@@ -1,0 +1,46 @@
+import { json } from '@sveltejs/kit';
+import { TMDB_API_KEY } from '$env/static/private';
+import { TmdbAPI } from '$lib/services/tmdb-api.js';
+
+const ITEMS_PER_PAGE = 4;
+
+export async function GET({ fetch, url }) {
+	const page = Math.max(1, Number(url.searchParams.get('page') ?? '1') || 1);
+
+	if (!TMDB_API_KEY) {
+		return json(
+			{
+				cards: [],
+				page,
+				hasMore: false,
+				error: 'TMDB_API_KEY fehlt'
+			},
+			{ status: 500 }
+		);
+	}
+
+	try {
+		const api = new TmdbAPI(fetch, TMDB_API_KEY);
+
+		const trending = await api.getTrendingAll(page);
+
+		return json({
+			cards: trending.results ?? [],
+			page: trending.page ?? page,
+			hasMore: trending.hasMore === true,
+			error: null
+		});
+	} catch (error) {
+		console.error('Failed to load trending content:', error);
+
+		return json(
+			{
+				cards: [],
+				page,
+				hasMore: false,
+				error: 'Weitere Inhalte konnten nicht geladen werden.'
+			},
+			{ status: 500 }
+		);
+	}
+}
