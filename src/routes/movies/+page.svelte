@@ -4,38 +4,45 @@
 	import CardDefault from '$lib/components/CardDefault.svelte';
 	import CardFeatured from '$lib/components/CardFeatured.svelte';
 	import LoadMore from '$lib/components/LoadMore.svelte';
+	import DialogMessage from '$lib/components/DialogMessage.svelte';
 
 	import { deduplicateMedia, getMediaKey } from '$lib/utils/deduplicateMedia';
+	import { restorePagedList } from '$lib/utils/pageStateRestore';
 
 	const STORAGE_KEY = 'movies-page';
 
 	/**
 	 * Erwartete Props für die Seite.
 	 *
-	 * @param {{
-	 *   featured?: {
-	 *     id: number|string,
-	 *     mediaType: 'movie'|'tv'|string,
-	 *     title: string,
-	 *     releaseDate?: string,
-	 *     overview?: string,
-	 *     homepage?: string,
-	 *     genres?: Array<{id: number|string, name: string}>,
-	 *     imageUrl?: string
-	 *   } | null,
-	 *   cards?: Array<{
-	 *     id: number|string,
-	 *     mediaType: 'movie'|'tv'|string,
-	 *     title: string,
-	 *     date?: string,
-	 *     rating?: number,
-	 *     genres?: Array<{id: number|string, name: string}>,
-	 *     imageUrl?: string
-	 *   }>,
-	 *   page?: number,
-	 *   hasMore?: boolean,
-	 *   error?: string | null
-	 * }} data - Geladene Seitendaten aus dem Server-Load.
+	 * @typedef {Object} PageData
+	 * @property {{
+	 *   id: number|string,
+	 *   mediaType: 'movie'|'tv'|string,
+	 *   title: string,
+	 *   releaseDate?: string,
+	 *   overview?: string,
+	 *   homepage?: string,
+	 *   genres?: Array<{id: number|string, name: string}>,
+	 *   imageUrl?: string
+	 * } | null} [featured]
+	 * @property {Array<{
+	 *   id: number|string,
+	 *   mediaType: 'movie'|'tv'|string,
+	 *   title: string,
+	 *   date?: string,
+	 *   rating?: number,
+	 *   genres?: Array<{id: number|string, name: string}>,
+	 *   imageUrl?: string
+	 * }>} [cards]
+	 * @property {number} [page]
+	 * @property {boolean} [hasMore]
+	 * @property {string | null} [error]
+	 */
+
+	/**
+	 * Geladene Seitendaten aus dem Server-Load.
+	 *
+	 * @type {{ data: PageData }}
 	 */
 	let { data } = $props();
 
@@ -50,20 +57,63 @@
 	let scrollTargetId = $state(null);
 	let observer = null;
 
+	/**
+	 * Initialisiert den Seitenzustand einmalig.
+	 *
+	 * Beim ersten Render werden gespeicherte Seitenwerte über `restorePagedList`
+	 * wiederhergestellt. Die Funktion lädt bei Bedarf weitere Seiten nach,
+	 * setzt `featured`, `cards`, `page` und `hasMore` und behandelt Fehler mit
+	 * einer sichtbaren Meldung.
+	 */
 	$effect(() => {
 		if (initialized) {
 			return;
 		}
 
-		featured = data.featured ?? null;
-		cards = deduplicateMedia(data.cards ?? []);
-		page = data.page ?? 1;
-		hasMore = data.hasMore === true;
+		initialized = true;
 		error = data.error ?? null;
 
-		initialized = true;
+		(async () => {
+			loading = true;
+
+			try {
+				const restored = await restorePagedList({
+					storageKey: STORAGE_KEY,
+					initialData: data,
+					fetchPageData: async (pageNumber) => {
+						const response = await fetch(`/movies?page=${pageNumber}`, {
+							headers: {
+								accept: 'application/json'
+							}
+						});
+
+						if (!response.ok) {
+							throw new Error('Weitere Inhalte konnten nicht geladen werden.');
+						}
+
+						return response.json();
+					}
+				});
+
+				featured = restored.featured;
+				cards = restored.cards;
+				page = restored.page;
+				hasMore = restored.hasMore;
+			} catch (restoreError) {
+				error = restoreError instanceof Error ? restoreError.message : 'Unbekannter Fehler';
+			} finally {
+				loading = false;
+			}
+		})();
 	});
 
+	/**
+	 * Scrollt nach dem Nachladen zur ersten neu eingefügten Karte.
+	 *
+	 * Sobald `scrollTargetId` gesetzt ist, beobachtet der Effekt das Ziel-Element
+	 * im Browser und führt ein sanftes Scrollen aus, sobald es im Viewport
+	 * auftaucht. Danach wird der Observer wieder entfernt.
+	 */
 	$effect(() => {
 		if (!browser || !scrollTargetId) {
 			return;
@@ -100,6 +150,11 @@
 		};
 	});
 
+	/**
+	 * Speichert die zuletzt geladene Seite im Session Storage.
+	 *
+	 * @param {number} value - Seitennummer, die gespeichert werden soll.
+	 */
 	function savePage(value) {
 		if (!browser) {
 			return;
@@ -199,14 +254,11 @@
 </svelte:head>
 
 <main class="ui container fluid movies-page">
-	<h2 class="ui dividing header">Filme</h2>
-
 	{#if error}
-		<div class="ui negative message">
-			<div class="header">Fehler beim Laden</div>
-			<p>{error}</p>
-		</div>
+		<DialogMessage message={error} />
 	{/if}
+
+	<h2 class="ui dividing header">Filme</h2>
 
 	{#if featured}
 		<CardFeatured {...featured} />

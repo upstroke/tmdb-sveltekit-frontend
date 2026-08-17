@@ -57,8 +57,8 @@ export async function load({ fetch, url }) {
 			featured = {
 				id: source.id,
 				mediaType: 'movie',
-				title: source.title ?? 'N/A',
-				releaseDate: source.date ?? 'N/A',
+				title: source.title,
+				releaseDate: source.date,
 				overview: '',
 				homepage: '',
 				genres: source.genres ?? [],
