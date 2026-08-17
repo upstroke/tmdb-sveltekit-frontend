@@ -1,3 +1,11 @@
+<script>
+	/**
+	 * Keine Props erforderlich.
+	 *
+	 * Die Komponente rendert nur den festen Footer mit statischen Links.
+	 */
+</script>
+
 <div class="main-footer hydrated">
 	<footer class="ui bottom fixed inverted menu">
 		<div class="ui inverted segment">

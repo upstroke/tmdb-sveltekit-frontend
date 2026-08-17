@@ -1,4 +1,12 @@
 <script>
+	/**
+	 * Erwartete Props für den "Mehr laden"-Button.
+	 *
+	 * @param {boolean} [hasMore=false] - Gibt an, ob weitere Ergebnisse vorhanden sind.
+	 * @param {boolean} [loading=false] - Gibt an, ob gerade geladen wird.
+	 * @param {Function|null} [onload=null] - Callback, das beim Klick aufgerufen wird.
+	 */
+
 	let { hasMore = false, loading = false, onload = null } = $props();
 </script>
 

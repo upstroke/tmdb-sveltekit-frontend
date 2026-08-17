@@ -2,6 +2,15 @@ import { json } from '@sveltejs/kit';
 import { TMDB_API_KEY } from '$env/static/private';
 import { TmdbAPI } from '$lib/services/tmdb-api.js';
 
+/**
+ * Sucht nach Filmen und TV-Shows anhand eines Suchbegriffs.
+ *
+ * Die Route erwartet den Query-Parameter `q`, prüft dessen Mindestlänge
+ * und liefert getrennte Listen für Filme und TV-Shows zurück.
+ *
+ * @param {{ fetch: Function, url: URL }} event - SvelteKit-Request-Kontext.
+ * @returns {Promise<Response>} JSON-Antwort mit Suchergebnissen.
+ */
 export async function GET({ fetch, url }) {
 	const query = url.searchParams.get('q')?.trim();
 

@@ -2,6 +2,15 @@ import { json } from '@sveltejs/kit';
 import { TMDB_API_KEY } from '$env/static/private';
 import { TmdbAPI } from '$lib/services/tmdb-api.js';
 
+/**
+ * Lädt eine weitere Seite mit TV-Shows.
+ *
+ * Die Route erwartet den Query-Parameter `page`, lädt die entsprechende
+ * TV-Show-Seite über die TMDB-API und gibt deduplizierte Karten sowie Paging-Infos zurück.
+ *
+ * @param {{ fetch: Function, url: URL }} event - SvelteKit-Request-Kontext.
+ * @returns {Promise<Response>} JSON-Antwort mit Karten, Seitennummer und Fehlerstatus.
+ */
 export async function GET({ fetch, url }) {
 	const page = Math.max(1, Number(url.searchParams.get('page') ?? '1') || 1);
 
