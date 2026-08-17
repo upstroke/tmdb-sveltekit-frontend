@@ -1,6 +1,15 @@
 import { browser } from '$app/environment';
 import { deduplicateMedia, getMediaKey } from '$lib/utils/deduplicateMedia';
 
+/**
+ * Liest die zuletzt gespeicherte Seite aus dem Session Storage.
+ *
+ * Gibt im Browser mindestens `1` zurück und fällt bei Fehlern ebenfalls
+ * auf `1` zurück.
+ *
+ * @param {string} storageKey - Schlüssel für den Session-Storage-Eintrag.
+ * @returns {number} Zuletzt gespeicherte Seitenzahl.
+ */
 export function getStoredPage(storageKey) {
 	if (!browser) return 1;
 
@@ -11,6 +20,34 @@ export function getStoredPage(storageKey) {
 	}
 }
 
+/**
+ * Stellt eine paginierte Liste aus gespeicherten und nachgeladenen Daten wieder her.
+ *
+ * Die Funktion nimmt die initialen Serverdaten, ergänzt sie bei Bedarf mit weiteren
+ * Seiten und entfernt doppelte Medien anhand ihrer Schlüssel.
+ *
+ * @param {{
+ *   storageKey: string,
+ *   initialData: {
+ *     featured?: unknown,
+ *     cards?: Array<unknown>,
+ *     page?: number,
+ *     hasMore?: boolean
+ *   },
+ *   fetchPageData: (pageNumber: number) => Promise<{
+ *     featured?: unknown,
+ *     cards?: Array<unknown>,
+ *     page?: number,
+ *     hasMore?: boolean
+ *   }>
+ * }} options - Konfiguration für die Wiederherstellung der Liste.
+ * @returns {Promise<{
+ *   featured: unknown,
+ *   cards: Array<unknown>,
+ *   page: number,
+ *   hasMore: boolean
+ * }>} Wiederhergestellter Listenstatus.
+ */
 export async function restorePagedList({
 																				 storageKey,
 																				 initialData,
