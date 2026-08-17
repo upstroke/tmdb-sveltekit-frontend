@@ -1,5 +1,6 @@
 <script>
 	import { resolve } from '$app/paths';
+	import notAvailable from '$lib/assets/not-available.png';
 
 	/**
 	 * Erwartete Props für die Standard-Karte.
@@ -39,25 +40,27 @@
 	);
 
 	let genreText = $derived((genres ?? []).map((genre) => genre.name).join(' / '));
+	let cardImageUrl = $derived(imageUrl || notAvailable);
+	let cardTitle = $derived(title?.trim() || 'N/A');
+	let cardDate = $derived(date?.trim() || 'N/A');
+	let cardRating = $derived(rating ? rating.toFixed(1) : 'N/A');
 </script>
 
 {#if detailsHref}
 	<a id={scrollId || undefined} class="ui card default-card" href={detailsHref}>
-		{#if imageUrl}
-			<div class="image">
-				<img src={imageUrl} alt={title} />
+		<div class="image">
+			<img src={cardImageUrl} alt={cardTitle} />
 
-				<div
-						class="ui top right attached label
-					{normalizedType === 'movie' ? 'blue' : 'teal'}"
-				>
-					{normalizedType}
-				</div>
+			<div
+					class="ui top right attached label
+				{normalizedType === 'movie' ? 'blue' : 'teal'}"
+			>
+				{normalizedType}
 			</div>
-		{/if}
+		</div>
 
 		<div class="content">
-			<div class="header">{title}</div>
+			<div class="header">{cardTitle}</div>
 
 			<div class="ui hidden divider small"></div>
 
@@ -66,13 +69,17 @@
 					<i class="layer group icon"></i>
 					{genreText}
 				</p>
+			{:else}
+				<p class="meta genres">N/A</p>
 			{/if}
 
 			{#if date}
 				<p class="meta date">
 					<i class="calendar icon"></i>
-					{date}
+					{cardDate}
 				</p>
+			{:else}
+				<p class="meta date">N/A</p>
 			{/if}
 		</div>
 
@@ -81,7 +88,7 @@
 			<i class="yellow star icon"></i>
 
 			<small class="ui label">
-				{rating ? rating.toFixed(1) : '–'}
+				{cardRating}
 			</small>
 		</div>
 	</a>

@@ -4,8 +4,10 @@
 	import CardFeatured from '$lib/components/CardFeatured.svelte';
 	import CardDefault from '$lib/components/CardDefault.svelte';
 	import LoadMore from '$lib/components/LoadMore.svelte';
+	import DialogMessage from '$lib/components/DialogMessage.svelte';
 
 	import { deduplicateMedia, getMediaKey } from '$lib/utils/deduplicateMedia';
+	import { restorePagedList } from '$lib/utils/pageStateRestore';
 
 	const STORAGE_KEY = 'home-page';
 
@@ -47,18 +49,100 @@
 	let loading = $state(false);
 	let initialized = $state(false);
 
+	let scrollTargetId = $state(null);
+	let observer = null;
+
+	/**
+	 * Stellt den Startseitenzustand beim ersten Render wieder her.
+	 *
+	 * Der Effekt läuft nur einmal, lädt gespeicherte Seitenwerte über
+	 * `restorePagedList` und setzt `featured`, `cards`, `page` und `hasMore`.
+	 * Bei Fehlern wird eine Meldung in `error` geschrieben, während `loading`
+	 * den Ladezustand steuert.
+	 */
 	$effect(() => {
 		if (initialized) {
 			return;
 		}
 
-		featured = data.featured ?? null;
-		cards = deduplicateMedia(data.cards ?? []);
-		page = data.page ?? 1;
-		hasMore = data.hasMore === true;
+		initialized = true;
 		error = data.error ?? null;
 
-		initialized = true;
+		(async () => {
+			loading = true;
+
+			try {
+				const restored = await restorePagedList({
+					storageKey: STORAGE_KEY,
+					initialData: data,
+					fetchPageData: async (pageNumber) => {
+						const response = await fetch(`/trending?page=${pageNumber}`, {
+							headers: {
+								accept: 'application/json'
+							}
+						});
+
+						if (!response.ok) {
+							throw new Error('Weitere Inhalte konnten nicht geladen werden.');
+						}
+
+						return response.json();
+					}
+				});
+
+				featured = restored.featured;
+				cards = restored.cards;
+				page = restored.page;
+				hasMore = restored.hasMore;
+			} catch (restoreError) {
+				error = restoreError instanceof Error ? restoreError.message : 'Unbekannter Fehler';
+			} finally {
+				loading = false;
+			}
+		})();
+	});
+
+	/**
+	 * Scrollt nach dem Nachladen zur ersten neu eingefügten Karte.
+	 *
+	 * Sobald `scrollTargetId` gesetzt ist, beobachtet der Effekt das Ziel-Element
+	 * im Browser und führt ein sanftes Scrollen aus, sobald es im Viewport auftaucht.
+	 * Danach wird der Observer wieder entfernt.
+	 */
+	$effect(() => {
+		if (!browser || !scrollTargetId) {
+			return;
+		}
+
+		if (observer) {
+			observer.disconnect();
+		}
+
+		const target = document.getElementById(scrollTargetId);
+
+		if (!target) {
+			scrollTargetId = null;
+			return;
+		}
+
+		observer = new IntersectionObserver(
+				(entries, currentObserver) => {
+					if (entries.some((entry) => entry.isIntersecting)) {
+						target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+						currentObserver.disconnect();
+						scrollTargetId = null;
+					}
+				},
+				{
+					threshold: 0.1
+				}
+		);
+
+		observer.observe(target);
+
+		return () => {
+			observer?.disconnect();
+		};
 	});
 
 	/**
@@ -79,49 +163,20 @@
 	}
 
 	/**
-	 * Scrollt zur ersten neu geladenen Karte auf der Seite.
+	 * Merkt sich das Ziel für das Scrollen zur ersten neu geladenen Karte.
 	 *
-	 * @param {string} selector - CSS-Selektor für das Ziel-Element.
-	 * @returns {Promise<void>} Wird erfüllt, sobald der Scrollversuch abgeschlossen ist.
+	 * @param {number} previousCardsCount - Anzahl der Karten vor dem Nachladen.
 	 */
-	function scrollToFirstNewCard(selector) {
-		return new Promise((resolve) => {
-			requestAnimationFrame(() => {
-				requestAnimationFrame(() => {
-					try {
-						const target = document.querySelector(selector);
-
-						if (!target) {
-							resolve();
-							return;
-						}
-
-						const rootStyles = getComputedStyle(document.documentElement);
-
-						const headerHeight = parseFloat(rootStyles.getPropertyValue('--header-height')) || 0;
-
-						const targetTop = target.getBoundingClientRect().top + window.scrollY - headerHeight;
-
-						window.scrollTo({
-							top: Math.max(0, targetTop),
-							behavior: 'smooth'
-						});
-					} catch (scrollError) {
-						console.warn('Scrollen zur neuen Karte fehlgeschlagen:', scrollError);
-					} finally {
-						resolve();
-					}
-				});
-			});
-		});
+	function markScrollTarget(previousCardsCount) {
+		scrollTargetId = `home-card-${previousCardsCount + 1}`;
 	}
 
 	/**
 	 * Lädt die nächste Seite mit Trending-Inhalten nach.
 	 *
 	 * Die Funktion verhindert Doppelaufrufe, holt weitere Karten über die
-	 * Trending-Route, dedupliziert die Ergebnisse und scrollt anschließend
-	 * zur ersten neu eingefügten Karte.
+	 * Trending-Route, dedupliziert die Ergebnisse und setzt das Scrollziel
+	 * auf die erste neu eingefügte Karte.
 	 *
 	 * @returns {Promise<void>} Wird abgeschlossen, wenn das Nachladen beendet ist.
 	 */
@@ -170,15 +225,12 @@
 
 			const previousCardsCount = cards.length;
 
-			const selector = `.home-page .cards .default-card:nth-child(${previousCardsCount + 1})`;
-
 			cards = [...cards, ...newCards];
 			page = result.page ?? nextPage;
 			hasMore = result.hasMore === true;
 
 			savePage(page);
-
-			await scrollToFirstNewCard(selector);
+			markScrollTarget(previousCardsCount);
 		} catch (exception) {
 			if (exception.name === 'AbortError') {
 				error = 'Das Laden hat zu lange gedauert.';
@@ -197,28 +249,17 @@
 </svelte:head>
 
 <main class="ui container fluid home-page">
+	{#if error}
+		<DialogMessage message={error} />
+	{/if}
+
 	{#if featured}
 		<h2 class="ui dividing header">Featured Today</h2>
 
 		<CardFeatured {...featured} />
 	{/if}
 
-	<h2 class="ui dividing header">Am besten bewertete Produktionen</h2>
-
-	<div class="spacer">
-		<p>
-			Entdecke Filme und TV-Shows anhand verschiedener Kriterien wie Durchschnittsbewertung, Anzahl
-			der Stimmen und Genres.
-		</p>
-	</div>
-
-	{#if error}
-		<div class="ui negative message">
-			<div class="header">Fehler beim Laden</div>
-
-			<p>{error}</p>
-		</div>
-	{/if}
+	<h2 class="ui dividing header">Trending Today</h2>
 
 	{#if cards.length > 0}
 		<div class="ui four doubling cards">
@@ -227,8 +268,10 @@
 			{/each}
 		</div>
 
-		<LoadMore {hasMore} {loading} onload={() => loadMore()} />
+		{#if hasMore}
+			<LoadMore {hasMore} {loading} onload={() => loadMore()} />
+		{/if}
 	{:else if !error}
-		<p>Aktuell sind keine Einträge verfügbar.</p>
+		<p>Keine Inhalte gefunden.</p>
 	{/if}
 </main>
