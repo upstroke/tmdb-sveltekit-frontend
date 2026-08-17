@@ -1,5 +1,6 @@
 <script>
 	import { resolve } from '$app/paths';
+	import notAvailable from '$lib/assets/not-available.png';
 
 	/**
 	 * Erwartete Props für die Featured-Karte.
@@ -39,14 +40,17 @@
 	);
 
 	let genreText = $derived((genres ?? []).map((genre) => genre.name).join(' / '));
+	let featuredImageUrl = $derived(imageUrl || notAvailable);
+	let featuredTitle = $derived(title?.trim() || 'N/A');
+	let featuredReleaseDate = $derived(releaseDate?.trim() || 'N/A');
+	let featuredOverview = $derived(overview?.trim() || 'N/A');
+	let featuredHomepage = $derived(homepage?.trim() || 'N/A');
 </script>
 
 <div class="ui fluid card basic featured-card">
-	{#if imageUrl}
-		<div class="image">
-			<img src={imageUrl} alt={title} />
-		</div>
-	{/if}
+	<div class="image">
+		<img src={featuredImageUrl} alt={featuredTitle} />
+	</div>
 
 	<div class="content">
 		{#if genreText}
@@ -58,31 +62,33 @@
 			</div>
 
 			<div class="ui hidden divider"></div>
-		{/if}
-
-		<h2 class="header">{title}</h2>
-
-		{#if releaseDate}
-			<p class="meta">
-				<i class="calendar icon"></i>
-				{releaseDate}
-			</p>
-		{/if}
-
-		{#if overview}
-			<div class="description">
-				<p>{overview}</p>
+		{:else}
+			<div class="content">
+				<h4 class="sub header">N/A</h4>
 			</div>
+
+			<div class="ui hidden divider"></div>
 		{/if}
+
+		<h2 class="header">{featuredTitle}</h2>
+
+		<p class="meta">
+			<i class="calendar icon"></i>
+			{featuredReleaseDate}
+		</p>
+
+		<div class="description">
+			<p>{featuredOverview}</p>
+		</div>
 	</div>
 
 	<div class="extra content actions">
 		{#if detailsHref}
-			<a class="ui primary button" href={detailsHref}> Weitere Informationen </a>
+			<a class="ui primary button" href={detailsHref}>Weitere Informationen</a>
 		{/if}
 
-		{#if homepage}
-			<a class="ui button" href={homepage} target="_blank" rel="noopener noreferrer">
+		{#if featuredHomepage !== 'N/A'}
+			<a class="ui button" href={featuredHomepage} target="_blank" rel="noopener noreferrer">
 				Offizielle Website
 			</a>
 		{/if}
