@@ -9,6 +9,34 @@
 
 	const STORAGE_KEY = 'home-page';
 
+	/**
+	 * Erwartete Daten aus dem Server-Load der Startseite.
+	 *
+	 * @param {{
+	 *   featured?: {
+	 *     id: number|string,
+	 *     mediaType: 'movie'|'tv'|string,
+	 *     title: string,
+	 *     releaseDate?: string,
+	 *     overview?: string,
+	 *     homepage?: string,
+	 *     genres?: Array<{id: number|string, name: string}>,
+	 *     imageUrl?: string
+	 *   } | null,
+	 *   cards?: Array<{
+	 *     id: number|string,
+	 *     mediaType: 'movie'|'tv'|string,
+	 *     title?: string,
+	 *     date?: string,
+	 *     rating?: number,
+	 *     genres?: Array<{id: number|string, name: string}>,
+	 *     imageUrl?: string
+	 *   }>,
+	 *   page?: number,
+	 *   hasMore?: boolean,
+	 *   error?: string | null
+	 * }} data - Geladene Startseiten-Daten.
+	 */
 	let { data } = $props();
 
 	let featured = $state(null);
@@ -33,6 +61,11 @@
 		initialized = true;
 	});
 
+	/**
+	 * Speichert die zuletzt geladene Seite im Session Storage.
+	 *
+	 * @param {number} value - Seitennummer, die gespeichert werden soll.
+	 */
 	function savePage(value) {
 		if (!browser) {
 			return;
@@ -45,6 +78,12 @@
 		}
 	}
 
+	/**
+	 * Scrollt zur ersten neu geladenen Karte auf der Seite.
+	 *
+	 * @param {string} selector - CSS-Selektor für das Ziel-Element.
+	 * @returns {Promise<void>} Wird erfüllt, sobald der Scrollversuch abgeschlossen ist.
+	 */
 	function scrollToFirstNewCard(selector) {
 		return new Promise((resolve) => {
 			requestAnimationFrame(() => {
@@ -77,6 +116,15 @@
 		});
 	}
 
+	/**
+	 * Lädt die nächste Seite mit Trending-Inhalten nach.
+	 *
+	 * Die Funktion verhindert Doppelaufrufe, holt weitere Karten über die
+	 * Trending-Route, dedupliziert die Ergebnisse und scrollt anschließend
+	 * zur ersten neu eingefügten Karte.
+	 *
+	 * @returns {Promise<void>} Wird abgeschlossen, wenn das Nachladen beendet ist.
+	 */
 	async function loadMore() {
 		if (loading || !hasMore) {
 			return;
@@ -102,7 +150,8 @@
 			});
 
 			if (!response.ok) {
-				throw new Error('Weitere Inhalte konnten nicht geladen werden.');
+				error = 'Weitere Inhalte konnten nicht geladen werden.';
+				return;
 			}
 
 			const result = await response.json();
@@ -110,7 +159,7 @@
 			const existingKeys = new Set(cards.map(getMediaKey).filter(Boolean));
 
 			const newCards = deduplicateMedia(result.cards ?? []).filter(
-				(card) => !existingKeys.has(getMediaKey(card))
+					(card) => !existingKeys.has(getMediaKey(card))
 			);
 
 			if (newCards.length === 0) {
@@ -173,8 +222,8 @@
 
 	{#if cards.length > 0}
 		<div class="ui four doubling cards">
-			{#each cards as item (`page-home-${item.mediaType}-${item.id}`)}
-				<CardDefault {...item} />
+			{#each cards as item, index (`page-home-${item.mediaType}-${item.id}`)}
+				<CardDefault {...item} scrollId={`home-card-${index + 1}`} />
 			{/each}
 		</div>
 

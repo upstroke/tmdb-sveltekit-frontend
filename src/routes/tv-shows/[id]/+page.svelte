@@ -3,38 +3,50 @@
 <script>
 	import { deduplicateById } from '$lib/utils/deduplicateById';
 
+	/**
+	 * Erwartete Props für die Detailseite.
+	 *
+	 * @param {{
+	 *   tvShow?: {
+	 *     imageUrl?: string,
+	 *     posterUrl?: string,
+	 *     title?: string,
+	 *     rating?: number|string,
+	 *     mediaType?: 'movie'|'tv'|string,
+	 *     genres?: Array<{id: number|string, name: string}>,
+	 *     overview?: string,
+	 *     homepage?: string,
+	 *     trailerUrl?: string,
+	 *     releaseDate?: string,
+	 *     productionCompanies?: Array<{id: number|string, name: string}>,
+	 *     runtime?: number|null,
+	 *     cast?: Array<{creditId?: number|string, id?: number|string, name: string, character?: string}>,
+	 *     crew?: Array<{creditId?: number|string, id?: number|string, name: string, job?: string}>
+	 *   } | null,
+	 *   error?: string | null
+	 * }} data - Geladene TV-Show-Daten.
+	 */
 	let { data } = $props();
 
 	let tvShow = $derived(data.tvShow ?? null);
+	let error = $derived(data.error ?? null);
 
 	let backdrop = $derived(tvShow?.imageUrl ?? '');
-
 	let posterUrl = $derived(tvShow?.posterUrl ?? '');
-
 	let title = $derived(tvShow?.title ?? '');
-
 	let rating = $derived(tvShow?.rating ?? '');
-
 	let mediaType = $derived(tvShow?.mediaType ?? 'tv');
-
 	let genres = $derived(deduplicateById(tvShow?.genres ?? []));
-
 	let overview = $derived(tvShow?.overview ?? '');
-
 	let homepage = $derived(tvShow?.homepage ?? '');
-
 	let trailerUrl = $derived(tvShow?.trailerUrl ?? '');
-
 	let releaseDate = $derived(tvShow?.releaseDate ?? '');
-
 	let productionCompanies = $derived(deduplicateById(tvShow?.productionCompanies ?? []));
-
 	let runtime = $derived(tvShow?.runtime ?? null);
-
 	let cast = $derived(deduplicateById(tvShow?.cast ?? []));
-
 	let crew = $derived(deduplicateById(tvShow?.crew ?? []));
 </script>
+
 
 <svelte:head>
 	<title>
@@ -42,7 +54,14 @@
 	</title>
 </svelte:head>
 
-{#if tvShow}
+{#if error}
+	<main class="ui text container details-view">
+		<div class="ui negative message">
+			<div class="header">Fehler beim Laden</div>
+			<p>{error}</p>
+		</div>
+	</main>
+{:else if tvShow}
 	<div class="ui inverted vertical center aligned masthead segment">
 		{#if backdrop}
 			<div class="masthead-image">

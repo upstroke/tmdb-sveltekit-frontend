@@ -1,6 +1,31 @@
 import { TMDB_API_KEY } from '$env/static/private';
 import { TmdbAPI } from '$lib/services/tmdb-api.js';
 
+/**
+ * Lädt die Serverdaten für die Filmliste.
+ *
+ * Die Funktion ermittelt die gewünschte Seite aus der URL, lädt die
+ * entsprechenden Trending-Filme über die TMDB-API und bereitet ein
+ * Featured-Objekt sowie die Kartenliste für die Seite auf.
+ *
+ * @param {{ fetch: Function, url: URL }} event - SvelteKit-Load-Kontext.
+ * @returns {Promise<{
+ *   featured: {
+ *     id: number|string,
+ *     mediaType: 'movie',
+ *     title: string,
+ *     releaseDate: string,
+ *     overview: string,
+ *     homepage: string,
+ *     genres: Array<{id: number|string, name: string}>,
+ *     imageUrl: string
+ *   } | null,
+ *   cards: Array<Record<string, unknown>>,
+ *   page: number,
+ *   hasMore: boolean,
+ *   error: string | null
+ * }>} Geladene Seiten- und Karten-Daten.
+ */
 export async function load({ fetch, url }) {
 	const lastPage = Math.max(1, Number(url.searchParams.get('page') ?? '1') || 1);
 

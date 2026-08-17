@@ -1,6 +1,18 @@
 <script>
 	import { resolve } from '$app/paths';
 
+	/**
+	 * Erwartete Props für die Featured-Karte.
+	 *
+	 * @param {number|string} id - ID des Mediums.
+	 * @param {'movie'|'tv'|string} mediaType - Medientyp der Karte.
+	 * @param {string} title - Titel des Mediums.
+	 * @param {string} [releaseDate=''] - Veröffentlichungsdatum oder Startdatum.
+	 * @param {string} [overview=''] - Kurzbeschreibung des Mediums.
+	 * @param {string} [homepage=''] - Offizielle Website des Mediums.
+	 * @param {Array<{id: number|string, name: string}>} [genres=[]] - Liste der Genres.
+	 * @param {string} [imageUrl=''] - URL des Vorschaubilds.
+	 */
 	let {
 		id,
 		mediaType,
@@ -15,15 +27,15 @@
 	let normalizedType = $derived(mediaType === 'movie' ? 'movie' : mediaType === 'tv' ? 'tv' : null);
 
 	let detailsHref = $derived(
-		normalizedType === 'movie'
-			? resolve('/movies/[id]', {
-					id: String(id)
-				})
-			: normalizedType === 'tv'
-				? resolve('/tv-shows/[id]', {
+			normalizedType === 'movie'
+					? resolve('/movies/[id]', {
 						id: String(id)
 					})
-				: undefined
+					: normalizedType === 'tv'
+							? resolve('/tv-shows/[id]', {
+								id: String(id)
+							})
+							: undefined
 	);
 
 	let genreText = $derived((genres ?? []).map((genre) => genre.name).join(' / '));

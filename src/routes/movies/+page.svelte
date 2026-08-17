@@ -9,6 +9,34 @@
 
 	const STORAGE_KEY = 'movies-page';
 
+	/**
+	 * Erwartete Props für die Seite.
+	 *
+	 * @param {{
+	 *   featured?: {
+	 *     id: number|string,
+	 *     mediaType: 'movie'|'tv'|string,
+	 *     title: string,
+	 *     releaseDate?: string,
+	 *     overview?: string,
+	 *     homepage?: string,
+	 *     genres?: Array<{id: number|string, name: string}>,
+	 *     imageUrl?: string
+	 *   } | null,
+	 *   cards?: Array<{
+	 *     id: number|string,
+	 *     mediaType: 'movie'|'tv'|string,
+	 *     title: string,
+	 *     date?: string,
+	 *     rating?: number,
+	 *     genres?: Array<{id: number|string, name: string}>,
+	 *     imageUrl?: string
+	 *   }>,
+	 *   page?: number,
+	 *   hasMore?: boolean,
+	 *   error?: string | null
+	 * }} data - Geladene Seitendaten aus dem Server-Load.
+	 */
 	let { data } = $props();
 
 	let featured = $state(null);
@@ -18,6 +46,9 @@
 	let error = $state(null);
 	let loading = $state(false);
 	let initialized = $state(false);
+
+	let scrollTargetId = $state(null);
+	let observer = null;
 
 	$effect(() => {
 		if (initialized) {
@@ -33,6 +64,42 @@
 		initialized = true;
 	});
 
+	$effect(() => {
+		if (!browser || !scrollTargetId) {
+			return;
+		}
+
+		if (observer) {
+			observer.disconnect();
+		}
+
+		const target = document.getElementById(scrollTargetId);
+
+		if (!target) {
+			scrollTargetId = null;
+			return;
+		}
+
+		observer = new IntersectionObserver(
+				(entries, currentObserver) => {
+					if (entries.some((entry) => entry.isIntersecting)) {
+						target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+						currentObserver.disconnect();
+						scrollTargetId = null;
+					}
+				},
+				{
+					threshold: 0.1
+				}
+		);
+
+		observer.observe(target);
+
+		return () => {
+			observer?.disconnect();
+		};
+	});
+
 	function savePage(value) {
 		if (!browser) {
 			return;
@@ -45,38 +112,24 @@
 		}
 	}
 
-	function scrollToFirstNewCard(selector) {
-		return new Promise((resolve) => {
-			requestAnimationFrame(() => {
-				requestAnimationFrame(() => {
-					try {
-						const target = document.querySelector(selector);
-
-						if (!target) {
-							resolve();
-							return;
-						}
-
-						const rootStyles = getComputedStyle(document.documentElement);
-
-						const headerHeight = parseFloat(rootStyles.getPropertyValue('--header-height')) || 0;
-
-						const targetTop = target.getBoundingClientRect().top + window.scrollY - headerHeight;
-
-						window.scrollTo({
-							top: Math.max(0, targetTop),
-							behavior: 'smooth'
-						});
-					} catch (scrollError) {
-						console.warn('Scrollen zur neuen Karte fehlgeschlagen:', scrollError);
-					} finally {
-						resolve();
-					}
-				});
-			});
-		});
+	/**
+	 * Merkt sich das Ziel für das Scrollen zur ersten neu geladenen Karte.
+	 *
+	 * @param {number} previousCardsCount - Anzahl der Karten vor dem Nachladen.
+	 */
+	function markScrollTarget(previousCardsCount) {
+		scrollTargetId = `movie-card-${previousCardsCount + 1}`;
 	}
 
+	/**
+	 * Lädt weitere Filme nach.
+	 *
+	 * Die Funktion verhindert Doppelaufrufe, holt weitere Karten über die
+	 * Movies-Route, dedupliziert die Ergebnisse und setzt das Scrollziel
+	 * auf die erste neu eingefügte Karte.
+	 *
+	 * @returns {Promise<void>} Wird abgeschlossen, wenn das Nachladen beendet ist.
+	 */
 	async function loadMore() {
 		if (loading || !hasMore) {
 			return;
@@ -102,7 +155,8 @@
 			});
 
 			if (!response.ok) {
-				throw new Error('Weitere Inhalte konnten nicht geladen werden.');
+				error = 'Weitere Inhalte konnten nicht geladen werden.';
+				return;
 			}
 
 			const result = await response.json();
@@ -110,7 +164,7 @@
 			const existingKeys = new Set(cards.map(getMediaKey).filter(Boolean));
 
 			const newCards = deduplicateMedia(result.cards ?? []).filter(
-				(card) => !existingKeys.has(getMediaKey(card))
+					(card) => !existingKeys.has(getMediaKey(card))
 			);
 
 			if (newCards.length === 0) {
@@ -121,15 +175,12 @@
 
 			const previousCardsCount = cards.length;
 
-			const selector = `.movies-page .cards .default-card:nth-child(${previousCardsCount + 1})`;
-
 			cards = [...cards, ...newCards];
 			page = result.page ?? nextPage;
 			hasMore = result.hasMore === true;
 
 			savePage(page);
-
-			await scrollToFirstNewCard(selector);
+			markScrollTarget(previousCardsCount);
 		} catch (exception) {
 			if (exception.name === 'AbortError') {
 				error = 'Das Laden hat zu lange gedauert.';
@@ -153,7 +204,6 @@
 	{#if error}
 		<div class="ui negative message">
 			<div class="header">Fehler beim Laden</div>
-
 			<p>{error}</p>
 		</div>
 	{/if}
@@ -166,8 +216,8 @@
 
 	{#if cards.length > 0}
 		<div class="ui four doubling cards">
-			{#each cards as item (`page-movies-${item.mediaType}-${item.id}`)}
-				<CardDefault {...item} />
+			{#each cards as item, index (`page-movies-${item.mediaType}-${item.id}`)}
+				<CardDefault {...item} scrollId={`movie-card-${index + 1}`} />
 			{/each}
 		</div>
 

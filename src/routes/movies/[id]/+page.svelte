@@ -3,36 +3,47 @@
 <script>
 	import { deduplicateById } from '$lib/utils/deduplicateById';
 
+	/**
+	 * Erwartete Props für die Detailseite.
+	 *
+	 * @param {{
+	 *   movie?: {
+	 *     imageUrl?: string,
+	 *     posterUrl?: string,
+	 *     title?: string,
+	 *     rating?: number|string,
+	 *     mediaType?: 'movie'|'tv'|string,
+	 *     genres?: Array<{id: number|string, name: string}>,
+	 *     overview?: string,
+	 *     homepage?: string,
+	 *     trailerUrl?: string,
+	 *     releaseDate?: string,
+	 *     productionCompanies?: Array<{id: number|string, name: string}>,
+	 *     runtime?: number|null,
+	 *     cast?: Array<{creditId?: number|string, id?: number|string, name: string, character?: string}>,
+	 *     crew?: Array<{creditId?: number|string, id?: number|string, name: string, job?: string}>
+	 *   } | null,
+	 *   error?: string | null
+	 * }} data - Geladene Film-Daten.
+	 */
 	let { data } = $props();
 
 	let movie = $derived(data.movie ?? null);
+	let error = $derived(data.error ?? null);
 
 	let backdrop = $derived(movie?.imageUrl ?? '');
-
 	let posterUrl = $derived(movie?.posterUrl ?? '');
-
 	let title = $derived(movie?.title ?? '');
-
 	let rating = $derived(movie?.rating ?? '');
-
 	let mediaType = $derived(movie?.mediaType ?? 'movie');
-
 	let genres = $derived(deduplicateById(movie?.genres ?? []));
-
 	let overview = $derived(movie?.overview ?? '');
-
 	let homepage = $derived(movie?.homepage ?? '');
-
 	let trailerUrl = $derived(movie?.trailerUrl ?? '');
-
 	let releaseDate = $derived(movie?.releaseDate ?? '');
-
 	let productionCompanies = $derived(deduplicateById(movie?.productionCompanies ?? []));
-
 	let runtime = $derived(movie?.runtime ?? null);
-
 	let cast = $derived(deduplicateById(movie?.cast ?? []));
-
 	let crew = $derived(deduplicateById(movie?.crew ?? []));
 </script>
 
@@ -42,7 +53,14 @@
 	</title>
 </svelte:head>
 
-{#if movie}
+{#if error}
+	<main class="ui text container details-view">
+		<div class="ui negative message">
+			<div class="header">Fehler beim Laden</div>
+			<p>{error}</p>
+		</div>
+	</main>
+{:else if movie}
 	<div class="ui inverted vertical center aligned masthead segment">
 		{#if backdrop}
 			<div class="masthead-image">

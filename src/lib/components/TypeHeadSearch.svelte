@@ -2,6 +2,13 @@
 	import { resolve } from '$app/paths';
 	import { deduplicateById } from '$lib/utils/deduplicateById';
 
+	/**
+	 * Typeahead-Suchkomponente ohne externe Props.
+	 *
+	 * Die Komponente verwaltet Suchbegriff, Ladezustand, Fehler und die
+	 * Ergebnislisten intern selbst.
+	 */
+
 	let query = $state('');
 	let movies = $state([]);
 	let tvShows = $state([]);
@@ -12,14 +19,42 @@
 	let debounceTimer;
 	let controller;
 
+	/**
+	 * Formatiert die Bewertung für die Anzeige.
+	 *
+	 * Rundet den Wert auf eine Nachkommastelle und stellt sicher,
+	 * dass auch leere oder ungültige Werte als `0.0` erscheinen.
+	 *
+	 * @param {number|string|undefined|null} value - Rohwert der Bewertung.
+	 * @returns {string} Formatierte Bewertung mit einer Nachkommastelle.
+	 */
 	function formatRating(value) {
 		return Number(value ?? 0).toFixed(1);
 	}
 
+	/**
+	 * Formatiert das Jahr aus einem Datumsstring.
+	 *
+	 * Nutzt nur die ersten vier Zeichen des Datums, also typischerweise
+	 * das Veröffentlichungsjahr. Wenn kein Wert vorhanden ist, wird ein
+	 * Platzhalter zurückgegeben.
+	 *
+	 * @param {string|undefined|null} value - Datumswert aus der Suche.
+	 * @returns {string} Jahr oder Platzhalter.
+	 */
 	function formatYear(value) {
 		return value?.slice(0, 4) || '- -';
 	}
 
+	/**
+	 * Erzeugt die Ziel-URL für ein Suchergebnis.
+	 *
+	 * Filme werden auf die Film-Detailseite und Serien auf die TV-Detailseite
+	 * verlinkt.
+	 *
+	 * @param {{ id: number|string, mediaType: 'movie' | 'tv' }} item - Suchergebnis.
+	 * @returns {string} Interner Routenpfad zum Detailbereich.
+	 */
 	function resultHref(item) {
 		if (item.mediaType === 'movie') {
 			return resolve('/movies/[id]', {
@@ -32,6 +67,12 @@
 		});
 	}
 
+	/**
+	 * Setzt alle Suchergebnisse und Fehlerzustände zurück.
+	 *
+	 * Wird verwendet, wenn die Eingabe zu kurz ist oder die Suche neu
+	 * initialisiert werden soll.
+	 */
 	function resetResults() {
 		movies = [];
 		tvShows = [];
@@ -39,6 +80,12 @@
 		error = null;
 	}
 
+	/**
+	 * Reagiert auf Benutzereingaben im Suchfeld.
+	 *
+	 * Entfernt alte Debounce-Timer, prüft die Mindestlänge des Suchbegriffs
+	 * und startet erst dann die eigentliche Suche mit kurzer Verzögerung.
+	 */
 	function handleInput() {
 		clearTimeout(debounceTimer);
 
@@ -54,6 +101,15 @@
 		debounceTimer = setTimeout(() => search(term), 300);
 	}
 
+	/**
+	 * Führt die Suche gegen den Backend-Endpunkt aus.
+	 *
+	 * Bricht eine laufende Anfrage ab, bevor eine neue gestartet wird,
+	 * und verarbeitet anschließend die Ergebnisse getrennt für Filme
+	 * und TV-Serien.
+	 *
+	 * @param {string} term - Suchbegriff ohne führende oder nachgestellte Leerzeichen.
+	 */
 	async function search(term) {
 		controller?.abort();
 		controller = new AbortController();
@@ -67,7 +123,8 @@
 			});
 
 			if (!response.ok) {
-				throw new Error('Suche konnte nicht geladen werden.');
+				error = 'Suche konnte nicht geladen werden.';
+				return;
 			}
 
 			const data = await response.json();
@@ -90,10 +147,22 @@
 		}
 	}
 
+	/**
+	 * Schließt die Ergebnisliste, wenn außerhalb der Komponente geklickt wird.
+	 *
+	 * Diese Funktion wird vom globalen Klick-Handler verwendet, damit die
+	 * Suchvorschläge verschwinden, sobald der Nutzer irgendwo anders hin klickt.
+	 */
 	function closeResults() {
 		visible = false;
 	}
 
+	/**
+	 * Öffnet die Ergebnisliste erneut, falls bereits passende Daten vorhanden sind.
+	 *
+	 * Der Fokus auf das Suchfeld soll die Ergebnisse wieder sichtbar machen,
+	 * ohne eine neue Suche auszulösen.
+	 */
 	function showResults() {
 		if (query.trim().length >= 4 && (movies.length > 0 || tvShows.length > 0 || loading || error)) {
 			visible = true;

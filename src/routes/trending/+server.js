@@ -2,8 +2,15 @@ import { json } from '@sveltejs/kit';
 import { TMDB_API_KEY } from '$env/static/private';
 import { TmdbAPI } from '$lib/services/tmdb-api.js';
 
-const ITEMS_PER_PAGE = 4;
-
+/**
+ * Lädt eine Seite mit trending Inhalten.
+ *
+ * Die Route erwartet den Query-Parameter `page` und liefert die nächste
+ * Portion gemischter Inhalte für die Startseite zurück.
+ *
+ * @param {{ fetch: Function, url: URL }} event - SvelteKit-Request-Kontext.
+ * @returns {Promise<Response>} JSON-Antwort mit Karten und Paging-Status.
+ */
 export async function GET({ fetch, url }) {
 	const page = Math.max(1, Number(url.searchParams.get('page') ?? '1') || 1);
 
