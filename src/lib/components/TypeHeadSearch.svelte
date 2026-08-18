@@ -19,42 +19,14 @@
 	let debounceTimer;
 	let controller;
 
-	/**
-	 * Formatiert die Bewertung für die Anzeige.
-	 *
-	 * Rundet den Wert auf eine Nachkommastelle und stellt sicher,
-	 * dass auch leere oder ungültige Werte als `0.0` erscheinen.
-	 *
-	 * @param {number|string|undefined|null} value - Rohwert der Bewertung.
-	 * @returns {string} Formatierte Bewertung mit einer Nachkommastelle.
-	 */
 	function formatRating(value) {
 		return Number(value ?? 0).toFixed(1);
 	}
 
-	/**
-	 * Formatiert das Jahr aus einem Datumsstring.
-	 *
-	 * Nutzt nur die ersten vier Zeichen des Datums, also typischerweise
-	 * das Veröffentlichungsjahr. Wenn kein Wert vorhanden ist, wird ein
-	 * Platzhalter zurückgegeben.
-	 *
-	 * @param {string|undefined|null} value - Datumswert aus der Suche.
-	 * @returns {string} Jahr oder Platzhalter.
-	 */
 	function formatYear(value) {
 		return value?.slice(0, 4) || '- -';
 	}
 
-	/**
-	 * Erzeugt die Ziel-URL für ein Suchergebnis.
-	 *
-	 * Filme werden auf die Film-Detailseite und Serien auf die TV-Detailseite
-	 * verlinkt.
-	 *
-	 * @param {{ id: number|string, mediaType: 'movie' | 'tv' }} item - Suchergebnis.
-	 * @returns {string} Interner Routenpfad zum Detailbereich.
-	 */
 	function resultHref(item) {
 		if (item.mediaType === 'movie') {
 			return resolve('/movies/[id]', {
@@ -67,12 +39,6 @@
 		});
 	}
 
-	/**
-	 * Setzt alle Suchergebnisse und Fehlerzustände zurück.
-	 *
-	 * Wird verwendet, wenn die Eingabe zu kurz ist oder die Suche neu
-	 * initialisiert werden soll.
-	 */
 	function resetResults() {
 		movies = [];
 		tvShows = [];
@@ -80,12 +46,6 @@
 		error = null;
 	}
 
-	/**
-	 * Reagiert auf Benutzereingaben im Suchfeld.
-	 *
-	 * Entfernt alte Debounce-Timer, prüft die Mindestlänge des Suchbegriffs
-	 * und startet erst dann die eigentliche Suche mit kurzer Verzögerung.
-	 */
 	function handleInput() {
 		clearTimeout(debounceTimer);
 
@@ -97,19 +57,9 @@
 		}
 
 		visible = true;
-
 		debounceTimer = setTimeout(() => search(term), 300);
 	}
 
-	/**
-	 * Führt die Suche gegen den Backend-Endpunkt aus.
-	 *
-	 * Bricht eine laufende Anfrage ab, bevor eine neue gestartet wird,
-	 * und verarbeitet anschließend die Ergebnisse getrennt für Filme
-	 * und TV-Serien.
-	 *
-	 * @param {string} term - Suchbegriff ohne führende oder nachgestellte Leerzeichen.
-	 */
 	async function search(term) {
 		controller?.abort();
 		controller = new AbortController();
@@ -130,9 +80,7 @@
 			const data = await response.json();
 
 			movies = deduplicateById(data.movies ?? []);
-
 			tvShows = deduplicateById(data.tvShows ?? []);
-
 			visible = movies.length > 0 || tvShows.length > 0;
 		} catch (exception) {
 			if (exception.name === 'AbortError') {
@@ -140,29 +88,16 @@
 			}
 
 			error = exception instanceof Error ? exception.message : 'Unbekannter Fehler';
-
 			visible = false;
 		} finally {
 			loading = false;
 		}
 	}
 
-	/**
-	 * Schließt die Ergebnisliste, wenn außerhalb der Komponente geklickt wird.
-	 *
-	 * Diese Funktion wird vom globalen Klick-Handler verwendet, damit die
-	 * Suchvorschläge verschwinden, sobald der Nutzer irgendwo anders hin klickt.
-	 */
 	function closeResults() {
 		visible = false;
 	}
 
-	/**
-	 * Öffnet die Ergebnisliste erneut, falls bereits passende Daten vorhanden sind.
-	 *
-	 * Der Fokus auf das Suchfeld soll die Ergebnisse wieder sichtbar machen,
-	 * ohne eine neue Suche auszulösen.
-	 */
 	function showResults() {
 		if (query.trim().length >= 4 && (movies.length > 0 || tvShows.length > 0 || loading || error)) {
 			visible = true;
@@ -191,45 +126,21 @@
 				{#if loading}
 					<div class="result">Suche läuft …</div>
 				{:else if error}
-					<div class="result">
-						{error}
-					</div>
+					<div class="result">{error}</div>
 				{:else}
 					{#if movies.length > 0}
 						<div class="category">
-							<div class="ui label blue">
-								<p>Movies</p>
-							</div>
-
-							<div class="results transition show">
-								{#each movies as item (`search-movie-${item.id}`)}
+							<div class="ui label blue">Filme</div>
+							<div class="results">
+								{#each movies as item (item.id)}
 									<a class="result" href={resultHref(item)} onclick={closeResults}>
-										<div class="ui horizontal card">
-											{#if item.posterUrl}
-												<div class="image">
-													<img src={item.posterUrl} alt={item.title} />
-												</div>
-											{/if}
-
-											<div class="content">
-												<div class="title">
-													{item.title}
-												</div>
-
-												<div class="meta">
-													<small class="ui mini basic label">
-														<i class="yellow star icon"></i>
-														{formatRating(item.rating)}
-													</small>
-												</div>
-
-												<div class="description">
-													<small>
-														<i class="calendar icon"></i>
-														{formatYear(item.date)}
-													</small>
-												</div>
-											</div>
+										<div class="image">
+											<img src={item.posterUrl} alt={item.title} />
+										</div>
+										<div class="content">
+											<div class="title">{item.title}</div>
+											<div class="description">{formatYear(item.releaseDate)} · {formatRating(item.rating)}</div>
+											<div class="ui basic label">Film</div>
 										</div>
 									</a>
 								{/each}
@@ -239,39 +150,17 @@
 
 					{#if tvShows.length > 0}
 						<div class="category">
-							<div class="ui label teal">
-								<p>TV-Shows</p>
-							</div>
-
-							<div class="results transition show">
-								{#each tvShows as item (`search-tv-${item.id}`)}
+							<div class="ui label blue">Serien</div>
+							<div class="results">
+								{#each tvShows as item (item.id)}
 									<a class="result" href={resultHref(item)} onclick={closeResults}>
-										<div class="ui horizontal card">
-											{#if item.posterUrl}
-												<div class="image">
-													<img src={item.posterUrl} alt={item.title} />
-												</div>
-											{/if}
-
-											<div class="content">
-												<div class="title">
-													{item.title}
-												</div>
-
-												<div class="meta">
-													<small class="ui mini basic label">
-														<i class="yellow star icon"></i>
-														{formatRating(item.rating)}
-													</small>
-												</div>
-
-												<div class="description">
-													<small>
-														<i class="calendar icon"></i>
-														{formatYear(item.date)}
-													</small>
-												</div>
-											</div>
+										<div class="image">
+											<img src={item.posterUrl} alt={item.title} />
+										</div>
+										<div class="content">
+											<div class="title">{item.title}</div>
+											<div class="description">{formatYear(item.releaseDate)} · {formatRating(item.rating)}</div>
+											<div class="ui basic label">TV</div>
 										</div>
 									</a>
 								{/each}
@@ -284,10 +173,163 @@
 	</div>
 </div>
 
-<svelte:window
-	onclick={(event) => {
-		if (!event.target.closest('.typeahead-search')) {
-			closeResults();
+<style lang="scss">
+	.typeahead-search {
+		position: relative;
+		display: block;
+		flex: 1 1 auto;
+		width: 100%;
+		min-width: 0;
+		height: 100%;
+	}
+
+	.right.menu.searchbar {
+		position: relative;
+		display: block;
+		width: 100%;
+		height: 100%;
+
+		.category.search {
+			position: relative;
+			display: block;
+			width: 100%;
+			height: 100%;
+			margin-left: 0;
+
+			> .results {
+				position: absolute;
+				z-index: 1000;
+				top: calc(100% + var(--search-dropdown-gap));
+				right: 0;
+				left: auto;
+				display: block;
+				width: min(var(--search-dropdown-width), calc(100vw - 2rem));
+				height: auto;
+				max-height: calc(100vh - var(--header-height) - var(--footer-height) - var(--search-dropdown-gap));
+				margin: 0;
+				overflow-x: hidden;
+				overflow-y: auto;
+				box-sizing: border-box;
+			}
 		}
-	}}
-/>
+
+		.ui.icon.input {
+			position: relative;
+			top: auto;
+			right: auto;
+			display: flex;
+			align-items: center;
+			width: 100%;
+			height: 100%;
+
+			input.prompt {
+				display: block;
+				width: 100%;
+				min-width: 0;
+				height: 100%;
+				visibility: visible;
+				opacity: 1;
+			}
+
+			> .search.icon {
+				flex: 0 0 auto;
+			}
+		}
+
+		.ui.category.search > .results {
+			.category {
+				display: block;
+				width: 100%;
+				height: auto;
+
+				.results {
+					position: static;
+					z-index: auto;
+					display: block;
+					width: 100%;
+					height: auto;
+					max-height: none;
+					margin: 0;
+					overflow: visible;
+				}
+
+				> .name {
+					display: block;
+					width: 100%;
+					margin: 0;
+					padding: 0.75rem 1rem;
+					box-sizing: border-box;
+					font-weight: 700;
+				}
+			}
+
+			.result {
+				display: block;
+				width: 100%;
+				box-sizing: border-box;
+
+				.content {
+					position: relative;
+					min-height: 3.5rem;
+					padding: 0.75rem 4rem 0.75rem 1rem;
+					box-sizing: border-box;
+
+					.ui.basic.label {
+						position: absolute;
+						top: 0.75rem;
+						right: 1rem;
+						margin: 0;
+					}
+				}
+
+				.title {
+					padding-right: 0;
+					line-height: 1.35;
+				}
+
+				.description {
+					margin-top: 0.35rem;
+					line-height: 1.2;
+				}
+
+				.image {
+					width: 2em;
+					height: 3em;
+				}
+
+				.content {
+					margin: 0;
+					padding-top: 2px;
+					padding-bottom: 0;
+				}
+			}
+		}
+
+		.ui.category .ui.label {
+			display: block;
+			border-radius: 0;
+		}
+	}
+
+	@media only screen and (max-width: 767px) {
+		.min-width-0 {
+			min-width: 0;
+		}
+
+		.right.menu.searchbar {
+			.ui.category.search > .results {
+				position: fixed;
+				z-index: 9999;
+				top: var(--header-height);
+				right: 0;
+				left: 0;
+				width: 100%;
+				max-width: none;
+				max-height: calc(100vh - var(--header-height) - var(--footer-height));
+				border: none;
+				border-radius: 0;
+				box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+			}
+		}
+	}
+</style>

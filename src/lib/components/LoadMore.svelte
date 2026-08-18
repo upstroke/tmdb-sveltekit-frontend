@@ -23,3 +23,15 @@
 		</button>
 	</div>
 {/if}
+
+<style lang="scss">
+	.load-more {
+		display: flex;
+		justify-content: center;
+		margin-top: 2rem;
+
+		.button.loading {
+			pointer-events: none;
+		}
+	}
+</style>

@@ -94,3 +94,15 @@
 		{/if}
 	</div>
 </div>
+
+<style lang="scss">
+	.ui.featured-card {
+		margin-bottom: 5rem;
+
+		.sub.header {
+			position: relative;
+			text-transform: none;
+			font-size: 0.85714286em;
+		}
+	}
+</style>
