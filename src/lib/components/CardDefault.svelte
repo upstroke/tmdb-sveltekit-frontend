@@ -93,3 +93,9 @@
 		</div>
 	</a>
 {/if}
+
+<style lang="scss">
+	a.default-card[id] {
+		scroll-padding-top: calc(var(--header-height) + 2rem);
+	}
+</style>

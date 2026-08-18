@@ -1,6 +1,7 @@
 <script>
 	import { deduplicateById } from '$lib/utils/deduplicateById';
 	import DialogMessage from '$lib/components/DialogMessage.svelte';
+	import DetailsHero from '$lib/components/DetailsHero.svelte';
 	import notAvailable from '$lib/assets/not-available.png';
 
 	/**
@@ -56,35 +57,14 @@
 	<DialogMessage message={error} />
 
 {:else if movie}
-	<div class="ui inverted vertical center aligned masthead segment">
-		<div class="masthead-image">
-			<img src={backdrop} alt={title} />
-		</div>
-
-		<div class="ui text container">
-			<div class="poster">
-				<img src={posterUrl} alt={`${title} Poster`} />
-			</div>
-
-			<h1 class="ui inverted header">
-				{title}
-			</h1>
-
-			{#if productionCompanies.length}
-				<ul class="ui inverted">
-					{#each productionCompanies as company (`movie-header-company-${company.id ?? company.name}`)}
-						<li class="item">
-							{company.name}
-						</li>
-					{/each}
-				</ul>
-			{:else}
-				<ul class="ui inverted">
-					<li class="item">N/A</li>
-				</ul>
-			{/if}
-		</div>
-	</div>
+	<DetailsHero
+		title={title}
+		backdrop={backdrop}
+		posterUrl={posterUrl}
+		productionCompanies={productionCompanies}
+		titlePrefix="Poster"
+		emptyLabel="N/A"
+	/>
 
 	<main class="ui text container details-view">
 		<p class="ui top left attached">
@@ -207,3 +187,86 @@
 		</section>
 	</main>
 {/if}
+
+<style lang="scss">
+	main.ui.text.container.details-view {
+		width: unset !important;
+		max-width: 95% !important;
+		margin-left: auto;
+		margin-right: auto;
+
+		@media (min-width: 768px) {
+			max-width: 80% !important;
+		}
+
+		@media (min-width: 992px) {
+			max-width: 75% !important;
+		}
+	}
+
+	.ui.masthead.segment {
+		padding: 0;
+		margin-top: 39px;
+		margin-bottom: -39px;
+		position: relative;
+		text-shadow: 0 2px 2px rgba(0, 0, 0, 0.6);
+		font-size: 3.5em;
+		font-weight: normal;
+		line-height: 1;
+
+		.masthead-image {
+			img {
+				min-width: 100%;
+				height: 100%;
+				max-height: 1000px;
+				object-fit: cover;
+				opacity: 0.5;
+				max-width: 100vw;
+			}
+		}
+
+		.poster {
+			width: 100%;
+			position: absolute;
+			bottom: 130%;
+			right: 0;
+			left: 0;
+
+			> img {
+				width: 15vw;
+				min-width: 160px;
+				box-shadow: 1px 0 5px 2px rgba(0, 0, 0, 0.4);
+				border: 2px solid white;
+			}
+		}
+
+		.ui.text.container {
+			position: absolute;
+			bottom: 5%;
+			left: 0;
+			right: 0;
+			width: 100vw;
+		}
+
+		ul.ui.inverted {
+			list-style: none;
+			margin: 20px 0 0;
+			font-size: 80%;
+
+			> li {
+				display: inline-block;
+				margin-right: 1rem;
+			}
+
+			> li.item::before {
+				padding-right: 1rem;
+				content: '•';
+				color: white;
+			}
+
+			> li:first-child::before {
+				display: none;
+			}
+		}
+	}
+</style>

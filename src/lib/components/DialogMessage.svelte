@@ -35,3 +35,25 @@
         </form>
     </div>
 </dialog>
+
+<style lang="scss">
+    .dialog-message {
+        border: none;
+        border-radius: 1rem;
+        padding: 0;
+        max-width: min(90vw, 480px);
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+    }
+
+    .dialog-message::backdrop {
+        background: rgba(0, 0, 0, 0.45);
+    }
+
+    .dialog-message__content {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        padding: 1.25rem 1.5rem;
+        background: #fff;
+    }
+</style>

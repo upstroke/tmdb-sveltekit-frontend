@@ -125,11 +125,16 @@ test-results/
 
 ## Zentrale Komponenten
 
-- `CardDefault` rendert eine Standard-Medienkarte
-- `CardFeatured` rendert eine hervorgehobene Medienkarte
-- `DialogMessage` zeigt Fehler in konsistenter Form an
-- `LoadMore` lädt weitere Einträge in paginierten Listen
-- `TypeHeadSearch` stellt die Live-Suche bereit
+- `HeaderMain` rendert die globale Navigation und erhält die Navigationslinks über die `navItems`-Prop.
+- `FooterMain` stellt den globalen Footer als eigene Layout-Komponente bereit.
+- `DetailsHero` kapselt den gemeinsamen Hero-/Poster-Bereich der Film- und Serien-Detailseiten.
+- `CardDefault` rendert eine Standard-Medienkarte.
+- `CardFeatured` rendert eine hervorgehobene Medienkarte.
+- `DialogMessage` zeigt Fehler in konsistenter Form an.
+- `LoadMore` lädt weitere Einträge in paginierten Listen.
+- `TypeHeadSearch` stellt die Live-Suche bereit und wird im Header als Inhalt eingebunden.
+
+Globale Styles werden über `src/css/app.scss` geladen. Diese Datei bindet Fomantic UI, globale Sass-Variablen und anwendungsweite Styles ein; komponentenspezifische Styles bleiben in den jeweiligen `.svelte`-Komponenten.
 
 Fallback-Bilder und Platzhaltertexte werden innerhalb der Komponenten zentral behandelt, damit dieselbe Logik nicht auf mehreren Seiten dupliziert werden muss.
 
