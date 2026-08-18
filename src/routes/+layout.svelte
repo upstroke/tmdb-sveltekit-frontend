@@ -4,7 +4,7 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 
-	import '../app.css';
+	import '../css/app.scss';
 	import favicon from '$lib/assets/favicon.svg';
 	import TypeHeadSearch from '$lib/components/TypeHeadSearch.svelte';
 	import FooterMain from '$lib/components/FooterMain.svelte';
