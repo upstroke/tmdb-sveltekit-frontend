@@ -1,0 +1,56 @@
+import { render, screen } from '@testing-library/svelte';
+import userEvent from '@testing-library/user-event';
+import { describe, expect, it, vi } from 'vitest';
+import LoadMore from '../../src/lib/components/LoadMore.svelte';
+
+describe('LoadMore', () => {
+	it('zeigt den Button an und ruft onload beim Klick auf', async () => {
+		// Test-Doppel für den Callback:
+		// Damit prüfen wir später, ob der Klick die Funktion wirklich auslöst.
+		const onload = vi.fn();
+
+		// Simuliert echte Benutzerinteraktion wie Klicks.
+		const user = userEvent.setup();
+
+		// Rendert die Svelte-Komponente mit den Props,
+		// die in diesem Testfall relevant sind.
+		render(LoadMore, {
+			props: {
+				hasMore: true,
+				loading: false,
+				onload
+			}
+		});
+
+		// Sucht den Button so, wie ihn auch ein Nutzer oder Screenreader wahrnimmt:
+		// über seine Rolle und seinen sichtbaren Text.
+		const button = screen.getByRole('button', { name: 'Weitere Ergebnisse' });
+
+		// Prüft, dass der Button überhaupt im DOM vorhanden ist.
+		expect(button).toBeInTheDocument();
+
+		// Prüft, dass der Button anklickbar ist.
+		expect(button).toBeEnabled();
+
+		// Simuliert einen echten Klick auf den Button.
+		await user.click(button);
+
+		// Erwartung: Der Callback wurde genau einmal ausgelöst.
+		expect(onload).toHaveBeenCalledTimes(1);
+	});
+
+	it('zeigt keinen Button, wenn hasMore false ist', () => {
+		// In diesem Fall sollen keine weiteren Ergebnisse verfügbar sein.
+		render(LoadMore, {
+			props: {
+				hasMore: false
+			}
+		});
+
+		// queryByRole ist hier richtig, weil wir etwas suchen,
+		// das absichtlich NICHT vorhanden sein soll.
+		expect(
+			screen.queryByRole('button', { name: 'Weitere Ergebnisse' })
+		).not.toBeInTheDocument();
+	});
+});
