@@ -11,15 +11,16 @@
 </script>
 
 {#if hasMore}
-	<div class="load-more">
+	<div class="load-more" aria-live="polite">
 		<button
 			class="ui primary button"
 			class:loading
 			type="button"
 			onclick={() => onload?.()}
 			disabled={loading}
+			aria-busy={loading}
 		>
-			Weitere Ergebnisse
+			{loading ? 'Lade weitere Ergebnisse …' : 'Weitere Ergebnisse'}
 		</button>
 	</div>
 {/if}

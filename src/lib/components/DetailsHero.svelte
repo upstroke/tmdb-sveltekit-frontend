@@ -1,12 +1,19 @@
 <script>
+	import notAvailable from '$lib/assets/not-available.png';
+
 	/**
 	 * Gemeinsamer Hero für Detailseiten.
+	 *
+	 * Layout:
+	 * - Der Root-Container trägt das Backdrop als flächendeckenden Hintergrund.
+	 * - Alle Inhalte liegen in einem vertikalen Flex-Layout und sind am unteren Rand ausgerichtet.
+	 * - Die Höhe ergibt sich aus dem Inhalt, optional abgesichert durch eine Mindesthöhe.
+	 * - Das Backdrop wächst mit dem Container in Breite und Höhe mit.
 	 *
 	 * @param {string} title - Titel des Mediums.
 	 * @param {string} backdrop - Hintergrundbild.
 	 * @param {string} posterUrl - Posterbild.
 	 * @param {Array<{id?: number|string, name: string}>} productionCompanies - Produktionsfirmen.
-	 * @param {string} titlePrefix - Text für die Bild-alt-Attribute.
 	 * @param {string} emptyLabel - Fallback-Text für fehlende Produktionsfirmen.
 	 */
 	let {
@@ -14,141 +21,151 @@
 		backdrop,
 		posterUrl,
 		productionCompanies = [],
-		titlePrefix = 'Poster',
 		emptyLabel = 'N/A'
 	} = $props();
 
-	let companyNamesText = $derived(
-		productionCompanies.length ? productionCompanies.map((company) => company.name).join(' • ') : emptyLabel
-	);
+	let fallbackImage = $derived(backdrop || posterUrl || notAvailable);
+	let resolvedPosterUrl = $derived(posterUrl || notAvailable);
 </script>
 
-<div class="ui inverted vertical center aligned masthead segment">
-	<div class="masthead-image">
-		<img src={backdrop} alt={title} />
-	</div>
+<section class="details-hero" aria-labelledby="details-hero-title" style={`--details-hero-backdrop: url('${fallbackImage}')`}>
+	<div class="details-hero-overlay">
+		<div class="details-hero-content">
+			<div class="details-hero-poster" aria-hidden="true">
+				<img src={resolvedPosterUrl} alt="" />
+			</div>
 
-	<div class="ui text container">
-		<div class="poster">
-			<img src={posterUrl} alt={`${title} ${titlePrefix}`} />
+			<h1 id="details-hero-title" class="details-hero-title">{title}</h1>
+
+			<section class="details-hero-companies" aria-labelledby="details-hero-companies-heading">
+				<h2 id="details-hero-companies-heading" class="u-sr-only">Produktionsfirmen</h2>
+				<ul>
+					{#if productionCompanies.length}
+						{#each productionCompanies as company (`header-company-${company.id ?? company.name}`)}
+							<li class="details-hero-company">{company.name}</li>
+						{/each}
+					{:else}
+						<li class="details-hero-company">{emptyLabel}</li>
+					{/if}
+				</ul>
+			</section>
 		</div>
-
-		<h1 class="ui inverted header">
-			{title}
-		</h1>
-
-		{#if productionCompanies.length}
-			<ul class="ui inverted production-companies" title={companyNamesText}>
-				{#each productionCompanies as company (`header-company-${company.id ?? company.name}`)}
-					<li class="item">
-						{company.name}
-					</li>
-				{/each}
-			</ul>
-		{:else}
-			<ul class="ui inverted production-companies" title={emptyLabel}>
-				<li class="item">{emptyLabel}</li>
-			</ul>
-		{/if}
 	</div>
-</div>
+</section>
 
 <style lang="scss">
-	.ui.masthead.segment {
-		padding: 39px 0 0;
+	@use '../../css/variables';
+	@use '../../css/mixins' as *;
+	.details-hero {
 		position: relative;
-		text-shadow: 0 2px 2px rgba(0, 0, 0, 0.6);
-		font-size: 3.5em;
-		font-weight: normal;
-		line-height: 1;
+		display: flex;
+		align-items: stretch;
+		width: 100%;
+		min-height: clamp(32rem, 61vw, 48rem);
+		padding: 0;
 		margin-bottom: -3rem;
+		background-color: #000;
+		background-image:
+			linear-gradient(to top, rgba(0, 0, 0, 0.92) 0%, rgba(0, 0, 0, 0.7) 32%, rgba(0, 0, 0, 0.45) 58%, rgba(0, 0, 0, 0.5) 100%),
+			var(--details-hero-backdrop);
+		background-position: center top;
+		background-repeat: no-repeat;
+		background-size: cover;
+		color: #fff;
+		text-shadow: 0 2px 2px rgba(0, 0, 0, 0.6);
+		overflow: hidden;
+	}
 
-		.masthead-image {
-			min-height: 61vw;
+	.details-hero-overlay {
+		display: flex;
+		align-items: flex-end;
+		width: 100%;
+		min-height: inherit;
+		padding: 2.5rem 1rem 0.5rem;
+		background: linear-gradient(to top, rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.1));
+	}
 
-			img {
-				height: 63vw;
-				max-width: 100%;
-				object-fit: cover;
-				object-position: center top;
-				opacity: 0.5;
-			}
+	.details-hero-content {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: flex-end;
+		gap: 1rem;
+		width: 100%;
+		max-width: 60rem;
+		margin: 0 auto;
+	}
+
+	.details-hero-poster {
+		width: clamp(10rem, 22vw, 14rem);
+		margin: 0 0 1rem 0;
+
+		img {
+			display: block;
+			width: 100%;
+			height: auto;
+			box-shadow: 1px 0 5px 2px rgba(0, 0, 0, 0.4);
+			border: 2px solid #fff;
 		}
+	}
 
-		h1.ui.header {
-			margin: 0;
-		}
+	.details-hero-title {
+		margin: 0;
+		font-size: clamp(2rem, 5vw, 3.5rem);
+		line-height: 1.1;
+		text-align: center;
+	}
 
-		.ui.text.container {
-			position: relative;
-			width: unset;
-			max-width: 100%;
-			padding-bottom: 0.5rem;
-			margin: -6rem auto -3.5rem;
-		}
+	.details-hero-companies {
+		list-style: none;
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: 0.75rem 1rem;
+		margin: 0;
+		padding: 0 0 1rem 0;
+		font-size: clamp(0.95rem, 2vw, 1.125rem);
+		text-align: center;
 
-		@media (min-width: 768px) {
-			.ui.text.container {
-				max-width: 85%;
-				padding-bottom: 3.5rem;
-				margin: -9rem auto -3.5rem;
-			}
-		}
-
-		@media (min-width: 992px) {
-			.ui.text.container {
-				max-width: 60%;
-			}
-		}
-
-		.poster {
-			position: absolute;
-			left: 50%;
-			transform: translate(-50%, 0);
-			bottom: 125%;
-			margin: 0;
-			width: 160px;
-
-			> img {
-				min-width: 160px;
-				width: 100%;
-				box-shadow: 1px 0 5px 2px rgba(0, 0, 0, 0.4);
-				border: 2px solid white;
-			}
-		}
-
-		@media (min-width: 768px) {
-			.poster {
-				bottom: 150%;
-			}
-		}
-
-		ul.ui.inverted.production-companies {
-			list-style: none;
-			margin: 20px 0 0 0;
-			padding: 0;
-			font-size: 80%;
+		ul {
 			display: flex;
-			justify-content: space-evenly;
-			gap: 1rem;
+			flex-wrap: inherit;
+			justify-content: inherit;
+			gap: inherit;
+			list-style: none;
+			margin: 0;
+			padding: 0;
+			line-height: 1;
+		}
+	}
 
-			@media (min-width: 768px) {
-				justify-content: center;
+	.details-hero-company {
+		white-space: normal;
+	}
 
-				> li:first-child {
-					margin-left: -.75rem;
-				}
+	@include tablet-up {
+		.details-hero {
+			min-height: clamp(36rem, 63vw, 52rem);
+		}
 
-				> li.item::before {
-					padding-right: 1rem;
-					content: '•';
-					color: white;
-				}
+		.details-hero-overlay {
+			padding: 3rem 1.5rem 3.5rem;
+		}
 
-				> li:first-child::before {
-					display: none;
-				}
-			}
+		.details-hero-companies {
+			gap: 0.75rem;
+		}
+
+		.details-hero-company:not(:first-child)::before {
+			content: '•';
+			margin-right: 0.75rem;
+			color: #fff;
+		}
+	}
+
+	@include computer-up {
+		.details-hero-content {
+			max-width: 70%;
 		}
 	}
 </style>

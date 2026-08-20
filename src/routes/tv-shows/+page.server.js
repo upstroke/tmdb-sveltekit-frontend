@@ -58,7 +58,7 @@ export async function load({ fetch, url }) {
 
 		let featured = null;
 
-		const featuredSource = firstPage?.results?.[0] ?? null;
+		const featuredSource = firstPage?.results?.[1] ?? firstPage?.results?.[2] ?? firstPage?.results?.[0] ?? null;
 
 		if (featuredSource) {
 			try {

@@ -2,6 +2,7 @@
 	import { deduplicateById } from '$lib/utils/deduplicateById';
 	import DialogMessage from '$lib/components/DialogMessage.svelte';
 	import DetailsHero from '$lib/components/DetailsHero.svelte';
+	import MediaTypeLabel from '$lib/components/MediaTypeLabel.svelte';
 	import notAvailable from '$lib/assets/not-available.png';
 
 	/**
@@ -62,44 +63,58 @@
 		backdrop={backdrop}
 		posterUrl={posterUrl}
 		productionCompanies={productionCompanies}
-		titlePrefix="Poster"
 		emptyLabel="N/A"
 	/>
 
 	<main class="ui text container details-view">
-		<p class="ui top left attached">
-			<span class="ui label blue">
-				{mediaType}
-			</span>
+		<header class="details-header">
+			<dl class="details-meta movie-meta">
+				<div>
+					<dt class="u-sr-only">Medientyp</dt>
+					<dd><MediaTypeLabel mediaType={mediaType} /></dd>
+				</div>
+				<div>
+					<dt class="u-sr-only">Bewertung</dt>
+					<dd>
+						<span class="ui label">
+							<i class="yellow star icon" aria-hidden="true"></i>
+							{#if rating !== null && rating !== undefined}
+								<b class="rating-value">{rating}</b> von 10
+							{:else}
+								Nicht verfügbar
+							{/if}
+						</span>
+					</dd>
+				</div>
+			</dl>
 
-			<span class="ui label">
-				<i class="yellow star icon"></i>
-				{rating !== null && rating !== undefined ? rating : 'N/A'}
-			</span>
-		</p>
+			<section aria-labelledby="genres-heading">
+				<h2 id="genres-heading" class="sr-only">Genres</h2>
+				{#if genres.length}
+					<ul class="ui celled horizontal list genres">
+						{#each genres as genre (`movie-genre-${genre.id ?? genre.name}`)}
+							<li class="item">{genre.name}</li>
+						{/each}
+					</ul>
+				{:else}
+					<p class="genres-empty">Keine Genres verfügbar.</p>
+				{/if}
+			</section>
+		</header>
 
-		{#if genres.length}
-			<p class="ui celled horizontal list genres">
-				{#each genres as genre (`movie-genre-${genre.id ?? genre.name}`)}
-					<span class="item">
-						{genre.name}
-					</span>
-				{/each}
-			</p>
-		{:else}
-			<p class="ui celled horizontal list genres">
-				<span class="item">N/A</span>
-			</p>
-		{/if}
+		<section class="segment" aria-labelledby="details-heading">
+			<h2 id="details-heading" class="sr-only">Weitere Informationen</h2>
 
-		<div class="segment">
-			<h2 class="ui medium header">Handlung:</h2>
+			<section aria-labelledby="overview-heading">
+			<h2 id="overview-heading" class="ui medium header">Handlung</h2>
 
 			<p class="overview">
 				{overview || 'N/A'}
 			</p>
+		</section>
 
-			<h2 class="ui medium header">Homepage:</h2>
+			<section aria-labelledby="homepage-heading">
+			<h2 id="homepage-heading" class="ui medium header">Homepage</h2>
 			<p>
 				{#if homepage}
 					<a class="home-link" href={homepage} target="_blank" rel="noopener noreferrer">
@@ -109,25 +124,31 @@
 					N/A
 				{/if}
 			</p>
+		</section>
 
-			<h2 class="ui medium header">Trailer:</h2>
+			<section aria-labelledby="trailer-heading">
+			<h2 id="trailer-heading" class="ui medium header">Trailer</h2>
 			<p>
 				{#if trailerUrl}
 					<a class="ui red button" href={trailerUrl} target="_blank" rel="noopener noreferrer">
-						<i class="youtube icon"></i>
+						<i class="youtube icon" aria-hidden="true"></i>
 						Trailer ansehen
 					</a>
 				{:else}
 					N/A
 				{/if}
 			</p>
+		</section>
 
-			<h2 class="ui medium header">Erstausstrahlung:</h2>
-			<p>{releaseDate || 'N/A'}</p>
+			<section aria-labelledby="release-heading">
+			<h2 id="release-heading" class="ui medium header">Erstausstrahlung</h2>
+			<p><time datetime={releaseDate || undefined}>{releaseDate || 'N/A'}</time></p>
+		</section>
 
-			<h2 class="ui medium header">Produktion:</h2>
+			<section aria-labelledby="production-heading">
+			<h2 id="production-heading" class="ui medium header">Produktion</h2>
 			{#if productionCompanies.length}
-				<ul>
+				<ul class="production-list">
 					{#each productionCompanies as company (`movie-production-company-${company.id ?? company.name}`)}
 						<li>{company.name}</li>
 					{/each}
@@ -135,138 +156,52 @@
 			{:else}
 				<p>N/A</p>
 			{/if}
+		</section>
 
 			{#if runtime}
-				<div class="hidden spacer"></div>
 
-				<section>
-					<h2 class="ui medium header">Laufzeit:</h2>
+				<section aria-labelledby="runtime-heading">
+					<h2 id="runtime-heading" class="ui medium header">Laufzeit</h2>
 
 					<p class="small">
-						<span>
-							{runtime} Minuten
-						</span>
+						<span>{runtime} Minuten</span>
 					</p>
 				</section>
 			{/if}
-		</div>
+		</section>
 
-		<div class="hidden spacer"></div>
-		<div class="hidden spacer"></div>
+		<div class="u-spacer"></div>
 
-		<section>
-			<div class="content">
-				<div class="summary">
-					<h2 class="ui medium dividing header">Cast</h2>
+		<section aria-labelledby="cast-heading">
+			<header>
+				<h2 id="cast-heading" class="ui medium dividing header">Cast</h2>
+			</header>
 
-					{#if cast.length}
-						<div class="ui relaxed divided list">
-							{#each cast as person (`movie-cast-${person.creditId ?? person.id}`)}
-								<div class="item">
-									<div class="content">
-										<div class="header">
-											{person.name || 'N/A'}
-										</div>
-
-										{#if person.character}
-											<div class="description">
-												{person.character}
-											</div>
-										{:else}
-											<div class="description">N/A</div>
-										{/if}
+			{#if cast.length}
+				<ul class="ui relaxed divided list">
+					{#each cast as person (`movie-cast-${person.creditId ?? person.id}`)}
+						<li class="item">
+							<article>
+								<dl>
+									<div>
+										<dt class="u-sr-only">Darsteller</dt>
+										<dd class="header"><strong>{person.name || 'N/A'}</strong></dd>
 									</div>
-								</div>
-							{/each}
-						</div>
-					{:else}
-						<p>N/A</p>
-					{/if}
-				</div>
-			</div>
+
+									<div>
+										<dt class="u-sr-only">Rolle</dt>
+										<dd class="description">
+											{person.character || 'Keine Rollenangabe verfügbar.'}
+										</dd>
+									</div>
+								</dl>
+							</article>
+						</li>
+					{/each}
+				</ul>
+			{:else}
+				<p>Keine Cast-Daten verfügbar.</p>
+			{/if}
 		</section>
 	</main>
 {/if}
-
-<style lang="scss">
-	main.ui.text.container.details-view {
-		width: unset !important;
-		max-width: 95% !important;
-		margin-left: auto;
-		margin-right: auto;
-
-		@media (min-width: 768px) {
-			max-width: 80% !important;
-		}
-
-		@media (min-width: 992px) {
-			max-width: 75% !important;
-		}
-	}
-
-	.ui.masthead.segment {
-		padding: 0;
-		margin-top: 39px;
-		margin-bottom: -39px;
-		position: relative;
-		text-shadow: 0 2px 2px rgba(0, 0, 0, 0.6);
-		font-size: 3.5em;
-		font-weight: normal;
-		line-height: 1;
-
-		.masthead-image {
-			img {
-				min-width: 100%;
-				height: 100%;
-				max-height: 1000px;
-				object-fit: cover;
-				opacity: 0.5;
-				max-width: 100vw;
-			}
-		}
-
-		.poster {
-			width: 100%;
-			position: absolute;
-			bottom: 130%;
-			right: 0;
-			left: 0;
-
-			> img {
-				width: 15vw;
-				min-width: 160px;
-				box-shadow: 1px 0 5px 2px rgba(0, 0, 0, 0.4);
-				border: 2px solid white;
-			}
-		}
-
-		.ui.text.container {
-			position: absolute;
-			bottom: 5%;
-			left: 0;
-			right: 0;
-			width: 100vw;
-		}
-
-		ul.ui.inverted {
-			list-style: none;
-			margin: 20px 0 0;
-			font-size: 80%;
-
-			> li {
-				display: inline-block;
-				margin-right: 1rem;
-			}
-
-			> li.item::before {
-				padding-right: 1rem;
-				content: '•';
-				color: white;
-			}
-
-			> li:first-child::before {
-				display: none;
-			}
-		}
-	}
-</style>

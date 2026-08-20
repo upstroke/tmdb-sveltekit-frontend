@@ -23,8 +23,10 @@ export class TmdbAPI {
 		this.fetch = fetchFn;
 		this.apiKey = apiKey;
 		this.language = language;
+		this.region = language.split('-')[1] ?? language.split('_')[1] ?? 'DE';
 		this.movieGenreMap = null;
 		this.tvGenreMap = null;
+		this.certificationCache = new Map();
 	}
 
 	/**
@@ -102,7 +104,7 @@ export class TmdbAPI {
 	 * Baut eine vollständige Bild-URL aus einem TMDB-Pfad.
 	 *
 	 * @param {string} path - Bildpfad.
-	 * @param {string} [size='w500'] - Bildgröße.
+	 * @param {string} [size='w500'] - TMDB-Bildgröße (z. B. `w92`, `w342`, `w500`, `w780`, `w1280`).
 	 * @returns {string} Vollständige Bild-URL oder leerer String.
 	 */
 	getImageUrl(path, size = 'w500') {
@@ -197,7 +199,61 @@ export class TmdbAPI {
 	}
 
 	/**
+	 * Ermittelt die lokale Altersfreigabe für ein Medium.
+	 *
+	 * Filme liefern Zertifizierungen über `release_dates`, TV-Serien über
+	 * `content_ratings`. Die gewünschte Region wird aus dem API-Sprachcode
+	 * abgeleitet, z. B. `de-DE` → `DE`.
+	 *
+	 * @param {string} mediaType - `movie` oder `tv`.
+	 * @param {number|string} id - TMDB-ID.
+	 * @returns {Promise<string>} Altersfreigabe oder leerer String.
+	 */
+	async getCertification(mediaType, id) {
+		const cacheKey = `${mediaType}-${id}`;
+		if (this.certificationCache.has(cacheKey)) {
+			return this.certificationCache.get(cacheKey);
+		}
+
+		let certification = '';
+
+		try {
+			if (mediaType === 'movie') {
+				const data = await this.request(`/movie/${id}/release_dates`);
+				const country = data.results?.find((entry) => entry.iso_3166_1 === this.region);
+				certification = country?.release_dates?.find((release) => release.certification)?.certification ?? '';
+			} else if (mediaType === 'tv') {
+				const data = await this.request(`/tv/${id}/content_ratings`);
+				certification = data.results?.find((entry) => entry.iso_3166_1 === this.region)?.rating ?? '';
+			}
+		} catch (error) {
+			console.warn(`Altersfreigabe konnte nicht geladen werden (${mediaType}/${id}):`, error);
+		}
+
+		this.certificationCache.set(cacheKey, certification);
+		return certification;
+	}
+
+	/**
+	 * Reichert Karten einer Seite mit lokalen Altersfreigaben an.
+	 *
+	 * @param {Object[]} cards - Normalisierte Karten.
+	 * @returns {Promise<Object[]>} Karten mit `certification`.
+	 */
+	async enrichCardCertifications(cards = []) {
+		return Promise.all(
+			cards.map(async (card) => ({
+				...card,
+				certification: await this.getCertification(card.mediaType, card.id)
+			}))
+		);
+	}
+
+	/**
 	 * Wandelt Detaildaten in ein Featured-Objekt um.
+	 *
+	 * Das Featured-Objekt enthält getrennte Bildquellen für das breite
+	 * Hintergrundbild und das Posterbild.
 	 *
 	 * @param {Object} details - TMDB-Detaildaten.
 	 * @param {string|null} [fallbackMediaType=null] - Alternativer Medientyp.
@@ -214,7 +270,8 @@ export class TmdbAPI {
 			overview: details.overview ?? '',
 			homepage: details.homepage ?? '',
 			genres: details.genres ?? [],
-			imageUrl: this.getImageUrl(details.backdrop_path ?? details.poster_path ?? '', 'w780')
+			imageUrl: this.getImageUrl(details.backdrop_path ?? details.poster_path ?? '', 'w780'),
+			posterUrl: this.getImageUrl(details.poster_path ?? '', 'w342')
 		};
 	}
 
@@ -262,7 +319,7 @@ export class TmdbAPI {
 			episodeRunTime: details.episode_run_time ?? [],
 			productionCompanies: details.production_companies ?? [],
 			imageUrl: this.getImageUrl(details.backdrop_path ?? details.poster_path ?? '', 'w1280'),
-			posterUrl: this.getImageUrl(details.poster_path ?? '', 'w500'),
+			posterUrl: this.getImageUrl(details.poster_path ?? '', 'w342'),
 			cast: this.mapCast(details.credits?.cast ?? []),
 			crew: this.mapCrew(details.credits?.crew ?? [])
 		};
@@ -314,7 +371,9 @@ export class TmdbAPI {
 
 		const data = await this.request('/trending/movie/week', { page });
 
-		const allResults = (data.results || []).map((item) => this.mapCardItem(item, 'movie'));
+		const allResults = await this.enrichCardCertifications(
+			(data.results || []).map((item) => this.mapCardItem(item, 'movie'))
+		);
 
 		const results = Array.from(
 			new Map(allResults.map((card) => [`${card.id}-${card.mediaType}`, card])).values()
@@ -344,7 +403,9 @@ export class TmdbAPI {
 
 		const data = await this.request('/trending/tv/week', { page });
 
-		const allResults = (data.results || []).map((item) => this.mapCardItem(item, 'tv'));
+		const allResults = await this.enrichCardCertifications(
+			(data.results || []).map((item) => this.mapCardItem(item, 'tv'))
+		);
 
 		const results = Array.from(
 			new Map(allResults.map((card) => [`${card.id}-${card.mediaType}`, card])).values()
@@ -374,9 +435,11 @@ export class TmdbAPI {
 
 		const data = await this.request('/trending/all/week', { page });
 
-		const allResults = (data.results || [])
-			.filter((item) => item.media_type === 'movie' || item.media_type === 'tv')
-			.map((item) => this.mapCardItem(item));
+		const allResults = await this.enrichCardCertifications(
+			(data.results || [])
+				.filter((item) => item.media_type === 'movie' || item.media_type === 'tv')
+				.map((item) => this.mapCardItem(item))
+		);
 
 		const results = Array.from(
 			new Map(allResults.map((card) => [`${card.id}-${card.mediaType}`, card])).values()
@@ -410,8 +473,7 @@ export class TmdbAPI {
 	/**
 	 * Sucht nach Filmen und Serien in der globalen TMDB-Suche.
 	 *
-	 * Erwachsene Inhalte werden ausgeschlossen und nur Filme bzw. Serien
-	 * werden zurückgegeben.
+	 * Es werden nur Filme bzw. Serien zurückgegeben.
 	 *
 	 * @param {string} query - Suchbegriff.
 	 * @returns {Promise<Object[]>} Normalisierte Suchergebnisse.
@@ -420,7 +482,7 @@ export class TmdbAPI {
 		const data = await this.request('/search/multi', {
 			query,
 			page: 1,
-			include_adult: false
+			include_adult: true
 		});
 
 		return (data.results ?? [])
@@ -443,6 +505,7 @@ export class TmdbAPI {
 			title: mediaType === 'movie' ? (item.title ?? '') : (item.name ?? ''),
 			rating: item.vote_average ?? 0,
 			date: mediaType === 'movie' ? (item.release_date ?? '') : (item.first_air_date ?? ''),
+			releaseDate: mediaType === 'movie' ? (item.release_date ?? '') : (item.first_air_date ?? ''),
 			year: (mediaType === 'movie' ? item.release_date : item.first_air_date)?.slice(0, 4) ?? '',
 			posterUrl: this.getImageUrl(item.poster_path ?? '', 'w92') // ← NEU
 		};

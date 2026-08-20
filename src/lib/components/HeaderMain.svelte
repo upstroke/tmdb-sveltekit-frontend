@@ -1,6 +1,5 @@
 <script>
 	import { browser } from '$app/environment';
-	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 
 	/**
@@ -31,45 +30,41 @@
 		}
 	}
 
-	function navigateTo(path, storageKey) {
+	function getNavHref(path, storageKey) {
 		const storedPage = getStoredPage(storageKey);
 
-		if (storedPage <= 1) {
-			goto(path);
-			return;
-		}
-
-		goto(`${path}?page=${storedPage}`);
+		return storedPage <= 1 ? path : `${path}?page=${storedPage}`;
 	}
 </script>
 
-<div id="menuHeader" class="ui top fixed inverted menu hydrated">
-	<nav class="ui container fluid">
-		{#each navItems as item (item.id)}
-			<div class="route-link item hydrated" id={item.id}>
-				<button
-					class="nav-button"
-					class:link-active={item.active(page.url.pathname)}
-					type="button"
-					onclick={() => navigateTo(item.path, item.storageKey)}
-				>
-					<i class={`${item.icon} icon`}></i>
-					<span>{item.label}</span>
-				</button>
-			</div>
-		{/each}
+<header id="menuHeader" class="ui top fixed inverted menu hydrated">
+	<nav class="ui container fluid" aria-label="Hauptnavigation">
+		<ul class="route-links">
+			{#each navItems as item (item.id)}
+				<li class="route-link item hydrated" id={item.id}>
+					<a
+						class="nav-link"
+						class:link-active={item.active(page.url.pathname)}
+						href={getNavHref(item.path, item.storageKey)}
+						aria-current={item.active(page.url.pathname) ? 'page' : undefined}
+					>
+						<i class={`${item.icon} icon`} aria-hidden="true"></i>
+						<span>{item.label}</span>
+					</a>
+				</li>
+			{/each}
+		</ul>
 
 		<div class="item search">
 			<slot />
 		</div>
 	</nav>
-</div>
+</header>
 
 <style lang="scss">
 	#menuHeader {
 		z-index: 1000;
-		height: var(--header-height);
-		min-height: var(--header-height);
+		box-shadow: 0 2px 7px rgba(0, 0, 0, 0.9);
 
 		.route-link:has(.link-active) {
 			background: rgba(255, 255, 255, 0.15);
@@ -81,24 +76,28 @@
 			min-width: 20vw;
 		}
 
-		> nav {
-			height: 100%;
+		.route-links {
 			display: flex;
 			align-items: center;
+			height: 100%;
+			margin: 0;
+			padding: 0;
+			list-style: none;
 		}
 
-		.nav-button {
+		.nav-link {
 			display: flex;
 			align-items: center;
 			gap: 0.35rem;
-			border: 0;
 			padding: 0;
 			background: transparent;
 			color: inherit;
 			font: inherit;
+			text-decoration: none;
 			cursor: pointer;
 
-			&:hover:not(.link-active) span {
+			&:hover:not(.link-active) span,
+			&:focus-visible:not(.link-active) span {
 				text-decoration: underline;
 				text-underline-offset: 2px;
 			}
