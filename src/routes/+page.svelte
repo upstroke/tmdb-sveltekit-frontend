@@ -262,11 +262,13 @@
 	<h2 class="ui dividing header">Trending Today</h2>
 
 	{#if cards.length > 0}
-		<div class="ui four doubling cards">
+		<ul class="ui four doubling cards media-card-list">
 			{#each cards as item, index (`page-home-${item.mediaType}-${item.id}`)}
-				<CardDefault {...item} scrollId={`home-card-${index + 1}`} />
+				<li>
+					<CardDefault {...item} scrollId={`home-card-${index + 1}`} />
+				</li>
 			{/each}
-		</div>
+		</ul>
 
 		{#if hasMore}
 			<LoadMore {hasMore} {loading} onload={() => loadMore()} />

@@ -25,12 +25,12 @@
     });
 </script>
 
-<dialog bind:this={dialog} class="dialog-message">
-    <div class="dialog-message__content">
-        <strong>{title}</strong>
+<dialog bind:this={dialog} class="dialog-message" role="alert" aria-labelledby="dialog-message-title">
+    <div class="dialog-message-content">
+        <strong id="dialog-message-title">{title}</strong>
         <p>{message}</p>
 
-        <form method="dialog" class="dialog-message__actions">
+        <form method="dialog" class="dialog-message-actions">
             <button class="ui button primary right floated" type="submit">OK</button>
         </form>
     </div>
@@ -49,7 +49,7 @@
         background: rgba(0, 0, 0, 0.45);
     }
 
-    .dialog-message__content {
+    .dialog-message-content {
         display: flex;
         flex-direction: column;
         gap: 1rem;

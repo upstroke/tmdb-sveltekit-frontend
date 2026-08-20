@@ -28,6 +28,7 @@
 			.ui.segment {
 				flex: 1;
 				align-self: center;
+				border-radius: 0;
 			}
 
 			.ui.text.menu {

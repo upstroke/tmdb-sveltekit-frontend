@@ -1,12 +1,17 @@
 <script>
 	import { resolve } from '$app/paths';
 	import { deduplicateById } from '$lib/utils/deduplicateById';
+	import notAvailable from '$lib/assets/not-available.png';
 
 	/**
 	 * Typeahead-Suchkomponente ohne externe Props.
 	 *
 	 * Die Komponente verwaltet Suchbegriff, Ladezustand, Fehler und die
-	 * Ergebnislisten intern selbst.
+	 * Ergebnislisten intern selbst. Die Suchergebnisse stammen aus der
+	 * lokalen `/search`-Route und enthalten normalisierte Objekte mit den
+	 * Feldern `id`, `mediaType`, `title`, `date`, `rating` und `posterUrl`.
+	 * Dabei entspricht `date` bei Filmen dem TMDB-Feld `release_date` und
+	 * bei TV-Serien dem TMDB-Feld `first_air_date`.
 	 */
 
 	let query = $state('');
@@ -15,6 +20,9 @@
 	let visible = $state(false);
 	let loading = $state(false);
 	let error = $state(null);
+
+	let hasResults = $derived(movies.length > 0 || tvShows.length > 0);
+	let resultsVisible = $derived(visible || loading || !!error);
 
 	let debounceTimer;
 	let controller;
@@ -25,6 +33,10 @@
 
 	function formatYear(value) {
 		return value?.slice(0, 4) || '- -';
+	}
+
+	function ratingAriaLabel(value) {
+		return `Bewertung: ${formatRating(value)} von 10`;
 	}
 
 	function resultHref(item) {
@@ -81,7 +93,7 @@
 
 			movies = deduplicateById(data.movies ?? []);
 			tvShows = deduplicateById(data.tvShows ?? []);
-			visible = movies.length > 0 || tvShows.length > 0;
+			visible = true;
 		} catch (exception) {
 			if (exception.name === 'AbortError') {
 				return;
@@ -94,8 +106,44 @@
 		}
 	}
 
+	function getVisibleLinks() {
+		return [...document.querySelectorAll('#typeahead-search-results a.result')].filter(
+			(link) => link.offsetParent !== null
+		);
+	}
+
+	function handleKeydown(event) {
+		if (event.key === 'Escape') {
+			closeResults();
+			return;
+		}
+
+		if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') {
+			return;
+		}
+
+		event.preventDefault();
+		const links = getVisibleLinks();
+		if (!links.length) {
+			return;
+		}
+
+		const currentIndex = links.indexOf(document.activeElement);
+		const nextIndex = currentIndex === -1
+			? (event.key === 'ArrowDown' ? 0 : links.length - 1)
+			: (currentIndex + (event.key === 'ArrowDown' ? 1 : -1) + links.length) % links.length;
+
+		links[nextIndex].focus();
+	}
+
 	function closeResults() {
 		visible = false;
+	}
+
+	function handleDocumentPointerdown(event) {
+		if (!event.target.closest('.typeahead-search')) {
+			closeResults();
+		}
 	}
 
 	function showResults() {
@@ -105,80 +153,112 @@
 	}
 </script>
 
-<div class="typeahead-search right menu searchbar hydrated">
-	<div class="ui left aligned transparent category search">
+<svelte:window onpointerdown={handleDocumentPointerdown} />
+
+<search class="typeahead-search right menu searchbar hydrated">
+	<form class="ui left aligned transparent category search" onsubmit={(event) => event.preventDefault()} onkeydown={handleKeydown}>
+		<label class="u-sr-only" for="typeahead-search-input">Film oder TV-Serie finden</label>
 		<div class="ui icon transparent inverted input">
 			<input
+				id="typeahead-search-input"
 				class="prompt"
 				type="search"
 				placeholder="Film oder TV-Serie finden"
-				aria-label="Film oder TV-Serie finden"
 				bind:value={query}
 				oninput={handleInput}
 				onfocus={showResults}
+				aria-describedby="typeahead-search-hint"
+				autocomplete="off"
 			/>
 
-			<i class="search icon"></i>
+			<i class="search icon" aria-hidden="true"></i>
 		</div>
+		<p id="typeahead-search-hint" class="u-sr-only">Mindestens vier Zeichen eingeben, um Suchergebnisse für Filme und TV anzuzeigen.</p>
 
-		{#if visible || loading || error}
-			<div class="results transition show">
+		{#if resultsVisible}
+			<div id="typeahead-search-results" class="results transition show" aria-label="Suchergebnisse" aria-live="polite">
 				{#if loading}
-					<div class="result">Suche läuft …</div>
+					<p class="result" role="status">Suche läuft …</p>
 				{:else if error}
-					<div class="result">{error}</div>
+					<p class="result" role="status">{error}</p>
 				{:else}
 					{#if movies.length > 0}
-						<div class="category">
-							<div class="ui label blue">Filme</div>
-							<div class="results">
+						<section class="category" aria-labelledby="typeahead-movies-heading">
+							<h2 id="typeahead-movies-heading" class="ui label blue">Filme</h2>
+							<ul class="results" aria-label="Filmergebnisse">
 								{#each movies as item (item.id)}
-									<a class="result" href={resultHref(item)} onclick={closeResults}>
-										<div class="image">
-											<img src={item.posterUrl} alt={item.title} />
-										</div>
-										<div class="content">
-											<div class="title">{item.title}</div>
-											<div class="description">{formatYear(item.releaseDate)} · {formatRating(item.rating)}</div>
-											<div class="ui basic label">Film</div>
-										</div>
-									</a>
+									<li>
+										<a class="result" href={resultHref(item)} onpointerdown={() => closeResults()}>
+											<figure class="image" aria-hidden="true">
+												<img src={item.posterUrl || notAvailable} alt="" />
+											</figure>
+											<div class="content">
+												<header class="result-header">
+													<h3 class="title">{item.title}</h3>
+												</header>
+												<p class="description">
+													<time datetime={item.date}>{formatYear(item.date)}</time>
+													<span aria-hidden="true"> · </span>
+													<span class="rating" aria-label={ratingAriaLabel(item.rating)}>
+														<i class="yellow star icon" aria-hidden="true"></i>
+														<span>{formatRating(item.rating)}</span>
+													</span>
+												</p>
+											</div>
+										</a>
+									</li>
 								{/each}
-							</div>
-						</div>
+							</ul>
+						</section>
 					{/if}
 
 					{#if tvShows.length > 0}
-						<div class="category">
-							<div class="ui label blue">Serien</div>
-							<div class="results">
+						<section class="category" aria-labelledby="typeahead-tv-heading">
+							<h2 id="typeahead-tv-heading" class="ui label blue">TV</h2>
+							<ul class="results" aria-label="TVergebnisse">
 								{#each tvShows as item (item.id)}
-									<a class="result" href={resultHref(item)} onclick={closeResults}>
-										<div class="image">
-											<img src={item.posterUrl} alt={item.title} />
-										</div>
-										<div class="content">
-											<div class="title">{item.title}</div>
-											<div class="description">{formatYear(item.releaseDate)} · {formatRating(item.rating)}</div>
-											<div class="ui basic label">TV</div>
-										</div>
-									</a>
+									<li>
+										<a class="result" href={resultHref(item)} onpointerdown={() => closeResults()}>
+											<figure class="image" aria-hidden="true">
+												<img src={item.posterUrl || notAvailable} alt="" />
+											</figure>
+											<div class="content">
+												<header class="result-header">
+													<h3 class="title">{item.title}</h3>
+												</header>
+												<p class="description">
+													<time datetime={item.date}>{formatYear(item.date)}</time>
+													<span aria-hidden="true"> · </span>
+													<span class="rating" aria-label={ratingAriaLabel(item.rating)}>
+														<i class="yellow star icon" aria-hidden="true"></i>
+														<span>{formatRating(item.rating)}</span>
+													</span>
+												</p>
+											</div>
+										</a>
+									</li>
 								{/each}
-							</div>
-						</div>
+							</ul>
+						</section>
+					{/if}
+
+					{#if !hasResults}
+						<p class="result" role="status">Keine Ergebnisse gefunden.</p>
 					{/if}
 				{/if}
 			</div>
 		{/if}
-	</div>
-</div>
+	</form>
+</search>
 
 <style lang="scss">
+	@use '../../css/variables';
+	@use '../../css/mixins' as *;
 	.typeahead-search {
 		position: relative;
 		display: block;
-		flex: 1 1 auto;
-		width: 100%;
+		flex: 0 0 auto;
+		width: fit-content;
 		min-width: 0;
 		height: 100%;
 	}
@@ -186,13 +266,13 @@
 	.right.menu.searchbar {
 		position: relative;
 		display: block;
-		width: 100%;
+		width: fit-content;
 		height: 100%;
 
 		.category.search {
 			position: relative;
 			display: block;
-			width: 100%;
+			width: fit-content;
 			height: 100%;
 			margin-left: 0;
 
@@ -217,18 +297,24 @@
 			position: relative;
 			top: auto;
 			right: auto;
-			display: flex;
+			display: inline-flex;
 			align-items: center;
-			width: 100%;
+			width: fit-content;
 			height: 100%;
 
 			input.prompt {
 				display: block;
-				width: 100%;
+				width: clamp(16rem, 30vw, 28rem);
 				min-width: 0;
 				height: 100%;
+				padding-right: 2.25rem;
 				visibility: visible;
 				opacity: 1;
+
+				&::-webkit-search-cancel-button {
+					filter: brightness(0) invert(1);
+					margin-left: 0.5rem;
+				}
 			}
 
 			> .search.icon {
@@ -236,7 +322,7 @@
 			}
 		}
 
-		.ui.category.search > .results {
+		.category.search > .results {
 			.category {
 				display: block;
 				width: 100%;
@@ -250,10 +336,12 @@
 					height: auto;
 					max-height: none;
 					margin: 0;
+					padding: 0;
 					overflow: visible;
+					list-style: none;
 				}
 
-				> .name {
+				> .ui.label {
 					display: block;
 					width: 100%;
 					margin: 0;
@@ -263,23 +351,55 @@
 				}
 			}
 
+			li {
+				transition: background-color 180ms ease;
+
+				&:hover,
+				&:has(a.result:focus-visible) {
+					background: rgba(0, 0, 0, 0.08);
+				}
+
+				&:has(a.result:focus-visible) {
+					outline: 2px solid #2185d0;
+					outline-offset: -3px;
+				}
+
+				&:has(a.result:focus-visible) a.result {
+					outline: none;
+				}
+			}
+
 			.result {
-				display: block;
+				display: flex;
+				align-items: stretch;
 				width: 100%;
 				box-sizing: border-box;
 
+				.image {
+					align-self: stretch;
+					flex: 0 0 2em;
+					width: 2em;
+					height: 3em;
+					max-height: 3em;
+					margin: 0 1rem 0 0;
+					overflow: hidden;
+				}
+
+				.image img {
+					display: block;
+					width: 100%;
+					height: 100%;
+					min-height: 100%;
+					object-fit: cover;
+				}
+
 				.content {
 					position: relative;
+					flex: 1 1 auto;
 					min-height: 3.5rem;
-					padding: 0.75rem 4rem 0.75rem 1rem;
+					margin: 0;
+					padding: 2px 4rem 0 0;
 					box-sizing: border-box;
-
-					.ui.basic.label {
-						position: absolute;
-						top: 0.75rem;
-						right: 1rem;
-						margin: 0;
-					}
 				}
 
 				.title {
@@ -291,31 +411,17 @@
 					margin-top: 0.35rem;
 					line-height: 1.2;
 				}
-
-				.image {
-					width: 2em;
-					height: 3em;
-				}
-
-				.content {
-					margin: 0;
-					padding-top: 2px;
-					padding-bottom: 0;
-				}
 			}
 		}
 
-		.ui.category .ui.label {
+		.ui.category .ui.label,
+		.category .ui.label {
 			display: block;
 			border-radius: 0;
 		}
 	}
 
-	@media only screen and (max-width: 767px) {
-		.min-width-0 {
-			min-width: 0;
-		}
-
+	@include mobile-only {
 		.right.menu.searchbar {
 			.ui.category.search > .results {
 				position: fixed;

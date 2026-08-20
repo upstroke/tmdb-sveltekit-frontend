@@ -49,7 +49,7 @@ export async function load({ fetch, url }) {
 		const firstPage = pages[0];
 
 		const source =
-			firstPage?.results?.[2] ?? firstPage?.results?.[1] ?? firstPage?.results?.[0] ?? null;
+			firstPage?.results?.[1] ?? firstPage?.results?.[2] ?? firstPage?.results?.[0] ?? null;
 
 		let featured = null;
 

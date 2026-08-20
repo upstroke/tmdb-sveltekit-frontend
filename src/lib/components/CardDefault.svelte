@@ -1,6 +1,8 @@
 <script>
 	import { resolve } from '$app/paths';
+	import MediaTypeLabel from '$lib/components/MediaTypeLabel.svelte';
 	import notAvailable from '$lib/assets/not-available.png';
+	import { getCertificationMeta } from '$lib/utils/certificationMeta';
 
 	/**
 	 * Erwartete Props für die Standard-Karte.
@@ -10,6 +12,7 @@
 	 * @param {string} title - Titel des Mediums.
 	 * @param {string} [date=''] - Anzeige-Datum des Mediums.
 	 * @param {number} [rating=0] - Bewertung des Mediums.
+	 * @param {string} [certification=''] - Lokale Altersfreigabe.
 	 * @param {Array<{id: number|string, name: string}>} [genres=[]] - Liste der Genres.
 	 * @param {string} [imageUrl=''] - URL des Vorschaubilds.
 	 * @param {string} [scrollId=''] - Optionale DOM-ID für das Karten-Element.
@@ -20,6 +23,7 @@
 		title,
 		date = '',
 		rating = 0,
+		certification = '',
 		genres = [],
 		imageUrl = '',
 		scrollId = ''
@@ -44,57 +48,78 @@
 	let cardTitle = $derived(title?.trim() || 'N/A');
 	let cardDate = $derived(date?.trim() || 'N/A');
 	let cardRating = $derived(rating ? rating.toFixed(1) : 'N/A');
+	let certificationMeta = $derived(getCertificationMeta(certification));
 </script>
 
 {#if detailsHref}
-	<a id={scrollId || undefined} class="ui card default-card" href={detailsHref}>
-		<div class="image">
-			<img src={cardImageUrl} alt={cardTitle} />
+	<a
+		id={scrollId || undefined}
+		class="ui card default-card"
+		href={detailsHref}
+	>
+		<figure class="image">
+			<img src={cardImageUrl} alt={`Poster von ${cardTitle}`} />
 
-			<div
-					class="ui top right attached label
-				{normalizedType === 'movie' ? 'blue' : 'teal'}"
-			>
-				{normalizedType}
-			</div>
-		</div>
+			<MediaTypeLabel mediaType={normalizedType} class="top right attached" />
+		</figure>
 
 		<div class="content">
-			<div class="header">{cardTitle}</div>
+			<h3 class="header">{cardTitle}</h3>
 
-			<div class="ui hidden divider small"></div>
+			<div class="u-spacer" aria-hidden="true"></div>
 
-			{#if genreText}
-				<p class="meta genres">
-					<i class="layer group icon"></i>
-					{genreText}
-				</p>
-			{:else}
-				<p class="meta genres">N/A</p>
-			{/if}
+			<dl class="card-meta">
+				<div class="card-meta-item">
+					<dt class="u-sr-only">Altersfreigabe</dt>
+					<dd
+						class="meta certification"
+						style={certificationMeta
+							? `--certification-icon-color: ${certificationMeta.color === '#ffffff' ? 'transparent' : certificationMeta.color}; --certification-icon-border-color: ${certificationMeta.color === '#ffffff' ? 'var(--color-text-muted, #9b9b9b)' : certificationMeta.color}`
+							: `--certification-icon-color: transparent; --certification-icon-border-color: var(--color-text-muted, #9b9b9b)`}
+					>
+						<span class="certification-content">
+							<span class="certification-icon" aria-hidden="true"></span>
+							<span class="certification-text">{certificationMeta?.label ?? 'N/A'}</span>
+						</span>
+					</dd>
+				</div>
 
-			{#if date}
-				<p class="meta date">
-					<i class="calendar icon"></i>
-					{cardDate}
-				</p>
-			{:else}
-				<p class="meta date">N/A</p>
-			{/if}
+				<div class="card-meta-item">
+					<dt class="u-sr-only">Genre</dt>
+					<dd class="meta genres">
+						<i class="layer group icon" aria-hidden="true"></i>
+						<span>{genreText || 'N/A'}</span>
+					</dd>
+				</div>
+
+				<div class="card-meta-item">
+					<dt class="u-sr-only">Erscheinungsdatum</dt>
+					<dd class="meta date">
+						<i class="calendar icon" aria-hidden="true"></i>
+						{#if date}
+							<time datetime={date}>{cardDate}</time>
+						{:else}
+							<span>N/A</span>
+						{/if}
+					</dd>
+				</div>
+			</dl>
 		</div>
 
-		<div class="extra content">
-			<span>Rating:&nbsp;</span>
-			<i class="yellow star icon"></i>
-
-			<small class="ui label">
-				{cardRating}
-			</small>
-		</div>
+		<footer class="extra content">
+			<span>
+				<i class="yellow star icon" aria-hidden="true"></i>
+				<span class="u-sr-only">Bewertung:</span> <span class="rating-value">{cardRating}</span> von 10
+			</span>
+		</footer>
 	</a>
 {/if}
 
 <style lang="scss">
+	.default-card figure.image {
+		margin: 0;
+	}
+
 	a.default-card[id] {
 		scroll-padding-top: calc(var(--header-height) + 2rem);
 	}
