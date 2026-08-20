@@ -5,7 +5,27 @@
     import notAvailable from '$lib/assets/not-available.png';
 
     /**
-     * Typeahead-Suchkomponente ohne externe Props.
+     * Stellt die Typeahead-Suche im Header für Filme und TV-Serien bereit.
+     *
+     * Die Komponente verwaltet Suchbegriff, Ladezustand, Fehlerzustand und
+     * Sichtbarkeit der Ergebnisliste vollständig intern. Ab mindestens vier
+     * Zeichen wird die lokale `/search`-Route mit Debounce abgefragt, laufende
+     * Requests werden per `AbortController` abgebrochen und die Antworten nach
+     * Medientyp in Filme und TV-Serien getrennt dargestellt.
+     *
+     * Während einer laufenden Suche wird ein Ladehinweis in der Ergebnisliste
+     * angezeigt. Liegen nach erfolgreicher Suche weder Film- noch TV-Treffer
+     * vor, blendet die Komponente stattdessen eine explizite Leerzustandsanzeige
+     * für fehlende Ergebnisse ein.
+     *
+     * Zusätzlich kapselt die Komponente das UI-Verhalten für Fokus, Escape,
+     * Außenklick und Navigation aus der Trefferliste. Klicks auf Treffer werden
+     * über `goto()` verarbeitet, damit die Ergebnisliste vor dem Routenwechsel
+     * sauber geschlossen wird.
+     *
+     * @component
+     * @example
+     * <TypeHeadSearch />
      */
 
     let query = $state('');
@@ -21,18 +41,42 @@
     let debounceTimer;
     let controller;
 
+    /**
+     * Formatiert einen Bewertungswert mit einer Nachkommastelle.
+     *
+     * @param {number | string | null | undefined} value - Ursprünglicher Bewertungswert.
+     * @returns {string} Bewertung als String mit genau einer Nachkommastelle.
+     */
     function formatRating(value) {
         return Number(value ?? 0).toFixed(1);
     }
 
+    /**
+     * Leitet aus einem Datumsstring das Jahr für die Trefferanzeige ab.
+     *
+     * @param {string | null | undefined} value - ISO-Datum eines Films oder einer Serie.
+     * @returns {string} Vierstelliges Jahr oder ein Platzhalter ohne Datum.
+     */
     function formatYear(value) {
         return value?.slice(0, 4) || '- -';
     }
 
+    /**
+     * Erstellt das Screenreader-Label für die dargestellte Bewertung.
+     *
+     * @param {number | string | null | undefined} value - Bewertungswert des Treffers.
+     * @returns {string} Lokalisierter ARIA-Text für die Bewertungsausgabe.
+     */
     function ratingAriaLabel(value) {
         return `Bewertung: ${formatRating(value)} von 10`;
     }
 
+    /**
+     * Ermittelt die Zielroute für einen Suchtreffer anhand seines Medientyps.
+     *
+     * @param {{ id: number | string, mediaType: 'movie' | 'tv' }} item - Normalisierter Suchtreffer.
+     * @returns {string} Aufgelöste interne Route zur Detailseite.
+     */
     function resultHref(item) {
         if (item.mediaType === 'movie') {
             return resolve('/movies/[id]', {
@@ -45,6 +89,11 @@
         });
     }
 
+    /**
+     * Setzt Ergebnislisten und Fehlermeldung auf den Ausgangszustand zurück.
+     *
+     * @returns {void}
+     */
     function resetResults() {
         movies = [];
         tvShows = [];
@@ -52,6 +101,12 @@
         error = null;
     }
 
+    /**
+     * Verarbeitet Eingaben im Suchfeld und startet die Suche verzögert.
+     *
+     * Bei weniger als vier Zeichen werden vorhandene Treffer sofort entfernt.
+     * @returns {void}
+     */
     function handleInput() {
         clearTimeout(debounceTimer);
 
@@ -66,6 +121,15 @@
         debounceTimer = setTimeout(() => search(term), 300);
     }
 
+    /**
+     * Lädt Suchergebnisse für den übergebenen Begriff von der lokalen Search-Route.
+     *
+     * Laufende Requests werden vor einem neuen Aufruf abgebrochen, um veraltete
+     * Antworten nicht mehr in den State zu übernehmen.
+     *
+     * @param {string} term - Bereinigter Suchbegriff ab vier Zeichen.
+     * @returns {Promise<void>} Wird aufgelöst, sobald State und Ergebnislisten aktualisiert wurden.
+     */
     async function search(term) {
         controller?.abort();
         controller = new AbortController();
@@ -99,30 +163,62 @@
             loading = false;
         }
     }
-
-    // Nur noch die Logik für die Escape-Taste
+    
+    /**
+     * Reagiert auf Tastatureingaben im Suchfeld.
+     *
+     * Aktuell wird nur die Escape-Taste ausgewertet, um die Ergebnisliste zu schließen.
+     * @param {KeyboardEvent} event - Tastaturereignis des Suchfelds.
+     * @returns {void}
+     */
     function handleKeydown(event) {
         if (event.key === 'Escape') {
             closeResults();
         }
     }
 
+    /**
+     * Blendet die Ergebnisliste aus, ohne den Suchbegriff zurückzusetzen.
+     *
+     * @returns {void}
+     */
     function closeResults() {
         visible = false;
     }
 
+    /**
+     * Schließt die Ergebnisliste bei Pointer-Interaktionen außerhalb der Komponente.
+     *
+     * @param {PointerEvent} event - Pointer-Ereignis auf Fensterebene.
+     * @returns {void}
+     */
     function handleDocumentPointerdown(event) {
         if (!event.target.closest('.typeahead-search')) {
             closeResults();
         }
     }
 
+    /**
+     * Blendet vorhandene Ergebnisse oder Statusmeldungen beim erneuten Fokussieren ein.
+     *
+     * @returns {void}
+     */
     function showResults() {
         if (query.trim().length >= 4 && (movies.length > 0 || tvShows.length > 0 || loading || error)) {
             visible = true;
         }
     }
 
+    /**
+     * Verarbeitet Klicks auf Suchtreffer und navigiert kontrolliert zur Detailseite.
+     *
+     * Das Standardverhalten des Links wird unterbunden, damit die Liste vor dem
+     * Routenwechsel geschlossen und die Navigation über SvelteKit ausgeführt wird.
+     *
+     * @param {MouseEvent} event - Klickereignis des Treffers.
+     * @param {{ id: number | string, mediaType: 'movie' | 'tv' }} item - Ausgewählter Suchtreffer.
+     * @returns {void}
+     */
     function handleLinkClick(event, item) {
         event.preventDefault();
         event.stopPropagation();
