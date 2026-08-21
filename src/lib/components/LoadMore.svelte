@@ -1,5 +1,5 @@
 <script>
-	import uiText from '$lib/i18n/ui.json';
+	import { getI18nContext } from '$lib/i18n/context';
 
 	/**
 	 * Erwartete Props für den "Mehr laden"-Button.
@@ -15,8 +15,7 @@
 		onload = null
 	} = $props();
 
-	const locale = 'de-DE';
-	const texts = uiText.locales[locale].messages;
+	const { messages: texts } = getI18nContext();
 </script>
 
 {#if hasMore}
