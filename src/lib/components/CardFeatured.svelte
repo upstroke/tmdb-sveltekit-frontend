@@ -1,6 +1,7 @@
 <script>
 	import { resolve } from '$app/paths';
 	import notAvailable from '$lib/assets/not-available.png';
+	import uiText from '$lib/i18n/ui.json';
 
 	/**
 	 * Erwartete Props für die Featured-Karte.
@@ -18,7 +19,7 @@
 	 * @param {string} title - Titel des Mediums.
 	 * @param {string} [releaseDate=''] - Veröffentlichungsdatum oder Startdatum.
 	 * @param {string} [overview=''] - Kurzbeschreibung des Mediums.
-	 * @param {string} [homepage=''] - Offizielle Website des Mediums.
+	 * @param {string} [homepage=''] - {uiText.locales['de-DE'].labels.officialWebsite} des Mediums.
 	 * @param {Array<{id: number|string, name: string}>} [genres=[]] - Liste der Genres.
 	 * @param {string} [imageUrl=''] - URL des Vorschaubilds.
 	 * @param {string} [posterUrl=''] - Optionale URL des Posterbilds; fällt auf `imageUrl` zurück.
@@ -49,14 +50,16 @@
 				: undefined
 	);
 
-	let featuredType = $derived(normalizedType === 'movie' ? 'movie' : normalizedType === 'tv' ? 'tv' : 'N/A');
+	let notAvailableText = $derived(uiText.locales['de-DE'].fallbacks.notAvailable);
+	let featuredType = $derived(normalizedType === 'movie' ? 'movie' : normalizedType === 'tv' ? 'tv' : notAvailableText);
 	let featuredGenres = $derived(genres?.length ? genres : []);
 	let featuredImageUrl = $derived(imageUrl || notAvailable);
 	let featuredPosterUrl = $derived(posterUrl || imageUrl || notAvailable);
-	let featuredTitle = $derived(title?.trim() || 'N/A');
-	let featuredReleaseDate = $derived(releaseDate?.trim() || 'N/A');
-	let featuredOverview = $derived(overview?.trim() || 'N/A');
-	let featuredHomepage = $derived(homepage?.trim() || 'N/A');
+	let featuredTitle = $derived(title?.trim() || notAvailableText);
+	let featuredReleaseDate = $derived(releaseDate?.trim() || '');
+	let hasReleaseDate = $derived(Boolean(featuredReleaseDate));
+	let featuredOverview = $derived(overview?.trim() || notAvailableText);
+	let featuredHomepage = $derived(homepage?.trim() || '');
 </script>
 
 <article
@@ -75,7 +78,7 @@
 					{featuredType}
 				</p>
 
-				{#if featuredGenres.length || featuredReleaseDate !== 'N/A'}
+				{#if featuredGenres.length || hasReleaseDate}
 					<dl class="featured-card-meta">
 						{#if featuredGenres.length}
 							<div class="featured-card-meta-item">
@@ -93,7 +96,7 @@
 							</div>
 						{/if}
 
-						{#if featuredReleaseDate !== 'N/A'}
+						{#if hasReleaseDate}
 							<div class="featured-card-meta-item">
 								<dt class="u-sr-only">Erscheinungsdatum</dt>
 								<dd class="featured-card-date">
@@ -111,17 +114,17 @@
 
 				<nav class="featured-card-actions" aria-label={`Aktionen für ${featuredTitle}`}>
 					{#if detailsHref}
-						<a class="ui inverted primary button" href={detailsHref}>Weitere Informationen</a>
+						<a class="ui inverted primary button" href={detailsHref}>{uiText.locales['de-DE'].labels.moreInfo}</a>
 					{/if}
 
-					{#if featuredHomepage !== 'N/A'}
+					{#if featuredHomepage}
 						<a
 							class="ui inverted button"
 							href={featuredHomepage}
 							target="_blank"
 							rel="noopener noreferrer"
 						>
-							Offizielle Website
+							{uiText.locales['de-DE'].labels.officialWebsite}
 						</a>
 					{/if}
 				</nav>
@@ -172,6 +175,7 @@
 		flex: 0 0 auto;
 		width: clamp(4rem, 12.5vw, 6rem);
 		margin: 0 0.5rem 0 0;
+		align-self: start;
 
 		img {
 			display: block;
@@ -256,6 +260,7 @@
 	.featured-card-description {
 		max-width: 65ch;
 		line-height: 1.5;
+		margin-bottom: 1rem;
 	}
 
 	.featured-card-actions {

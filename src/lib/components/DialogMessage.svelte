@@ -1,5 +1,6 @@
 <script>
     import { browser } from '$app/environment';
+    import uiText from '$lib/i18n/ui.json';
 
     /**
      * Wiederverwendbarer nativer Dialog für Fehlermeldungen.
@@ -9,7 +10,7 @@
      */
     let {
         message,
-        title = 'Fehler beim Laden'
+        title = uiText.locales['de-DE'].messages.dialogErrorTitle
     } = $props();
 
     let dialog;
@@ -25,13 +26,13 @@
     });
 </script>
 
-<dialog bind:this={dialog} class="dialog-message" role="alert" aria-labelledby="dialog-message-title">
+<dialog bind:this={dialog} class="dialog-message" aria-live="assertive" aria-labelledby="dialog-message-title">
     <div class="dialog-message-content">
         <strong id="dialog-message-title">{title}</strong>
         <p>{message}</p>
 
         <form method="dialog" class="dialog-message-actions">
-            <button class="ui button primary right floated" type="submit">OK</button>
+            <button class="ui button primary right floated" type="submit">{uiText.locales['de-DE'].messages.dialogOk}</button>
         </form>
     </div>
 </dialog>

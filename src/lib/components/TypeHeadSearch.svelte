@@ -3,6 +3,13 @@
     import { goto } from '$app/navigation';
     import { deduplicateById } from '$lib/utils/deduplicateById';
     import notAvailable from '$lib/assets/not-available.png';
+    import uiText from '$lib/i18n/ui.json';
+
+    const locale = 'de-DE';
+    const texts = uiText.locales[locale].labels;
+	const messages = uiText.locales[locale].messages;
+	const titles = uiText.locales[locale].titles;
+	const formats = uiText.locales[locale].formats;
 
     /**
      * Stellt die Typeahead-Suche im Header für Filme und TV-Serien bereit.
@@ -68,8 +75,10 @@
      * @returns {string} Lokalisierter ARIA-Text für die Bewertungsausgabe.
      */
     function ratingAriaLabel(value) {
-        return `Bewertung: ${formatRating(value)} von 10`;
+        return `${texts.rating}: ${formatRating(value)} ${formats.outOfTen}`;
     }
+
+    const searchHintId = 'typeahead-search-hint';
 
     /**
      * Ermittelt die Zielroute für einen Suchtreffer anhand seines Medientyps.
@@ -143,7 +152,7 @@
             });
 
             if (!response.ok) {
-                error = 'Suche konnte nicht geladen werden.';
+                error = messages.searchError;
                 return;
             }
 
@@ -157,7 +166,7 @@
                 return;
             }
 
-            error = exception instanceof Error ? exception.message : 'Unbekannter Fehler';
+            error = exception instanceof Error ? exception.message : messages.searchError;
             visible = false;
         } finally {
             loading = false;
@@ -232,39 +241,37 @@
 <svelte:window onpointerdown={handleDocumentPointerdown} />
 
 <search class="typeahead-search right menu searchbar hydrated">
-    <!-- HIER: onkeydown gelöscht, um a11y-Fehler auf nicht-interaktiven Elementen zu vermeiden -->
     <form role="search" class="ui left aligned transparent category search" onsubmit={(e) => e.preventDefault()}>
-        <label class="u-sr-only" for="typeahead-search-input">Film oder TV-Serie finden</label>
+        <label class="u-sr-only" for="typeahead-search-input">{texts.searchInput}</label>
         <div class="ui icon transparent inverted input">
-            <!-- HIER: onkeydown hinzugefügt. Das Input-Feld fängt die Pfeiltasten jetzt sauber ab -->
             <input
                     id="typeahead-search-input"
                     class="prompt"
                     type="search"
-                    placeholder="Film oder TV-Serie finden"
+                    placeholder={texts.searchInput}
                     bind:value={query}
                     oninput={handleInput}
                     onfocus={showResults}
                     onkeydown={handleKeydown}
-                    aria-describedby="typeahead-search-hint"
+                    aria-describedby={searchHintId}
                     autocomplete="off"
             />
 
             <i class="search icon" aria-hidden="true"></i>
         </div>
-        <p id="typeahead-search-hint" class="u-sr-only">Mindestens vier Zeichen eingeben, um Suchergebnisse für Filme und TV anzuzeigen.</p>
+        <p id="typeahead-search-hint" class="u-sr-only">{messages.searchHint}</p>
 
         {#if resultsVisible}
-            <div id="typeahead-search-results" class="results transition show" aria-label="Suchergebnisse" aria-live="polite">
+            <div id="typeahead-search-results" class="results transition show" aria-label={messages.searchResults} aria-live="polite">
                 {#if loading}
-                    <p class="result" role="status">Suche läuft …</p>
+                    <p class="result" role="status">{messages.searchLoading}</p>
                 {:else if error}
-                    <p class="result" role="status">{error}</p>
+                    <p class="result" role="status">{error === messages.searchError ? messages.searchError : error}</p>
                 {:else}
                     {#if movies.length > 0}
                         <section class="category" aria-labelledby="typeahead-movies-heading">
-                            <h2 id="typeahead-movies-heading" class="ui label blue">Filme</h2>
-                            <ul class="results" aria-label="Filmergebnisse">
+                            <h2 id="typeahead-movies-heading" class="ui label blue">{titles.movies}</h2>
+                            <ul class="results" aria-label={titles.movies}>
                                 {#each movies as item (item.id)}
                                     <li>
                                         <a class="result" href={resultHref(item)} onclick={(e) => handleLinkClick(e, item)}>
@@ -293,8 +300,8 @@
 
                     {#if tvShows.length > 0}
                         <section class="category" aria-labelledby="typeahead-tv-heading">
-                            <h2 id="typeahead-tv-heading" class="ui label blue">TV</h2>
-                            <ul class="results" aria-label="TVergebnisse">
+                            <h2 id="typeahead-tv-heading" class="ui label blue">{titles.tvShows}</h2>
+                            <ul class="results" aria-label={titles.tvShows}>
                                 {#each tvShows as item (item.id)}
                                     <li>
                                         <a class="result" href={resultHref(item)} onclick={(e) => handleLinkClick(e, item)}>
@@ -322,7 +329,7 @@
                     {/if}
 
                     {#if !hasResults}
-                        <p class="result" role="status">Keine Ergebnisse gefunden.</p>
+                        <p class="result" role="status">{messages.searchNoResults}</p>
                     {/if}
                 {/if}
             </div>

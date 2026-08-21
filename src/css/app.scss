@@ -22,24 +22,12 @@ html {
 		position: relative;
 		top: 6rem;
 		padding-bottom: 10rem;
-
-		&.details-view {
-			.list.genres {
-				margin-bottom: 2rem;
-			}
-		}
 	}
 
 	.ui.container.fluid {
 		width: 94vw;
 		margin-left: auto;
 		margin-right: auto;
-	}
-
-	.spacer {
-		margin: 1em 0;
-		padding: 1em 0;
-		position: relative;
 	}
 
 	button.link {
@@ -55,20 +43,15 @@ html {
 			color: #1e70bf;
 		}
 	}
+
+	.ui.header:first-child {
+		margin-top: inherit;
+	}
 }
 
 /* ============================================
-   CARDS (Featured, Default, Horizontal)
+   CARDS
    ============================================ */
-.ui.featured-card {
-	margin-bottom: 5rem;
-
-	.sub.header {
-		position: relative;
-		text-transform: none;
-		font-size: 0.85714286em;
-	}
-}
 
 .ui.cards.media-card-list {
 	display: flex;
@@ -216,10 +199,6 @@ dd {
 	border: 0;
 }
 
-.u-hidden {
-	display: none !important;
-}
-
 .u-spacer {
 	padding: 1em 0;
 }
@@ -241,17 +220,22 @@ main.ui.text.container.details-view {
 		max-width: 75%;
 	}
 
+	.home-link:hover {
+		text-decoration: underline;
+	}
+
+	.details-header {
+		margin-bottom: 3rem;
+	}
+
 	.details-meta {
 		display: flex;
 		align-items: center;
 		gap: 0.5rem;
+		margin-bottom: 1rem;
 
-		&.movie-meta {
-			margin-bottom: 3rem;
-		}
-
-		&.tv-meta {
-			margin-bottom: 1rem;
+		.ui.label .icon {
+			margin-right: .2rem;
 		}
 	}
 
@@ -263,8 +247,12 @@ main.ui.text.container.details-view {
 		margin-block: 1.5rem 0.5rem;
 	}
 
-	section {
-		margin-bottom: 1.5rem;
+	> section {
+		margin-bottom: 3rem;
+
+		&:last-child {
+			margin-bottom: unset;
+		}
 	}
 
 	.ui.horizontal.list.genres {
@@ -290,6 +278,10 @@ main.ui.text.container.details-view {
 			list-style: none;
 			margin-left: 0;
 		}
+	}
+
+	ul.relaxed.divided.list {
+		font-size: 1rem;
 	}
 }
 

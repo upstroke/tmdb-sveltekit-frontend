@@ -1,4 +1,5 @@
 import { TMDB_API_KEY } from '$env/static/private';
+import uiText from '$lib/i18n/ui.json';
 import { TmdbAPI } from '$lib/services/tmdb-api.js';
 
 /**
@@ -16,7 +17,7 @@ export async function load({ fetch, params }) {
 	if (!TMDB_API_KEY) {
 		return {
 			movie: null,
-			error: 'TMDB_API_KEY fehlt'
+			error: uiText.locales['de-DE'].messages.apiKeyMissing
 		};
 	}
 
@@ -34,7 +35,7 @@ export async function load({ fetch, params }) {
 
 		return {
 			movie: null,
-			error: 'Film konnte nicht geladen werden'
+			error: uiText.locales['de-DE'].messages.movieLoadError
 		};
 	}
 }
