@@ -1,7 +1,9 @@
 <script>
 	import { resolve } from '$app/paths';
 	import notAvailable from '$lib/assets/not-available.png';
-	import uiText from '$lib/i18n/ui.json';
+	import { getI18nContext } from '$lib/i18n/context';
+
+	const { labels, fallbacks } = getI18nContext();
 
 	/**
 	 * Erwartete Props für die Featured-Karte.
@@ -19,7 +21,7 @@
 	 * @param {string} title - Titel des Mediums.
 	 * @param {string} [releaseDate=''] - Veröffentlichungsdatum oder Startdatum.
 	 * @param {string} [overview=''] - Kurzbeschreibung des Mediums.
-	 * @param {string} [homepage=''] - {uiText.locales['de-DE'].labels.officialWebsite} des Mediums.
+	 * @param {string} [homepage=''] - {labels.officialWebsite} des Mediums.
 	 * @param {Array<{id: number|string, name: string}>} [genres=[]] - Liste der Genres.
 	 * @param {string} [imageUrl=''] - URL des Vorschaubilds.
 	 * @param {string} [posterUrl=''] - Optionale URL des Posterbilds; fällt auf `imageUrl` zurück.
@@ -50,7 +52,7 @@
 				: undefined
 	);
 
-	let notAvailableText = $derived(uiText.locales['de-DE'].fallbacks.notAvailable);
+	let notAvailableText = $derived(fallbacks.notAvailable);
 	let featuredType = $derived(normalizedType === 'movie' ? 'movie' : normalizedType === 'tv' ? 'tv' : notAvailableText);
 	let featuredGenres = $derived(genres?.length ? genres : []);
 	let featuredImageUrl = $derived(imageUrl || notAvailable);
@@ -114,7 +116,7 @@
 
 				<nav class="featured-card-actions" aria-label={`Aktionen für ${featuredTitle}`}>
 					{#if detailsHref}
-						<a class="ui inverted primary button" href={detailsHref}>{uiText.locales['de-DE'].labels.moreInfo}</a>
+						<a class="ui inverted primary button" href={detailsHref}>{labels.moreInfo}</a>
 					{/if}
 
 					{#if featuredHomepage}
@@ -124,7 +126,7 @@
 							target="_blank"
 							rel="noopener noreferrer"
 						>
-							{uiText.locales['de-DE'].labels.officialWebsite}
+							{labels.officialWebsite}
 						</a>
 					{/if}
 				</nav>

@@ -5,14 +5,14 @@
 	import CardFeatured from '$lib/components/CardFeatured.svelte';
 	import LoadMore from '$lib/components/LoadMore.svelte';
 	import DialogMessage from '$lib/components/DialogMessage.svelte';
-	import uiText from '$lib/i18n/ui.json';
+	import { getI18nContext } from '$lib/i18n/context';
 
 	import { deduplicateMedia, getMediaKey } from '$lib/utils/deduplicateMedia';
 	import { restorePagedList } from '$lib/utils/pageStateRestore';
 
+	const { titles, messages } = getI18nContext();
+
 	const STORAGE_KEY = 'tv-shows-page';
-	const messages = uiText.locales['de-DE'].messages;
-	const titles = uiText.locales['de-DE'].titles;
 
 	/**
 	 * Erwartete Props für die Seite.

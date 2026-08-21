@@ -1,6 +1,6 @@
 <script>
 	import { browser } from '$app/environment';
-	import uiText from '$lib/i18n/ui.json';
+	import { getI18nContext } from '$lib/i18n/context';
 
 	import CardFeatured from '$lib/components/CardFeatured.svelte';
 	import CardDefault from '$lib/components/CardDefault.svelte';
@@ -9,6 +9,8 @@
 
 	import { deduplicateMedia, getMediaKey } from '$lib/utils/deduplicateMedia';
 	import { restorePagedList } from '$lib/utils/pageStateRestore';
+
+	const { titles, messages } = getI18nContext();
 
 	const STORAGE_KEY = 'home-page';
 
@@ -84,7 +86,7 @@
 						});
 
 						if (!response.ok) {
-							throw new Error(uiText.locales['de-DE'].messages.loadMoreError);
+							throw new Error(messages.loadMoreError);
 						}
 
 						return response.json();
@@ -96,7 +98,7 @@
 				page = restored.page;
 				hasMore = restored.hasMore;
 			} catch (restoreError) {
-				error = restoreError instanceof Error ? restoreError.message : uiText.locales['de-DE'].messages.unknownError;
+				error = restoreError instanceof Error ? restoreError.message : messages.unknownError;
 			} finally {
 				loading = false;
 			}
@@ -159,7 +161,7 @@
 		try {
 			sessionStorage.setItem(STORAGE_KEY, String(value));
 		} catch (storageError) {
-			console.warn(uiText.locales['de-DE'].messages.pageSaveWarning, storageError);
+			console.warn(messages.pageSaveWarning, storageError);
 		}
 	}
 
@@ -206,7 +208,7 @@
 			});
 
 			if (!response.ok) {
-				error = uiText.locales['de-DE'].messages.loadMoreError;
+				error = messages.loadMoreError;
 				return;
 			}
 
@@ -234,9 +236,9 @@
 			markScrollTarget(previousCardsCount);
 		} catch (exception) {
 			if (exception.name === 'AbortError') {
-				error = uiText.locales['de-DE'].messages.loadTimeout;
+				error = messages.loadTimeout;
 			} else {
-				error = exception instanceof Error ? exception.message : uiText.locales['de-DE'].messages.unknownError;
+				error = exception instanceof Error ? exception.message : messages.unknownError;
 			}
 		} finally {
 			clearTimeout(timeoutId);
@@ -246,7 +248,7 @@
 </script>
 
 <svelte:head>
-	<title>{uiText.locales['de-DE'].titles.home}</title>
+	<title>{titles.home}</title>
 </svelte:head>
 
 <main class="ui container fluid home-page">
@@ -255,12 +257,12 @@
 	{/if}
 
 	{#if featured}
-		<h2 class="ui dividing header">{uiText.locales['de-DE'].titles.featuredToday}</h2>
+		<h2 class="ui dividing header">{titles.featuredToday}</h2>
 
 		<CardFeatured {...featured} />
 	{/if}
 
-	<h2 class="ui dividing header">{uiText.locales['de-DE'].titles.trendingToday}</h2>
+	<h2 class="ui dividing header">{titles.trendingToday}</h2>
 
 	{#if cards.length > 0}
 		<ul class="ui four doubling cards media-card-list">
@@ -275,6 +277,6 @@
 			<LoadMore {hasMore} {loading} onload={() => loadMore()} />
 		{/if}
 	{:else if !error}
-		<p>{uiText.locales['de-DE'].messages.noContent}</p>
+		<p>{messages.noContent}</p>
 	{/if}
 </main>
