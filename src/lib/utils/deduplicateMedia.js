@@ -27,8 +27,8 @@ export function getMediaKey(item) {
  * Duplikate werden entfernt. Elemente ohne gültigen Schlüssel werden
  * übersprungen.
  *
- * @param {Array<object>} items - Liste der Media-Elemente, die bereinigt werden sollen.
- * @returns {Array<object>} Neues Array mit nur dem ersten Vorkommen jedes eindeutigen
+ * @param {Array<MediaItem>} items - Liste der Media-Elemente, die bereinigt werden sollen.
+ * @returns {Array<MediaItem>} Neues Array mit nur dem ersten Vorkommen jedes eindeutigen
  * Media-Elements.
  */
 export function deduplicateMedia(items = []) {

@@ -5,11 +5,14 @@
 	import CardFeatured from '$lib/components/CardFeatured.svelte';
 	import LoadMore from '$lib/components/LoadMore.svelte';
 	import DialogMessage from '$lib/components/DialogMessage.svelte';
+	import uiText from '$lib/i18n/ui.json';
 
 	import { deduplicateMedia, getMediaKey } from '$lib/utils/deduplicateMedia';
 	import { restorePagedList } from '$lib/utils/pageStateRestore';
 
 	const STORAGE_KEY = 'tv-shows-page';
+	const messages = uiText.locales['de-DE'].messages;
+	const titles = uiText.locales['de-DE'].titles;
 
 	/**
 	 * Erwartete Props für die Seite.
@@ -88,7 +91,7 @@
 						});
 
 						if (!response.ok) {
-							throw new Error('Weitere Inhalte konnten nicht geladen werden.');
+							throw new Error(messages.loadMoreError);
 						}
 
 						return response.json();
@@ -100,7 +103,7 @@
 				page = restored.page;
 				hasMore = restored.hasMore;
 			} catch (restoreError) {
-				error = restoreError instanceof Error ? restoreError.message : 'Unbekannter Fehler';
+				error = restoreError instanceof Error ? restoreError.message : messages.unknownError;
 			} finally {
 				loading = false;
 			}
@@ -163,7 +166,7 @@
 		try {
 			sessionStorage.setItem(STORAGE_KEY, String(value));
 		} catch (storageError) {
-			console.warn('TV-Shows-Seite konnte nicht gespeichert werden:', storageError);
+			console.warn(messages.pageSaveWarning, storageError);
 		}
 	}
 
@@ -210,7 +213,7 @@
 			});
 
 			if (!response.ok) {
-				error = 'Weitere Inhalte konnten nicht geladen werden.';
+				error = messages.loadMoreError;
 				return;
 			}
 
@@ -238,9 +241,9 @@
 			markScrollTarget(previousCardsCount);
 		} catch (exception) {
 			if (exception.name === 'AbortError') {
-				error = 'Das Laden hat zu lange gedauert.';
+				error = messages.loadTimeout;
 			} else {
-				error = exception instanceof Error ? exception.message : 'Unbekannter Fehler';
+				error = exception instanceof Error ? exception.message : messages.unknownError;
 			}
 		} finally {
 			clearTimeout(timeoutId);
@@ -250,7 +253,7 @@
 </script>
 
 <svelte:head>
-	<title>TV-Shows</title>
+	<title>{titles.tvShows}</title>
 </svelte:head>
 
 <main class="ui container fluid tv-shows-page">
@@ -258,13 +261,13 @@
 		<DialogMessage message={error} />
 	{/if}
 
-	<h2 class="ui dividing header">TV-Shows</h2>
+	<h2 class="ui dividing header">{titles.tvShows}</h2>
 
 	{#if featured}
 		<CardFeatured {...featured} />
 	{/if}
 
-	<h2 class="ui dividing header">Am besten bewertete Produktionen</h2>
+	<h2 class="ui dividing header">{titles.topRatedProductions}</h2>
 
 	{#if cards.length > 0}
 		<ul class="ui four doubling cards media-card-list">
@@ -279,6 +282,6 @@
 			<LoadMore {hasMore} {loading} onload={() => loadMore()} />
 		{/if}
 	{:else if !error}
-		<p>Keine TV-Shows gefunden.</p>
+		<p>{messages.noTvShows}</p>
 	{/if}
 </main>

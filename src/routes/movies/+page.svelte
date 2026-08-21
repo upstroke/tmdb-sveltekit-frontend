@@ -1,5 +1,6 @@
 <script>
 	import { browser } from '$app/environment';
+	import uiText from '$lib/i18n/ui.json';
 
 	import CardDefault from '$lib/components/CardDefault.svelte';
 	import CardFeatured from '$lib/components/CardFeatured.svelte';
@@ -88,7 +89,7 @@
 						});
 
 						if (!response.ok) {
-							throw new Error('Weitere Inhalte konnten nicht geladen werden.');
+							throw new Error(uiText.locales['de-DE'].messages.loadMoreError);
 						}
 
 						return response.json();
@@ -100,7 +101,7 @@
 				page = restored.page;
 				hasMore = restored.hasMore;
 			} catch (restoreError) {
-				error = restoreError instanceof Error ? restoreError.message : 'Unbekannter Fehler';
+				error = restoreError instanceof Error ? restoreError.message : uiText.locales['de-DE'].messages.unknownError;
 			} finally {
 				loading = false;
 			}
@@ -163,7 +164,7 @@
 		try {
 			sessionStorage.setItem(STORAGE_KEY, String(value));
 		} catch (storageError) {
-			console.warn('Movies-Seite konnte nicht gespeichert werden:', storageError);
+			console.warn(uiText.locales['de-DE'].messages.pageSaveWarning, storageError);
 		}
 	}
 
@@ -210,7 +211,7 @@
 			});
 
 			if (!response.ok) {
-				error = 'Weitere Inhalte konnten nicht geladen werden.';
+				error = uiText.locales['de-DE'].messages.loadMoreError;
 				return;
 			}
 
@@ -238,9 +239,9 @@
 			markScrollTarget(previousCardsCount);
 		} catch (exception) {
 			if (exception.name === 'AbortError') {
-				error = 'Das Laden hat zu lange gedauert.';
+				error = uiText.locales['de-DE'].messages.loadTimeout;
 			} else {
-				error = exception instanceof Error ? exception.message : 'Unbekannter Fehler';
+				error = exception instanceof Error ? exception.message : uiText.locales['de-DE'].messages.unknownError;
 			}
 		} finally {
 			clearTimeout(timeoutId);
@@ -250,7 +251,7 @@
 </script>
 
 <svelte:head>
-	<title>Filme</title>
+	<title>{uiText.locales['de-DE'].titles.movies}</title>
 </svelte:head>
 
 <main class="ui container fluid movies-page">
@@ -258,13 +259,13 @@
 		<DialogMessage message={error} />
 	{/if}
 
-	<h2 class="ui dividing header">Filme</h2>
+	<h2 class="ui dividing header">{uiText.locales['de-DE'].titles.movies}</h2>
 
 	{#if featured}
 		<CardFeatured {...featured} />
 	{/if}
 
-	<h2 class="ui dividing header">Am besten bewertete Produktionen</h2>
+	<h2 class="ui dividing header">{uiText.locales['de-DE'].titles.topRatedProductions}</h2>
 
 	{#if cards.length > 0}
 		<ul class="ui four doubling cards media-card-list">
@@ -279,6 +280,6 @@
 			<LoadMore {hasMore} {loading} onload={() => loadMore()} />
 		{/if}
 	{:else if !error}
-		<p>Keine Filme gefunden.</p>
+		<p>{uiText.locales['de-DE'].messages.noMoviesFound}</p>
 	{/if}
 </main>

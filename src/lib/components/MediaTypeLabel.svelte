@@ -1,4 +1,11 @@
 <script>
+	/**
+	 * Erwartete Props für das Medientyp-Label.
+	 *
+	 * @param {'movie'|'tv'|string|null|undefined} mediaType - Medientyp zur Ableitung von Labeltext und Farbvariante.
+	 * @param {string} [class=''] - Zusätzliche CSS-Klassen für das Label.
+	 */
+
 	let { mediaType, class: className = '' } = $props();
 
 	let normalizedType = $derived(mediaType === 'movie' ? 'movie' : mediaType === 'tv' ? 'tv' : null);

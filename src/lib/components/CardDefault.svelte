@@ -2,6 +2,7 @@
 	import { resolve } from '$app/paths';
 	import MediaTypeLabel from '$lib/components/MediaTypeLabel.svelte';
 	import notAvailable from '$lib/assets/not-available.png';
+	import uiText from '$lib/i18n/ui.json';
 	import { getCertificationMeta } from '$lib/utils/certificationMeta';
 
 	/**
@@ -44,11 +45,13 @@
 	);
 
 	let genreText = $derived((genres ?? []).map((genre) => genre.name).join(' / '));
+	let notAvailableText = $derived(uiText.locales['de-DE'].fallbacks.notAvailable);
 	let cardImageUrl = $derived(imageUrl || notAvailable);
-	let cardTitle = $derived(title?.trim() || 'N/A');
-	let cardDate = $derived(date?.trim() || 'N/A');
-	let cardRating = $derived(rating ? rating.toFixed(1) : 'N/A');
+	let cardTitle = $derived(title?.trim() || notAvailableText);
+	let cardDate = $derived(date?.trim() || '');
+	let cardRating = $derived(typeof rating === 'number' && rating > 0 ? rating.toFixed(1) : notAvailableText);
 	let certificationMeta = $derived(getCertificationMeta(certification));
+	let hasGenres = $derived(Boolean(genreText));
 </script>
 
 {#if detailsHref}
@@ -70,7 +73,7 @@
 
 			<dl class="card-meta">
 				<div class="card-meta-item">
-					<dt class="u-sr-only">Altersfreigabe</dt>
+					<dt class="u-sr-only">{uiText.locales['de-DE'].labels.certification}</dt>
 					<dd
 						class="meta certification"
 						style={certificationMeta
@@ -79,7 +82,7 @@
 					>
 						<span class="certification-content">
 							<span class="certification-icon" aria-hidden="true"></span>
-							<span class="certification-text">{certificationMeta?.label ?? 'N/A'}</span>
+							<span class="certification-text">{certificationMeta?.label ?? notAvailableText}</span>
 						</span>
 					</dd>
 				</div>
@@ -88,7 +91,7 @@
 					<dt class="u-sr-only">Genre</dt>
 					<dd class="meta genres">
 						<i class="layer group icon" aria-hidden="true"></i>
-						<span>{genreText || 'N/A'}</span>
+						<span>{hasGenres ? genreText : notAvailableText}</span>
 					</dd>
 				</div>
 
@@ -99,7 +102,7 @@
 						{#if date}
 							<time datetime={date}>{cardDate}</time>
 						{:else}
-							<span>N/A</span>
+							<span>{notAvailableText}</span>
 						{/if}
 					</dd>
 				</div>
@@ -109,7 +112,7 @@
 		<footer class="extra content">
 			<span>
 				<i class="yellow star icon" aria-hidden="true"></i>
-				<span class="u-sr-only">Bewertung:</span> <span class="rating-value">{cardRating}</span> von 10
+				<span class="u-sr-only">{uiText.locales['de-DE'].labels.rating}</span> <span class="rating-value">{cardRating}</span> {uiText.locales['de-DE'].formats.outOfTen}
 			</span>
 		</footer>
 	</a>

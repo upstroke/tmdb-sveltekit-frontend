@@ -507,7 +507,7 @@ export class TmdbAPI {
 			date: mediaType === 'movie' ? (item.release_date ?? '') : (item.first_air_date ?? ''),
 			releaseDate: mediaType === 'movie' ? (item.release_date ?? '') : (item.first_air_date ?? ''),
 			year: (mediaType === 'movie' ? item.release_date : item.first_air_date)?.slice(0, 4) ?? '',
-			posterUrl: this.getImageUrl(item.poster_path ?? '', 'w92') // ← NEU
+			posterUrl: this.getImageUrl(item.poster_path ?? '', 'w92')
 		};
 	}
 }

@@ -1,4 +1,6 @@
 <script>
+	import uiText from '$lib/i18n/ui.json';
+
 	/**
 	 * Erwartete Props für den "Mehr laden"-Button.
 	 *
@@ -7,7 +9,14 @@
 	 * @param {Function|null} [onload=null] - Callback, das beim Klick aufgerufen wird.
 	 */
 
-	let { hasMore = false, loading = false, onload = null } = $props();
+	let {
+		hasMore = false,
+		loading = false,
+		onload = null
+	} = $props();
+
+	const locale = 'de-DE';
+	const texts = uiText.locales[locale].messages;
 </script>
 
 {#if hasMore}
@@ -20,7 +29,7 @@
 			disabled={loading}
 			aria-busy={loading}
 		>
-			{loading ? 'Lade weitere Ergebnisse …' : 'Weitere Ergebnisse'}
+			{loading ? texts.loadMoreLoading : texts.loadMore}
 		</button>
 	</div>
 {/if}

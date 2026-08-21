@@ -1,5 +1,6 @@
 <script>
 	import notAvailable from '$lib/assets/not-available.png';
+	import uiText from '$lib/i18n/ui.json';
 
 	/**
 	 * Gemeinsamer Hero für Detailseiten.
@@ -21,11 +22,14 @@
 		backdrop,
 		posterUrl,
 		productionCompanies = [],
-		emptyLabel = 'N/A'
+		emptyLabel = ''
 	} = $props();
 
+	let notAvailableText = $derived(uiText.locales['de-DE'].fallbacks.notAvailable);
 	let fallbackImage = $derived(backdrop || posterUrl || notAvailable);
 	let resolvedPosterUrl = $derived(posterUrl || notAvailable);
+	let resolvedTitle = $derived(title?.trim() || notAvailableText);
+	let resolvedEmptyLabel = $derived(emptyLabel?.trim() || notAvailableText);
 </script>
 
 <section class="details-hero" aria-labelledby="details-hero-title" style={`--details-hero-backdrop: url('${fallbackImage}')`}>
@@ -35,7 +39,7 @@
 				<img src={resolvedPosterUrl} alt="" />
 			</div>
 
-			<h1 id="details-hero-title" class="details-hero-title">{title}</h1>
+			<h1 id="details-hero-title" class="details-hero-title">{resolvedTitle}</h1>
 
 			<section class="details-hero-companies" aria-labelledby="details-hero-companies-heading">
 				<h2 id="details-hero-companies-heading" class="u-sr-only">Produktionsfirmen</h2>
@@ -45,7 +49,7 @@
 							<li class="details-hero-company">{company.name}</li>
 						{/each}
 					{:else}
-						<li class="details-hero-company">{emptyLabel}</li>
+						<li class="details-hero-company">{resolvedEmptyLabel}</li>
 					{/if}
 				</ul>
 			</section>
