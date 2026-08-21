@@ -53,7 +53,9 @@ export class TmdbAPI {
 		const response = await this.fetch(url.toString());
 
 		if (!response.ok) {
-			throw new Error(`TMDB-Anfrage fehlgeschlagen: ${response.status} ${response.statusText}`);
+			throw new Error(
+				`TMDB-Anfrage fehlgeschlagen: ${response.status} ${response.statusText}`
+			);
 		}
 
 		return response.json();
@@ -155,9 +157,9 @@ export class TmdbAPI {
 			.map((id) =>
 				map?.[id]
 					? {
-						id,
-						name: map[id]
-					}
+							id,
+							name: map[id]
+						}
 					: null
 			)
 			.filter(Boolean);
@@ -221,10 +223,13 @@ export class TmdbAPI {
 			if (mediaType === 'movie') {
 				const data = await this.request(`/movie/${id}/release_dates`);
 				const country = data.results?.find((entry) => entry.iso_3166_1 === this.region);
-				certification = country?.release_dates?.find((release) => release.certification)?.certification ?? '';
+				certification =
+					country?.release_dates?.find((release) => release.certification)
+						?.certification ?? '';
 			} else if (mediaType === 'tv') {
 				const data = await this.request(`/tv/${id}/content_ratings`);
-				certification = data.results?.find((entry) => entry.iso_3166_1 === this.region)?.rating ?? '';
+				certification =
+					data.results?.find((entry) => entry.iso_3166_1 === this.region)?.rating ?? '';
 			}
 		} catch (error) {
 			console.warn(`Altersfreigabe konnte nicht geladen werden (${mediaType}/${id}):`, error);
@@ -275,7 +280,6 @@ export class TmdbAPI {
 		};
 	}
 
-
 	/**
 	 * Ermittelt die beste verfügbare Trailer-URL aus den Videodaten.
 	 *
@@ -289,7 +293,8 @@ export class TmdbAPI {
 
 		const trailer =
 			videos.find(
-				(video) => video.site === 'YouTube' && video.type === 'Trailer' && video.official === true
+				(video) =>
+					video.site === 'YouTube' && video.type === 'Trailer' && video.official === true
 			) ?? videos.find((video) => video.site === 'YouTube' && video.type === 'Trailer');
 
 		return trailer ? `https://www.youtube.com/watch?v=${trailer.key}` : '';
@@ -505,8 +510,11 @@ export class TmdbAPI {
 			title: mediaType === 'movie' ? (item.title ?? '') : (item.name ?? ''),
 			rating: item.vote_average ?? 0,
 			date: mediaType === 'movie' ? (item.release_date ?? '') : (item.first_air_date ?? ''),
-			releaseDate: mediaType === 'movie' ? (item.release_date ?? '') : (item.first_air_date ?? ''),
-			year: (mediaType === 'movie' ? item.release_date : item.first_air_date)?.slice(0, 4) ?? '',
+			releaseDate:
+				mediaType === 'movie' ? (item.release_date ?? '') : (item.first_air_date ?? ''),
+			year:
+				(mediaType === 'movie' ? item.release_date : item.first_air_date)?.slice(0, 4) ??
+				'',
 			posterUrl: this.getImageUrl(item.poster_path ?? '', 'w92')
 		};
 	}

@@ -1,11 +1,11 @@
 <script>
-    import { resolve } from '$app/paths';
-    import { goto } from '$app/navigation';
-    import { deduplicateById } from '$lib/utils/deduplicateById';
+    import {resolve} from '$app/paths';
+    import {goto} from '$app/navigation';
+    import {deduplicateById} from '$lib/utils/deduplicateById';
     import notAvailable from '$lib/assets/not-available.png';
-    import { getI18nContext } from '$lib/i18n/context';
+    import {getI18nContext} from '$lib/i18n/context';
 
-    const { labels: texts, messages, titles, formats } = getI18nContext();
+    const {labels: texts, messages, titles, formats} = getI18nContext();
 
     /**
      * Stellt die Typeahead-Suche im Header für Filme und TV-Serien bereit.
@@ -168,7 +168,7 @@
             loading = false;
         }
     }
-    
+
     /**
      * Reagiert auf Tastatureingaben im Suchfeld.
      *
@@ -234,31 +234,32 @@
     }
 </script>
 
-<svelte:window onpointerdown={handleDocumentPointerdown} />
+<svelte:window onpointerdown={handleDocumentPointerdown}/>
 
 <search class="typeahead-search right menu searchbar hydrated">
-    <form role="search" class="ui left aligned transparent category search" onsubmit={(e) => e.preventDefault()}>
+    <form class="ui left aligned transparent category search" onsubmit={(e) => e.preventDefault()} role="search">
         <label class="u-sr-only" for="typeahead-search-input">{texts.searchInput}</label>
         <div class="ui icon transparent inverted input">
             <input
-                    id="typeahead-search-input"
-                    class="prompt"
-                    type="search"
-                    placeholder={texts.searchInput}
-                    bind:value={query}
-                    oninput={handleInput}
-                    onfocus={showResults}
-                    onkeydown={handleKeydown}
-                    aria-describedby={searchHintId}
-                    autocomplete="off"
+                aria-describedby={searchHintId}
+                autocomplete="off"
+                bind:value={query}
+                class="prompt"
+                id="typeahead-search-input"
+                onfocus={showResults}
+                oninput={handleInput}
+                onkeydown={handleKeydown}
+                placeholder={texts.searchInput}
+                type="search"
             />
 
-            <i class="search icon" aria-hidden="true"></i>
+            <i aria-hidden="true" class="search icon"></i>
         </div>
-        <p id="typeahead-search-hint" class="u-sr-only">{messages.searchHint}</p>
+        <p class="u-sr-only" id="typeahead-search-hint">{messages.searchHint}</p>
 
         {#if resultsVisible}
-            <div id="typeahead-search-results" class="results transition show" aria-label={messages.searchResults} aria-live="polite">
+            <div id="typeahead-search-results" class="results transition show" aria-label={messages.searchResults}
+                 aria-live="polite">
                 {#if loading}
                     <p class="result" role="status">{messages.searchLoading}</p>
                 {:else if error}
@@ -270,9 +271,10 @@
                             <ul class="results" aria-label={titles.movies}>
                                 {#each movies as item (item.id)}
                                     <li>
-                                        <a class="result" href={resultHref(item)} onclick={(e) => handleLinkClick(e, item)}>
+                                        <a class="result" href={resultHref(item)}
+                                           onclick={(e) => handleLinkClick(e, item)}>
                                             <figure class="image" aria-hidden="true">
-                                                <img src={item.posterUrl || notAvailable} alt="" />
+                                                <img src={item.posterUrl || notAvailable} alt=""/>
                                             </figure>
                                             <div class="content">
                                                 <header class="result-header">
@@ -300,9 +302,10 @@
                             <ul class="results" aria-label={titles.tvShows}>
                                 {#each tvShows as item (item.id)}
                                     <li>
-                                        <a class="result" href={resultHref(item)} onclick={(e) => handleLinkClick(e, item)}>
+                                        <a class="result" href={resultHref(item)}
+                                           onclick={(e) => handleLinkClick(e, item)}>
                                             <figure class="image" aria-hidden="true">
-                                                <img src={item.posterUrl || notAvailable} alt="" />
+                                                <img src={item.posterUrl || notAvailable} alt=""/>
                                             </figure>
                                             <div class="content">
                                                 <header class="result-header">
@@ -334,195 +337,196 @@
 </search>
 
 <style lang="scss">
-	@use '../../css/variables';
-	@use '../../css/mixins' as *;
-	.typeahead-search {
-		position: relative;
-		display: block;
-		flex: 0 0 auto;
-		width: fit-content;
-		min-width: 0;
-		height: 100%;
-	}
+  @use '../../css/variables';
+  @use '../../css/mixins' as *;
 
-	.right.menu.searchbar {
-		position: relative;
-		display: block;
-		width: fit-content;
-		height: 100%;
+  .typeahead-search {
+    position: relative;
+    display: block;
+    flex: 0 0 auto;
+    width: fit-content;
+    min-width: 0;
+    height: 100%;
+  }
 
-		.category.search {
-			position: relative;
-			display: block;
-			width: fit-content;
-			height: 100%;
-			margin-left: 0;
+  .right.menu.searchbar {
+    position: relative;
+    display: block;
+    width: fit-content;
+    height: 100%;
 
-			> .results {
-				position: absolute;
-				z-index: 1000;
-				top: calc(100% + var(--search-dropdown-gap));
-				right: 0;
-				left: auto;
-				display: block;
-				width: min(var(--search-dropdown-width), calc(100vw - 2rem));
-				height: auto;
-				max-height: calc(100vh - var(--header-height) - var(--footer-height) - var(--search-dropdown-gap));
-				margin: 0;
-				overflow-x: hidden;
-				overflow-y: auto;
-				box-sizing: border-box;
-			}
-		}
+    .category.search {
+      position: relative;
+      display: block;
+      width: fit-content;
+      height: 100%;
+      margin-left: 0;
 
-		.ui.icon.input {
-			position: relative;
-			top: auto;
-			right: auto;
-			display: inline-flex;
-			align-items: center;
-			width: fit-content;
-			height: 100%;
+      > .results {
+        position: absolute;
+        z-index: 1000;
+        top: calc(100% + var(--search-dropdown-gap));
+        right: 0;
+        left: auto;
+        display: block;
+        width: min(var(--search-dropdown-width), calc(100vw - 2rem));
+        height: auto;
+        max-height: calc(100vh - var(--header-height) - var(--footer-height) - var(--search-dropdown-gap));
+        margin: 0;
+        overflow-x: hidden;
+        overflow-y: auto;
+        box-sizing: border-box;
+      }
+    }
 
-			input.prompt {
-				display: block;
-				width: clamp(16rem, 30vw, 28rem);
-				min-width: 0;
-				height: 100%;
-				padding-right: 2.25rem;
-				visibility: visible;
-				opacity: 1;
+    .ui.icon.input {
+      position: relative;
+      top: auto;
+      right: auto;
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      height: 100%;
 
-				&::-webkit-search-cancel-button {
-					filter: brightness(0) invert(1);
-					margin-left: 0.5rem;
-				}
-			}
+      input.prompt {
+        display: block;
+        width: clamp(16rem, 30vw, 28rem);
+        min-width: 0;
+        height: 100%;
+        padding-right: 2.25rem;
+        visibility: visible;
+        opacity: 1;
 
-			> .search.icon {
-				flex: 0 0 auto;
-			}
-		}
+        &::-webkit-search-cancel-button {
+          filter: brightness(0) invert(1);
+          margin-left: 0.5rem;
+        }
+      }
 
-		.category.search > .results {
-			.category {
-				display: block;
-				width: 100%;
-				height: auto;
+      > .search.icon {
+        flex: 0 0 auto;
+      }
+    }
 
-				.results {
-					position: static;
-					z-index: auto;
-					display: block;
-					width: 100%;
-					height: auto;
-					max-height: none;
-					margin: 0;
-					padding: 0;
-					overflow: visible;
-					list-style: none;
-				}
+    .category.search > .results {
+      .category {
+        display: block;
+        width: 100%;
+        height: auto;
 
-				> .ui.label {
-					display: block;
-					width: 100%;
-					margin: 0;
-					padding: 0.75rem 1rem;
-					box-sizing: border-box;
-					font-weight: 700;
-				}
-			}
+        .results {
+          position: static;
+          z-index: auto;
+          display: block;
+          width: 100%;
+          height: auto;
+          max-height: none;
+          margin: 0;
+          padding: 0;
+          overflow: visible;
+          list-style: none;
+        }
 
-			li {
-				transition: background-color 180ms ease;
+        > .ui.label {
+          display: block;
+          width: 100%;
+          margin: 0;
+          padding: 0.75rem 1rem;
+          box-sizing: border-box;
+          font-weight: 700;
+        }
+      }
 
-				&:hover,
-				&:has(a.result:focus-visible) {
-					background: rgba(0, 0, 0, 0.08);
-				}
+      li {
+        transition: background-color 180ms ease;
 
-				&:has(a.result:focus-visible) {
-					outline: 2px solid #2185d0;
-					outline-offset: -3px;
-				}
+        &:hover,
+        &:has(a.result:focus-visible) {
+          background: rgba(0, 0, 0, 0.08);
+        }
 
-				&:hover a.result,
-				&:has(a.result:focus-visible) a.result {
-					background: transparent;
-				}
+        &:has(a.result:focus-visible) {
+          outline: 2px solid #2185d0;
+          outline-offset: -3px;
+        }
 
-				&:has(a.result:focus-visible) a.result {
-					outline: none;
-				}
-			}
+        &:hover a.result,
+        &:has(a.result:focus-visible) a.result {
+          background: transparent;
+        }
 
-			.result {
-				display: flex;
-				align-items: stretch;
-				width: 100%;
-				box-sizing: border-box;
+        &:has(a.result:focus-visible) a.result {
+          outline: none;
+        }
+      }
 
-				.image {
-					align-self: stretch;
-					flex: 0 0 2em;
-					width: 2em;
-					height: 3em;
-					max-height: 3em;
-					margin: 0 1rem 0 0;
-					overflow: hidden;
-				}
+      .result {
+        display: flex;
+        align-items: stretch;
+        width: 100%;
+        box-sizing: border-box;
 
-				.image img {
-					display: block;
-					width: 100%;
-					height: 100%;
-					min-height: 100%;
-					object-fit: cover;
-				}
+        .image {
+          align-self: stretch;
+          flex: 0 0 2em;
+          width: 2em;
+          height: 3em;
+          max-height: 3em;
+          margin: 0 1rem 0 0;
+          overflow: hidden;
+        }
 
-				.content {
-					position: relative;
-					flex: 1 1 auto;
-					min-height: 3.5rem;
-					margin: 0;
-					padding: 2px 4rem 0 0;
-					box-sizing: border-box;
-				}
+        .image img {
+          display: block;
+          width: 100%;
+          height: 100%;
+          min-height: 100%;
+          object-fit: cover;
+        }
 
-				.title {
-					padding-right: 0;
-					line-height: 1.35;
-				}
+        .content {
+          position: relative;
+          flex: 1 1 auto;
+          min-height: 3.5rem;
+          margin: 0;
+          padding: 2px 4rem 0 0;
+          box-sizing: border-box;
+        }
 
-				.description {
-					margin-top: 0.35rem;
-					line-height: 1.2;
-				}
-			}
-		}
+        .title {
+          padding-right: 0;
+          line-height: 1.35;
+        }
 
-		.ui.category .ui.label,
-		.category .ui.label {
-			display: block;
-			border-radius: 0;
-		}
-	}
+        .description {
+          margin-top: 0.35rem;
+          line-height: 1.2;
+        }
+      }
+    }
 
-	@include mobile-only {
-		.right.menu.searchbar {
-			.ui.category.search > .results {
-				position: fixed;
-				z-index: 9999;
-				top: var(--header-height);
-				right: 0;
-				left: 0;
-				width: 100%;
-				max-width: none;
-				max-height: calc(100vh - var(--header-height) - var(--footer-height));
-				border: none;
-				border-radius: 0;
-				box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-			}
-		}
-	}
+    .ui.category .ui.label,
+    .category .ui.label {
+      display: block;
+      border-radius: 0;
+    }
+  }
+
+  @include mobile-only {
+    .right.menu.searchbar {
+      .ui.category.search > .results {
+        position: fixed;
+        z-index: 9999;
+        top: var(--header-height);
+        right: 0;
+        left: 0;
+        width: 100%;
+        max-width: none;
+        max-height: calc(100vh - var(--header-height) - var(--footer-height));
+        border: none;
+        border-radius: 0;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+      }
+    }
+  }
 </style>

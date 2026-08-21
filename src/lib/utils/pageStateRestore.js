@@ -48,11 +48,7 @@ export function getStoredPage(storageKey) {
  *   hasMore: boolean
  * }>} Wiederhergestellter Listenstatus.
  */
-export async function restorePagedList({
-																				 storageKey,
-																				 initialData,
-																				 fetchPageData
-																			 }) {
+export async function restorePagedList({ storageKey, initialData, fetchPageData }) {
 	const storedPage = getStoredPage(storageKey);
 	let currentCards = deduplicateMedia(initialData.cards ?? []);
 	let currentFeatured = initialData.featured ?? null;

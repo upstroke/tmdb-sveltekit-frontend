@@ -1,4 +1,3 @@
-
 /**
  * Formatiert einen Datumsstring abhängig von der angegebenen Locale.
  *

@@ -1,11 +1,11 @@
 <script>
-    import { deduplicateById } from '$lib/utils/deduplicateById';
-    import { formatHomepageLabel } from '$lib/utils/formatHomepageLabel';
+    import {deduplicateById} from '$lib/utils/deduplicateById';
+    import {formatHomepageLabel} from '$lib/utils/formatHomepageLabel';
     import DialogMessage from '$lib/components/DialogMessage.svelte';
     import DetailsHero from '$lib/components/DetailsHero.svelte';
     import MediaTypeLabel from '$lib/components/MediaTypeLabel.svelte';
     import notAvailable from '$lib/assets/not-available.png';
-    import { getI18nContext } from '$lib/i18n/context';
+    import {getI18nContext} from '$lib/i18n/context';
 
     /**
      * Erwartete Props für die Detailseite.
@@ -30,9 +30,9 @@
      *   error?: string | null
      * }} data - Geladene TV-Show-Daten.
      */
-    let { data } = $props();
+    let {data} = $props();
 
-const { buttons, fallbacks, formats, labels, messages, titles } = getI18nContext();
+    const {buttons, fallbacks, formats, labels, messages, titles} = getI18nContext();
 
     let tvShow = $derived(data.tvShow ?? null);
     let error = $derived(data.error ?? null);
@@ -60,15 +60,15 @@ const { buttons, fallbacks, formats, labels, messages, titles } = getI18nContext
 </svelte:head>
 
 {#if error}
-    <DialogMessage message={error} />
+    <DialogMessage message={error}/>
 
 {:else if tvShow}
     <DetailsHero
-		title={title}
-		backdrop={backdrop}
-		posterUrl={posterUrl}
-		productionCompanies={productionCompanies}
-		emptyLabel={fallbacks.notAvailable}
+            title={title}
+            backdrop={backdrop}
+            posterUrl={posterUrl}
+            productionCompanies={productionCompanies}
+            emptyLabel={fallbacks.notAvailable}
     />
 
     <main class="ui text container details-view">
@@ -109,70 +109,70 @@ const { buttons, fallbacks, formats, labels, messages, titles } = getI18nContext
             </section>
         </header>
 
-		<section aria-labelledby="overview-heading">
-			<h3 id="overview-heading" class="ui medium dividing header">{labels.overview}</h3>
+        <section aria-labelledby="overview-heading">
+            <h3 id="overview-heading" class="ui medium dividing header">{labels.overview}</h3>
 
-			<p class="overview">
-				{overview || fallbacks.notAvailable}
-			</p>
-		</section>
+            <p class="overview">
+                {overview || fallbacks.notAvailable}
+            </p>
+        </section>
 
-		<section aria-labelledby="homepage-heading">
-			<h3 id="homepage-heading" class="ui medium dividing header">{labels.homepage}</h3>
-			<p>
-				{#if homepage}
-					<a class="home-link" href={homepage} target="_blank" rel="noopener noreferrer">
-						{formatHomepageLabel(homepage)}
-					</a>
-				{:else}
-					{fallbacks.notAvailable}
-				{/if}
-			</p>
-		</section>
+        <section aria-labelledby="homepage-heading">
+            <h3 id="homepage-heading" class="ui medium dividing header">{labels.homepage}</h3>
+            <p>
+                {#if homepage}
+                    <a class="home-link" href={homepage} target="_blank" rel="noopener noreferrer">
+                        {formatHomepageLabel(homepage)}
+                    </a>
+                {:else}
+                    {fallbacks.notAvailable}
+                {/if}
+            </p>
+        </section>
 
-		<section aria-labelledby="trailer-heading">
-			<h3 id="trailer-heading" class="ui medium dividing header">{labels.trailer}</h3>
-			<p>
-				{#if trailerUrl}
-					<a class="ui red button" href={trailerUrl} target="_blank" rel="noopener noreferrer">
-						<i class="youtube icon" aria-hidden="true"></i>
-						{buttons.watchTrailer}
-					</a>
-				{:else}
-					{fallbacks.notAvailable}
-				{/if}
-			</p>
-		</section>
+        <section aria-labelledby="trailer-heading">
+            <h3 id="trailer-heading" class="ui medium dividing header">{labels.trailer}</h3>
+            <p>
+                {#if trailerUrl}
+                    <a class="ui red button" href={trailerUrl} target="_blank" rel="noopener noreferrer">
+                        <i class="youtube icon" aria-hidden="true"></i>
+                        {buttons.watchTrailer}
+                    </a>
+                {:else}
+                    {fallbacks.notAvailable}
+                {/if}
+            </p>
+        </section>
 
-		<section aria-labelledby="release-heading">
-			<h3 id="release-heading" class="ui medium dividing header">{labels.firstAirDate}</h3>
-			<p>
-				<time datetime={releaseDate || undefined}>{releaseDate || fallbacks.notAvailable}</time>
-			</p>
-		</section>
+        <section aria-labelledby="release-heading">
+            <h3 id="release-heading" class="ui medium dividing header">{labels.firstAirDate}</h3>
+            <p>
+                <time datetime={releaseDate || undefined}>{releaseDate || fallbacks.notAvailable}</time>
+            </p>
+        </section>
 
-		<section aria-labelledby="production-heading">
-			<h3 id="production-heading" class="ui medium dividing header">{labels.production}</h3>
-			{#if productionCompanies.length}
-				<ul class="production-list">
-					{#each productionCompanies as company (`tv-production-company-${company.id ?? company.name}`)}
-						<li>{company.name}</li>
-					{/each}
-				</ul>
-			{:else}
-				<p>{fallbacks.notAvailable}</p>
-			{/if}
-		</section>
+        <section aria-labelledby="production-heading">
+            <h3 id="production-heading" class="ui medium dividing header">{labels.production}</h3>
+            {#if productionCompanies.length}
+                <ul class="production-list">
+                    {#each productionCompanies as company (`tv-production-company-${company.id ?? company.name}`)}
+                        <li>{company.name}</li>
+                    {/each}
+                </ul>
+            {:else}
+                <p>{fallbacks.notAvailable}</p>
+            {/if}
+        </section>
 
-		{#if runtime}
-			<section aria-labelledby="runtime-heading">
-				<h3 id="runtime-heading" class="ui medium header">{labels.runtime}</h3>
+        {#if runtime}
+            <section aria-labelledby="runtime-heading">
+                <h3 id="runtime-heading" class="ui medium header">{labels.runtime}</h3>
 
-				<p class="small">
-					<span>{runtime} {formats.minutes}</span>
-				</p>
-			</section>
-		{/if}
+                <p class="small">
+                    <span>{runtime} {formats.minutes}</span>
+                </p>
+            </section>
+        {/if}
 
         <section aria-labelledby="cast-heading">
             <header>

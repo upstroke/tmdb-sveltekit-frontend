@@ -1,13 +1,17 @@
 /**
+ * @typedef {object} MediaItem
+ * @property {string|number} id - Eindeutige ID des Media-Elements.
+ * @property {string} mediaType - Medientyp, zum Beispiel `movie` oder `tv`.
+ */
+
+/**
  * Erstellt einen stabilen Schlüssel, um ein Media-Element eindeutig zu erkennen.
  *
  * Dafür müssen `mediaType` und `id` vorhanden sein. Fehlt einer der beiden
  * Werte, gibt die Funktion `null` zurück, damit das Element bei der
  * Deduplizierung ignoriert wird.
  *
- * @param {object} item - Zu prüfendes Media-Element.
- * @param {string|number} item.id - Eindeutige ID des Media-Elements.
- * @param {string} item.mediaType - Medientyp, zum Beispiel `movie` oder `tv`.
+ * @param {MediaItem} item - Zu prüfendes Media-Element.
  * @returns {string|null} Kombinierter Schlüssel im Format `mediaType-id` oder
  * `null`, wenn kein sicherer Schlüssel gebildet werden kann.
  */
