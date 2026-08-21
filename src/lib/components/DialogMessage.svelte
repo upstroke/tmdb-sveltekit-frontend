@@ -1,6 +1,8 @@
 <script>
     import { browser } from '$app/environment';
-    import uiText from '$lib/i18n/ui.json';
+    import { getI18nContext } from '$lib/i18n/context';
+
+    const { messages } = getI18nContext();
 
     /**
      * Wiederverwendbarer nativer Dialog für Fehlermeldungen.
@@ -10,7 +12,7 @@
      */
     let {
         message,
-        title = uiText.locales['de-DE'].messages.dialogErrorTitle
+        title = messages.dialogErrorTitle
     } = $props();
 
     let dialog;
@@ -32,7 +34,7 @@
         <p>{message}</p>
 
         <form method="dialog" class="dialog-message-actions">
-            <button class="ui button primary right floated" type="submit">{uiText.locales['de-DE'].messages.dialogOk}</button>
+            <button class="ui button primary right floated" type="submit">{messages.dialogOk}</button>
         </form>
     </div>
 </dialog>

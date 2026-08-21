@@ -2,8 +2,10 @@
 	import { resolve } from '$app/paths';
 	import MediaTypeLabel from '$lib/components/MediaTypeLabel.svelte';
 	import notAvailable from '$lib/assets/not-available.png';
-	import uiText from '$lib/i18n/ui.json';
+	import { getI18nContext } from '$lib/i18n/context';
 	import { getCertificationMeta } from '$lib/utils/certificationMeta';
+
+	const { labels, formats, fallbacks } = getI18nContext();
 
 	/**
 	 * Erwartete Props für die Standard-Karte.
@@ -45,7 +47,7 @@
 	);
 
 	let genreText = $derived((genres ?? []).map((genre) => genre.name).join(' / '));
-	let notAvailableText = $derived(uiText.locales['de-DE'].fallbacks.notAvailable);
+	let notAvailableText = $derived(fallbacks.notAvailable);
 	let cardImageUrl = $derived(imageUrl || notAvailable);
 	let cardTitle = $derived(title?.trim() || notAvailableText);
 	let cardDate = $derived(date?.trim() || '');
@@ -73,7 +75,7 @@
 
 			<dl class="card-meta">
 				<div class="card-meta-item">
-					<dt class="u-sr-only">{uiText.locales['de-DE'].labels.certification}</dt>
+					<dt class="u-sr-only">{labels.certification}</dt>
 					<dd
 						class="meta certification"
 						style={certificationMeta
@@ -112,7 +114,7 @@
 		<footer class="extra content">
 			<span>
 				<i class="yellow star icon" aria-hidden="true"></i>
-				<span class="u-sr-only">{uiText.locales['de-DE'].labels.rating}</span> <span class="rating-value">{cardRating}</span> {uiText.locales['de-DE'].formats.outOfTen}
+				<span class="u-sr-only">{labels.rating}</span> <span class="rating-value">{cardRating}</span> {formats.outOfTen}
 			</span>
 		</footer>
 	</a>

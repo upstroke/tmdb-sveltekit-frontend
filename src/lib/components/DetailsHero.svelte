@@ -1,6 +1,8 @@
 <script>
 	import notAvailable from '$lib/assets/not-available.png';
-	import uiText from '$lib/i18n/ui.json';
+	import { getI18nContext } from '$lib/i18n/context';
+
+	const { fallbacks } = getI18nContext();
 
 	/**
 	 * Gemeinsamer Hero für Detailseiten.
@@ -25,7 +27,7 @@
 		emptyLabel = ''
 	} = $props();
 
-	let notAvailableText = $derived(uiText.locales['de-DE'].fallbacks.notAvailable);
+	let notAvailableText = $derived(fallbacks.notAvailable);
 	let fallbackImage = $derived(backdrop || posterUrl || notAvailable);
 	let resolvedPosterUrl = $derived(posterUrl || notAvailable);
 	let resolvedTitle = $derived(title?.trim() || notAvailableText);
