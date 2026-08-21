@@ -1,7 +1,10 @@
 import { json } from '@sveltejs/kit';
-import uiText from '$lib/i18n/ui.json';
+import { DEFAULT_LOCALE } from '$lib/i18n/config';
+import { getLocaleText } from '$lib/i18n/resolver';
 import { TMDB_API_KEY } from '$env/static/private';
 import { TmdbAPI } from '$lib/services/tmdb-api.js';
+
+const { messages } = getLocaleText(DEFAULT_LOCALE);
 
 /**
  * Lädt eine weitere Seite mit TV-Shows.
@@ -21,7 +24,7 @@ export async function GET({ fetch, url }) {
 				cards: [],
 				page,
 				hasMore: false,
-				error: uiText.locales['de-DE'].messages.apiKeyMissing
+				error: messages.apiKeyMissing
 			},
 			{ status: 500 }
 		);
@@ -52,7 +55,7 @@ export async function GET({ fetch, url }) {
 				cards: [],
 				page,
 				hasMore: false,
-				error: uiText.locales['de-DE'].messages.moreTvShowsLoadError
+				error: messages.moreTvShowsLoadError
 			},
 			{ status: 500 }
 		);

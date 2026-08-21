@@ -3,13 +3,9 @@
     import { goto } from '$app/navigation';
     import { deduplicateById } from '$lib/utils/deduplicateById';
     import notAvailable from '$lib/assets/not-available.png';
-    import uiText from '$lib/i18n/ui.json';
+    import { getI18nContext } from '$lib/i18n/context';
 
-    const locale = 'de-DE';
-    const texts = uiText.locales[locale].labels;
-	const messages = uiText.locales[locale].messages;
-	const titles = uiText.locales[locale].titles;
-	const formats = uiText.locales[locale].formats;
+    const { labels: texts, messages, titles, formats } = getI18nContext();
 
     /**
      * Stellt die Typeahead-Suche im Header für Filme und TV-Serien bereit.

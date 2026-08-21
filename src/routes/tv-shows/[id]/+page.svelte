@@ -5,14 +5,7 @@
     import DetailsHero from '$lib/components/DetailsHero.svelte';
     import MediaTypeLabel from '$lib/components/MediaTypeLabel.svelte';
     import notAvailable from '$lib/assets/not-available.png';
-    import uiText from '$lib/i18n/ui.json';
-
-    const fallbacks = uiText.locales['de-DE'].fallbacks;
-    const labels = uiText.locales['de-DE'].labels;
-    const messages = uiText.locales['de-DE'].messages;
-    const formats = uiText.locales['de-DE'].formats;
-    const buttons = uiText.locales['de-DE'].buttons;
-    const titles = uiText.locales['de-DE'].titles;
+    import { getI18nContext } from '$lib/i18n/context';
 
     /**
      * Erwartete Props für die Detailseite.
@@ -38,6 +31,8 @@
      * }} data - Geladene TV-Show-Daten.
      */
     let { data } = $props();
+
+const { buttons, fallbacks, formats, labels, messages, titles } = getI18nContext();
 
     let tvShow = $derived(data.tvShow ?? null);
     let error = $derived(data.error ?? null);

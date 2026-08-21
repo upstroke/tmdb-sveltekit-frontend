@@ -1,6 +1,9 @@
 import { TMDB_API_KEY } from '$env/static/private';
-import uiText from '$lib/i18n/ui.json';
+import { DEFAULT_LOCALE } from '$lib/i18n/config';
+import { getLocaleText } from '$lib/i18n/resolver';
 import { TmdbAPI } from '$lib/services/tmdb-api.js';
+
+const { messages } = getLocaleText(DEFAULT_LOCALE);
 
 /**
  * Lädt die Serverdaten für eine Film-Detailseite.
@@ -17,7 +20,7 @@ export async function load({ fetch, params }) {
 	if (!TMDB_API_KEY) {
 		return {
 			movie: null,
-			error: uiText.locales['de-DE'].messages.apiKeyMissing
+			error: messages.apiKeyMissing
 		};
 	}
 
@@ -35,7 +38,7 @@ export async function load({ fetch, params }) {
 
 		return {
 			movie: null,
-			error: uiText.locales['de-DE'].messages.movieLoadError
+			error: messages.movieLoadError
 		};
 	}
 }
