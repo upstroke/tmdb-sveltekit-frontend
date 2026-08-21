@@ -36,7 +36,9 @@ export async function GET({ fetch, url }) {
 		const movies = await api.getTrendingMovies(page);
 
 		const cards = Array.from(
-			new Map((movies.results ?? []).map((card) => [`${card.id}-${card.mediaType}`, card])).values()
+			new Map(
+				(movies.results ?? []).map((card) => [`${card.id}-${card.mediaType}`, card])
+			).values()
 		);
 
 		return json({

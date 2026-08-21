@@ -6,47 +6,47 @@
 @use './mixins' as *;
 
 html {
-	scroll-behavior: smooth;
-	scroll-padding-top: calc(var(--header-height) + var(--scroll-offset));
+  scroll-behavior: smooth;
+  scroll-padding-top: calc(var(--header-height) + var(--scroll-offset));
 }
 
 /* ============================================
    LAYOUT (#root wrapper)
    ============================================ */
 #root {
-	.fixed.menu {
-		z-index: 1000;
-	}
+  .fixed.menu {
+    z-index: 1000;
+  }
 
-	main {
-		position: relative;
-		top: 6rem;
-		padding-bottom: 10rem;
-	}
+  main {
+    position: relative;
+    top: 6rem;
+    padding-bottom: 10rem;
+  }
 
-	.ui.container.fluid {
-		width: 94vw;
-		margin-left: auto;
-		margin-right: auto;
-	}
+  .ui.container.fluid {
+    width: 94vw;
+    margin-left: auto;
+    margin-right: auto;
+  }
 
-	button.link {
-		border: none;
-		background: none;
-		color: #4183c4;
-		cursor: pointer;
+  button.link {
+    border: none;
+    background: none;
+    color: #4183c4;
+    cursor: pointer;
 
-		&:hover,
-		&:active,
-		&:focus {
-			outline: none;
-			color: #1e70bf;
-		}
-	}
+    &:hover,
+    &:active,
+    &:focus {
+      outline: none;
+      color: #1e70bf;
+    }
+  }
 
-	.ui.header:first-child {
-		margin-top: inherit;
-	}
+  .ui.header:first-child {
+    margin-top: inherit;
+  }
 }
 
 /* ============================================
@@ -54,153 +54,154 @@ html {
    ============================================ */
 
 .ui.cards.media-card-list {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 1rem;
-	list-style: none;
-	margin: 0;
-	padding: 0;
-	--media-card-gap: 1rem;
-	--media-card-columns: 4;
-	--media-card-max-width: calc((100% - ((var(--media-card-columns) - 1) * var(--media-card-gap))) / var(--media-card-columns));
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  --media-card-gap: 1rem;
+  --media-card-columns: 4;
+  --media-card-max-width: calc((100% - ((var(--media-card-columns) - 1) * var(--media-card-gap))) / var(--media-card-columns));
 }
 
 .ui.cards.media-card-list > li {
-	display: flex;
-	min-width: 0;
-	flex: 0 1 var(--media-card-max-width);
-	max-width: var(--media-card-max-width);
-	margin: 0;
+  display: flex;
+  min-width: 0;
+  flex: 0 1 var(--media-card-max-width);
+  max-width: var(--media-card-max-width);
+  margin: 0;
 }
 
 .ui.cards.media-card-list > li > a.default-card {
-	display: flex;
-	width: 100%;
-	height: 100%;
+  display: flex;
+  width: 100%;
+  height: 100%;
 }
 
 .ui.cards.media-card-list > li > a.default-card:hover,
 .ui.cards.media-card-list > li > a.default-card:focus-visible {
-	transform: translateY(-2px);
+  transform: translateY(-2px);
 }
 
 dl,
 dd {
-	margin: 0;
+  margin: 0;
 }
 
 .details-view .ui.relaxed.divided.list p,
 .details-view .ui.relaxed.divided.list dd {
-	margin-bottom: 0;
-	margin-left: 0;
+  margin-bottom: 0;
+  margin-left: 0;
 }
 
 .details-view .production-list {
-	margin: 0;
-	padding: 0 0 0 1.5rem;
+  margin: 0;
+  padding: 0 0 0 1.5rem;
 }
 
 .rating-value {
-	color: #000;
-	font-weight: 700;
+  color: #000;
+  font-weight: 700;
 }
 
 
 @media only screen and (max-width: 767.98px) {
-	.ui.doubling.cards.media-card-list > li {
-		flex-basis: 100%;
-	}
+  .ui.doubling.cards.media-card-list > li {
+    flex-basis: 100%;
+  }
 }
 
 @media only screen and (min-width: 768px) and (max-width: 991.98px) {
-	.ui.doubling.cards.media-card-list > li {
-		flex-basis: 50%;
-	}
+  .ui.doubling.cards.media-card-list > li {
+    flex-basis: 50%;
+  }
 }
 
 .ui.card {
-	.card-meta {
-		display: flex;
-		flex-direction: column;
-		gap: 0.15rem;
-		margin: 0;
-	}
+  .card-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    margin: 0;
+  }
 
-	.card-meta-item {
-		display: contents;
-	}
+  .card-meta-item {
+    display: contents;
+  }
 
-	.meta {
-		&.certification,
-		&.genres,
-		&.date {
-			display: inline-flex;
-			align-items: center;
-			gap: 0.25rem;
-			width: fit-content;
-			font-size: 0.8rem;
-		}
+  .meta {
+    &.certification,
+    &.genres,
+    &.date {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      width: fit-content;
+      font-size: 0.8rem;
+    }
 
-		&.certification {
-			padding: 0;
-			background: transparent;
-			color: inherit;
+    &.certification {
+      padding: 0;
+      background: transparent;
+      color: inherit;
 
-			.certification-content {
-				display: inline-flex;
-				align-items: center;
-				gap: 0.35rem;
-			}
+      .certification-content {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+      }
 
-			.certification-text {
-				color: rgba(0, 0, 0, 0.4);
-			}
+      .certification-text {
+        color: rgba(0, 0, 0, 0.4);
+      }
 
-			.certification-icon {
-				width: 0.75rem;
-				height: 0.75rem;
-				flex: 0 0 0.75rem;
-				border: 1.5px solid var(--certification-icon-border-color, currentColor);
-				border-radius: 50%;
-				background-color: var(--certification-icon-color, transparent);
-				margin-left: 1.5px;
-			}
-		}
-	}
+      .certification-icon {
+        width: 0.75rem;
+        height: 0.75rem;
+        flex: 0 0 0.75rem;
+        border: 1.5px solid var(--certification-icon-border-color, currentColor);
+        border-radius: 50%;
+        background-color: var(--certification-icon-color, transparent);
+        margin-left: 1.5px;
+      }
+    }
+  }
 
-	&.horizontal {
-		background-color: transparent;
-		box-shadow: none;
-		width: 100%;
-	}
+  &.horizontal {
+    background-color: transparent;
+    box-shadow: none;
+    width: 100%;
+  }
 }
 
 .ui.horizontal.cards > .card {
-	background-color: transparent;
-	box-shadow: none;
-	width: 100%;
+  background-color: transparent;
+  box-shadow: none;
+  width: 100%;
 }
 
 .ui.hidden.divider.small {
-	margin: 0.2rem 0;
+  margin: 0.2rem 0;
 }
+
 /* ============================================
    UTILITY CLASSES
    ============================================ */
 .u-sr-only {
-	position: absolute;
-	width: 1px;
-	height: 1px;
-	padding: 0;
-	margin: -1px;
-	overflow: hidden;
-	clip: rect(0, 0, 0, 0);
-	white-space: nowrap;
-	border: 0;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .u-spacer {
-	padding: 1em 0;
+  padding: 1em 0;
 }
 
 
@@ -208,85 +209,85 @@ dd {
    DETAILS PAGES
    ============================================ */
 main.ui.text.container.details-view {
-	width: unset;
-	max-width: 95%;
-	margin-inline: auto;
+  width: unset;
+  max-width: 95%;
+  margin-inline: auto;
 
-	@include tablet-up {
-		max-width: 80%;
-	}
+  @include tablet-up {
+    max-width: 80%;
+  }
 
-	@include computer-up {
-		max-width: 75%;
-	}
+  @include computer-up {
+    max-width: 75%;
+  }
 
-	.home-link:hover {
-		text-decoration: underline;
-	}
+  .home-link:hover {
+    text-decoration: underline;
+  }
 
-	.details-header {
-		margin-bottom: 3rem;
-	}
+  .details-header {
+    margin-bottom: 3rem;
+  }
 
-	.details-meta {
-		display: flex;
-		align-items: center;
-		gap: 0.5rem;
-		margin-bottom: 1rem;
+  .details-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
 
-		.ui.label .icon {
-			margin-right: .2rem;
-		}
-	}
+    .ui.label .icon {
+      margin-right: .2rem;
+    }
+  }
 
-	p {
-		margin-bottom: 1.25rem;
-	}
+  p {
+    margin-bottom: 1.25rem;
+  }
 
-	h2.ui.header {
-		margin-block: 1.5rem 0.5rem;
-	}
+  h2.ui.header {
+    margin-block: 1.5rem 0.5rem;
+  }
 
-	> section {
-		margin-bottom: 3rem;
+  > section {
+    margin-bottom: 3rem;
 
-		&:last-child {
-			margin-bottom: unset;
-		}
-	}
+    &:last-child {
+      margin-bottom: unset;
+    }
+  }
 
-	.ui.horizontal.list.genres {
-		margin-top: 0;
-		font-size: 1rem;
-	}
+  .ui.horizontal.list.genres {
+    margin-top: 0;
+    font-size: 1rem;
+  }
 
-	ul.genres {
-		margin: 0 0 1.5rem;
-		padding: 0;
-		list-style: none;
-		font-size: 1rem;
+  ul.genres {
+    margin: 0 0 1.5rem;
+    padding: 0;
+    list-style: none;
+    font-size: 1rem;
 
-		&::before,
-		&::after,
-		> li::before,
-		> li::after {
-			content: none;
-			display: none;
-		}
+    &::before,
+    &::after,
+    > li::before,
+    > li::after {
+      content: none;
+      display: none;
+    }
 
-		> li {
-			list-style: none;
-			margin-left: 0;
-		}
-	}
+    > li {
+      list-style: none;
+      margin-left: 0;
+    }
+  }
 
-	ul.relaxed.divided.list {
-		font-size: 1rem;
-	}
+  ul.relaxed.divided.list {
+    font-size: 1rem;
+  }
 }
 
 @include mobile-only {
-	.ui.search .results {
-		max-width: 100vw;
-	}
+  .ui.search .results {
+    max-width: 100vw;
+  }
 }

@@ -1,8 +1,8 @@
 <script>
-    import { browser } from '$app/environment';
-    import { getI18nContext } from '$lib/i18n/context';
+    import {browser} from '$app/environment';
+    import {getI18nContext} from '$lib/i18n/context';
 
-    const { messages } = getI18nContext();
+    const {messages} = getI18nContext();
 
     /**
      * Wiederverwendbarer nativer Dialog für Fehlermeldungen.
@@ -28,35 +28,35 @@
     });
 </script>
 
-<dialog bind:this={dialog} class="dialog-message" aria-live="assertive" aria-labelledby="dialog-message-title">
+<dialog aria-labelledby="dialog-message-title" aria-live="assertive" bind:this={dialog} class="dialog-message">
     <div class="dialog-message-content">
         <strong id="dialog-message-title">{title}</strong>
         <p>{message}</p>
 
-        <form method="dialog" class="dialog-message-actions">
+        <form class="dialog-message-actions" method="dialog">
             <button class="ui button primary right floated" type="submit">{messages.dialogOk}</button>
         </form>
     </div>
 </dialog>
 
 <style lang="scss">
-    .dialog-message {
-        border: none;
-        border-radius: 1rem;
-        padding: 0;
-        max-width: min(90vw, 480px);
-        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
-    }
+  .dialog-message {
+    border: none;
+    border-radius: 1rem;
+    padding: 0;
+    max-width: min(90vw, 480px);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+  }
 
-    .dialog-message::backdrop {
-        background: rgba(0, 0, 0, 0.45);
-    }
+  .dialog-message::backdrop {
+    background: rgba(0, 0, 0, 0.45);
+  }
 
-    .dialog-message-content {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-        padding: 1.25rem 1.5rem;
-        background: #fff;
-    }
+  .dialog-message-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1.25rem 1.5rem;
+    background: #fff;
+  }
 </style>
