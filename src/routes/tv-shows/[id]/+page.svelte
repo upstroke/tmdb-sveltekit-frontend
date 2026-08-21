@@ -1,6 +1,7 @@
 <script>
     import { deduplicateById } from '$lib/utils/deduplicateById';
     import { formatHomepageLabel } from '$lib/utils/formatHomepageLabel';
+    import DialogMessage from '$lib/components/DialogMessage.svelte';
     import DetailsHero from '$lib/components/DetailsHero.svelte';
     import MediaTypeLabel from '$lib/components/MediaTypeLabel.svelte';
     import notAvailable from '$lib/assets/not-available.png';
@@ -36,7 +37,7 @@
      *   error?: string | null
      * }} data - Geladene TV-Show-Daten.
      */
-    let {data} = $props();
+    let { data } = $props();
 
     let tvShow = $derived(data.tvShow ?? null);
     let error = $derived(data.error ?? null);
@@ -64,7 +65,7 @@
 </svelte:head>
 
 {#if error}
-    <DialogMessage message={error}/>
+    <DialogMessage message={error} />
 
 {:else if tvShow}
     <DetailsHero
