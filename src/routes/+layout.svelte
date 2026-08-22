@@ -4,12 +4,12 @@
 	import TypeHeadSearch from '$lib/components/TypeHeadSearch.svelte';
 	import FooterMain from '$lib/components/FooterMain.svelte';
 	import HeaderMain from '$lib/components/HeaderMain.svelte';
-	import {setI18nContext} from '$lib/i18n/context';
+	import { setI18nContext } from '$lib/i18n/context';
 	import '../css/app.scss';
 
-	let {children} = $props();
+	let { children } = $props();
 
-	const {titles} = setI18nContext();
+	const { titles } = setI18nContext();
 
 	const navItems = [
 		{
@@ -40,13 +40,13 @@
 </script>
 
 <svelte:head>
-	<link href={favicon} rel="icon"/>
+	<link href={favicon} rel="icon" />
 </svelte:head>
 
 <HeaderMain {navItems}>
-	<TypeHeadSearch/>
+	<TypeHeadSearch />
 </HeaderMain>
 
 {@render children()}
 
-<FooterMain/>
+<FooterMain />

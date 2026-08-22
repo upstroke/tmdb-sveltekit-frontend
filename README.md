@@ -34,7 +34,7 @@ Im Fokus stehen:
 - Svelte 5
 - Vite
 - Fomantic UI / Semantic UI Klassen
-- Playwright für Acceptance- bzw. End-to-End-Tests
+- Playwright für Acceptance-Tests
 - Vitest für Komponenten-, Integrations- und Unit-Tests
 - Prettier und ESLint für Formatierung und Codequalität
 - Sass für Styles
@@ -69,6 +69,25 @@ Einen eigenen API-Schlüssel kannst du in deinem TMDB-Konto anlegen:
 npm install
 npm run dev
 ```
+
+Alternativ können die wichtigsten Projektbefehle über `just` ausgeführt werden. Dafür muss `just` global installiert sein, zum Beispiel mit Homebrew:
+
+```bash
+brew install just
+```
+
+Das Projekt enthält dafür ein `justfile` im Projektstamm. Beispiele:
+
+```bash
+just dev
+just build
+just lint
+just format
+just test-vitest
+just test-e2e
+```
+
+Die `just`-Befehle sind Abkürzungen für die npm-Skripte aus `package.json`. Die eigentliche Befehlsdefinition bleibt daher in `package.json`; bei neuen oder geänderten npm-Skripten muss das `justfile` geprüft und gegebenenfalls ergänzt oder angepasst werden.
 
 ## Für einen Produktionsbuild
 
@@ -169,7 +188,7 @@ Die Teststruktur orientiert sich an Testarten und fachlicher Ebene, nicht an tec
 ### Testebenen
 
 - `tests/acceptance/`  
-  Acceptance- bzw. End-to-End-Tests mit Playwright für fachliche Nutzerflüsse
+  Acceptance-Tests mit Playwright für fachliche Nutzerflüsse
 
 - `tests/components/`  
   Komponententests mit Vitest für isolierte Svelte-Komponenten
@@ -265,7 +284,7 @@ Die wichtigsten `package.json`-Skripte:
 - `npm run lint` prüft Formatierung und ESLint-Regeln
 - `npm run format` formatiert die Quelldateien mit Prettier
 - `npm run lint:fix` formatiert und behebt Lint-Probleme automatisch
-- `npm run dev:e2e` startet die Anwendung auf festem Host und Port für Playwright
+- `npm run dev:acceptance` startet die Anwendung auf festem Host und Port für Playwright
 - `npm run test:acceptance` startet die Acceptance-Test-Suite
 - `npm run test:acceptance:ui` startet Playwright mit UI
 - `npm run test:vitest` führt alle Vitest-Tests aus
