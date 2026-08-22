@@ -1,8 +1,9 @@
 <script>
 	/**
-	 * Keine Props erforderlich.
+	 * Statische Footer-Komponente der Anwendung.
 	 *
-	 * Die Komponente rendert nur den festen Footer mit statischen Links.
+	 * Die Komponente erwartet keine Props und rendert feste rechtliche Hinweise
+	 * sowie einen externen Quellenlink.
 	 */
 </script>
 
