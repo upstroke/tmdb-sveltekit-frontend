@@ -1,96 +1,96 @@
 {
-  "locales": {
-    "de-DE": {
-      "labels": {
-        "certification": "Altersfreigabe",
-        "genre": "Genre",
-        "releaseDate": "Erscheinungsdatum"
-      },
-      "fallbacks": {
-        "notAvailable": "N/A"
-      }
-    },
-    "en-US": {
-      "labels": {
-        "certification": "Rating",
-        "genre": "Genre",
-        "releaseDate": "Release date"
-      },
-      "fallbacks": {
-        "notAvailable": "N/A"
-      }
-    }
-  },
-  "ratingSystems": {
-    "DE": {
-      "name": "FSK",
-      "ratings": {
-        "0": {
-          "label": "FSK 0",
-          "age": 0,
-          "color": "#ffffff",
-          "textColor": "#000000"
-        },
-        "6": {
-          "label": "FSK 6",
-          "age": 6,
-          "color": "#ffd500",
-          "textColor": "#000000"
-        },
-        "12": {
-          "label": "FSK 12",
-          "age": 12,
-          "color": "#4caf50",
-          "textColor": "#000000"
-        },
-        "16": {
-          "label": "FSK 16",
-          "age": 16,
-          "color": "#1976d2",
-          "textColor": "#ffffff"
-        },
-        "18": {
-          "label": "FSK 18",
-          "age": 18,
-          "color": "#d32f2f",
-          "textColor": "#ffffff"
-        }
-      }
-    },
-    "US": {
-      "name": "MPA",
-      "ratings": {
-        "G": {
-          "label": "G",
-          "description": "General Audiences",
-          "color": "#2e7d32",
-          "textColor": "#ffffff"
-        },
-        "PG": {
-          "label": "PG",
-          "description": "Parental Guidance Suggested",
-          "color": "#f9a825",
-          "textColor": "#000000"
-        },
-        "PG-13": {
-          "label": "PG-13",
-          "description": "Parents Strongly Cautioned",
-          "color": "#ef6c00",
-          "textColor": "#ffffff"
-        },
-        "R": {
-          "label": "R",
-          "description": "Restricted",
-          "color": "#c62828",
-          "textColor": "#ffffff"
-        },
-        "NC-17": {
-          "label": "NC-17",
-          "description": "Adults Only",
-          "color": "#6a1b9a",
-          "textColor": "#ffffff"
-        }
-      }
-    }
-  }
+	"locales": {
+		"de-DE": {
+			"labels": {
+				"certification": "Altersfreigabe",
+				"genre": "Genre",
+				"releaseDate": "Erscheinungsdatum"
+			},
+			"fallbacks": {
+				"notAvailable": "N/A"
+			}
+		},
+		"en-US": {
+			"labels": {
+				"certification": "Rating",
+				"genre": "Genre",
+				"releaseDate": "Release date"
+			},
+			"fallbacks": {
+				"notAvailable": "N/A"
+			}
+		}
+	},
+	"ratingSystems": {
+		"DE": {
+			"name": "FSK",
+			"ratings": {
+				"0": {
+					"label": "FSK 0",
+					"age": 0,
+					"color": "#ffffff",
+					"textColor": "#000000"
+				},
+				"6": {
+					"label": "FSK 6",
+					"age": 6,
+					"color": "#ffd500",
+					"textColor": "#000000"
+				},
+				"12": {
+					"label": "FSK 12",
+					"age": 12,
+					"color": "#4caf50",
+					"textColor": "#000000"
+				},
+				"16": {
+					"label": "FSK 16",
+					"age": 16,
+					"color": "#1976d2",
+					"textColor": "#ffffff"
+				},
+				"18": {
+					"label": "FSK 18",
+					"age": 18,
+					"color": "#d32f2f",
+					"textColor": "#ffffff"
+				}
+			}
+		},
+		"US": {
+			"name": "MPA",
+			"ratings": {
+				"G": {
+					"label": "G",
+					"description": "General Audiences",
+					"color": "#2e7d32",
+					"textColor": "#ffffff"
+				},
+				"PG": {
+					"label": "PG",
+					"description": "Parental Guidance Suggested",
+					"color": "#f9a825",
+					"textColor": "#000000"
+				},
+				"PG-13": {
+					"label": "PG-13",
+					"description": "Parents Strongly Cautioned",
+					"color": "#ef6c00",
+					"textColor": "#ffffff"
+				},
+				"R": {
+					"label": "R",
+					"description": "Restricted",
+					"color": "#c62828",
+					"textColor": "#ffffff"
+				},
+				"NC-17": {
+					"label": "NC-17",
+					"description": "Adults Only",
+					"color": "#6a1b9a",
+					"textColor": "#ffffff"
+				}
+			}
+		}
+	}
 }
