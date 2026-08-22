@@ -14,6 +14,12 @@
 		{ value: 'vi-VN', label: 'VI' }
 	];
 
+	/**
+	 * Aktualisiert die aktive Sprache, speichert sie im Locale-Store und lädt die aktuelle Route mit Locale-Parameter neu.
+	 *
+	 * @param {Event & { currentTarget: HTMLSelectElement }} event - Change-Event des Sprach-Selects.
+	 * @returns {Promise<void>} Wird abgeschlossen, sobald die Navigation mit aktualisierter Locale beendet ist.
+	 */
 	async function handleChange(event) {
 		const nextLocale = resolveLocale(event.currentTarget.value);
 		selectedLocale = nextLocale;
