@@ -4,14 +4,14 @@
 	import TypeHeadSearch from '$lib/components/TypeHeadSearch.svelte';
 	import FooterMain from '$lib/components/FooterMain.svelte';
 	import HeaderMain from '$lib/components/HeaderMain.svelte';
-	import { setI18nContext } from '$lib/i18n/context';
+	import { i18n } from '$lib/stores/i18n';
 	import '../css/app.scss';
 
 	let { children } = $props();
 
-	const { titles } = setI18nContext();
+	const { titles } = $derived($i18n);
 
-	const navItems = [
+	const navItems = $derived([
 		{
 			id: 'home',
 			label: titles.home,
@@ -36,7 +36,7 @@
 			storageKey: 'tv-shows-page',
 			active: (pathname) => pathname === '/tv-shows' || pathname.startsWith('/tv-shows/')
 		}
-	];
+	]);
 </script>
 
 <svelte:head>

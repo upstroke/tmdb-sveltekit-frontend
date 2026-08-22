@@ -12,12 +12,22 @@
 		},
 		"en-US": {
 			"labels": {
-				"certification": "Rating",
+				"certification": "Age Rating",
 				"genre": "Genre",
 				"releaseDate": "Release date"
 			},
 			"fallbacks": {
 				"notAvailable": "N/A"
+			}
+		},
+		"vi-VN": {
+			"labels": {
+				"certification": "Phân loại độ tuổi",
+				"genre": "Thể loại",
+				"releaseDate": "Ngày phát hành"
+			},
+			"fallbacks": {
+				"notAvailable": "Không có"
 			}
 		}
 	},
@@ -88,6 +98,53 @@
 					"label": "NC-17",
 					"description": "Adults Only",
 					"color": "#6a1b9a",
+					"textColor": "#ffffff"
+				}
+			}
+		},
+		"VN": {
+			"name": "Phân loại phim",
+			"ratings": {
+				"P": {
+					"label": "P",
+					"description": "Phổ biến đến mọi độ tuổi",
+					"age": 0,
+					"color": "#00AA4F",
+					"textColor": "#ffffff"
+				},
+				"K": {
+					"label": "K",
+					"description": "Dưới 13 tuổi xem cùng cha mẹ/giám hộ",
+					"age": 0,
+					"color": "#FFBB00",
+					"textColor": "#000000"
+				},
+				"T13": {
+					"label": "T13",
+					"description": "Phổ biến đến người xem từ đủ 13 tuổi trở lên",
+					"age": 13,
+					"color": "#E67E22",
+					"textColor": "#ffffff"
+				},
+				"T16": {
+					"label": "T16",
+					"description": "Phổ biến đến người xem từ đủ 16 tuổi trở lên",
+					"age": 16,
+					"color": "#0072BC",
+					"textColor": "#ffffff"
+				},
+				"T18": {
+					"label": "T18",
+					"description": "Phổ biến đến người xem từ đủ 18 tuổi trở lên",
+					"age": 18,
+					"color": "#DA251D",
+					"textColor": "#ffffff"
+				},
+				"C": {
+					"label": "C",
+					"description": "Phim không được phép phổ biến",
+					"age": 99,
+					"color": "#1A1A1A",
 					"textColor": "#ffffff"
 				}
 			}

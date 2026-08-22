@@ -1,10 +1,8 @@
 import { json } from '@sveltejs/kit';
-import { DEFAULT_LOCALE } from '$lib/i18n/config';
+import { resolveLocale } from '$lib/i18n/helpers';
 import { getLocaleText } from '$lib/i18n/resolver';
 import { TMDB_API_KEY } from '$env/static/private';
 import { TmdbAPI } from '$lib/services/tmdb-api.js';
-
-const { messages } = getLocaleText(DEFAULT_LOCALE);
 
 /**
  * Lädt eine weitere Seite mit Filmen.
@@ -16,6 +14,8 @@ const { messages } = getLocaleText(DEFAULT_LOCALE);
  * @returns {Promise<Response>} JSON-Antwort mit Karten, Seitennummer und Fehlerstatus.
  */
 export async function GET({ fetch, url }) {
+	const locale = resolveLocale(url.searchParams.get('locale'));
+	const { messages } = getLocaleText(locale);
 	const page = Math.max(1, Number(url.searchParams.get('page') ?? '1') || 1);
 
 	if (!TMDB_API_KEY) {
@@ -31,7 +31,7 @@ export async function GET({ fetch, url }) {
 	}
 
 	try {
-		const api = new TmdbAPI(fetch, TMDB_API_KEY);
+		const api = new TmdbAPI(fetch, TMDB_API_KEY, locale);
 
 		const movies = await api.getTrendingMovies(page);
 

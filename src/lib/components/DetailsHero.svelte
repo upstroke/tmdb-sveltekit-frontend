@@ -1,8 +1,8 @@
 <script>
 	import notAvailable from '$lib/assets/not-available.png';
-	import { getI18nContext } from '$lib/i18n/context';
+	import { i18n } from '$lib/stores/i18n';
 
-	const { fallbacks } = getI18nContext();
+	const { fallbacks } = $derived($i18n);
 
 	/**
 	 * Gemeinsamer Hero für Detailseiten.

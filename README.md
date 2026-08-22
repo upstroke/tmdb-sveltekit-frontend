@@ -2,7 +2,7 @@
 
 Ein SvelteKit-Frontend zum Durchsuchen von Filmen und Serien aus der TMDB-API.
 
-Die Anwendung bietet eine klare Katalogansicht für Medieninhalte mit Trending-Bereichen, paginierten Listen, Detailseiten, Suche sowie Fallback-Mechanismen für fehlende Daten.
+Die Anwendung bietet eine Katalogansicht für Medieninhalte mit Trending-Bereichen, paginierten Listen, Detailseiten, lokalisierter Typeahead-Suche und Fallback-Mechanismen für fehlende Daten.
 
 ## Ziel des Projekts
 
@@ -22,11 +22,34 @@ Im Fokus stehen:
 - getrennte Übersichtsseiten für Filme und Serien
 - Detailseiten mit Bild, Metadaten, Cast und Produktionsinformationen
 - Typeahead-Suche für Filme und Serien
+- lokalisierte Oberfläche mit Deutsch (`de-DE`), Englisch (`en-US`) und Vietnamesisch (`vi-VN`)
+- Sprachwechsel über den globalen Header
+- erneute Typeahead-Suche in der neu gewählten Sprache bei aktivem Suchbegriff
+- Suchtreffer verwenden beim Klick die aktuell aktive Locale, auch wenn die Treffer vor dem Sprachwechsel geladen wurden
+- Weitergabe der Locale über interne Navigation und serverseitige Datenabfragen
 - Wiederherstellung der zuletzt besuchten Seite in paginierten Listen
 - Duplikatbereinigung beim Nachladen von Daten
 - gemeinsame Fallback-Logik für fehlende Bilder und Texte
 - gemeinsamer Fehlerdialog für API- und Ladefehler
+- mobiles Menü mit Click-outside-Schließen
 - wiederverwendbare Komponenten für Karten, Suche, Pagination und Fehlerzustände
+
+## Internationalisierung
+
+Die Übersetzungskataloge liegen getrennt nach UI-Texten und Bewertungsformaten in:
+
+- `src/lib/i18n/ui.json`
+- `src/lib/i18n/ratings.json`
+
+Die Locale-Logik befindet sich in:
+
+- `src/lib/i18n/helpers.js` für unterstützte Locales und Fallbacks
+- `src/lib/stores/locale.js` für den aktiven Sprachzustand
+- `src/lib/stores/i18n.js` für den Zugriff auf die geladenen Übersetzungen
+
+Aktuell werden `de-DE`, `en-US` und `vi-VN` unterstützt. Die Locale wird als `locale`-Query-Parameter in der URL geführt, damit Seiten, API-Routen, Navigation und Suchanfragen dieselbe Sprache verwenden.
+
+Beim Sprachwechsel bleibt die aktuelle Route erhalten. Ist in der Typeahead-Suche ein Suchbegriff mit mindestens vier Zeichen vorhanden, werden die Ergebnisse automatisch mit der neuen Locale erneut geladen.
 
 ## Tech Stack
 
@@ -89,7 +112,7 @@ just test-e2e
 
 Die `just`-Befehle sind Abkürzungen für die npm-Skripte aus `package.json`. Die eigentliche Befehlsdefinition bleibt daher in `package.json`; bei neuen oder geänderten npm-Skripten muss das `justfile` geprüft und gegebenenfalls ergänzt oder angepasst werden.
 
-## Für einen Produktionsbuild
+## Produktionsbuild
 
 ```bash
 npm run build
@@ -103,7 +126,9 @@ src/
   routes/
   lib/
     components/
+    i18n/
     services/
+    stores/
     utils/
 
 static/
@@ -126,7 +151,9 @@ test-results/
 
 - `src/routes/` enthält Seiten und serverseitige Routen
 - `src/lib/components/` enthält wiederverwendbare UI-Komponenten
+- `src/lib/i18n/` enthält Übersetzungskataloge und Locale-Hilfslogik
 - `src/lib/services/` enthält Service-Logik für externe Datenquellen wie TMDB
+- `src/lib/stores/` enthält globale Zustände wie Locale und Übersetzungen
 - `src/lib/utils/` enthält Hilfsfunktionen für Formatierung, Paging und Duplikatbehandlung
 - `static/` enthält statische Assets
 - `tests/` enthält alle automatisierten Tests nach Testebene strukturiert
@@ -140,18 +167,20 @@ test-results/
 - Die Filmseite listet Film-Inhalte mit Pagination und Restore-Logik.
 - Die Serienseite listet Serien-Inhalte mit derselben Pagination-Logik.
 - Die Detailseiten zeigen Informationen zu Filmen und Serien inklusive Cast, Genres, Laufzeit und Produktionsfirmen.
-- Die Suchroute versorgt die Typeahead-Suche in der Hauptnavigation.
+- Die Suchroute versorgt die lokalisierte Typeahead-Suche in der Hauptnavigation.
+- Der `locale`-Query-Parameter wird an Seiten, API-Routen und Detailnavigation weitergegeben.
 
 ## Zentrale Komponenten
 
-- `HeaderMain` rendert die globale Navigation und erhält die Navigationslinks über die `navItems`-Prop.
+- `HeaderMain` rendert die globale Navigation, den mobilen Menüschalter und den Sprachumschalter.
+- `LanguageSwitcher` ändert die aktive Locale und lädt die aktuelle Route mit der neuen Sprache neu.
 - `FooterMain` stellt den globalen Footer als eigene Layout-Komponente bereit.
 - `DetailsHero` kapselt den gemeinsamen Hero-/Poster-Bereich der Film- und Serien-Detailseiten.
 - `CardDefault` rendert eine Standard-Medienkarte.
 - `CardFeatured` rendert eine hervorgehobene Medienkarte.
 - `DialogMessage` zeigt Fehler in konsistenter Form an.
 - `LoadMore` lädt weitere Einträge in paginierten Listen.
-- `TypeHeadSearch` stellt die Live-Suche bereit und wird im Header als Inhalt eingebunden.
+- `TypeHeadSearch` stellt die Live-Suche bereit, lokalisiert Suchergebnisse und startet die Suche nach einem Sprachwechsel erneut.
 
 Globale Styles werden über `src/css/app.scss` geladen. Diese Datei bindet Fomantic UI, globale Sass-Variablen und anwendungsweite Styles ein; komponentenspezifische Styles bleiben in den jeweiligen `.svelte`-Komponenten.
 
@@ -165,6 +194,7 @@ Fallback-Bilder und Platzhaltertexte werden innerhalb der Komponenten zentral be
 - `getMediaKey` erzeugt stabile Schlüssel für Medieneinträge
 - `deduplicateById` entfernt doppelte Objekte anhand ihrer ID
 - `formatDate` formatiert Datumswerte anhand der konfigurierten Locale
+- `resolveLocale` validiert Locales und fällt bei unbekannten Werten auf die Standardsprache zurück
 
 ## Fehlerbehandlung
 
@@ -180,6 +210,26 @@ Fallback-Bilder und Platzhaltertexte werden innerhalb der Komponenten zentral be
 - Die Restore-Logik lädt bei Bedarf weitere Seiten nach, bis der gespeicherte Zustand erreicht ist.
 - Doppelte Medieneinträge werden vor dem Rendern gefiltert.
 - Nach dem Nachladen wird zur ersten neu eingefügten Position gescrollt.
+
+## Mobiles Menü
+
+`HeaderMain` verwendet auf mobilen Ansichten eine Checkbox als Menüschalter. Ein `pointerdown`-Handler auf dem Window prüft, ob der Klick außerhalb des Headers stattfindet, und schließt ein geöffnetes Menü dann automatisch.
+
+Klicks auf Burger und Navigation bleiben innerhalb des Headers und werden deshalb nicht als Außenklick behandelt.
+
+## Qualitätssicherung
+
+Vor einem Commit sollten mindestens folgende Befehle erfolgreich durchlaufen:
+
+```bash
+npm run lint
+npm run build
+npm test
+```
+
+`npm run lint` prüft Prettier und ESLint für den gesamten `src`-Ordner. Die Regel `svelte/no-navigation-without-resolve` ist deaktiviert, weil das Projekt interne und externe URLs abhängig vom jeweiligen Ziel unterschiedlich behandelt.
+
+Bei Änderungen an Übersetzungen sollten alle unterstützten Locale-Kataloge auf identische Schlüssel geprüft werden.
 
 ## Teststrategie
 
@@ -217,130 +267,6 @@ Diese Ordner sind keine eigenen Testarten, sondern nur Hilfsstrukturen.
 Die Testabdeckung folgt möglichst nah der Praxis im agilen Entwicklungsalltag:
 
 1. Eine User Story oder ein Use Case beschreibt das gewünschte Verhalten.
-2. Akzeptanzkriterien und Checklisten konkretisieren die fachlichen Erwartungen.
-3. Acceptance-Tests prüfen den Nutzerfluss.
-4. Komponenten-, Integrations- und Unit-Tests sichern die technische Umsetzung gezielt ab.
-
-### Namenskonventionen
-
-#### Playwright
-
-Acceptance-Tests werden mit `*.spec.js` benannt.
-
-Beispiele:
-
-- `search-flow.spec.js`
-- `movie-details.spec.js`
-- `load-more-flow.spec.js`
-
-#### Vitest
-
-Komponenten-, Integrations- und Unit-Tests werden mit `*.test.js` benannt.
-
-Beispiele:
-
-- `LoadMore.test.js`
-- `tmdb-api.trending.test.js`
-- `formatDate.test.js`
-
-### Benennung von Testdateien
-
-- Komponenten: nach dem Namen der Komponente  
-  Beispiel: `LoadMore.test.js`
-
-- Services oder Integrationsbereiche: nach Fachbereich oder Verhalten  
-  Beispiel: `tmdb-api.search.test.js`
-
-- Acceptance-Tests: nach Nutzerfluss oder Story  
-  Beispiel: `search-flow.spec.js`
-
-### Benennung innerhalb der Tests
-
-- `describe()` benennt das getestete Objekt oder den fachlichen Bereich
-- `it()` beschreibt genau ein Verhalten
-- Testnamen sollen fachlich lesbar sein und nicht nur technische Details beschreiben
-
-Gute Beispiele:
-
-- `it('zeigt den Button an, wenn weitere Ergebnisse vorhanden sind')`
-- `it('deaktiviert den Button während eines laufenden Ladevorgangs')`
-- `it('liefert hasMore false auf der letzten Seite')`
-
-### Praktische Regeln
-
-- Eine Datei pro Komponente, Service-Bereich oder Nutzerfluss
-- Erst aufteilen, wenn eine Datei fachlich zu groß wird
-- Ein Test prüft genau ein Verhalten
-- Fixtures und Mocks dienen nur als Hilfsmittel, nicht als Strukturkriterium
-
-## Node.js-Skripte
-
-Die wichtigsten `package.json`-Skripte:
-
-- `npm run dev` startet den lokalen Entwicklungsserver
-- `npm run build` erstellt einen Produktionsbuild
-- `npm run preview` startet die lokale Produktionsvorschau
-- `npm run prepare` führt den SvelteKit-Sync-Schritt nach der Installation aus
-- `npm run lint` prüft Formatierung und ESLint-Regeln
-- `npm run format` formatiert die Quelldateien mit Prettier
-- `npm run lint:fix` formatiert und behebt Lint-Probleme automatisch
-- `npm run dev:acceptance` startet die Anwendung auf festem Host und Port für Playwright
-- `npm run test:acceptance` startet die Acceptance-Test-Suite
-- `npm run test:acceptance:ui` startet Playwright mit UI
-- `npm run test:vitest` führt alle Vitest-Tests aus
-- `npm run test:vitest:watch` startet Vitest im Watch-Modus
-- `npm run test:vitest:coverage` führt Vitest mit Coverage-Ausgabe aus
-- `npm run test` ist ein Alias für den Vitest-Lauf
-
-## Testausführung
-
-### Vitest
-
-Alle Vitest-Tests ausführen:
-
-```bash
-npm run test:vitest
-```
-
-Vitest im Watch-Modus:
-
-```bash
-npm run test:vitest:watch
-```
-
-Mit Coverage:
-
-```bash
-npm run test:vitest:coverage
-```
-
-### Playwright
-
-Acceptance-Tests ausführen:
-
-```bash
-npm run test:acceptance
-```
-
-Mit interaktiver Playwright-Oberfläche:
-
-```bash
-npm run test:acceptance:ui
-```
-
-## Entwicklungsprinzipien
-
-- Wiederverwendbare Komponenten statt duplizierter UI-Logik
-- Klare Trennung zwischen Darstellung, Hilfslogik und Datenzugriff
-- Robuste Behandlung fehlerhafter oder unvollständiger API-Daten
-- Fachlich lesbare Tests mit klarer Zuordnung zu Testebene und Use Case
-- Saubere und stabile Dateinamen für Komponenten, Services und Tests
-
-## Weiterentwicklung
-
-Sinnvolle nächste Ausbaustufen für das Projekt:
-
-- zusätzliche Acceptance-Tests für zentrale Nutzerflüsse
-- mehr Integrationstests für die TMDB-Service-Schicht
-- gezielte Unit-Tests für isolierte Utilities
-- Ausbau der README um Architektur- oder Deployment-Hinweise, falls das Projekt wächst
+2. Acceptance-Tests prüfen den vollständigen Nutzerfluss.
+3. Komponenten- und Integrationstests prüfen das Zusammenspiel der beteiligten Teile.
+4. Unit-Tests sichern reine Hilfsfunktionen und Randfälle ab.

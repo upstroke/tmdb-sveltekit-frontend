@@ -1,5 +1,5 @@
 <script>
-	import { getI18nContext } from '$lib/i18n/context';
+	import { i18n } from '$lib/stores/i18n';
 
 	/**
 	 * Erwartete Props für den "Mehr laden"-Button.
@@ -11,7 +11,7 @@
 
 	let { hasMore = false, loading = false, onload = null } = $props();
 
-	const { messages: texts } = getI18nContext();
+	const { messages: texts } = $derived($i18n);
 </script>
 
 {#if hasMore}

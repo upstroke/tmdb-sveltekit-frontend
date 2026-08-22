@@ -1,8 +1,8 @@
 <script>
 	import { browser } from '$app/environment';
-	import { getI18nContext } from '$lib/i18n/context';
+	import { i18n } from '$lib/stores/i18n';
 
-	const { messages } = getI18nContext();
+	const { messages } = $derived($i18n);
 
 	/**
 	 * Wiederverwendbarer nativer Dialog für Fehlermeldungen.

@@ -25,7 +25,10 @@
 				"crew": "Crew",
 				"job": "Aufgabe",
 				"certification": "Altersfreigabe",
-				"searchInput": "Suchen"
+				"searchInput": "Suchen",
+				"languageSelect": "Sprache auswählen",
+				"navigationToggle": "Navigation öffnen oder schließen",
+				"mainNavigation": "Hauptnavigation"
 			},
 			"messages": {
 				"loadMoreError": "Weitere Inhalte konnten nicht geladen werden.",
@@ -102,7 +105,10 @@
 				"crew": "Crew",
 				"job": "Job",
 				"certification": "Certification",
-				"searchInput": "Search"
+				"searchInput": "Search",
+				"languageSelect": "Select language",
+				"navigationToggle": "Open or close navigation",
+				"mainNavigation": "Main navigation"
 			},
 			"messages": {
 				"loadMoreError": "More content could not be loaded.",
@@ -151,6 +157,85 @@
 			},
 			"buttons": {
 				"watchTrailer": "Watch trailer"
+			}
+		},
+		"vi-VN": {
+			"fallbacks": {
+				"notAvailable": "Không có"
+			},
+			"labels": {
+				"rating": "Đánh giá",
+				"genre": "Thể loại",
+				"genres": "Thể loại",
+				"releaseDate": "Ngày phát hành",
+				"productionCompanies": "Công ty sản xuất",
+				"moreInfo": "Thông tin chi tiết",
+				"officialWebsite": "Trang web chính thức",
+				"firstAirDate": "Ngày phát sóng đầu tiên",
+				"mediaType": "Loại phương tiện",
+				"overview": "Tổng quan",
+				"homepage": "Trang chủ",
+				"trailer": "Trailer",
+				"production": "Sản xuất",
+				"runtime": "Thời lượng",
+				"cast": "Diễn viên",
+				"actor": "Diễn viên",
+				"role": "Vai diễn",
+				"crew": "Đoàn làm phim",
+				"job": "Công việc",
+				"certification": "Phân loại độ tuổi",
+				"searchInput": "Tìm kiếm",
+				"languageSelect": "Chọn ngôn ngữ",
+				"navigationToggle": "Mở hoặc đóng điều hướng",
+				"mainNavigation": "Điều hướng chính"
+			},
+			"messages": {
+				"loadMoreError": "Không thể tải thêm nội dung.",
+				"unknownError": "Lỗi không xác định",
+				"pageSaveWarning": "Không thể lưu trạng thái trang:",
+				"loadTimeout": "Thời gian tải quá lâu.",
+				"noTvShows": "Không tìm thấy chương trình truyền hình nào.",
+				"noGenres": "Không có thể loại nào.",
+				"noRole": "Không có thông tin về vai diễn.",
+				"noCast": "Không có dữ liệu về diễn viên.",
+				"noCrew": "Không có dữ liệu về đoàn làm phim.",
+				"noJob": "Không có thông tin về công việc.",
+				"searchLoading": "Đang tìm kiếm …",
+				"searchError": "Không thể tải kết quả tìm kiếm.",
+				"searchNoResults": "Không tìm thấy kết quả.",
+				"noContent": "Không tìm thấy nội dung.",
+				"apiKeyMissing": "Thiếu TMDB_API_KEY",
+				"contentLoadError": "Không thể tải nội dung",
+				"moviesLoadError": "Không thể tải danh sách phim",
+				"movieLoadError": "Không thể tải thông tin phim",
+				"moreMoviesLoadError": "Không thể tải thêm phim.",
+				"tvShowsLoadError": "Không thể tải chương trình truyền hình",
+				"tvShowLoadError": "Không thể tải thông tin chương trình truyền hình",
+				"moreTvShowsLoadError": "Không thể tải thêm chương trình truyền hình.",
+				"searchHint": "Nhập ít nhất bốn ký tự để hiển thị kết quả tìm kiếm phim và chương trình truyền hình.",
+				"searchResults": "Kết quả tìm kiếm",
+				"loadMore": "Xem thêm kết quả",
+				"dialogErrorTitle": "Lỗi khi tải",
+				"dialogOk": "OK",
+				"loadMoreLoading": "Đang tải thêm kết quả …"
+			},
+			"formats": {
+				"outOfTen": "trên 10",
+				"minutes": "phút",
+				"detailsSuffix": "Chi tiết"
+			},
+			"titles": {
+				"home": "Trang chủ",
+				"movies": "Phim",
+				"movieDetails": "Chi tiết phim",
+				"tvShowDetails": "Chi tiết chương trình truyền hình",
+				"tvShows": "Chương trình truyền hình",
+				"topRatedProductions": "Tác phẩm được đánh giá cao nhất",
+				"featuredToday": "Nổi bật hôm nay",
+				"trendingToday": "Xu hướng hôm nay"
+			},
+			"buttons": {
+				"watchTrailer": "Xem trailer"
 			}
 		}
 	}

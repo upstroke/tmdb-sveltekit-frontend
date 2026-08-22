@@ -1,18 +1,19 @@
 <script>
 	import { browser } from '$app/environment';
+	import { page } from '$app/state';
+	import { resolveLocale } from '$lib/i18n/helpers';
+	import { i18n } from '$lib/stores/i18n';
 
 	import CardDefault from '$lib/components/CardDefault.svelte';
 	import CardFeatured from '$lib/components/CardFeatured.svelte';
 	import LoadMore from '$lib/components/LoadMore.svelte';
 	import DialogMessage from '$lib/components/DialogMessage.svelte';
-	import { getI18nContext } from '$lib/i18n/context';
-
-	import { deduplicateMedia, getMediaKey } from '$lib/utils/deduplicateMedia';
 	import { restorePagedList } from '$lib/utils/pageStateRestore';
+	import { deduplicateMedia, getMediaKey } from '$lib/utils/deduplicateMedia';
 
-	const { titles, messages } = getI18nContext();
-
-	const STORAGE_KEY = 'tv-shows-page';
+	const { titles, messages } = $derived($i18n);
+	const activeLocale = $derived(resolveLocale(page.url.searchParams.get('locale')));
+	const storageKey = $derived(`tv-shows-page-${activeLocale}`);
 
 	/**
 	 * Erwartete Props für die Seite.
@@ -48,10 +49,11 @@
 	 * @type {{ data: PageData }}
 	 */
 	let { data } = $props();
+	let previousData;
 
 	let featured = $state(null);
 	let cards = $state([]);
-	let page = $state(1);
+	let currentPage = $state(1);
 	let hasMore = $state(false);
 	let error = $state(null);
 	let loading = $state(false);
@@ -69,26 +71,42 @@
 	 * einer sichtbaren Meldung.
 	 */
 	$effect(() => {
+		if (data === previousData) {
+			return;
+		}
+
+		previousData = data;
+		initialized = false;
+		featured = null;
+		cards = [];
+		currentPage = 1;
+		hasMore = false;
+		error = data.error ?? null;
+	});
+
+	$effect(() => {
 		if (initialized) {
 			return;
 		}
 
 		initialized = true;
-		error = data.error ?? null;
 
 		(async () => {
 			loading = true;
 
 			try {
 				const restored = await restorePagedList({
-					storageKey: STORAGE_KEY,
+					storageKey: storageKey,
 					initialData: data,
 					fetchPageData: async (pageNumber) => {
-						const response = await fetch(`/tv-shows?page=${pageNumber}`, {
-							headers: {
-								accept: 'application/json'
+						const response = await fetch(
+							`/tv-shows?page=${pageNumber}&locale=${encodeURIComponent(activeLocale)}`,
+							{
+								headers: {
+									accept: 'application/json'
+								}
 							}
-						});
+						);
 
 						if (!response.ok) {
 							throw new Error(messages.loadMoreError);
@@ -100,7 +118,7 @@
 
 				featured = restored.featured;
 				cards = restored.cards;
-				page = restored.page;
+				currentPage = restored.page;
 				hasMore = restored.hasMore;
 			} catch (restoreError) {
 				error = restoreError instanceof Error ? restoreError.message : messages.unknownError;
@@ -164,7 +182,7 @@
 		}
 
 		try {
-			sessionStorage.setItem(STORAGE_KEY, String(value));
+			sessionStorage.setItem(storageKey, String(value));
 		} catch (storageError) {
 			console.warn(messages.pageSaveWarning, storageError);
 		}
@@ -203,14 +221,17 @@
 		}, 15000);
 
 		try {
-			const nextPage = page + 1;
+			const nextPage = currentPage + 1;
 
-			const response = await fetch(`/tv-shows?page=${nextPage}`, {
-				headers: {
-					accept: 'application/json'
-				},
-				signal: controller.signal
-			});
+			const response = await fetch(
+				`/tv-shows?page=${nextPage}&locale=${encodeURIComponent(activeLocale)}`,
+				{
+					headers: {
+						accept: 'application/json'
+					},
+					signal: controller.signal
+				}
+			);
 
 			if (!response.ok) {
 				error = messages.loadMoreError;
@@ -227,17 +248,17 @@
 
 			if (newCards.length === 0) {
 				hasMore = false;
-				savePage(page);
+				savePage(currentPage);
 				return;
 			}
 
 			const previousCardsCount = cards.length;
 
 			cards = [...cards, ...newCards];
-			page = result.page ?? nextPage;
+			currentPage = result.page ?? nextPage;
 			hasMore = result.hasMore === true;
 
-			savePage(page);
+			savePage(currentPage);
 			markScrollTarget(previousCardsCount);
 		} catch (exception) {
 			if (exception.name === 'AbortError') {

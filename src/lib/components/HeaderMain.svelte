@@ -1,6 +1,8 @@
 <script>
 	import { browser } from '$app/environment';
 	import { page } from '$app/state';
+	import LanguageSwitcher from '$lib/components/LanguageSwitcher.svelte';
+	import { i18n } from '$lib/stores/i18n';
 
 	/**
 	 * Navigationslinks für den globalen Header.
@@ -15,6 +17,14 @@
 	 * }>} navItems
 	 */
 	let { navItems = [], children } = $props();
+	const { labels } = $derived($i18n);
+	let menuToggle;
+
+	function handleWindowPointerdown(event) {
+		if (menuToggle?.checked && !event.target.closest('#menuHeader')) {
+			menuToggle.checked = false;
+		}
+	}
 
 	function getStoredPage(key) {
 		if (!browser) {
@@ -24,7 +34,7 @@
 		try {
 			return Math.max(1, Number(sessionStorage.getItem(key) ?? '1') || 1);
 		} catch (error) {
-			console.warn(`Gespeicherte Seite für ${key} konnte nicht gelesen werden:`, error);
+			console.warn(`saved page fo ${key} could not be written:`, error);
 
 			return 1;
 		}
@@ -32,13 +42,24 @@
 
 	function getNavHref(path, storageKey) {
 		const storedPage = getStoredPage(storageKey);
+		const query = page.url.search
+			.slice(1)
+			.split('&')
+			.filter((entry) => entry && !entry.startsWith('page='));
 
-		return storedPage <= 1 ? path : `${path}?page=${storedPage}`;
+		if (storedPage > 1) {
+			query.push(`page=${encodeURIComponent(storedPage)}`);
+		}
+
+		const search = query.join('&');
+		return search ? `${path}?${search}` : path;
 	}
 </script>
 
+<svelte:window onpointerdown={handleWindowPointerdown} />
+
 <header class="header" id="menuHeader">
-	<input type="checkbox" id="menu-toggle" class="menu-toggle" />
+	<input bind:this={menuToggle} type="checkbox" id="menu-toggle" class="menu-toggle" />
 
 	<label for="menu-toggle" class="burger-icon" aria-label="Navigation öffnen oder schließen">
 		<span></span>
@@ -47,13 +68,14 @@
 	</label>
 
 	<div class="nav-wrapper">
-		<nav class="nav-menu" aria-label="Hauptnavigation">
+		<nav class="nav-menu" aria-label={labels.mainNavigation}>
 			<ul class="nav-list">
 				{#each navItems as item (item.id)}
 					<li class="nav-item" id={item.id}>
 						<a
 							class:link-active={item.active(page.url.pathname)}
 							href={getNavHref(item.path, item.storageKey)}
+							data-sveltekit-reload
 							aria-current={item.active(page.url.pathname) ? 'page' : undefined}
 						>
 							<i class={`${item.icon} icon`} aria-hidden="true"></i>
@@ -66,8 +88,8 @@
 
 		<!-- typehead-search -->
 		{@render children?.()}
+		<LanguageSwitcher />
 	</div>
-
 </header>
 
 <style lang="scss">
@@ -129,7 +151,6 @@
 	}
 
 	.nav-item a:hover,
-	.nav-item a:focus-visible,
 	.nav-item a.link-active {
 		background: rgba(255, 255, 255, 0.15);
 	}
@@ -157,7 +178,9 @@
 			border-radius: 2px;
 			background: #fff;
 			transform-origin: center;
-			transition: transform 220ms cubic-bezier(0.16, 1, 0.3, 1), opacity 220ms cubic-bezier(0.16, 1, 0.3, 1);
+			transition:
+				transform 220ms cubic-bezier(0.16, 1, 0.3, 1),
+				opacity 220ms cubic-bezier(0.16, 1, 0.3, 1);
 		}
 
 		.burger-icon span:nth-child(1) {
@@ -235,6 +258,5 @@
 		.nav-item:first-child a {
 			box-shadow: inset 0 8px 14px rgba(0, 0, 0, 0.28);
 		}
-
 	}
 </style>
