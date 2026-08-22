@@ -5,7 +5,7 @@
 	import DetailsHero from '$lib/components/DetailsHero.svelte';
 	import MediaTypeLabel from '$lib/components/MediaTypeLabel.svelte';
 	import notAvailable from '$lib/assets/not-available.png';
-	import { getI18nContext } from '$lib/i18n/context';
+	import { i18n } from '$lib/stores/i18n';
 
 	/**
 	 * Erwartete Props für die Detailseite.
@@ -32,7 +32,7 @@
 	 */
 	let { data } = $props();
 
-	const { buttons, fallbacks, formats, labels, messages, titles } = getI18nContext();
+	const { buttons, fallbacks, formats, labels, messages, titles } = $derived($i18n);
 
 	let movie = $derived(data.movie ?? null);
 	let error = $derived(data.error ?? null);

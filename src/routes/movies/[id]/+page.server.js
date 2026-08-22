@@ -1,9 +1,7 @@
 import { TMDB_API_KEY } from '$env/static/private';
-import { DEFAULT_LOCALE } from '$lib/i18n/config';
+import { resolveLocale } from '$lib/i18n/helpers';
 import { getLocaleText } from '$lib/i18n/resolver';
 import { TmdbAPI } from '$lib/services/tmdb-api.js';
-
-const { messages } = getLocaleText(DEFAULT_LOCALE);
 
 /**
  * Lädt die Serverdaten für eine Film-Detailseite.
@@ -16,7 +14,9 @@ const { messages } = getLocaleText(DEFAULT_LOCALE);
  * @param {{ fetch: Function, params: { id: string } }} event - SvelteKit-Load-Kontext.
  * @returns {Promise<{ movie: Record<string, unknown> | null, error: string | null }>} Filmobjekt für die Detailseite.
  */
-export async function load({ fetch, params }) {
+export async function load({ fetch, params, url }) {
+	const locale = resolveLocale(url.searchParams.get('locale'));
+	const { messages } = getLocaleText(locale);
 	if (!TMDB_API_KEY) {
 		return {
 			movie: null,
@@ -25,7 +25,7 @@ export async function load({ fetch, params }) {
 	}
 
 	try {
-		const api = new TmdbAPI(fetch, TMDB_API_KEY);
+		const api = new TmdbAPI(fetch, TMDB_API_KEY, locale);
 
 		const details = await api.getDetails('movie', params.id);
 

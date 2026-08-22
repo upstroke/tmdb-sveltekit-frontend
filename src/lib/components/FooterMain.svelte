@@ -10,8 +10,8 @@
 	<footer class="ui bottom fixed inverted menu">
 		<div class="ui inverted segment">
 			<div class="ui inverted secondary text menu">
-				<a class="item" href="#">Conditions of Use</a>
-				<a class="item" href="#">Privacy Policy</a>
+				<span class="item">Conditions of Use</span>
+				<span class="item">Privacy Policy</span>
 				<a class="item" href="https://www.imdb.com/" rel="noopener noreferrer" target="_blank"
 					>Content: © by IMDb.com, Inc.</a
 				>

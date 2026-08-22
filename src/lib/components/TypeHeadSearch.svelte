@@ -1,11 +1,14 @@
 <script>
 	import { resolve } from '$app/paths';
 	import { goto } from '$app/navigation';
+	import { page } from '$app/state';
 	import { deduplicateById } from '$lib/utils/deduplicateById';
 	import notAvailable from '$lib/assets/not-available.png';
-	import { getI18nContext } from '$lib/i18n/context';
+	import { i18n } from '$lib/stores/i18n';
+	import { resolveLocale } from '$lib/i18n/helpers';
 
-	const { labels: texts, messages, titles, formats } = getI18nContext();
+	const { labels: texts, messages, titles, formats } = $derived($i18n);
+	const activeLocale = $derived(resolveLocale(page.url.searchParams.get('locale')));
 
 	/**
 	 * Stellt die Typeahead-Suche im Header für Filme und TV-Serien bereit.
@@ -43,6 +46,20 @@
 
 	let debounceTimer;
 	let controller;
+	let previousLocale = $state(activeLocale);
+
+	$effect(() => {
+		if (activeLocale === previousLocale) {
+			return;
+		}
+
+		previousLocale = activeLocale;
+		const term = query.trim();
+
+		if (term.length >= 4) {
+			void search(term);
+		}
+	});
 
 	/**
 	 * Formatiert einen Bewertungswert mit einer Nachkommastelle.
@@ -77,11 +94,21 @@
 	const searchHintId = 'typeahead-search-hint';
 
 	/**
-	 * Ermittelt die Zielroute für einen Suchtreffer anhand seines Medientyps.
+	 * Ergänzt eine interne Route um die aktuell aktive Locale.
 	 *
-	 * @param {{ id: number | string, mediaType: 'movie' | 'tv' }} item - Normalisierter Suchtreffer.
-	 * @returns {string} Aufgelöste interne Route zur Detailseite.
+	 * @param {string} href - Interne Zielroute ohne oder mit bestehenden Query-Parametern.
+	 * @returns {string} Zielroute inklusive aktiver Locale.
 	 */
+	function withLocale(href) {
+		if (!href) {
+			return href;
+		}
+
+		const url = new URL(href, page.url.origin);
+		url.searchParams.set('locale', activeLocale);
+		return `${url.pathname}${url.search}${url.hash}`;
+	}
+
 	function resultHref(item) {
 		if (item.mediaType === 'movie') {
 			return resolve('/movies/[id]', {
@@ -143,9 +170,12 @@
 		error = null;
 
 		try {
-			const response = await fetch(`/search?q=${encodeURIComponent(term)}`, {
-				signal: controller.signal
-			});
+			const response = await fetch(
+				`/search?q=${encodeURIComponent(term)}&locale=${encodeURIComponent(activeLocale)}`,
+				{
+					signal: controller.signal
+				}
+			);
 
 			if (!response.ok) {
 				error = messages.searchError;
@@ -228,7 +258,7 @@
 		event.preventDefault();
 		event.stopPropagation();
 
-		const href = resultHref(item);
+		const href = withLocale(resultHref(item));
 		closeResults();
 		goto(href);
 	}
@@ -285,7 +315,7 @@
 									<li>
 										<a
 											class="result"
-											href={resultHref(item)}
+											href={withLocale(resultHref(item))}
 											onclick={(e) => handleLinkClick(e, item)}
 										>
 											<figure class="image" aria-hidden="true">
@@ -321,7 +351,7 @@
 									<li>
 										<a
 											class="result"
-											href={resultHref(item)}
+											href={withLocale(resultHref(item))}
 											onclick={(e) => handleLinkClick(e, item)}
 										>
 											<figure class="image" aria-hidden="true">
@@ -373,10 +403,10 @@
 			margin-left: 0;
 
 			> .results {
-				position: absolute;
+				position: fixed;
 				z-index: 1000;
-				top: calc(100% + var(--search-dropdown-gap));
-				right: 0;
+				top: var(--header-height);
+				right: 2%;
 				left: auto;
 				display: block;
 				width: min(var(--search-dropdown-width), calc(100vw - 2rem));
@@ -538,6 +568,11 @@
 				border: none;
 				border-radius: 0;
 				box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+
+				flex: 1;
+				margin-left: auto;
+				justify-content: flex-end;
+				display: flex;
 			}
 		}
 	}

@@ -1,11 +1,12 @@
 <script>
 	import { resolve } from '$app/paths';
+	import { page } from '$app/state';
 	import MediaTypeLabel from '$lib/components/MediaTypeLabel.svelte';
 	import notAvailable from '$lib/assets/not-available.png';
-	import { getI18nContext } from '$lib/i18n/context';
+	import { i18n } from '$lib/stores/i18n';
 	import { getCertificationMeta } from '$lib/utils/certificationMeta';
 
-	const { labels, formats, fallbacks } = getI18nContext();
+	const { labels, formats, fallbacks } = $derived($i18n);
 
 	/**
 	 * Erwartete Props für die Standard-Karte.
@@ -34,17 +35,21 @@
 
 	let normalizedType = $derived(mediaType === 'movie' ? 'movie' : mediaType === 'tv' ? 'tv' : null);
 
-	let detailsHref = $derived(
-		normalizedType === 'movie'
-			? resolve('/movies/[id]', {
-					id: String(id)
-				})
-			: normalizedType === 'tv'
-				? resolve('/tv-shows/[id]', {
-						id: String(id)
-					})
-				: undefined
-	);
+	let detailsHref = $derived.by(() => {
+		let href;
+
+		if (normalizedType === 'movie') {
+			href = resolve('/movies/[id]', { id: String(id) });
+		} else if (normalizedType === 'tv') {
+			href = resolve('/tv-shows/[id]', { id: String(id) });
+		} else {
+			return undefined;
+		}
+
+		const url = new URL(href, page.url.origin);
+		url.searchParams.set('locale', page.url.searchParams.get('locale') ?? 'de-DE');
+		return `${url.pathname}${url.search}${url.hash}`;
+	});
 
 	let genreText = $derived((genres ?? []).map((genre) => genre.name).join(' / '));
 	let notAvailableText = $derived(fallbacks.notAvailable);

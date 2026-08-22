@@ -1,5 +1,5 @@
 import { TMDB_API_KEY } from '$env/static/private';
-import { DEFAULT_LOCALE } from '$lib/i18n/config';
+import { resolveLocale } from '$lib/i18n/helpers';
 import { getLocaleText } from '$lib/i18n/resolver';
 import { TmdbAPI } from '$lib/services/tmdb-api.js';
 
@@ -28,9 +28,9 @@ import { TmdbAPI } from '$lib/services/tmdb-api.js';
  *   error: string | null
  * }>} Geladene Seiten- und Karten-Daten.
  */
-const { messages } = getLocaleText(DEFAULT_LOCALE);
-
 export async function load({ fetch, url }) {
+	const locale = resolveLocale(url.searchParams.get('locale'));
+	const { messages } = getLocaleText(locale);
 	const lastPage = Math.max(1, Number(url.searchParams.get('page') ?? '1') || 1);
 
 	if (!TMDB_API_KEY) {
@@ -43,7 +43,7 @@ export async function load({ fetch, url }) {
 		};
 	}
 
-	const api = new TmdbAPI(fetch, TMDB_API_KEY);
+	const api = new TmdbAPI(fetch, TMDB_API_KEY, locale);
 
 	try {
 		const pages = await Promise.all(
