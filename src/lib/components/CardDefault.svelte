@@ -8,19 +8,6 @@
 
 	const { labels, formats, fallbacks } = $derived($i18n);
 
-	/**
-	 * Erwartete Props für die Standard-Karte.
-	 *
-	 * @param {number|string} id - ID des Mediums.
-	 * @param {'movie'|'tv'|string} mediaType - Medientyp der Karte.
-	 * @param {string} title - Titel des Mediums.
-	 * @param {string} [date=''] - Anzeige-Datum des Mediums.
-	 * @param {number} [rating=0] - Bewertung des Mediums.
-	 * @param {string} [certification=''] - Lokale Altersfreigabe.
-	 * @param {Array<{id: number|string, name: string}>} [genres=[]] - Liste der Genres.
-	 * @param {string} [imageUrl=''] - URL des Vorschaubilds.
-	 * @param {string} [scrollId=''] - Optionale DOM-ID für das Karten-Element.
-	 */
 	let {
 		id,
 		mediaType,
@@ -30,11 +17,11 @@
 		certification = '',
 		genres = [],
 		imageUrl = '',
-		scrollId = ''
+		scrollId = '',
+		isLoading = false
 	} = $props();
 
 	let normalizedType = $derived(mediaType === 'movie' ? 'movie' : mediaType === 'tv' ? 'tv' : null);
-
 	let detailsHref = $derived.by(() => {
 		let href;
 
@@ -61,12 +48,57 @@
 	);
 	let certificationMeta = $derived(getCertificationMeta(certification));
 	let hasGenres = $derived(Boolean(genreText));
+	let imageLoaded = $state(false);
+	let imageErrored = $state(false);
+	let imageKey = $derived(cardImageUrl);
+
+	$effect(() => {
+		imageKey;
+		imageLoaded = false;
+		imageErrored = false;
+	});
 </script>
 
 {#if detailsHref}
-	<a id={scrollId || undefined} class="ui card default-card" href={detailsHref}>
+	<a
+		id={scrollId || undefined}
+		class="ui card default-card {isLoading ? 'is-loading' : ''} {imageLoaded
+			? 'image-loaded'
+			: ''} {imageErrored ? 'image-error' : ''}"
+		href={detailsHref}
+	>
 		<figure class="image">
-			<img src={cardImageUrl} alt={`Poster von ${cardTitle}`} />
+			<div
+				class="image-stage {(!imageLoaded || isLoading) && !imageErrored
+					? 'is-loading'
+					: ''} {imageLoaded && !imageErrored ? 'is-ready' : ''}"
+				style="--image-delay: var(--stagger-delay, 0ms)"
+			>
+				<!-- Reads the per-card stagger offset from the parent `each` block. -->
+				<!-- When no parent delay is provided, the loading state starts immediately. -->
+				{#if !imageErrored}
+					<img
+						src={cardImageUrl}
+						alt={`Poster von ${cardTitle}`}
+						onload={(event) => {
+							const img = event.currentTarget;
+							if (img.complete && img.naturalWidth > 0) {
+								requestAnimationFrame(() => {
+									imageLoaded = true;
+								});
+							} else {
+								imageLoaded = true;
+							}
+						}}
+						onerror={(event) => {
+							const img = event.currentTarget;
+							img.style.display = 'none';
+							imageErrored = true;
+							imageLoaded = false;
+						}}
+					/>
+				{/if}
+			</div>
 
 			<MediaTypeLabel mediaType={normalizedType} class="top right attached" />
 		</figure>
@@ -130,11 +162,101 @@
 {/if}
 
 <style lang="scss">
-	.default-card figure.image {
-		margin: 0;
+	@use '../../css/mixins' as mixins;
+
+	@keyframes shimmer {
+		0% {
+			transform: translateX(-120%);
+		}
+
+		100% {
+			transform: translateX(120%);
+		}
 	}
 
-	a.default-card[id] {
-		scroll-padding-top: calc(var(--header-height) + 2rem);
+	.default-card {
+		position: relative;
+		overflow: hidden;
+		transition:
+			transform 180ms ease,
+			box-shadow 180ms ease;
+
+		&:hover {
+			transform: translateY(-2px);
+		}
+
+		.image-stage {
+			position: relative;
+			display: block;
+			aspect-ratio: 2 / 3;
+			overflow: hidden;
+			background: linear-gradient(
+				90deg,
+				color-mix(in oklch, var(--color-surface-offset) 72%, white) 0%,
+				color-mix(in oklch, var(--color-surface-offset) 88%, white) 38%,
+				color-mix(in oklch, var(--color-surface-dynamic) 72%, white) 50%,
+				color-mix(in oklch, var(--color-surface-offset) 88%, white) 62%,
+				color-mix(in oklch, var(--color-surface-offset) 72%, white) 100%
+			);
+			background-size: 220% 100%;
+
+			&::before {
+				content: '';
+				position: absolute;
+				inset: 0;
+				background: linear-gradient(
+					90deg,
+					transparent 0%,
+					color-mix(in oklch, white 62%, transparent) 48%,
+					transparent 100%
+				);
+				animation: shimmer 1.5s ease-in-out infinite;
+				animation-delay: var(--image-delay, 0ms);
+				filter: blur(0px);
+				pointer-events: none;
+			}
+
+			img {
+				display: block;
+				width: 100%;
+				height: 100%;
+				object-fit: cover;
+				opacity: 0;
+				transition: opacity 180ms ease;
+			}
+
+			&.is-ready {
+				background: none;
+
+				&::before {
+					opacity: 0;
+					animation: none;
+				}
+
+				img {
+					opacity: 1;
+				}
+			}
+
+			&.is-loading {
+				img {
+					opacity: 0;
+				}
+			}
+		}
+
+		&.image-error {
+			.image-stage {
+				background: linear-gradient(
+					135deg,
+					color-mix(in oklch, var(--color-surface-offset) 78%, white),
+					color-mix(in oklch, var(--color-surface-dynamic) 80%, white)
+				);
+
+				img {
+					opacity: 0;
+				}
+			}
+		}
 	}
 </style>
