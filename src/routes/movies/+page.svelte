@@ -296,7 +296,9 @@
 	{#if cards.length > 0}
 		<ul class="ui four doubling cards media-card-list">
 			{#each cards as item, index (`page-movies-${item.mediaType}-${item.id}`)}
-				<li>
+				<li style={`--stagger-delay: ${index * 90}ms`}>
+					<!-- Staggers the card loading pulse so the grid reveals itself with slight variation. -->
+					<!-- CardDefault consumes this as `--stagger-delay` for the loading state. -->
 					<CardDefault {...item} scrollId={`movie-card-${index + 1}`} />
 				</li>
 			{/each}

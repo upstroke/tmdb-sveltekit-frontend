@@ -32,6 +32,7 @@
 <style lang="scss">
 	.ui.label.blue,
 	.ui.label.teal {
+		z-index: 1;
 		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
 	}
 </style>

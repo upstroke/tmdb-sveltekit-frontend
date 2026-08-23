@@ -49,11 +49,14 @@
 
 	let featured = $state(null);
 	let cards = $state([]);
+	let previousCards = $state([]);
 	let currentPage = $state(1);
 	let hasMore = $state(false);
 	let error = $state(null);
 	let loading = $state(false);
+	let restoringCards = $state(false);
 	let initialized = $state(false);
+	let showLoadingCards = $state(true);
 
 	let scrollTargetId = $state(null);
 	let observer = null;
@@ -73,11 +76,14 @@
 
 		previousData = data;
 		initialized = false;
+		previousCards = cards;
 		featured = null;
 		cards = [];
 		currentPage = 1;
 		hasMore = false;
 		error = data.error ?? null;
+		restoringCards = previousCards.length > 0;
+		showLoadingCards = true;
 	});
 
 	$effect(() => {
@@ -89,6 +95,7 @@
 
 		(async () => {
 			loading = true;
+			restoringCards = previousCards.length > 0;
 
 			try {
 				const restored = await restorePagedList({
@@ -114,12 +121,15 @@
 
 				featured = restored.featured;
 				cards = restored.cards;
+				previousCards = restored.cards;
 				currentPage = restored.page;
 				hasMore = restored.hasMore;
 			} catch (restoreError) {
 				error = restoreError instanceof Error ? restoreError.message : messages.unknownError;
 			} finally {
+				restoringCards = false;
 				loading = false;
+				showLoadingCards = false;
 			}
 		})();
 	});
@@ -293,8 +303,10 @@
 	{#if cards.length > 0}
 		<ul class="ui four doubling cards media-card-list">
 			{#each cards as item, index (`page-home-${item.mediaType}-${item.id}`)}
-				<li>
-					<CardDefault {...item} scrollId={`home-card-${index + 1}`} />
+				<li style={`--stagger-delay: ${index * 90}ms`}>
+					<!-- Staggers the loading shimmer per card so the grid doesn't animate in lockstep. -->
+					<!-- The child card reads this CSS variable as `--stagger-delay`. -->
+					<CardDefault {...item} isLoading={showLoadingCards} scrollId={`home-card-${index + 1}`} />
 				</li>
 			{/each}
 		</ul>
@@ -302,6 +314,14 @@
 		{#if hasMore}
 			<LoadMore {hasMore} {loading} onload={() => loadMore()} />
 		{/if}
+	{:else if restoringCards && previousCards.length > 0 && !error}
+		<ul class="ui four doubling cards media-card-list" aria-busy="true" aria-live="polite">
+			{#each previousCards as item, index (`restoring-home-${item.mediaType}-${item.id}`)}
+				<li>
+					<CardDefault {...item} isLoading={showLoadingCards} scrollId={`home-card-${index + 1}`} />
+				</li>
+			{/each}
+		</ul>
 	{:else if !error}
 		<p class={messages.noContent ? '' : 'u-not-available'}>{messages.noContent}</p>
 	{/if}
