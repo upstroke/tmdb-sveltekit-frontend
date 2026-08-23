@@ -1,6 +1,7 @@
 <script>
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
+	import uiText from '$lib/i18n/ui.json';
 	import { i18n } from '$lib/stores/i18n';
 	import { locale } from '$lib/stores/locale';
 	import { resolveLocale } from '$lib/i18n/helpers';
@@ -8,11 +9,10 @@
 	const { labels } = $derived($i18n);
 	let selectedLocale = $state(resolveLocale(page.url.searchParams.get('locale')));
 
-	const locales = [
-		{ value: 'de-DE', label: 'DE' },
-		{ value: 'en-US', label: 'EN' },
-		{ value: 'vi-VN', label: 'VI' }
-	];
+	const locales = Object.values(uiText.locales).map(({ languageCode, languageShortCode }) => ({
+		value: languageCode,
+		label: languageShortCode
+	}));
 
 	/**
 	 * Aktualisiert die aktive Sprache, speichert sie im Locale-Store und lädt die aktuelle Route mit Locale-Parameter neu.
@@ -46,7 +46,9 @@
 		onchange={handleChange}
 	>
 		{#each locales as locale (locale.value)}
-			<option value={locale.value}>{locale.label}</option>
+			<option class={locale.label ? '' : 'u-not-available'} value={locale.value}
+				>{locale.label}</option
+			>
 		{/each}
 	</select>
 </div>

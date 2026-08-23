@@ -1,31 +1,16 @@
 {
 	"locales": {
 		"de-DE": {
-			"labels": {
-				"certification": "Altersfreigabe",
-				"genre": "Genre",
-				"releaseDate": "Erscheinungsdatum"
-			},
 			"fallbacks": {
 				"notAvailable": "N/A"
 			}
 		},
 		"en-US": {
-			"labels": {
-				"certification": "Age Rating",
-				"genre": "Genre",
-				"releaseDate": "Release date"
-			},
 			"fallbacks": {
 				"notAvailable": "N/A"
 			}
 		},
 		"vi-VN": {
-			"labels": {
-				"certification": "Phân loại độ tuổi",
-				"genre": "Thể loại",
-				"releaseDate": "Ngày phát hành"
-			},
 			"fallbacks": {
 				"notAvailable": "Không có"
 			}

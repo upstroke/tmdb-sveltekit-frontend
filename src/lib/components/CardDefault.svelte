@@ -72,7 +72,7 @@
 		</figure>
 
 		<div class="content">
-			<h3 class="header">{cardTitle}</h3>
+			<h3 class="header {cardTitle ? '' : 'u-not-available'}">{cardTitle}</h3>
 
 			<div class="u-spacer" aria-hidden="true"></div>
 
@@ -87,27 +87,31 @@
 					>
 						<span class="certification-content">
 							<span class="certification-icon" aria-hidden="true"></span>
-							<span class="certification-text">{certificationMeta?.label ?? notAvailableText}</span>
+							<span class="certification-text {certificationMeta?.label ? '' : 'u-not-available'}"
+								>{certificationMeta?.label ?? notAvailableText}</span
+							>
 						</span>
 					</dd>
 				</div>
 
 				<div class="card-meta-item">
-					<dt class="u-sr-only">Genre</dt>
+					<dt class="u-sr-only">{labels.genre}</dt>
 					<dd class="meta genres">
 						<i class="layer group icon" aria-hidden="true"></i>
-						<span>{hasGenres ? genreText : notAvailableText}</span>
+						<span class={hasGenres ? '' : 'u-not-available'}
+							>{hasGenres ? genreText : notAvailableText}</span
+						>
 					</dd>
 				</div>
 
 				<div class="card-meta-item">
-					<dt class="u-sr-only">Erscheinungsdatum</dt>
+					<dt class="u-sr-only">{labels.releaseDate}</dt>
 					<dd class="meta date">
 						<i class="calendar icon" aria-hidden="true"></i>
 						{#if date}
-							<time datetime={date}>{cardDate}</time>
+							<time class={cardDate ? '' : 'u-not-available'} datetime={date}>{cardDate}</time>
 						{:else}
-							<span>{notAvailableText}</span>
+							<span class="u-not-available">{notAvailableText}</span>
 						{/if}
 					</dd>
 				</div>
@@ -118,8 +122,8 @@
 			<span>
 				<i class="yellow star icon" aria-hidden="true"></i>
 				<span class="u-sr-only">{labels.rating}</span>
-				<span class="rating-value">{cardRating}</span>
-				{formats.outOfTen}
+				<span class="rating-value {cardRating ? '' : 'u-not-available'}">{cardRating}</span>
+				<span class={formats.outOfTen ? '' : 'u-not-available'}>{formats.outOfTen}</span>
 			</span>
 		</footer>
 	</a>
