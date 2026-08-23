@@ -282,13 +282,15 @@
 		<DialogMessage message={error} />
 	{/if}
 
-	<h2 class="ui dividing header">{titles.tvShows}</h2>
+	<h2 class="ui dividing header {titles.tvShows ? '' : 'u-not-available'}">{titles.tvShows}</h2>
 
 	{#if featured}
 		<CardFeatured {...featured} />
 	{/if}
 
-	<h2 class="ui dividing header">{titles.topRatedProductions}</h2>
+	<h2 class="ui dividing header {titles.topRatedProductions ? '' : 'u-not-available'}">
+		{titles.topRatedProductions}
+	</h2>
 
 	{#if cards.length > 0}
 		<ul class="ui four doubling cards media-card-list">
@@ -303,6 +305,6 @@
 			<LoadMore {hasMore} {loading} onload={() => loadMore()} />
 		{/if}
 	{:else if !error}
-		<p>{messages.noTvShows}</p>
+		<p class={messages.noTvShows ? '' : 'u-not-available'}>{messages.noTvShows}</p>
 	{/if}
 </main>

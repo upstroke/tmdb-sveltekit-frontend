@@ -1,4 +1,8 @@
 <script>
+	import { i18n } from '$lib/stores/i18n';
+
+	const { labels } = $derived($i18n);
+
 	/**
 	 * Erwartete Props für das Medientyp-Label.
 	 *
@@ -9,14 +13,19 @@
 	let { mediaType, class: className = '' } = $props();
 
 	let normalizedType = $derived(mediaType === 'movie' ? 'movie' : mediaType === 'tv' ? 'tv' : null);
+
 	let labelClass = $derived(
 		normalizedType === 'movie' ? 'blue' : normalizedType === 'tv' ? 'teal' : ''
+	);
+
+	let labelText = $derived(
+		normalizedType === 'movie' ? labels.movie : normalizedType === 'tv' ? labels.tvShow : ''
 	);
 </script>
 
 {#if normalizedType}
 	<span class={`ui label ${labelClass} ${className}`}>
-		{normalizedType}
+		{labelText}
 	</span>
 {/if}
 

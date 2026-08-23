@@ -59,7 +59,11 @@
 
 	let notAvailableText = $derived(fallbacks.notAvailable);
 	let featuredType = $derived(
-		normalizedType === 'movie' ? 'movie' : normalizedType === 'tv' ? 'tv' : notAvailableText
+		normalizedType === 'movie'
+			? labels.movie
+			: normalizedType === 'tv'
+				? labels.tvShow
+				: notAvailableText
 	);
 	let featuredGenres = $derived(genres?.length ? genres : []);
 	let featuredImageUrl = $derived(imageUrl || notAvailable);
@@ -83,7 +87,9 @@
 			</figure>
 
 			<div class="featured-card-content">
-				<p class={`featured-card-type featured-card-type--${normalizedType ?? 'unknown'}`}>
+				<p
+					class={`featured-card-type featured-card-type--${normalizedType ?? 'unknown'} ${featuredType ? '' : 'u-not-available'}`}
+				>
 					{featuredType}
 				</p>
 
@@ -91,7 +97,7 @@
 					<dl class="featured-card-meta">
 						{#if featuredGenres.length}
 							<div class="featured-card-meta-item">
-								<dt class="u-sr-only">Genre</dt>
+								<dt class="u-sr-only">{labels.genre}</dt>
 								<dd class="featured-card-genres">
 									<i class="layer group icon" aria-hidden="true"></i>
 									<ul>
@@ -100,7 +106,7 @@
 												{#if index > 0}
 													<span class="featured-card-genre-separator" aria-hidden="true">/</span>
 												{/if}
-												<span>{genre.name}</span>
+												<span class={genre.name ? '' : 'u-not-available'}>{genre.name}</span>
 											</li>
 										{/each}
 									</ul>
@@ -110,28 +116,40 @@
 
 						{#if hasReleaseDate}
 							<div class="featured-card-meta-item">
-								<dt class="u-sr-only">Erscheinungsdatum</dt>
+								<dt class="u-sr-only">{labels.releaseDate}</dt>
 								<dd class="featured-card-date">
 									<i class="calendar icon" aria-hidden="true"></i>
-									<span>{featuredReleaseDate}</span>
+									<span class={featuredReleaseDate ? '' : 'u-not-available'}
+										>{featuredReleaseDate}</span
+									>
 								</dd>
 							</div>
 						{/if}
 					</dl>
 				{/if}
 
-				<h2 class="featured-card-title" id="featured-card-title">{featuredTitle}</h2>
+				<h2
+					class="featured-card-title {featuredTitle ? '' : 'u-not-available'}"
+					id="featured-card-title"
+				>
+					{featuredTitle}
+				</h2>
 
-				<p class="featured-card-description">{featuredOverview}</p>
+				<p class="featured-card-description {featuredOverview ? '' : 'u-not-available'}">
+					{featuredOverview}
+				</p>
 
 				<nav aria-label={`Aktionen für ${featuredTitle}`} class="featured-card-actions">
 					{#if detailsHref}
-						<a class="ui inverted primary button" href={detailsHref}>{labels.moreInfo}</a>
+						<a
+							class="ui inverted primary button {labels.moreInfo ? '' : 'u-not-available'}"
+							href={detailsHref}>{labels.moreInfo}</a
+						>
 					{/if}
 
 					{#if featuredHomepage}
 						<a
-							class="ui inverted button"
+							class="ui inverted button {labels.officialWebsite ? '' : 'u-not-available'}"
 							href={featuredHomepage}
 							target="_blank"
 							rel="noopener noreferrer"

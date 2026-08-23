@@ -307,7 +307,10 @@
 				{:else}
 					{#if movies.length > 0}
 						<section class="category" aria-labelledby="typeahead-movies-heading">
-							<h2 id="typeahead-movies-heading" class="ui label blue">
+							<h2
+								id="typeahead-movies-heading"
+								class="ui label blue {titles.movies ? '' : 'u-not-available'}"
+							>
 								{titles.movies}
 							</h2>
 							<ul class="results" aria-label={titles.movies}>
@@ -323,14 +326,18 @@
 											</figure>
 											<div class="content">
 												<header class="result-header">
-													<h3 class="title">{item.title}</h3>
+													<h3 class="title {item.title ? '' : 'u-not-available'}">{item.title}</h3>
 												</header>
 												<p class="description">
-													<time datetime={item.date}>{formatYear(item.date)}</time>
+													<time class={item.date ? '' : 'u-not-available'} datetime={item.date}
+														>{formatYear(item.date)}</time
+													>
 													<span aria-hidden="true"> · </span>
 													<span class="rating" aria-label={ratingAriaLabel(item.rating)}>
 														<i class="yellow star icon" aria-hidden="true"></i>
-														<span>{formatRating(item.rating)}</span>
+														<span class={item.rating ? '' : 'u-not-available'}
+															>{formatRating(item.rating)}</span
+														>
 													</span>
 												</p>
 											</div>
@@ -343,7 +350,10 @@
 
 					{#if tvShows.length > 0}
 						<section class="category" aria-labelledby="typeahead-tv-heading">
-							<h2 id="typeahead-tv-heading" class="ui label blue">
+							<h2
+								id="typeahead-tv-heading"
+								class="ui label blue {titles.tvShows ? '' : 'u-not-available'}"
+							>
 								{titles.tvShows}
 							</h2>
 							<ul class="results" aria-label={titles.tvShows}>
@@ -359,14 +369,18 @@
 											</figure>
 											<div class="content">
 												<header class="result-header">
-													<h3 class="title">{item.title}</h3>
+													<h3 class="title {item.title ? '' : 'u-not-available'}">{item.title}</h3>
 												</header>
 												<p class="description">
-													<time datetime={item.date}>{formatYear(item.date)}</time>
+													<time class={item.date ? '' : 'u-not-available'} datetime={item.date}
+														>{formatYear(item.date)}</time
+													>
 													<span aria-hidden="true"> · </span>
 													<span class="rating" aria-label={ratingAriaLabel(item.rating)}>
 														<i class="yellow star icon" aria-hidden="true"></i>
-														<span>{formatRating(item.rating)}</span>
+														<span class={item.rating ? '' : 'u-not-available'}
+															>{formatRating(item.rating)}</span
+														>
 													</span>
 												</p>
 											</div>
@@ -378,7 +392,9 @@
 					{/if}
 
 					{#if !hasResults}
-						<p class="result" role="status">{messages.searchNoResults}</p>
+						<p class="result {messages.searchNoResults ? '' : 'u-not-available'}" role="status">
+							{messages.searchNoResults}
+						</p>
 					{/if}
 				{/if}
 			</div>

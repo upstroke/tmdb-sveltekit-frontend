@@ -279,12 +279,16 @@
 	{/if}
 
 	{#if featured}
-		<h2 class="ui dividing header">{titles.featuredToday}</h2>
+		<h2 class="ui dividing header {titles.featuredToday ? '' : 'u-not-available'}">
+			{titles.featuredToday}
+		</h2>
 
 		<CardFeatured {...featured} />
 	{/if}
 
-	<h2 class="ui dividing header">{titles.trendingToday}</h2>
+	<h2 class="ui dividing header {titles.trendingToday ? '' : 'u-not-available'}">
+		{titles.trendingToday}
+	</h2>
 
 	{#if cards.length > 0}
 		<ul class="ui four doubling cards media-card-list">
@@ -299,6 +303,6 @@
 			<LoadMore {hasMore} {loading} onload={() => loadMore()} />
 		{/if}
 	{:else if !error}
-		<p>{messages.noContent}</p>
+		<p class={messages.noContent ? '' : 'u-not-available'}>{messages.noContent}</p>
 	{/if}
 </main>

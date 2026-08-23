@@ -1,6 +1,8 @@
 {
 	"locales": {
 		"de-DE": {
+			"languageCode": "de-DE",
+			"languageShortCode": "DE",
 			"fallbacks": {
 				"notAvailable": "N/A"
 			},
@@ -28,7 +30,9 @@
 				"searchInput": "Suchen",
 				"languageSelect": "Sprache auswählen",
 				"navigationToggle": "Navigation öffnen oder schließen",
-				"mainNavigation": "Hauptnavigation"
+				"mainNavigation": "Hauptnavigation",
+				"movie": "Movie",
+				"tvShow": "TV"
 			},
 			"messages": {
 				"loadMoreError": "Weitere Inhalte konnten nicht geladen werden.",
@@ -81,6 +85,8 @@
 			}
 		},
 		"en-US": {
+			"languageCode": "en-US",
+			"languageShortCode": "EN",
 			"fallbacks": {
 				"notAvailable": "N/A"
 			},
@@ -104,11 +110,13 @@
 				"role": "Role",
 				"crew": "Crew",
 				"job": "Job",
-				"certification": "Certification",
+				"certification": "Age Rating",
 				"searchInput": "Search",
 				"languageSelect": "Select language",
 				"navigationToggle": "Open or close navigation",
-				"mainNavigation": "Main navigation"
+				"mainNavigation": "Main navigation",
+				"movie": "Movie",
+				"tvShow": "TV"
 			},
 			"messages": {
 				"loadMoreError": "More content could not be loaded.",
@@ -133,10 +141,10 @@
 				"tvShowsLoadError": "TV shows could not be loaded",
 				"tvShowLoadError": "TV show could not be loaded",
 				"moreTvShowsLoadError": "More TV shows could not be loaded.",
-				"searchHint": "Enter at least four characters to show search results for movies and TV.",
+				"searchHint": "Enter at least four characters to display search results for movies and TV.",
 				"searchResults": "Search results",
 				"loadMore": "More results",
-				"dialogErrorTitle": "Error loading",
+				"dialogErrorTitle": "Loading error",
 				"dialogOk": "OK",
 				"loadMoreLoading": "Loading more results …"
 			},
@@ -151,15 +159,17 @@
 				"movieDetails": "Movie Details",
 				"tvShowDetails": "TV Show Details",
 				"tvShows": "TV Shows",
-				"topRatedProductions": "Top-rated productions",
-				"featuredToday": "Featured Today",
-				"trendingToday": "Trending Today"
+				"topRatedProductions": "Top rated productions",
+				"featuredToday": "Featured today",
+				"trendingToday": "Trending today"
 			},
 			"buttons": {
 				"watchTrailer": "Watch trailer"
 			}
 		},
 		"vi-VN": {
+			"languageCode": "vi-VN",
+			"languageShortCode": "VN",
 			"fallbacks": {
 				"notAvailable": "Không có"
 			},
@@ -169,11 +179,11 @@
 				"genres": "Thể loại",
 				"releaseDate": "Ngày phát hành",
 				"productionCompanies": "Công ty sản xuất",
-				"moreInfo": "Thông tin chi tiết",
+				"moreInfo": "Thông tin thêm",
 				"officialWebsite": "Trang web chính thức",
 				"firstAirDate": "Ngày phát sóng đầu tiên",
-				"mediaType": "Loại phương tiện",
-				"overview": "Tổng quan",
+				"mediaType": "Loại nội dung",
+				"overview": "Nội dung",
 				"homepage": "Trang chủ",
 				"trailer": "Trailer",
 				"production": "Sản xuất",
@@ -181,40 +191,42 @@
 				"cast": "Diễn viên",
 				"actor": "Diễn viên",
 				"role": "Vai diễn",
-				"crew": "Đoàn làm phim",
+				"crew": "Đoàn phim",
 				"job": "Công việc",
 				"certification": "Phân loại độ tuổi",
 				"searchInput": "Tìm kiếm",
 				"languageSelect": "Chọn ngôn ngữ",
-				"navigationToggle": "Mở hoặc đóng điều hướng",
-				"mainNavigation": "Điều hướng chính"
+				"navigationToggle": "Mở hoặc đóng điều hướng",
+				"mainNavigation": "Điều hướng chính",
+				"movie": "Phim",
+				"tvShow": "Chương trình TV"
 			},
 			"messages": {
 				"loadMoreError": "Không thể tải thêm nội dung.",
 				"unknownError": "Lỗi không xác định",
 				"pageSaveWarning": "Không thể lưu trạng thái trang:",
-				"loadTimeout": "Thời gian tải quá lâu.",
-				"noTvShows": "Không tìm thấy chương trình truyền hình nào.",
+				"loadTimeout": "Tải nội dung mất quá nhiều thời gian.",
+				"noTvShows": "Không tìm thấy chương trình TV nào.",
 				"noGenres": "Không có thể loại nào.",
-				"noRole": "Không có thông tin về vai diễn.",
-				"noCast": "Không có dữ liệu về diễn viên.",
-				"noCrew": "Không có dữ liệu về đoàn làm phim.",
-				"noJob": "Không có thông tin về công việc.",
+				"noRole": "Không có thông tin vai diễn.",
+				"noCast": "Không có dữ liệu diễn viên.",
+				"noCrew": "Không có dữ liệu đoàn phim.",
+				"noJob": "Không có thông tin công việc.",
 				"searchLoading": "Đang tìm kiếm …",
-				"searchError": "Không thể tải kết quả tìm kiếm.",
+				"searchError": "Không thể tải tìm kiếm.",
 				"searchNoResults": "Không tìm thấy kết quả.",
 				"noContent": "Không tìm thấy nội dung.",
 				"apiKeyMissing": "Thiếu TMDB_API_KEY",
 				"contentLoadError": "Không thể tải nội dung",
-				"moviesLoadError": "Không thể tải danh sách phim",
-				"movieLoadError": "Không thể tải thông tin phim",
+				"moviesLoadError": "Không thể tải phim",
+				"movieLoadError": "Không thể tải phim",
 				"moreMoviesLoadError": "Không thể tải thêm phim.",
-				"tvShowsLoadError": "Không thể tải chương trình truyền hình",
-				"tvShowLoadError": "Không thể tải thông tin chương trình truyền hình",
-				"moreTvShowsLoadError": "Không thể tải thêm chương trình truyền hình.",
-				"searchHint": "Nhập ít nhất bốn ký tự để hiển thị kết quả tìm kiếm phim và chương trình truyền hình.",
+				"tvShowsLoadError": "Không thể tải chương trình TV",
+				"tvShowLoadError": "Không thể tải chương trình TV",
+				"moreTvShowsLoadError": "Không thể tải thêm chương trình TV.",
+				"searchHint": "Nhập ít nhất bốn ký tự để hiển thị kết quả tìm kiếm cho phim và TV.",
 				"searchResults": "Kết quả tìm kiếm",
-				"loadMore": "Xem thêm kết quả",
+				"loadMore": "Thêm kết quả",
 				"dialogErrorTitle": "Lỗi khi tải",
 				"dialogOk": "OK",
 				"loadMoreLoading": "Đang tải thêm kết quả …"
@@ -228,8 +240,8 @@
 				"home": "Trang chủ",
 				"movies": "Phim",
 				"movieDetails": "Chi tiết phim",
-				"tvShowDetails": "Chi tiết chương trình truyền hình",
-				"tvShows": "Chương trình truyền hình",
+				"tvShowDetails": "Chi tiết chương trình TV",
+				"tvShows": "Chương trình TV",
 				"topRatedProductions": "Tác phẩm được đánh giá cao nhất",
 				"featuredToday": "Nổi bật hôm nay",
 				"trendingToday": "Xu hướng hôm nay"
