@@ -13,7 +13,7 @@
 
 	const { titles, messages } = $derived($i18n);
 	const activeLocale = $derived(resolveLocale(page.url.searchParams.get('locale')));
-	const storageKey = $derived(`tv-shows-page-${activeLocale}`);
+	const storageKey = 'tv-shows-page';
 
 	/**
 	 * Erwartete Props für die Seite.
@@ -295,7 +295,9 @@
 	{#if cards.length > 0}
 		<ul class="ui four doubling cards media-card-list">
 			{#each cards as item, index (`page-tv-${item.mediaType}-${item.id}`)}
-				<li>
+				<li style={`--stagger-delay: ${index * 90}ms`}>
+					<!-- Staggers the card loading pulse so the grid reveals itself with slight variation. -->
+					<!-- CardDefault consumes this as `--stagger-delay` for the loading state. -->
 					<CardDefault {...item} scrollId={`tv-card-${index + 1}`} />
 				</li>
 			{/each}

@@ -5,19 +5,26 @@
 	const { fallbacks } = $derived($i18n);
 
 	/**
-	 * Gemeinsamer Hero für Detailseiten.
+	 * Rendert den gemeinsamen Hero-Bereich für Detailseiten.
 	 *
-	 * Layout:
-	 * - Der Root-Container trägt das Backdrop als flächendeckenden Hintergrund.
-	 * - Alle Inhalte liegen in einem vertikalen Flex-Layout und sind am unteren Rand ausgerichtet.
-	 * - Die Höhe ergibt sich aus dem Inhalt, optional abgesichert durch eine Mindesthöhe.
-	 * - Das Backdrop wächst mit dem Container in Breite und Höhe mit.
+	 * Das Backdrop wird als großflächiger Hintergrund verwendet, während Poster,
+	 * Titel und Produktionsfirmen in einem zentrierten Overlay am unteren Rand
+	 * dargestellt werden.
 	 *
-	 * @param {string} title - Titel des Mediums.
-	 * @param {string} backdrop - Hintergrundbild.
-	 * @param {string} posterUrl - Posterbild.
-	 * @param {Array<{id?: number|string, name: string}>} productionCompanies - Produktionsfirmen.
-	 * @param {string} emptyLabel - Fallback-Text für fehlende Produktionsfirmen.
+	 * @component
+	 * @prop {string} title - Titel des Mediums.
+	 * @prop {string} backdrop - URL des Hintergrundbilds.
+	 * @prop {string} posterUrl - URL des Posterbilds; dient auch als Fallback.
+	 * @prop {Array<{id?: number|string, name?: string, logoPath?: string}>} [productionCompanies=[]] - Produktionsfirmen des Mediums.
+	 * @prop {string} [emptyLabel=''] - Text für den Leerzustand der Produktionsfirmen.
+	 *
+	 * @example
+	 * <DetailsHero
+	 * 	title="Inception"
+	 * 	backdrop="/backdrop.jpg"
+	 * 	posterUrl="/poster.jpg"
+	 * 	productionCompanies={[{ id: 1, name: 'Warner Bros.' }]}
+	 * />
 	 */
 	let { title, backdrop, posterUrl, productionCompanies = [], emptyLabel = '' } = $props();
 

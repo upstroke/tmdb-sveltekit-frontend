@@ -14,6 +14,16 @@
 			"fallbacks": {
 				"notAvailable": "Không có"
 			}
+		},
+		"es-ES": {
+			"fallbacks": {
+				"notAvailable": "N/D"
+			}
+		},
+		"fr-FR": {
+			"fallbacks": {
+				"notAvailable": "N/D"
+			}
 		}
 	},
 	"ratingSystems": {
@@ -53,7 +63,7 @@
 			}
 		},
 		"US": {
-			"name": "MPA",
+			"name": "US Entertainment Ratings",
 			"ratings": {
 				"G": {
 					"label": "G",
@@ -84,52 +94,194 @@
 					"description": "Adults Only",
 					"color": "#6a1b9a",
 					"textColor": "#ffffff"
+				},
+				"NR": {
+					"label": "NR",
+					"description": "Not Rated / Unrated",
+					"color": "#757575",
+					"textColor": "#ffffff"
+				},
+				"TV-Y": {
+					"label": "TV-Y",
+					"description": "All Children",
+					"color": "#4caf50",
+					"textColor": "#ffffff"
+				},
+				"TV-Y7": {
+					"label": "TV-Y7",
+					"description": "Directed to Older Children",
+					"color": "#8bc34a",
+					"textColor": "#ffffff"
+				},
+				"TV-G": {
+					"label": "TV-G",
+					"description": "General Audience (TV)",
+					"color": "#2e7d32",
+					"textColor": "#ffffff"
+				},
+				"TV-PG": {
+					"label": "TV-PG",
+					"description": "Parental Guidance Suggested (TV)",
+					"color": "#f9a825",
+					"textColor": "#000000"
+				},
+				"TV-14": {
+					"label": "TV-14",
+					"description": "Parents Strongly Cautioned (TV)",
+					"color": "#ef6c00",
+					"textColor": "#ffffff"
+				},
+				"TV-MA": {
+					"label": "TV-MA",
+					"description": "Mature Audience Only",
+					"color": "#c62828",
+					"textColor": "#ffffff"
 				}
 			}
 		},
 		"VN": {
-			"name": "Phân loại phim",
+			"name": "Vietnam Cinema Department Ratings",
 			"ratings": {
 				"P": {
 					"label": "P",
-					"description": "Phổ biến đến mọi độ tuổi",
-					"age": 0,
-					"color": "#00AA4F",
+					"description": "Phép phổ biến đến mọi lứa tuổi (General Audiences)",
+					"color": "#2e7d32",
 					"textColor": "#ffffff"
 				},
 				"K": {
 					"label": "K",
-					"description": "Dưới 13 tuổi xem cùng cha mẹ/giám hộ",
-					"age": 0,
-					"color": "#FFBB00",
-					"textColor": "#000000"
+					"description": "Phổ biến đến người xem dưới 13 tuổi với điều kiện xem cùng cha, mẹ hoặc người giám hộ (Under 13 with Parental Guidance)",
+					"color": "#8bc34a",
+					"textColor": "#ffffff"
 				},
 				"T13": {
 					"label": "T13",
-					"description": "Phổ biến đến người xem từ đủ 13 tuổi trở lên",
-					"age": 13,
-					"color": "#E67E22",
-					"textColor": "#ffffff"
+					"description": "Phổ biến đến người xem từ đủ 13 tuổi trở lên (13+)",
+					"color": "#f9a825",
+					"textColor": "#000000"
 				},
 				"T16": {
 					"label": "T16",
-					"description": "Phổ biến đến người xem từ đủ 16 tuổi trở lên",
-					"age": 16,
-					"color": "#0072BC",
+					"description": "Phổ biến đến người xem từ đủ 16 tuổi trở lên (16+)",
+					"color": "#ef6c00",
 					"textColor": "#ffffff"
 				},
 				"T18": {
 					"label": "T18",
-					"description": "Phổ biến đến người xem từ đủ 18 tuổi trở lên",
-					"age": 18,
-					"color": "#DA251D",
+					"description": "Phổ biến đến người xem từ đủ 18 tuổi trở lên (18+ / Adults Only)",
+					"color": "#c62828",
 					"textColor": "#ffffff"
 				},
 				"C": {
 					"label": "C",
-					"description": "Phim không được phép phổ biến",
-					"age": 99,
-					"color": "#1A1A1A",
+					"description": "Không được phép phổ biến (Banned / Censored)",
+					"color": "#000000",
+					"textColor": "#ffffff"
+				},
+				"NR": {
+					"label": "NR",
+					"description": "Chưa phân loại / Not Rated",
+					"color": "#757575",
+					"textColor": "#ffffff"
+				}
+			}
+		},
+		"ES": {
+			"name": "ICAA Spain Ratings",
+			"ratings": {
+				"A": {
+					"label": "A",
+					"description": "Apta para todos los públicos (All Audiences)",
+					"color": "#2e7d32",
+					"textColor": "#ffffff"
+				},
+				"APTA": {
+					"label": "APTA",
+					"description": "Apta para todos los públicos (Alternative TMDB key)",
+					"color": "#2e7d32",
+					"textColor": "#ffffff"
+				},
+				"7": {
+					"label": "7",
+					"description": "No recomendada para menores de 7 años",
+					"color": "#8bc34a",
+					"textColor": "#ffffff"
+				},
+				"12": {
+					"label": "12",
+					"description": "No recomendada para menores de 12 años",
+					"color": "#f9a825",
+					"textColor": "#000000"
+				},
+				"16": {
+					"label": "16",
+					"description": "No recomendada para menores de 16 años",
+					"color": "#ef6c00",
+					"textColor": "#ffffff"
+				},
+				"18": {
+					"label": "18",
+					"description": "No recomendada para menores de 18 años",
+					"color": "#c62828",
+					"textColor": "#ffffff"
+				},
+				"X": {
+					"label": "X",
+					"description": "Contenido X / Pornografía (Adults Only)",
+					"color": "#6a1b9a",
+					"textColor": "#ffffff"
+				}
+			}
+		},
+		"FR": {
+			"name": "CNC France Ratings",
+			"ratings": {
+				"TP": {
+					"label": "TP",
+					"description": "Tous publics (All Audiences)",
+					"color": "#2e7d32",
+					"textColor": "#ffffff"
+				},
+				"U": {
+					"label": "U",
+					"description": "Tous publics (Universal / alternative TMDB key)",
+					"color": "#2e7d32",
+					"textColor": "#ffffff"
+				},
+				"10": {
+					"label": "-10",
+					"description": "Interdit aux moins de 10 ans",
+					"color": "#f9a825",
+					"textColor": "#000000"
+				},
+				"12": {
+					"label": "-12",
+					"description": "Interdit aux moins de 12 ans",
+					"color": "#ef6c00",
+					"textColor": "#ffffff"
+				},
+				"16": {
+					"label": "-16",
+					"description": "Interdit aux moins de 16 ans",
+					"color": "#c62828",
+					"textColor": "#ffffff"
+				},
+				"18": {
+					"label": "-18",
+					"description": "Interdit aux moins de 18 ans",
+					"color": "#6a1b9a",
+					"textColor": "#ffffff"
+				},
+				"X": {
+					"label": "X",
+					"description": "Classement X (Pornographic / Incitement to violence)",
+					"color": "#880e4f",
+					"textColor": "#ffffff"
+				},
+				"NR": {
+					"label": "NR",
+					"description": "Non classé / Not Rated",
+					"color": "#757575",
 					"textColor": "#ffffff"
 				}
 			}
