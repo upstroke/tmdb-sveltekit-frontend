@@ -5,16 +5,27 @@
 	import { i18n } from '$lib/stores/i18n';
 
 	/**
-	 * Navigationslinks für den globalen Header.
+	 * Rendert die globale Kopfzeile mit Navigation, mobilem Menü,
+	 * optionalem Inhalts-Slot und Sprachauswahl.
 	 *
-	 * @param {Array<{
+	 * Die Navigationslinks übernehmen den aktiven Pfad sowie die zuletzt
+	 * verwendete Seitennummer pro Route.
+	 *
+	 * @component
+	 * @prop {Array<{
 	 *   id: string,
 	 *   label: string,
 	 *   icon: string,
 	 *   path: string,
 	 *   storageKey: string,
 	 *   active: (pathname: string) => boolean
-	 * }>} navItems
+	 * }>} [navItems=[]] - Navigationspunkte für den globalen Header.
+	 * @prop {Snippet|undefined} [children] - Optionaler Svelte-5-Snippet-Inhalt zwischen Navigation und Sprachauswahl.
+	 *
+	 * @example
+	 * <HeaderMain navItems={navigationItems}>
+	 * 	<TypeHeadSearch />
+	 * </HeaderMain>
 	 */
 	let { navItems = [], children } = $props();
 	const { labels } = $derived($i18n);

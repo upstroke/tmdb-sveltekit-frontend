@@ -6,10 +6,14 @@
 	import { getSupportedLocales, resolveLocale } from '$lib/i18n/helpers';
 
 	/**
-	 * Stellt die Sprachauswahl im Header bereit und synchronisiert die Auswahl
-	 * mit URL, Locale-Store und laufender Route.
+	 * Stellt die Sprachauswahl im Header bereit.
+	 *
+	 * Die Komponente synchronisiert die Auswahl mit URL, Locale-Store und
+	 * aktueller Route, ohne Scroll- oder Fokusverlust auszulösen.
 	 *
 	 * @component
+	 * @remarks Diese Komponente erwartet keine Props.
+	 *
 	 * @example
 	 * <LanguageSwitcher />
 	 */

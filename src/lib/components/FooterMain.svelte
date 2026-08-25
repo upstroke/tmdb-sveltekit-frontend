@@ -1,9 +1,15 @@
 <script>
 	/**
-	 * Statische Footer-Komponente der Anwendung.
+	 * Rendert den statischen Footer der Anwendung.
 	 *
-	 * Die Komponente erwartet keine Props und rendert feste rechtliche Hinweise
-	 * sowie einen externen Quellenlink.
+	 * Der Footer enthält feste rechtliche Hinweise sowie einen externen
+	 * Quellenlink zu IMDb.
+	 *
+	 * @component
+	 * @remarks Diese Komponente erwartet keine Props.
+	 *
+	 * @example
+	 * <FooterMain />
 	 */
 </script>
 

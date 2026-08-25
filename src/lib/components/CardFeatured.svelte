@@ -7,25 +7,30 @@
 	const { labels, fallbacks } = $derived($i18n);
 
 	/**
-	 * Erwartete Props für die Featured-Karte.
+	 * Rendert eine hervorgehobene Karte für einen Film oder eine TV-Serie.
 	 *
-	 * Die Karte verwendet das Vorschaubild als Hintergrund und legt Poster,
-	 * Informationen und Aktionen in einem kontrastreichen Overlay am unteren
-	 * Rand ab. Poster und Inhalte stehen auf allen Bildschirmgrößen
-	 * nebeneinander; auf kleinen Bildschirmen wird das Poster kompakter dargestellt
-	 * und beginnt linksbündig im Root-Container. Das Overlay verwendet dabei
-	 * einen einheitlichen Abstand von `1.5rem` auf allen Seiten. Der Medientyp
-	 * wird als kompaktes farbiges Badge dargestellt: Filme blau, Serien türkis.
+	 * Das Vorschaubild wird als Hintergrund verwendet. Poster, Metadaten,
+	 * Kurzbeschreibung und optionale Website-Verknüpfung werden als Overlay
+	 * dargestellt.
 	 *
-	 * @param {number|string} id - ID des Mediums.
-	 * @param {'movie'|'tv'|string} mediaType - Medientyp der Karte.
-	 * @param {string} title - Titel des Mediums.
-	 * @param {string} [releaseDate=''] - Veröffentlichungsdatum oder Startdatum.
-	 * @param {string} [overview=''] - Kurzbeschreibung des Mediums.
-	 * @param {string} [homepage=''] - {labels.officialWebsite} des Mediums.
-	 * @param {Array<{id: number|string, name: string}>} [genres=[]] - Liste der Genres.
-	 * @param {string} [imageUrl=''] - URL des Vorschaubilds.
-	 * @param {string} [posterUrl=''] - Optionale URL des Posterbilds; fällt auf `imageUrl` zurück.
+	 * @component
+	 * @prop {number|string} id - Eindeutige ID des Mediums für den Detail-Link.
+	 * @prop {'movie'|'tv'} mediaType - Medientyp und Zielroute der Karte.
+	 * @prop {string} title - Titel des Mediums.
+	 * @prop {string} [releaseDate=''] - Veröffentlichungs- oder Startdatum.
+	 * @prop {string} [overview=''] - Kurzbeschreibung des Mediums.
+	 * @prop {string} [homepage=''] - URL der offiziellen Website.
+	 * @prop {Array<{id?: number|string, name: string}>} [genres=[]] - Genres des Mediums.
+	 * @prop {string} [imageUrl=''] - URL des Hintergrund- beziehungsweise Vorschaubilds.
+	 * @prop {string} [posterUrl=''] - URL des Posters; fällt auf `imageUrl` zurück.
+	 *
+	 * @example
+	 * <CardFeatured
+	 * 	id={123}
+	 * 	mediaType="movie"
+	 * 	 title="Inception"
+	 * 	 overview="A thief who steals corporate secrets..."
+	 * />
 	 */
 	let {
 		id,
