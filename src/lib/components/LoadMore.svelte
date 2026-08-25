@@ -2,19 +2,19 @@
 	import { i18n } from '$lib/stores/i18n';
 
 	/**
-	 * Erwartete Props für den "Mehr laden"-Button.
+	 * Rendert eine Schaltfläche zum Nachladen weiterer Einträge.
 	 *
-	 * @param {boolean} [hasMore=false] - Gibt an, ob weitere Ergebnisse vorhanden sind.
-	 * @param {boolean} [loading=false] - Gibt an, ob gerade geladen wird.
-	 * @param {Function|null} [onload=null] - Callback, das beim Klick aufgerufen wird.
-	 */
-
-	/**
-	 * Erwartete Props für die Nachladen-Schaltfläche.
+	 * Die Komponente zeigt den Button nur an, wenn weitere Ergebnisse verfügbar
+	 * sind. Während des Ladens wird der Button deaktiviert und der passende
+	 * Ladehinweis angezeigt.
 	 *
-	 * @param {boolean} [hasMore=false] - Gibt an, ob weitere Einträge verfügbar sind.
-	 * @param {boolean} [loading=false] - Gibt an, ob aktuell weitere Einträge geladen werden.
-	 * @param {(() => void | Promise<void>) | null} [onload=null] - Callback zum Laden weiterer Einträge.
+	 * @component
+	 * @prop {boolean} [hasMore=false] - Gibt an, ob weitere Einträge verfügbar sind.
+	 * @prop {boolean} [loading=false] - Gibt an, ob aktuell weitere Einträge geladen werden.
+	 * @prop {(() => void | Promise<void>) | null} [onload=null] - Callback zum Laden weiterer Einträge.
+	 *
+	 * @example
+	 * <LoadMore hasMore={true} loading={false} onload={loadNextPage} />
 	 */
 	let { hasMore = false, loading = false, onload = null } = $props();
 

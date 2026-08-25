@@ -5,10 +5,17 @@
 	const { messages } = $derived($i18n);
 
 	/**
-	 * Wiederverwendbarer nativer Dialog für Fehlermeldungen.
+	 * Rendert einen wiederverwendbaren nativen Dialog für Fehlermeldungen.
 	 *
-	 * @param {string} message - Der anzuzeigende Text.
-	 * @param {string} [title='Fehler beim Laden'] - Die Überschrift des Dialogs.
+	 * Der Dialog öffnet sich clientseitig automatisch, sobald eine Meldung
+	 * vorliegt, und zeigt optional eine angepasste Überschrift an.
+	 *
+	 * @component
+	 * @prop {string} message - Der anzuzeigende Meldungstext.
+	 * @prop {string} [title=messages.dialogErrorTitle] - Optionale Überschrift des Dialogs.
+	 *
+	 * @example
+	 * <DialogMessage message="Beim Laden ist ein Fehler aufgetreten." />
 	 */
 	let { message, title = messages.dialogErrorTitle } = $props();
 
