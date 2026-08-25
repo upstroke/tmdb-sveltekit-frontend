@@ -79,6 +79,8 @@ Wichtig sind insbesondere:
 - `VITE_DATE_LOCALE`  
   Locale für die Datumsformatierung
 
+*Nachdem der API Key ergänzt wurden - die Datei in .env umbenennen.*
+
 ## TMDB API Key
 
 Einen eigenen API-Schlüssel kannst du in deinem TMDB-Konto anlegen:
