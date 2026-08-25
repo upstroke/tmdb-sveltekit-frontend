@@ -19,6 +19,15 @@
 	 * @param {Array<{id?: number|string, name: string}>} productionCompanies - Produktionsfirmen.
 	 * @param {string} emptyLabel - Fallback-Text für fehlende Produktionsfirmen.
 	 */
+	/**
+	 * Erwartete Props für den Hero-Bereich einer Detailseite.
+	 *
+	 * @param {string} title - Titel des Mediums.
+	 * @param {string} backdrop - URL des Hintergrundbilds.
+	 * @param {string} posterUrl - URL des Posterbilds als Fallback.
+	 * @param {Array<{id: number|string, logoPath?: string, name?: string}>} [productionCompanies=[]] - Produktionsfirmen mit optionalem Logo.
+	 * @param {string} [emptyLabel=''] - Text für den Leerzustand der Produktionsfirmen.
+	 */
 	let { title, backdrop, posterUrl, productionCompanies = [], emptyLabel = '' } = $props();
 
 	let notAvailableText = $derived(fallbacks.notAvailable);

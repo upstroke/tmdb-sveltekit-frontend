@@ -6,7 +6,19 @@
 	import { i18n } from '$lib/stores/i18n';
 	import { getCertificationMeta } from '$lib/utils/certificationMeta';
 
+	/**
+	 * Rendert eine Standardkarte für Filme und TV-Serien inklusive Bild,
+	 * Metadaten, Detail-Link und Ladezustand.
+	 *
+	 * @component
+	 * @example
+	 * <CardDefault id={123} mediaType="movie" title="Inception" />
+	 */
+
 	const { labels, formats, fallbacks } = $derived($i18n);
+	let activeRegion = $derived(
+		(page.url.searchParams.get('locale') ?? 'de-DE').split('-')[1] ?? 'DE'
+	);
 
 	let {
 		id,
@@ -43,15 +55,21 @@
 	let cardImageUrl = $derived(imageUrl || notAvailable);
 	let cardTitle = $derived(title?.trim() || notAvailableText);
 	let cardDate = $derived(date?.trim() || '');
-	let cardRating = $derived(
-		typeof rating === 'number' && rating > 0 ? rating.toFixed(1) : notAvailableText
-	);
-	let certificationMeta = $derived(getCertificationMeta(certification));
+	let cardRating = $derived(typeof rating === 'number' && rating > 0 ? rating.toFixed(1) : null);
+	let certificationMeta = $derived(getCertificationMeta(certification, activeRegion));
 	let hasGenres = $derived(Boolean(genreText));
 	let imageLoaded = $state(false);
 	let imageErrored = $state(false);
 	let imageKey = $derived(cardImageUrl);
 
+	/**
+	 * Setzt den Bildstatus zurück, sobald sich die aktuelle Bildquelle ändert.
+	 *
+	 * Dadurch können Lade- und Fehlerzustand für ein neues Poster sauber neu
+	 * aufgebaut werden.
+	 *
+	 * @returns {void}
+	 */
 	$effect(() => {
 		imageKey;
 		imageLoaded = false;
@@ -74,13 +92,11 @@
 					: ''} {imageLoaded && !imageErrored ? 'is-ready' : ''}"
 				style="--image-delay: var(--stagger-delay, 0ms)"
 			>
-				<!-- Reads the per-card stagger offset from the parent `each` block. -->
-				<!-- When no parent delay is provided, the loading state starts immediately. -->
 				{#if !imageErrored}
 					<img
 						src={cardImageUrl}
 						alt={`Poster von ${cardTitle}`}
-						onload={(event) => {
+						on:load={(event) => {
 							const img = event.currentTarget;
 							if (img.complete && img.naturalWidth > 0) {
 								requestAnimationFrame(() => {
@@ -90,7 +106,7 @@
 								imageLoaded = true;
 							}
 						}}
-						onerror={(event) => {
+						on:error={(event) => {
 							const img = event.currentTarget;
 							img.style.display = 'none';
 							imageErrored = true;
@@ -105,9 +121,7 @@
 
 		<div class="content">
 			<h3 class="header {cardTitle ? '' : 'u-not-available'}">{cardTitle}</h3>
-
 			<div class="u-spacer" aria-hidden="true"></div>
-
 			<dl class="card-meta">
 				<div class="card-meta-item">
 					<dt class="u-sr-only">{labels.certification}</dt>
@@ -125,7 +139,6 @@
 						</span>
 					</dd>
 				</div>
-
 				<div class="card-meta-item">
 					<dt class="u-sr-only">{labels.genre}</dt>
 					<dd class="meta genres">
@@ -135,7 +148,6 @@
 						>
 					</dd>
 				</div>
-
 				<div class="card-meta-item">
 					<dt class="u-sr-only">{labels.releaseDate}</dt>
 					<dd class="meta date">
@@ -154,8 +166,12 @@
 			<span>
 				<i class="yellow star icon" aria-hidden="true"></i>
 				<span class="u-sr-only">{labels.rating}</span>
-				<span class="rating-value {cardRating ? '' : 'u-not-available'}">{cardRating}</span>
-				<span class={formats.outOfTen ? '' : 'u-not-available'}>{formats.outOfTen}</span>
+				{#if cardRating !== null}
+					<b class="rating-value">{cardRating}</b>
+					<span class={formats.outOfTen ? '' : 'u-not-available'}>{formats.outOfTen}</span>
+				{:else}
+					<span class="u-not-available">{notAvailableText}</span>
+				{/if}
 			</span>
 		</footer>
 	</a>
@@ -212,7 +228,6 @@
 				);
 				animation: shimmer 1.5s ease-in-out infinite;
 				animation-delay: var(--image-delay, 0ms);
-				filter: blur(0px);
 				pointer-events: none;
 			}
 
@@ -229,32 +244,11 @@
 				background: none;
 
 				&::before {
-					opacity: 0;
-					animation: none;
+					display: none;
 				}
 
 				img {
 					opacity: 1;
-				}
-			}
-
-			&.is-loading {
-				img {
-					opacity: 0;
-				}
-			}
-		}
-
-		&.image-error {
-			.image-stage {
-				background: linear-gradient(
-					135deg,
-					color-mix(in oklch, var(--color-surface-offset) 78%, white),
-					color-mix(in oklch, var(--color-surface-dynamic) 80%, white)
-				);
-
-				img {
-					opacity: 0;
 				}
 			}
 		}

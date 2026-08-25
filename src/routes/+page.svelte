@@ -14,7 +14,7 @@
 
 	const { titles, messages } = $derived($i18n);
 	const activeLocale = $derived(resolveLocale(page.url.searchParams.get('locale')));
-	const storageKey = $derived(`home-page-${activeLocale}`);
+	const storageKey = 'home-page';
 
 	/**
 	 * Erwartete Daten aus dem Server-Load der Startseite.

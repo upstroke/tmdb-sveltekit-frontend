@@ -1,7 +1,8 @@
 :root {
-	--header-height: 40px;
+	--header-height: 45px;
 	--footer-height: 60px;
-	--search-dropdown-gap: 0.5rem;
-	--search-dropdown-width: 560px;
+	--typeahead-search-results-gap: 0.5rem;
+	--typeahead-search-results-width: 530px;
+	--typeahead-search-results-position-right: 32px;
 	--scroll-offset: 20px;
 }

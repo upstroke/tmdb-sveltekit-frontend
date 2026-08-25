@@ -9,6 +9,13 @@
 	 * @param {Function|null} [onload=null] - Callback, das beim Klick aufgerufen wird.
 	 */
 
+	/**
+	 * Erwartete Props für die Nachladen-Schaltfläche.
+	 *
+	 * @param {boolean} [hasMore=false] - Gibt an, ob weitere Einträge verfügbar sind.
+	 * @param {boolean} [loading=false] - Gibt an, ob aktuell weitere Einträge geladen werden.
+	 * @param {(() => void | Promise<void>) | null} [onload=null] - Callback zum Laden weiterer Einträge.
+	 */
 	let { hasMore = false, loading = false, onload = null } = $props();
 
 	const { messages: texts } = $derived($i18n);

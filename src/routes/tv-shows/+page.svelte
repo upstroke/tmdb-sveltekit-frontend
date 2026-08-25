@@ -13,7 +13,7 @@
 
 	const { titles, messages } = $derived($i18n);
 	const activeLocale = $derived(resolveLocale(page.url.searchParams.get('locale')));
-	const storageKey = $derived(`tv-shows-page-${activeLocale}`);
+	const storageKey = 'tv-shows-page';
 
 	/**
 	 * Erwartete Props für die Seite.

@@ -41,6 +41,13 @@
 
 	let normalizedType = $derived(mediaType === 'movie' ? 'movie' : mediaType === 'tv' ? 'tv' : null);
 
+	/**
+	 * Ermittelt die lokale Detailroute für die Karte und übernimmt die aktive Locale.
+	 *
+	 * Bei einem unbekannten Medientyp wird kein Link erzeugt.
+	 *
+	 * @returns {string | undefined} Lokalisierte Detailroute oder `undefined`.
+	 */
 	let detailsHref = $derived.by(() => {
 		let href;
 

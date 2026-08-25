@@ -14,7 +14,7 @@
 
 	const { titles, messages } = $derived($i18n);
 	const activeLocale = $derived(resolveLocale(page.url.searchParams.get('locale')));
-	const storageKey = $derived(`movies-page-${activeLocale}`);
+	const storageKey = 'movies-page';
 
 	/**
 	 * Erwartete Props für die Seite.

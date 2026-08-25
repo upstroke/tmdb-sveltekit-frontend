@@ -14,6 +14,14 @@
 
 	let dialog;
 
+	/**
+	 * Öffnet den nativen Dialog automatisch, sobald im Browser eine Meldung vorliegt.
+	 *
+	 * Der Effekt reagiert nur clientseitig und vermeidet mehrfaches Öffnen eines
+	 * bereits sichtbaren Dialogs.
+	 *
+	 * @returns {void}
+	 */
 	$effect(() => {
 		if (!browser || !dialog || !message) {
 			return;
