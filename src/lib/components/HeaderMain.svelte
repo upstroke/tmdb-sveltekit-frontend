@@ -20,12 +20,27 @@
 	const { labels } = $derived($i18n);
 	let menuToggle;
 
+	/**
+	 * Schließt das mobile Menü bei Pointer-Interaktionen außerhalb des Headers.
+	 *
+	 * @param {PointerEvent} event - Pointer-Ereignis auf Fensterebene.
+	 * @returns {void}
+	 */
 	function handleWindowPointerdown(event) {
 		if (menuToggle?.checked && !event.target.closest('#menuHeader')) {
 			menuToggle.checked = false;
 		}
 	}
 
+	/**
+	 * Liest die zuletzt gemerkte Seitennummer für eine Route aus dem Session-Storage.
+	 *
+	 * Bei fehlendem Browser-Kontext oder ungültigen Werten wird auf Seite 1
+	 * zurückgefallen.
+	 *
+	 * @param {string} key - Storage-Schlüssel der jeweiligen Route.
+	 * @returns {number} Gespeicherte Seitennummer, mindestens 1.
+	 */
 	function getStoredPage(key) {
 		if (!browser) {
 			return 1;
@@ -40,6 +55,16 @@
 		}
 	}
 
+	/**
+	 * Erzeugt einen Navigationslink inklusive gemerkter Seitennummer und aktiver Locale.
+	 *
+	 * Vorhandene Query-Parameter bleiben erhalten, nur ein bestehender `page`-
+	 * Parameter wird durch den gespeicherten Wert ersetzt.
+	 *
+	 * @param {string} path - Zielpfad der Navigation.
+	 * @param {string} storageKey - Storage-Schlüssel für die zuletzt geöffnete Seite.
+	 * @returns {string} Ziel-URL für den Navigationslink.
+	 */
 	function getNavHref(path, storageKey) {
 		const storedPage = getStoredPage(storageKey);
 		const query = page.url.search

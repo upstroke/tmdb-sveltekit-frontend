@@ -10,6 +10,12 @@
 	 * @param {string} [class=''] - Zusätzliche CSS-Klassen für das Label.
 	 */
 
+	/**
+	 * Erwartete Props für das kompakte Medientyp-Label.
+	 *
+	 * @param {'movie'|'tv'|string} mediaType - Medientyp, der angezeigt werden soll.
+	 * @param {string} [className=''] - Zusätzliche CSS-Klassen für das Label.
+	 */
 	let { mediaType, class: className = '' } = $props();
 
 	let normalizedType = $derived(mediaType === 'movie' ? 'movie' : mediaType === 'tv' ? 'tv' : null);
