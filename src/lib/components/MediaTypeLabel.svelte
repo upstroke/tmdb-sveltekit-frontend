@@ -4,12 +4,18 @@
 	const { labels } = $derived($i18n);
 
 	/**
-	 * Erwartete Props für das Medientyp-Label.
+	 * Rendert ein kompaktes Label für den Medientyp.
 	 *
-	 * @param {'movie'|'tv'|string|null|undefined} mediaType - Medientyp zur Ableitung von Labeltext und Farbvariante.
-	 * @param {string} [class=''] - Zusätzliche CSS-Klassen für das Label.
+	 * Filme werden als blaues Label und TV-Serien als türkises Label dargestellt.
+	 * Für unbekannte oder fehlende Medientypen wird kein Label gerendert.
+	 *
+	 * @component
+	 * @prop {'movie'|'tv'|string|null|undefined} mediaType - Medientyp, aus dem Text und Farbvariante abgeleitet werden.
+	 * @prop {string} [class=''] - Zusätzliche CSS-Klassen für das Label.
+	 *
+	 * @example
+	 * <MediaTypeLabel mediaType="movie" class="featured-card-type" />
 	 */
-
 	let { mediaType, class: className = '' } = $props();
 
 	let normalizedType = $derived(mediaType === 'movie' ? 'movie' : mediaType === 'tv' ? 'tv' : null);
@@ -32,6 +38,7 @@
 <style lang="scss">
 	.ui.label.blue,
 	.ui.label.teal {
+		z-index: 1;
 		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
 	}
 </style>

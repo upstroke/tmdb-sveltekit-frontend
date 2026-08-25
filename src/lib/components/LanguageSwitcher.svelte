@@ -1,24 +1,39 @@
 <script>
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
-	import uiText from '$lib/i18n/ui.json';
 	import { i18n } from '$lib/stores/i18n';
 	import { locale } from '$lib/stores/locale';
-	import { resolveLocale } from '$lib/i18n/helpers';
+	import { getSupportedLocales, resolveLocale } from '$lib/i18n/helpers';
+
+	/**
+	 * Stellt die Sprachauswahl im Header bereit.
+	 *
+	 * Die Komponente synchronisiert die Auswahl mit URL, Locale-Store und
+	 * aktueller Route, ohne Scroll- oder Fokusverlust auszulösen.
+	 *
+	 * @component
+	 * @remarks Diese Komponente erwartet keine Props.
+	 *
+	 * @example
+	 * <LanguageSwitcher />
+	 */
 
 	const { labels } = $derived($i18n);
 	let selectedLocale = $state(resolveLocale(page.url.searchParams.get('locale')));
 
-	const locales = Object.values(uiText.locales).map(({ languageCode, languageShortCode }) => ({
+	const locales = getSupportedLocales().map((languageCode) => ({
 		value: languageCode,
-		label: languageShortCode
+		label: languageCode.split('-')[0].toUpperCase()
 	}));
 
 	/**
-	 * Aktualisiert die aktive Sprache, speichert sie im Locale-Store und lädt die aktuelle Route mit Locale-Parameter neu.
+	 * Reagiert auf eine geänderte Sprachwahl und aktualisiert Store sowie URL.
 	 *
-	 * @param {Event & { currentTarget: HTMLSelectElement }} event - Change-Event des Sprach-Selects.
-	 * @returns {Promise<void>} Wird abgeschlossen, sobald die Navigation mit aktualisierter Locale beendet ist.
+	 * Die aktuelle Seite bleibt dabei erhalten und wird mit der neuen Locale
+	 * ohne Scroll- oder Fokusverlust neu geladen.
+	 *
+	 * @param {Event & { currentTarget: HTMLSelectElement }} event - Änderungsereignis des Select-Felds.
+	 * @returns {Promise<void>} Wird aufgelöst, sobald die Navigation abgeschlossen ist.
 	 */
 	async function handleChange(event) {
 		const nextLocale = resolveLocale(event.currentTarget.value);
@@ -46,9 +61,7 @@
 		onchange={handleChange}
 	>
 		{#each locales as locale (locale.value)}
-			<option class={locale.label ? '' : 'u-not-available'} value={locale.value}
-				>{locale.label}</option
-			>
+			<option value={locale.value}>{locale.label}</option>
 		{/each}
 	</select>
 </div>
@@ -67,6 +80,19 @@
 		background: transparent;
 		color: #fff;
 		cursor: pointer;
+		outline: none;
+		box-shadow: none;
+	}
+
+	select:focus,
+	select:focus-visible {
+		border: 0;
+		box-shadow: none;
+	}
+
+	select:focus-visible {
+		outline: 2px solid #2185d0;
+		outline-offset: 3px;
 	}
 
 	select:hover {

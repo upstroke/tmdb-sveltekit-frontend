@@ -110,6 +110,22 @@ just test-vitest
 just test-e2e
 ```
 
+Die wichtigsten npm-Skripte für Formatierung und Codequalität sind:
+
+```bash
+npm run format
+npm run format:check
+npm run lint:eslint
+npm run lint
+npm run lint:fix
+```
+
+- `npm run format` formatiert die Dateien unter `src` mit Prettier.
+- `npm run format:check` prüft die Formatierung, ohne Dateien zu ändern.
+- `npm run lint:eslint` führt ausschließlich ESLint für `src` aus.
+- `npm run lint` kombiniert den Prettier-Check mit ESLint.
+- `npm run lint:fix` formatiert den Quellcode und korrigiert mögliche ESLint-Probleme automatisch.
+
 Die `just`-Befehle sind Abkürzungen für die npm-Skripte aus `package.json`. Die eigentliche Befehlsdefinition bleibt daher in `package.json`; bei neuen oder geänderten npm-Skripten muss das `justfile` geprüft und gegebenenfalls ergänzt oder angepasst werden.
 
 ## Produktionsbuild
@@ -118,6 +134,10 @@ Die `just`-Befehle sind Abkürzungen für die npm-Skripte aus `package.json`. Di
 npm run build
 npm run preview
 ```
+
+## Dokumentation
+
+- Testdokumentation und Testvorgehen: `docs/testing.md`
 
 ## Projektstruktur
 
@@ -142,9 +162,9 @@ tests/
   mocks/
   setup/
 
-coverage/
-playwright-report/
-test-results/
+coverage/ (entsteht bei Bedarf)
+playwright-report/ (entsteht bei Bedarf)
+test-results/ (entsteht bei Bedarf)
 ```
 
 ## Bedeutung der wichtigsten Ordner
@@ -157,7 +177,7 @@ test-results/
 - `src/lib/utils/` enthält Hilfsfunktionen für Formatierung, Paging und Duplikatbehandlung
 - `static/` enthält statische Assets
 - `tests/` enthält alle automatisierten Tests nach Testebene strukturiert
-- `coverage/` enthält die von Vitest erzeugten Coverage-Berichte
+- `coverage/` entsteht bei Bedarf durch Coverage-Läufe mit Vitest
 - `playwright-report/` enthält die HTML-Ausgabe der Playwright-Tests
 - `test-results/` enthält Laufzeit-Artefakte und Fehlerausgaben aus Playwright
 
