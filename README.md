@@ -135,6 +135,10 @@ npm run build
 npm run preview
 ```
 
+## Dokumentation
+
+- Testdokumentation und Testvorgehen: `docs/testing.md`
+
 ## Projektstruktur
 
 ```text
@@ -158,9 +162,9 @@ tests/
   mocks/
   setup/
 
-coverage/
-playwright-report/
-test-results/
+coverage/ (entsteht bei Bedarf)
+playwright-report/ (entsteht bei Bedarf)
+test-results/ (entsteht bei Bedarf)
 ```
 
 ## Bedeutung der wichtigsten Ordner
@@ -173,7 +177,7 @@ test-results/
 - `src/lib/utils/` enthält Hilfsfunktionen für Formatierung, Paging und Duplikatbehandlung
 - `static/` enthält statische Assets
 - `tests/` enthält alle automatisierten Tests nach Testebene strukturiert
-- `coverage/` enthält die von Vitest erzeugten Coverage-Berichte
+- `coverage/` entsteht bei Bedarf durch Coverage-Läufe mit Vitest
 - `playwright-report/` enthält die HTML-Ausgabe der Playwright-Tests
 - `test-results/` enthält Laufzeit-Artefakte und Fehlerausgaben aus Playwright
 

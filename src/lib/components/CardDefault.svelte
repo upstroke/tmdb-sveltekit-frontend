@@ -96,7 +96,7 @@
 					<img
 						src={cardImageUrl}
 						alt={`Poster von ${cardTitle}`}
-						on:load={(event) => {
+						onload={(event) => {
 							const img = event.currentTarget;
 							if (img.complete && img.naturalWidth > 0) {
 								requestAnimationFrame(() => {
@@ -106,7 +106,7 @@
 								imageLoaded = true;
 							}
 						}}
-						on:error={(event) => {
+						onerror={(event) => {
 							const img = event.currentTarget;
 							img.style.display = 'none';
 							imageErrored = true;

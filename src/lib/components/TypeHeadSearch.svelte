@@ -50,7 +50,7 @@
 	let debounceTimer;
 	let loadingTimer;
 	let controller;
-	let previousLocale = $state(activeLocale);
+	let previousLocale = $state(null);
 
 	/**
 	 * Reagiert auf Locale-Wechsel und startet bei aktivem Suchbegriff eine neue Suche.
@@ -61,6 +61,11 @@
 	 * @returns {void}
 	 */
 	$effect(() => {
+		if (previousLocale == null) {
+			previousLocale = activeLocale;
+			return;
+		}
+
 		if (activeLocale === previousLocale) {
 			return;
 		}
