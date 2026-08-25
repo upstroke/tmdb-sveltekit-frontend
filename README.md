@@ -137,7 +137,7 @@ npm run preview
 
 ## Dokumentation
 
-- Testdokumentation und Testvorgehen: `docs/testing.md`
+- [Testdokumentation und Testvorgehen](docs/testing.md)
 
 ## Projektstruktur
 
