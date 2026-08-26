@@ -79,7 +79,7 @@ Wichtig sind insbesondere:
 - `VITE_DATE_LOCALE`  
   Locale für die Datumsformatierung
 
-*Nachdem der API Key ergänzt wurden - die Datei in .env umbenennen.*
+*Nachdem der API Key ergänzt wurde - die Datei in .env umbenennen.*
 
 ## TMDB API Key
 
@@ -137,10 +137,6 @@ npm run build
 npm run preview
 ```
 
-## Dokumentation
-
-- [Testdokumentation und Testvorgehen](docs/testing.md)
-
 ## Projektstruktur
 
 ```text
@@ -168,6 +164,10 @@ coverage/ (entsteht bei Bedarf)
 playwright-report/ (entsteht bei Bedarf)
 test-results/ (entsteht bei Bedarf)
 ```
+
+## Testdokumentation
+Diese Datei beschreibt das pragmatische Vorgehen für Tests <br>
+[Testdokumentation und Testvorgehen](docs/testing.md)
 
 ## Bedeutung der wichtigsten Ordner
 

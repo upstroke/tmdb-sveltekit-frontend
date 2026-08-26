@@ -43,7 +43,7 @@ function createLocaleStore() {
 				try {
 					sessionStorage.setItem(STORAGE_KEY, locale);
 				} catch (storageError) {
-					console.warn(`Locale konnte nicht gespeichert werden: ${storageError}`);
+					console.warn(`The locale could not be saved: ${storageError}`);
 				}
 			}
 
