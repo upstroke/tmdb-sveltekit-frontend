@@ -385,6 +385,7 @@
 				"searchError": "Không thể tải tìm kiếm.",
 				"searchNoResults": "Không tìm thấy kết quả.",
 				"noContent": "Không tìm thấy nội dung.",
+				"noMoviesFound": "Không tìm thấy phim nào.",
 				"apiKeyMissing": "Thiếu TMDB_API_KEY",
 				"contentLoadError": "Không thể tải nội dung",
 				"moviesLoadError": "Không thể tải phim",
