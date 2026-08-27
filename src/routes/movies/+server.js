@@ -2,7 +2,7 @@ import { json } from '@sveltejs/kit';
 import { resolveLocale } from '$lib/i18n/helpers';
 import { getLocaleText } from '$lib/i18n/resolver';
 import { TMDB_API_KEY } from '$env/static/private';
-import { TmdbAPI } from '$lib/services/tmdb-api.js';
+import { createTmdbApi } from '$lib/services/tmdb-api.js';
 
 /**
  * Lädt eine weitere Seite mit Filmen.
@@ -31,7 +31,7 @@ export async function GET({ fetch, url }) {
 	}
 
 	try {
-		const api = new TmdbAPI(fetch, TMDB_API_KEY, locale);
+		const api = createTmdbApi(fetch, TMDB_API_KEY, locale);
 
 		const movies = await api.getTrendingMovies(page);
 

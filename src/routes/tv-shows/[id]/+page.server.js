@@ -1,7 +1,7 @@
 import { TMDB_API_KEY } from '$env/static/private';
 import { resolveLocale } from '$lib/i18n/helpers';
 import { getLocaleText } from '$lib/i18n/resolver';
-import { TmdbAPI } from '$lib/services/tmdb-api.js';
+import { createTmdbApi } from '$lib/services/tmdb-api.js';
 
 /**
  * Lädt die Serverdaten für eine TV-Show-Detailseite.
@@ -25,12 +25,12 @@ export async function load({ fetch, params, url }) {
 	}
 
 	try {
-		const api = new TmdbAPI(fetch, TMDB_API_KEY, locale);
+		const api = createTmdbApi(fetch, TMDB_API_KEY, locale);
 
 		const details = await api.getDetails('tv', params.id);
 
 		return {
-			tvShow: api.mapDetails(details, 'tv'),
+			tvShow: details,
 			error: null
 		};
 	} catch (error) {

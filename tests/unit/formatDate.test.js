@@ -11,8 +11,24 @@ describe('formatDate', () => {
 		expect(formatDate('')).toBe('');
 	});
 
-	it('gibt den Originalwert bei ungültigem Datum zurück', () => {
+	it('gibt den Originalwert bei einem nicht parsebaren String zurück', () => {
 		expect(formatDate('kein-datum')).toBe('kein-datum');
+	});
+
+	it('gibt den Originalwert bei einem ungültigen Kalendertag zurück', () => {
+		expect(formatDate('2024-02-30')).toBe('2024-02-30');
+	});
+
+	it('gibt den Originalwert bei einem ungültigen Monat zurück', () => {
+		expect(formatDate('2024-13-15')).toBe('2024-13-15');
+	});
+
+	it('gibt den Originalwert bei einem unvollständigen ISO-Datum zurück', () => {
+		expect(formatDate('2024-01')).toBe('2024-01');
+	});
+
+	it('gibt den Originalwert bei einem Datum mit ungültiger Uhrzeit zurück', () => {
+		expect(formatDate('2024-01-15T25:00:00')).toBe('2024-01-15T25:00:00');
 	});
 
 	it('formatiert ein parsebares Datum mit der übergebenen Locale', () => {
