@@ -1,7 +1,7 @@
 import { TMDB_API_KEY } from '$env/static/private';
 import { resolveLocale } from '$lib/i18n/helpers';
 import { getLocaleText } from '$lib/i18n/resolver';
-import { TmdbAPI } from '$lib/services/tmdb-api.js';
+import { createTmdbApi } from '$lib/services/tmdb-api.js';
 
 /**
  * Lädt die Serverdaten für die Filmliste.
@@ -43,7 +43,7 @@ export async function load({ fetch, url }) {
 		};
 	}
 
-	const api = new TmdbAPI(fetch, TMDB_API_KEY, locale);
+	const api = createTmdbApi(fetch, TMDB_API_KEY, locale);
 
 	try {
 		const pages = await Promise.all(
@@ -58,23 +58,19 @@ export async function load({ fetch, url }) {
 		let featured = null;
 
 		if (source) {
-			featured = {
-				id: source.id,
-				mediaType: 'movie',
-				title: source.title,
-				releaseDate: source.date,
-				overview: '',
-				homepage: '',
-				genres: source.genres ?? [],
-				imageUrl: source.imageUrl
-			};
-
 			try {
 				const details = await api.getDetails('movie', source.id);
 
 				featured = {
-					...featured,
-					...api.mapFeaturedItem(details, 'movie')
+					id: details.id,
+					mediaType: details.mediaType,
+					title: details.title,
+					releaseDate: details.releaseDate,
+					overview: details.overview,
+					homepage: details.homepage,
+					genres: details.genres ?? [],
+					imageUrl: details.imageUrl,
+					posterUrl: details.posterUrl
 				};
 			} catch (error) {
 				console.error('Featured movie details could not be loaded:', error);

@@ -6,7 +6,7 @@
 	import { i18n } from '$lib/stores/i18n';
 	import { resolveLocale } from '$lib/i18n/helpers';
 
-	const { labels: texts, messages, titles, formats } = $derived($i18n);
+	const { labels: texts, messages, titles, formats, fallbacks } = $derived($i18n);
 	const activeLocale = $derived(resolveLocale(page.url.searchParams.get('locale')));
 
 	/**
@@ -87,7 +87,14 @@
 	 * @returns {string} Vierstelliges Jahr oder ein Platzhalter ohne Datum.
 	 */
 	function formatYear(value) {
-		return value?.slice(0, 4) || '- -';
+		if (!value) return fallbacks.dateFallback;
+
+		const date = new Date(value);
+		if (Number.isNaN(date.getTime())) {
+			return fallbacks.dateFallback;
+		}
+
+		return String(date.getFullYear());
 	}
 
 	/**
@@ -344,7 +351,7 @@
 									data-result-link="true"
 								>
 									<figure class="image" aria-hidden="true">
-										<img src={item.posterUrl || notAvailable} alt="" />
+										<img src={item.posterUrl || item.imageUrl || notAvailable} alt="" />
 									</figure>
 									<div class="content">
 										<header class="result-header">
@@ -387,7 +394,7 @@
 										data-result-link="true"
 									>
 										<figure class="image" aria-hidden="true">
-											<img src={item.posterUrl || notAvailable} alt="" />
+											<img src={item.posterUrl || item.imageUrl || notAvailable} alt="" />
 										</figure>
 										<div class="content">
 											<header class="result-header">

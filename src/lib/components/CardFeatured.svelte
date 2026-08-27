@@ -3,6 +3,7 @@
 	import { page } from '$app/state';
 	import notAvailable from '$lib/assets/not-available.png';
 	import { i18n } from '$lib/stores/i18n';
+	import { formatDate } from '$lib/utils/formatDate';
 
 	const { labels, fallbacks } = $derived($i18n);
 
@@ -81,7 +82,11 @@
 	let featuredImageUrl = $derived(imageUrl || notAvailable);
 	let featuredPosterUrl = $derived(posterUrl || imageUrl || notAvailable);
 	let featuredTitle = $derived(title?.trim() || notAvailableText);
-	let featuredReleaseDate = $derived(releaseDate?.trim() || '');
+	let featuredReleaseDate = $derived(
+		releaseDate?.trim()
+			? formatDate(releaseDate, page.url.searchParams.get('locale') ?? 'de-DE')
+			: ''
+	);
 	let hasReleaseDate = $derived(Boolean(featuredReleaseDate));
 	let featuredOverview = $derived(overview?.trim() || notAvailableText);
 	let featuredHomepage = $derived(homepage?.trim() || '');

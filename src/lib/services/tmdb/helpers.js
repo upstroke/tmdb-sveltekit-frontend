@@ -32,16 +32,6 @@ export function getDate(item) {
 }
 
 /**
- * Gibt den Bildpfad eines Eintrags zurück.
- *
- * @param {Object} item - TMDB-Datensatz.
- * @returns {string} Poster- oder Backdrop-Pfad.
- */
-export function getImagePath(item) {
-	return item.poster_path ?? item.backdrop_path ?? '';
-}
-
-/**
  * Baut eine vollständige Bild-URL aus einem TMDB-Pfad.
  *
  * @param {string} path - Bildpfad.
