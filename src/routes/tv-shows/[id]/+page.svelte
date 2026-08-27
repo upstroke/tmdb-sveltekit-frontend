@@ -1,4 +1,5 @@
 <script>
+	import { page } from '$app/state';
 	import { deduplicateById } from '$lib/utils/deduplicateById';
 	import { formatHomepageLabel } from '$lib/utils/formatHomepageLabel';
 	import DialogMessage from '$lib/components/DialogMessage.svelte';
@@ -6,36 +7,27 @@
 	import MediaTypeLabel from '$lib/components/MediaTypeLabel.svelte';
 	import notAvailable from '$lib/assets/not-available.png';
 	import { i18n } from '$lib/stores/i18n';
+	import { getCertificationMeta } from '$lib/utils/certificationMeta';
 
-	/**
-	 * Erwartete Props für die Detailseite.
-	 *
-	 * @param {{
-	 *   tvShow?: {
-	 *     imageUrl?: string,
-	 *     posterUrl?: string,
-	 *     title?: string,
-	 *     rating?: number|string,
-	 *     mediaType?: 'movie'|'tv'|string,
-	 *     genres?: Array<{id: number|string, name: string}>,
-	 *     overview?: string,
-	 *     homepage?: string,
-	 *     trailerUrl?: string,
-	 *     releaseDate?: string,
-	 *     productionCompanies?: Array<{id: number|string, name: string}>,
-	 *     runtime?: number|null,
-	 *     cast?: Array<{creditId?: number|string, id?: number|string, name: string, character?: string}>,
-	 *     crew?: Array<{creditId?: number|string, id?: number|string, name: string, job?: string}>
-	 *   } | null,
-	 *   error?: string | null
-	 * }} data - Geladene TV-Show-Daten.
-	 */
 	let { data } = $props();
 
 	const { buttons, fallbacks, formats, labels, messages, titles } = $derived($i18n);
 
 	let tvShow = $derived(data.tvShow ?? null);
 	let error = $derived(data.error ?? null);
+	let activeRegion = $derived((page.url.searchParams.get('locale') ?? 'de-DE').split('-')[1] ?? 'DE');
+	let certificationMeta = $derived(getCertificationMeta(tvShow?.certification, activeRegion));
+	let certificationStyle = $derived.by(() =>
+		certificationMeta
+			? `--certification-icon-color: ${
+				certificationMeta.color === '#ffffff' ? 'transparent' : certificationMeta.color
+			  }; --certification-icon-border-color: ${
+				certificationMeta.color === '#ffffff'
+					? 'var(--color-text-muted, #9b9b9b)'
+					: certificationMeta.color
+			  }`
+			: `--certification-icon-color: transparent; --certification-icon-border-color: var(--color-text-muted, #9b9b9b)`
+	);
 
 	let backdrop = $derived(tvShow?.imageUrl || notAvailable);
 	let posterUrl = $derived(tvShow?.posterUrl || tvShow?.imageUrl || notAvailable);
@@ -62,7 +54,7 @@
 </svelte:head>
 
 {#if error}
-	<DialogMessage message={error} />
+	<DialogMessage message={error}/>
 {:else if tvShow}
 	<DetailsHero
 		{title}
@@ -78,9 +70,22 @@
 				<div>
 					<dt class="u-sr-only">{labels.mediaType}</dt>
 					<dd>
-						<MediaTypeLabel {mediaType} />
+						<MediaTypeLabel {mediaType}/>
 					</dd>
 				</div>
+
+				<div class="details-meta-item">
+					<dt class="u-sr-only">{labels.certification}</dt>
+					<dd class="meta certification" style={certificationStyle}>
+						<span class="certification-content">
+							<span class="certification-icon" aria-hidden="true"></span>
+							<span class={certificationMeta?.label ? '' : 'u-not-available'}>
+								{certificationMeta?.label ?? fallbacks.notAvailable}
+							</span>
+						</span>
+					</dd>
+				</div>
+
 				<div>
 					<dt class="u-sr-only">{labels.rating}</dt>
 					<dd>
@@ -114,10 +119,7 @@
 		</header>
 
 		<section aria-labelledby="overview-heading">
-			<h3
-				id="overview-heading"
-				class="ui medium dividing header {labels.overview ? '' : 'u-not-available'}"
-			>
+			<h3 id="overview-heading" class="ui medium dividing header {labels.overview ? '' : 'u-not-available'}">
 				{labels.overview}
 			</h3>
 
@@ -205,98 +207,55 @@
 			{/if}
 		</section>
 
-		{#if runtime}
-			<section aria-labelledby="runtime-heading">
-				<h3 id="runtime-heading" class="ui medium header {labels.runtime ? '' : 'u-not-available'}">
-					{labels.runtime}
-				</h3>
-
-				<p class="small">
-					<span class={runtime ? '' : 'u-not-available'}>{runtime}</span>
-					<span class={formats.minutes ? '' : 'u-not-available'}>{formats.minutes}</span>
-				</p>
-			</section>
-		{/if}
+		<section aria-labelledby="runtime-heading">
+			<h3
+				id="runtime-heading"
+				class="ui medium dividing header {labels.runtime ? '' : 'u-not-available'}"
+			>
+				{labels.runtime}
+			</h3>
+			<p>
+				{#if runtime !== null && runtime !== undefined}
+					<span>{runtime} min</span>
+				{:else}
+					<span class="u-not-available">{fallbacks.notAvailable}</span>
+				{/if}
+			</p>
+		</section>
 
 		<section aria-labelledby="cast-heading">
-			<header>
-				<h3
-					id="cast-heading"
-					class="ui medium dividing header {labels.cast ? '' : 'u-not-available'}"
-				>
-					{labels.cast}
-				</h3>
-			</header>
-
+			<h3 id="cast-heading" class="ui medium dividing header">Cast</h3>
 			{#if castMembers.length}
 				<ul class="ui relaxed divided list">
-					{#each castMembers as person (`tv-cast-${person.creditId ?? person.id}`)}
-						<li class="item">
-							<article>
-								<dl>
-									<div>
-										<dt class="u-sr-only">{labels.actor}</dt>
-										<dd class="header">
-											<strong class={person.name ? '' : 'u-not-available'}
-												>{person.name || fallbacks.notAvailable}</strong
-											>
-										</dd>
-									</div>
-
-									<div>
-										<dt class="u-sr-only">{labels.role}</dt>
-										<dd class="description {person.character ? '' : 'u-not-available'}">
-											{person.character || messages.noRole}
-										</dd>
-									</div>
-								</dl>
-							</article>
+					{#each castMembers as member (`tv-cast-${member.creditId ?? member.id ?? member.name}`)}
+						<li>
+							<strong>{member.name}</strong>
+							{#if member.character}
+								<span> — {member.character}</span>
+							{/if}
 						</li>
 					{/each}
 				</ul>
 			{:else}
-				<p class={messages.noCast ? '' : 'u-not-available'}>{messages.noCast}</p>
+				<p class="u-not-available">{fallbacks.notAvailable}</p>
 			{/if}
 		</section>
 
 		<section aria-labelledby="crew-heading">
-			<header>
-				<h3
-					id="crew-heading"
-					class="ui medium dividing header {labels.crew ? '' : 'u-not-available'}"
-				>
-					{labels.crew}
-				</h3>
-			</header>
-
+			<h3 id="crew-heading" class="ui medium dividing header">Crew</h3>
 			{#if crew.length}
 				<ul class="ui relaxed divided list">
-					{#each crew as person (`tv-crew-${person.creditId ?? person.id}`)}
-						<li class="item">
-							<article>
-								<dl>
-									<div>
-										<dt class="u-sr-only">{labels.actor}</dt>
-										<dd class="header">
-											<strong class={person.name ? '' : 'u-not-available'}
-												>{person.name || fallbacks.notAvailable}</strong
-											>
-										</dd>
-									</div>
-
-									<div>
-										<dt class="u-sr-only">{labels.job}</dt>
-										<dd class="description {person.job ? '' : 'u-not-available'}">
-											{person.job || messages.noJob}
-										</dd>
-									</div>
-								</dl>
-							</article>
+					{#each crew as member (`tv-crew-${member.creditId ?? member.id ?? member.name}`)}
+						<li>
+							<strong>{member.name}</strong>
+							{#if member.job}
+								<span> — {member.job}</span>
+							{/if}
 						</li>
 					{/each}
 				</ul>
 			{:else}
-				<p class={messages.noCrew ? '' : 'u-not-available'}>{messages.noCrew}</p>
+				<p class="u-not-available">{fallbacks.notAvailable}</p>
 			{/if}
 		</section>
 	</main>

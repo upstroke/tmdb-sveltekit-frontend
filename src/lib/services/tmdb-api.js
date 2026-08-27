@@ -239,7 +239,8 @@ export function createTmdbApi(fetchFn, apiKey, language = 'de-DE') {
 			imageUrl: getImageUrl(details.backdrop_path ?? details.poster_path ?? '', 'w1280'),
 			posterUrl: getImageUrl(details.poster_path ?? '', 'w342'),
 			cast: mapCast(details.credits?.cast ?? []),
-			crew: mapCrew(details.credits?.crew ?? [])
+			crew: mapCrew(details.credits?.crew ?? []),
+			certification: details.certification ?? ''
 		};
 	}
 
@@ -296,10 +297,11 @@ export function createTmdbApi(fetchFn, apiKey, language = 'de-DE') {
 		const items = data.results ?? [];
 		await loadGenreMaps();
 		const results = items.map((item) => mapCardItem(item, fallbackMediaType)).filter(Boolean);
+		const enrichedResults = await enrichCardCertifications(results);
 
 		return {
 			page: data.page ?? page,
-			results,
+			results: enrichedResults,
 			hasMore: (data.page ?? page) < (data.total_pages ?? data.page ?? page)
 		};
 	}
@@ -356,9 +358,12 @@ export function createTmdbApi(fetchFn, apiKey, language = 'de-DE') {
 
 	async function getDetails(mediaType, id) {
 		const endpoint = mediaType === 'tv' ? `/tv/${id}` : `/movie/${id}`;
-		const data = await request(endpoint, { append_to_response: 'videos,credits' });
+		const [data, certification] = await Promise.all([
+			request(endpoint, { append_to_response: 'videos,credits' }),
+			getCertification(mediaType, id)
+		]);
 		const normalizedMediaType = getMediaType(data, mediaType);
-		return mapDetails({ ...data, mediaType: normalizedMediaType }, mediaType);
+		return mapDetails({ ...data, mediaType: normalizedMediaType, certification }, mediaType);
 	}
 
 	return {
