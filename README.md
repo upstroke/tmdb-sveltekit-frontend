@@ -22,7 +22,7 @@ Im Fokus stehen:
 - getrennte Übersichtsseiten für Filme und Serien
 - Detailseiten mit Bild, Metadaten, Cast und Produktionsinformationen
 - Typeahead-Suche für Filme und Serien
-- lokalisierte Oberfläche mit Deutsch (`de-DE`), Englisch (`en-US`) und Vietnamesisch (`vi-VN`)
+- lokalisierte Oberfläche
 - Sprachwechsel über den globalen Header
 - erneute Typeahead-Suche in der neu gewählten Sprache bei aktivem Suchbegriff
 - Suchtreffer verwenden beim Klick die aktuell aktive Locale, auch wenn die Treffer vor dem Sprachwechsel geladen wurden
@@ -31,7 +31,6 @@ Im Fokus stehen:
 - Duplikatbereinigung beim Nachladen von Daten
 - gemeinsame Fallback-Logik für fehlende Bilder und Texte
 - gemeinsamer Fehlerdialog für API- und Ladefehler
-- mobiles Menü mit Click-outside-Schließen
 - wiederverwendbare Komponenten für Karten, Suche, Pagination und Fehlerzustände
 
 ## Internationalisierung
@@ -46,8 +45,6 @@ Die Locale-Logik befindet sich in:
 - `src/lib/i18n/helpers.js` für unterstützte Locales und Fallbacks
 - `src/lib/stores/locale.js` für den aktiven Sprachzustand
 - `src/lib/stores/i18n.js` für den Zugriff auf die geladenen Übersetzungen
-
-Aktuell werden `de-DE`, `en-US` und `vi-VN` unterstützt. Die Locale wird als `locale`-Query-Parameter in der URL geführt, damit Seiten, API-Routen, Navigation und Suchanfragen dieselbe Sprache verwenden.
 
 Beim Sprachwechsel bleibt die aktuelle Route erhalten. Ist in der Typeahead-Suche ein Suchbegriff mit mindestens vier Zeichen vorhanden, werden die Ergebnisse automatisch mit der neuen Locale erneut geladen.
 
