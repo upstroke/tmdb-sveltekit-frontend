@@ -4,7 +4,8 @@
 			"languageCode": "de-DE",
 			"languageShortCode": "DE",
 			"fallbacks": {
-				"notAvailable": "N/A"
+				"notAvailable": "N/A",
+				"dateFallback": "- -"
 			},
 			"labels": {
 				"rating": "Bewertung",
@@ -88,7 +89,8 @@
 			"languageCode": "en-US",
 			"languageShortCode": "EN",
 			"fallbacks": {
-				"notAvailable": "N/A"
+				"notAvailable": "N/A",
+				"dateFallback": "- -"
 			},
 			"labels": {
 				"rating": "Rating",
@@ -172,7 +174,8 @@
 			"languageCode": "es-ES",
 			"languageShortCode": "ES",
 			"fallbacks": {
-				"notAvailable": "N/D"
+				"notAvailable": "N/D",
+				"dateFallback": "- -"
 			},
 			"labels": {
 				"rating": "Valoración",
@@ -256,7 +259,8 @@
 			"languageCode": "fr-FR",
 			"languageShortCode": "FR",
 			"fallbacks": {
-				"notAvailable": "N/D"
+				"notAvailable": "N/D",
+				"dateFallback": "- -"
 			},
 			"labels": {
 				"rating": "Note",
@@ -340,7 +344,8 @@
 			"languageCode": "vi-VN",
 			"languageShortCode": "VN",
 			"fallbacks": {
-				"notAvailable": "Không có"
+				"notAvailable": "Không có",
+				"dateFallback": "- -"
 			},
 			"labels": {
 				"rating": "Đánh giá",

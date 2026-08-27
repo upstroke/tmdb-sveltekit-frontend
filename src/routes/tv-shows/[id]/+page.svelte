@@ -38,7 +38,7 @@
 	let error = $derived(data.error ?? null);
 
 	let backdrop = $derived(tvShow?.imageUrl || notAvailable);
-	let posterUrl = $derived(tvShow?.posterUrl || notAvailable);
+	let posterUrl = $derived(tvShow?.posterUrl || tvShow?.imageUrl || notAvailable);
 	let title = $derived(tvShow?.title?.trim() || fallbacks.notAvailable);
 	let rating = $derived(tvShow?.rating ?? null);
 	let mediaType = $derived(tvShow?.mediaType ?? 'tv');
