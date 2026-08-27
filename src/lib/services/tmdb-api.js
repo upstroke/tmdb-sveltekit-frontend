@@ -1,9 +1,14 @@
+import {
+	getDate,
+	getImagePath,
+	getImageUrl,
+	getMediaType,
+	getTitle
+} from '$lib/services/tmdb/helpers';
 import { formatDate } from '$lib/utils/formatDate';
 import notAvailableImage from '$lib/assets/not-available.png';
 
 const BASE_URL = 'https://api.themoviedb.org/3';
-
-const IMAGE_BASE_URL = 'https://image.tmdb.org/t/p';
 
 /**
  * Zugriffsschicht für die TMDB-API.
@@ -57,62 +62,6 @@ export class TmdbAPI {
 		}
 
 		return response.json();
-	}
-
-	/**
-	 * Ermittelt den Medientyp eines Eintrags.
-	 *
-	 * @param {Object} item - TMDB-Datensatz.
-	 * @param {string|null} [fallback=null] - Alternativer Medientyp.
-	 * @returns {string|null} `movie`, `tv` oder `null`.
-	 */
-	getMediaType(item, fallback = null) {
-		return fallback ?? item.media_type ?? (item.title ? 'movie' : item.name ? 'tv' : null);
-	}
-
-	/**
-	 * Gibt den Titel eines Eintrags zurück.
-	 *
-	 * @param {Object} item - TMDB-Datensatz.
-	 * @returns {string} Titel oder leerer String.
-	 */
-	getTitle(item) {
-		return item.title ?? item.name ?? '';
-	}
-
-	/**
-	 * Gibt das relevante Datum eines Eintrags zurück.
-	 *
-	 * @param {Object} item - TMDB-Datensatz.
-	 * @returns {string} Veröffentlichungs- oder Startdatum.
-	 */
-	getDate(item) {
-		return item.release_date ?? item.first_air_date ?? '';
-	}
-
-	/**
-	 * Gibt den Bildpfad eines Eintrags zurück.
-	 *
-	 * @param {Object} item - TMDB-Datensatz.
-	 * @returns {string} Poster- oder Backdrop-Pfad.
-	 */
-	getImagePath(item) {
-		return item.poster_path ?? item.backdrop_path ?? '';
-	}
-
-	/**
-	 * Baut eine vollständige Bild-URL aus einem TMDB-Pfad.
-	 *
-	 * @param {string} path - Bildpfad.
-	 * @param {string} [size='w500'] - TMDB-Bildgröße (z. B. `w92`, `w342`, `w500`, `w780`, `w1280`).
-	 * @returns {string} Vollständige Bild-URL oder leerer String.
-	 */
-	getImageUrl(path, size = 'w500') {
-		if (!path) {
-			return '';
-		}
-
-		return `${IMAGE_BASE_URL}/${size}${path}`;
 	}
 
 	/**
@@ -181,7 +130,7 @@ export class TmdbAPI {
 	 * @returns {Object} Normalisiertes Kartenobjekt.
 	 */
 	mapCardItem(item, fallbackMediaType = null) {
-		const mediaType = this.getMediaType(item, fallbackMediaType);
+		const mediaType = getMediaType(item, fallbackMediaType);
 
 		const genres = item.genres?.length
 			? item.genres
@@ -190,11 +139,11 @@ export class TmdbAPI {
 		return {
 			id: item.id,
 			mediaType: mediaType ?? 'na',
-			title: this.getTitle(item) || 'N/A',
-			date: this.formatDate(this.getDate(item)) || 'N/A',
+			title: getTitle(item) || 'N/A',
+			date: this.formatDate(getDate(item)) || 'N/A',
 			rating: item.vote_average ?? 0,
 			genres: genres.length ? genres : [{ id: 'na', name: 'N/A' }],
-			imageUrl: this.getImageUrl(this.getImagePath(item), 'w500') || notAvailableImage
+			imageUrl: getImageUrl(getImagePath(item), 'w500') || notAvailableImage
 		};
 	}
 
@@ -262,18 +211,18 @@ export class TmdbAPI {
 	 * @returns {Object} Normalisiertes Featured-Objekt.
 	 */
 	mapFeaturedItem(details, fallbackMediaType = null) {
-		const mediaType = this.getMediaType(details, fallbackMediaType);
+		const mediaType = getMediaType(details, fallbackMediaType);
 
 		return {
 			id: details.id,
 			mediaType,
-			title: this.getTitle(details),
-			releaseDate: this.formatDate(this.getDate(details)),
+			title: getTitle(details),
+			releaseDate: this.formatDate(getDate(details)),
 			overview: details.overview ?? '',
 			homepage: details.homepage ?? '',
 			genres: details.genres ?? [],
-			imageUrl: this.getImageUrl(details.backdrop_path ?? details.poster_path ?? '', 'w780'),
-			posterUrl: this.getImageUrl(details.poster_path ?? '', 'w342')
+			imageUrl: getImageUrl(details.backdrop_path ?? details.poster_path ?? '', 'w780'),
+			posterUrl: getImageUrl(details.poster_path ?? '', 'w342')
 		};
 	}
 
@@ -304,13 +253,13 @@ export class TmdbAPI {
 	 * @returns {Object} Normalisiertes Detailobjekt.
 	 */
 	mapDetails(details, fallbackMediaType) {
-		const mediaType = this.getMediaType(details, fallbackMediaType);
+		const mediaType = getMediaType(details, fallbackMediaType);
 
 		return {
 			id: details.id,
 			mediaType,
-			title: this.getTitle(details),
-			releaseDate: this.formatDate(this.getDate(details)),
+			title: getTitle(details),
+			releaseDate: this.formatDate(getDate(details)),
 			overview: details.overview ?? '',
 			homepage: details.homepage ?? '',
 			trailerUrl: this.getTrailerUrl(details),
@@ -319,8 +268,8 @@ export class TmdbAPI {
 			runtime: details.runtime ?? null,
 			episodeRunTime: details.episode_run_time ?? [],
 			productionCompanies: details.production_companies ?? [],
-			imageUrl: this.getImageUrl(details.backdrop_path ?? details.poster_path ?? '', 'w1280'),
-			posterUrl: this.getImageUrl(details.poster_path ?? '', 'w342'),
+			imageUrl: getImageUrl(details.backdrop_path ?? details.poster_path ?? '', 'w1280'),
+			posterUrl: getImageUrl(details.poster_path ?? '', 'w342'),
 			cast: this.mapCast(details.credits?.cast ?? []),
 			crew: this.mapCrew(details.credits?.crew ?? [])
 		};
@@ -508,7 +457,7 @@ export class TmdbAPI {
 			date: mediaType === 'movie' ? (item.release_date ?? '') : (item.first_air_date ?? ''),
 			releaseDate: mediaType === 'movie' ? (item.release_date ?? '') : (item.first_air_date ?? ''),
 			year: (mediaType === 'movie' ? item.release_date : item.first_air_date)?.slice(0, 4) ?? '',
-			posterUrl: this.getImageUrl(item.poster_path ?? '', 'w92')
+			posterUrl: getImageUrl(item.poster_path ?? '', 'w92')
 		};
 	}
 }
