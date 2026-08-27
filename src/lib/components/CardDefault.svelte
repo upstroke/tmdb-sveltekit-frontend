@@ -46,15 +46,17 @@
 	} = $props();
 
 	let normalizedType = $derived(mediaType === 'movie' ? 'movie' : mediaType === 'tv' ? 'tv' : null);
+	let hasValidCard = $derived(Boolean(id) && Boolean(normalizedType));
 	let detailsHref = $derived.by(() => {
-		let href;
+		if (!hasValidCard) {
+			return undefined;
+		}
 
+		let href;
 		if (normalizedType === 'movie') {
 			href = resolve('/movies/[id]', { id: String(id) });
-		} else if (normalizedType === 'tv') {
-			href = resolve('/tv-shows/[id]', { id: String(id) });
 		} else {
-			return undefined;
+			href = resolve('/tv-shows/[id]', { id: String(id) });
 		}
 
 		const url = new URL(href, page.url.origin);
