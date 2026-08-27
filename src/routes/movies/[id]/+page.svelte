@@ -38,7 +38,7 @@
 	let error = $derived(data.error ?? null);
 
 	let backdrop = $derived(movie?.imageUrl || notAvailable);
-	let posterUrl = $derived(movie?.posterUrl || notAvailable);
+	let posterUrl = $derived(movie?.posterUrl || movie?.imageUrl || notAvailable);
 	let title = $derived(movie?.title?.trim() || fallbacks.notAvailable);
 	let rating = $derived(movie?.rating ?? null);
 	let mediaType = $derived(movie?.mediaType ?? 'movie');

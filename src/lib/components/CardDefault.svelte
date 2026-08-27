@@ -5,6 +5,7 @@
 	import notAvailable from '$lib/assets/not-available.png';
 	import { i18n } from '$lib/stores/i18n';
 	import { getCertificationMeta } from '$lib/utils/certificationMeta';
+	import { formatDate } from '$lib/utils/formatDate';
 
 	/**
 	 * Rendert eine Standardkarte für Filme und TV-Serien inklusive Bild,
@@ -65,7 +66,9 @@
 	let notAvailableText = $derived(fallbacks.notAvailable);
 	let cardImageUrl = $derived(imageUrl || notAvailable);
 	let cardTitle = $derived(title?.trim() || notAvailableText);
-	let cardDate = $derived(date?.trim() || '');
+	let cardDate = $derived(
+		date?.trim() ? formatDate(date, page.url.searchParams.get('locale') ?? 'de-DE') : ''
+	);
 	let cardRating = $derived(typeof rating === 'number' && rating > 0 ? rating.toFixed(1) : null);
 	let certificationMeta = $derived(getCertificationMeta(certification, activeRegion));
 	let hasGenres = $derived(Boolean(genreText));
