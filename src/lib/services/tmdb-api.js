@@ -95,6 +95,10 @@ export function createTmdbApi(fetchFn, apiKey, language = 'de-DE') {
 	function mapCardItem(item, fallbackMediaType = null) {
 		const mediaType = getMediaType(item, fallbackMediaType);
 
+		if (!item?.id || !['movie', 'tv'].includes(mediaType)) {
+			return null;
+		}
+
 		const genres = item.genres?.length
 			? item.genres
 			: resolveGenres(item.genre_ids ?? [], mediaType);
@@ -102,7 +106,7 @@ export function createTmdbApi(fetchFn, apiKey, language = 'de-DE') {
 
 		return {
 			id: item.id,
-			mediaType: mediaType ?? 'na',
+			mediaType,
 			title: getTitle(item) || 'N/A',
 			date: getDate(item) || '',
 			rating: item.vote_average ?? 0,
@@ -291,7 +295,7 @@ export function createTmdbApi(fetchFn, apiKey, language = 'de-DE') {
 		const data = await request(endpoint, { page });
 		const items = data.results ?? [];
 		await loadGenreMaps();
-		const results = items.map((item) => mapCardItem(item, fallbackMediaType));
+		const results = items.map((item) => mapCardItem(item, fallbackMediaType)).filter(Boolean);
 
 		return {
 			page: data.page ?? page,
@@ -346,7 +350,8 @@ export function createTmdbApi(fetchFn, apiKey, language = 'de-DE') {
 			.map((item) => ({
 				...mapCardItem(item),
 				posterUrl: getImageUrl(item.poster_path ?? '', 'w342')
-			}));
+			}))
+			.filter(Boolean);
 	}
 
 	async function getDetails(mediaType, id) {
