@@ -248,8 +248,13 @@ main.ui.text.container.details-view {
 		max-width: 75%;
 	}
 
-	.home-link:hover {
-		text-decoration: underline;
+	.home-link {
+		color: #4183c4;
+		text-decoration: none;
+
+		&:hover {
+			text-decoration: underline;
+		}
 	}
 
 	.details-header {
@@ -376,5 +381,27 @@ main.ui.text.container.details-view {
 				}
 			}
 		}
+	}
+}
+
+/* ============================================
+   PROVIDER LIST
+   ============================================ */
+.justwatch-attribution {
+	color: #999;
+	font-weight: normal;
+	font-size: 60%;
+
+	strong {
+		color: initial;
+	}
+}
+
+.ui.list.providers-list {
+	margin-left: 0;
+
+	.item::before,
+	& > li::before {
+		display: none;
 	}
 }

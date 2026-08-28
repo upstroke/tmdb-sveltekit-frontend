@@ -19,6 +19,7 @@ export function createTmdbApi(fetchFn, apiKey, language = 'de-DE') {
 	let movieGenreMap = null;
 	let tvGenreMap = null;
 	const certificationCache = new Map();
+	const watchProvidersCache = new Map();
 
 	/**
 	 * Führt eine standardisierte Anfrage an die TMDB-API aus.
@@ -114,6 +115,70 @@ export function createTmdbApi(fetchFn, apiKey, language = 'de-DE') {
 			imageUrl: getImageUrl(posterPath, 'w500') || notAvailableImage,
 			posterUrl: getImageUrl(posterPath, 'w342') || notAvailableImage
 		};
+	}
+
+	function mapWatchProvider(provider, type, baseLink) {
+		if (!provider?.provider_id || !provider?.provider_name) {
+			return null;
+		}
+
+		return {
+			providerId: provider.provider_id,
+			providerName: provider.provider_name,
+			type,
+			link: baseLink ?? null,
+			logoPath: provider.logo_path ?? null,
+			displayPriority: provider.display_priority ?? null
+		};
+	}
+
+	function mapWatchProviderList(providers = [], type, baseLink) {
+		return providers.map((provider) => mapWatchProvider(provider, type, baseLink)).filter(Boolean);
+	}
+
+	/**
+	 * Ermittelt die lokalen Streaming-Provider für ein Medium.
+	 *
+	 * Filme und TV-Serien liefern Watch-Provider-Daten über den Endpunkt
+	 * `/{mediaType}/{id}/watch/providers`. Die gewünschte Region wird aus
+	 * dem API-Sprachcode abgeleitet, z. B. `de-DE` → `DE`.
+	 *
+	 * @param {string} mediaType - `movie` oder `tv`.
+	 * @param {number|string} id - TMDB-ID.
+	 * @returns {Promise<{link:string,providers:Object[]}|null>} Watch-Provider-Daten oder null.
+	 */
+	async function getWatchProviders(mediaType, id) {
+		const cacheKey = `${mediaType}-${id}`;
+		if (watchProvidersCache.has(cacheKey)) {
+			return watchProvidersCache.get(cacheKey);
+		}
+
+		let providers = null;
+
+		try {
+			const data = await request(`/${mediaType}/${id}/watch/providers`);
+			const regionData = data.results?.[region];
+
+			if (regionData) {
+				const mappedProviders = [
+					...mapWatchProviderList(regionData.flatrate, 'Flatrate', regionData.link),
+					...mapWatchProviderList(regionData.rent, 'Leihen', regionData.link),
+					...mapWatchProviderList(regionData.buy, 'Kaufen', regionData.link)
+				];
+
+				providers = mappedProviders.length
+					? {
+						link: regionData.link ?? '',
+						providers: mappedProviders
+					  }
+					: null;
+			}
+		} catch (error) {
+			console.warn(`Streaming-Provider konnten nicht geladen werden (${mediaType}/${id}):`, error);
+		}
+
+		watchProvidersCache.set(cacheKey, providers);
+		return providers;
 	}
 
 	/**
@@ -372,6 +437,7 @@ export function createTmdbApi(fetchFn, apiKey, language = 'de-DE') {
 		resolveGenres,
 		mapCardItem,
 		getCertification,
+		getWatchProviders,
 		enrichCardCertifications,
 		mapFeaturedItem,
 		getTrailerUrl,

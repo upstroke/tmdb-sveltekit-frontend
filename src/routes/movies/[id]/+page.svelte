@@ -39,6 +39,7 @@
 	let homepage = $derived(movie?.homepage ?? '');
 	let trailerUrl = $derived(movie?.trailerUrl ?? '');
 	let releaseDate = $derived(movie?.releaseDate ?? '');
+	let streamingProviders = $derived(data.providers ?? null);
 	let productionCompanies = $derived(deduplicateById(movie?.productionCompanies ?? []));
 	let runtime = $derived(movie?.runtime ?? null);
 	let castMembers = $derived(deduplicateById(movie?.cast ?? []));
@@ -185,17 +186,72 @@
 			</p>
 		</section>
 
+		<section aria-labelledby="watch-providers-heading">
+			<h3 id="watch-providers-heading" class="ui medium dividing header">
+				{labels.streamingProviders}
+				<small class="justwatch-attribution">{labels.streamingDataProvidedBy} <strong>&copy;JustWatch</strong></small>
+			</h3>
+			{#if streamingProviders}
+				{#await streamingProviders}
+					<p>{messages.loadMoreLoading}</p>
+				{:then providers}
+					{#if providers?.providers?.length}
+						<ul class="ui relaxed divided list providers-list">
+							{#each providers.providers as provider (`movie-provider-${provider.providerId}-${provider.type}`)}
+								<li>
+									<div style="display:flex;align-items:center;gap:0.75rem">
+										{#if provider.logoPath}
+											<img
+												src={`https://image.tmdb.org/t/p/w92${provider.logoPath}`}
+												alt=""
+												width="40"
+												height="40"
+												style="border-radius:0.25rem;background:#f0f0f0"
+											/>
+										{/if}
+										<div>
+											{#if provider.link}
+												<a
+													href={provider.link}
+													target="_blank"
+													rel="noopener noreferrer"
+													class="home-link"
+												>
+													<strong>{provider.providerName}</strong>
+												</a>
+											{:else}
+												<strong>{provider.providerName}</strong>
+											{/if}
+											<span> — {provider.type}</span>
+										</div>
+									</div>
+								</li>
+							{/each}
+						</ul>
+					{:else}
+						<p class="u-not-available">{fallbacks.notAvailable}</p>
+					{/if}
+				{:catch}
+					<p class="u-not-available">{fallbacks.notAvailable}</p>
+				{/await}
+			{:else}
+				<p class="u-not-available">{fallbacks.notAvailable}</p>
+			{/if}
+		</section>
+
 		<section aria-labelledby="production-heading">
 			<h3
 				id="production-heading"
 				class="ui medium dividing header {labels.productionCompanies ? '' : 'u-not-available'}"
 			>
-				{labels.productionCompanies}
+				{labels.production}
 			</h3>
 			{#if productionCompanies.length}
-				<ul class="ui list">
+				<ul class="ui relaxed divided list">
 					{#each productionCompanies as company (`movie-company-${company.id ?? company.name}`)}
-						<li class={company.name ? '' : 'u-not-available'}>{company.name}</li>
+						<li>
+							<strong>{company.name}</strong>
+						</li>
 					{/each}
 				</ul>
 			{:else}

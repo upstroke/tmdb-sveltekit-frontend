@@ -31,6 +31,7 @@ export async function load({ fetch, params, url }) {
 
 		return {
 			tvShow: details,
+			providers: api.getWatchProviders('tv', params.id),
 			error: null
 		};
 	} catch (error) {

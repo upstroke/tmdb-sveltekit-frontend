@@ -33,7 +33,9 @@
 				"navigationToggle": "Navigation öffnen oder schließen",
 				"mainNavigation": "Hauptnavigation",
 				"movie": "Movie",
-				"tvShow": "TV"
+				"tvShow": "TV",
+				"streamingProviders": "Streaminganbieter",
+				"streamingDataProvidedBy": "Bereitgestellt von JustWatch"
 			},
 			"messages": {
 				"loadMoreError": "Weitere Inhalte konnten nicht geladen werden.",
@@ -118,7 +120,9 @@
 				"navigationToggle": "Open or close navigation",
 				"mainNavigation": "Main navigation",
 				"movie": "Movie",
-				"tvShow": "TV"
+				"tvShow": "TV",
+				"streamingProviders": "Streaming providers",
+				"streamingDataProvidedBy": "Provided by JustWatch"
 			},
 			"messages": {
 				"loadMoreError": "More content could not be loaded.",
@@ -203,7 +207,9 @@
 				"navigationToggle": "Abrir o cerrar navegación",
 				"mainNavigation": "Navegación principal",
 				"movie": "Película",
-				"tvShow": "TV"
+				"tvShow": "TV",
+				"streamingProviders": "Proveedores de streaming",
+				"streamingDataProvidedBy": "Proporcionado por JustWatch"
 			},
 			"messages": {
 				"loadMoreError": "No se pudo cargar más contenido.",
@@ -288,7 +294,9 @@
 				"navigationToggle": "Ouvrir ou fermer la navigation",
 				"mainNavigation": "Navigation principale",
 				"movie": "Film",
-				"tvShow": "TV"
+				"tvShow": "TV",
+				"streamingProviders": "Fournisseurs de streaming",
+				"streamingDataProvidedBy": "Fourni par JustWatch"
 			},
 			"messages": {
 				"loadMoreError": "Impossible de charger plus de contenu.",
@@ -319,8 +327,7 @@
 				"loadMore": "Plus de résultats",
 				"dialogErrorTitle": "Erreur de chargement",
 				"dialogOk": "OK",
-				"loadMoreLoading": "Chargement de résultats supplémentaires …"
-			},
+				"loadMoreLoading": "Chargement de résultats supplémentaires …"},
 			"formats": {
 				"outOfTen": "sur 10",
 				"minutes": "minutes",
@@ -373,7 +380,9 @@
 				"navigationToggle": "Mở hoặc đóng điều hướng",
 				"mainNavigation": "Điều hướng chính",
 				"movie": "Phim",
-				"tvShow": "Chương trình TV"
+				"tvShow": "Chương trình TV",
+				"streamingProviders": "Nhàµµ cung cấp streaming",
+				"streamingDataProvidedBy": "Cung cấp bởi JustWatch"
 			},
 			"messages": {
 				"loadMoreError": "Không thể tải thêm nội dung.",

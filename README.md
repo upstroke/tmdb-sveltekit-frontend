@@ -48,6 +48,10 @@ Die Locale-Logik befindet sich in:
 
 Beim Sprachwechsel bleibt die aktuelle Route erhalten. Ist in der Typeahead-Suche ein Suchbegriff mit mindestens vier Zeichen vorhanden, werden die Ergebnisse automatisch mit der neuen Locale erneut geladen.
 
+## Streaming-Daten
+
+Die angezeigten Streaming-Anbieter und Watch-Links werden über die TMDB-API bereitgestellt. Die Streaming-Daten stammen von JustWatch und werden auf den Detailseiten für Filme und TV-Shows mit "Provided by JustWatch" gekennzeichnet.
+
 ## Tech Stack
 
 - SvelteKit 2.63
