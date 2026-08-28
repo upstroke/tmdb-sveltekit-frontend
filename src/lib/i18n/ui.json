@@ -35,7 +35,7 @@
 				"movie": "Movie",
 				"tvShow": "TV",
 				"streamingProviders": "Streaminganbieter",
-				"streamingDataProvidedBy": "Bereitgestellt von JustWatch",
+				"streamingDataProvidedBy": "Bereitgestellt von",
 				"providerTypeFlatrate": "Flatrate",
 				"providerTypeRent": "Leihen",
 				"providerTypeBuy": "Kaufen"
@@ -125,7 +125,7 @@
 				"movie": "Movie",
 				"tvShow": "TV",
 				"streamingProviders": "Streaming providers",
-				"streamingDataProvidedBy": "Provided by JustWatch",
+				"streamingDataProvidedBy": "Provided by",
 				"providerTypeFlatrate": "Flatrate",
 				"providerTypeRent": "Rent",
 				"providerTypeBuy": "Buy"
@@ -215,7 +215,7 @@
 				"movie": "Película",
 				"tvShow": "TV",
 				"streamingProviders": "Proveedores de streaming",
-				"streamingDataProvidedBy": "Proporcionado por JustWatch",
+				"streamingDataProvidedBy": "Proporcionado por",
 				"providerTypeFlatrate": "Suscripción",
 				"providerTypeRent": "Alquilar",
 				"providerTypeBuy": "Comprar"
@@ -305,7 +305,7 @@
 				"movie": "Film",
 				"tvShow": "TV",
 				"streamingProviders": "Fournisseurs de streaming",
-				"streamingDataProvidedBy": "Fourni par JustWatch",
+				"streamingDataProvidedBy": "Fourni par",
 				"providerTypeFlatrate": "Abonnement",
 				"providerTypeRent": "Louer",
 				"providerTypeBuy": "Acheter"
@@ -394,7 +394,7 @@
 				"movie": "Phim",
 				"tvShow": "Chương trình TV",
 				"streamingProviders": "Nhàµµ cung cấp streaming",
-				"streamingDataProvidedBy": "Cung cấp bởi JustWatch",
+				"streamingDataProvidedBy": "Cung cấp bởi",
 				"providerTypeFlatrate": "Góµ»£c",
 				"providerTypeRent": "Thuêµª",
 				"providerTypeBuy": "Mua"
