@@ -35,7 +35,10 @@
 				"movie": "Movie",
 				"tvShow": "TV",
 				"streamingProviders": "Streaminganbieter",
-				"streamingDataProvidedBy": "Bereitgestellt von JustWatch"
+				"streamingDataProvidedBy": "Bereitgestellt von JustWatch",
+				"providerTypeFlatrate": "Flatrate",
+				"providerTypeRent": "Leihen",
+				"providerTypeBuy": "Kaufen"
 			},
 			"messages": {
 				"loadMoreError": "Weitere Inhalte konnten nicht geladen werden.",
@@ -122,7 +125,10 @@
 				"movie": "Movie",
 				"tvShow": "TV",
 				"streamingProviders": "Streaming providers",
-				"streamingDataProvidedBy": "Provided by JustWatch"
+				"streamingDataProvidedBy": "Provided by JustWatch",
+				"providerTypeFlatrate": "Flatrate",
+				"providerTypeRent": "Rent",
+				"providerTypeBuy": "Buy"
 			},
 			"messages": {
 				"loadMoreError": "More content could not be loaded.",
@@ -209,7 +215,10 @@
 				"movie": "Película",
 				"tvShow": "TV",
 				"streamingProviders": "Proveedores de streaming",
-				"streamingDataProvidedBy": "Proporcionado por JustWatch"
+				"streamingDataProvidedBy": "Proporcionado por JustWatch",
+				"providerTypeFlatrate": "Suscripción",
+				"providerTypeRent": "Alquilar",
+				"providerTypeBuy": "Comprar"
 			},
 			"messages": {
 				"loadMoreError": "No se pudo cargar más contenido.",
@@ -296,7 +305,10 @@
 				"movie": "Film",
 				"tvShow": "TV",
 				"streamingProviders": "Fournisseurs de streaming",
-				"streamingDataProvidedBy": "Fourni par JustWatch"
+				"streamingDataProvidedBy": "Fourni par JustWatch",
+				"providerTypeFlatrate": "Abonnement",
+				"providerTypeRent": "Louer",
+				"providerTypeBuy": "Acheter"
 			},
 			"messages": {
 				"loadMoreError": "Impossible de charger plus de contenu.",
@@ -382,7 +394,10 @@
 				"movie": "Phim",
 				"tvShow": "Chương trình TV",
 				"streamingProviders": "Nhàµµ cung cấp streaming",
-				"streamingDataProvidedBy": "Cung cấp bởi JustWatch"
+				"streamingDataProvidedBy": "Cung cấp bởi JustWatch",
+				"providerTypeFlatrate": "Góµ»£c",
+				"providerTypeRent": "Thuêµª",
+				"providerTypeBuy": "Mua"
 			},
 			"messages": {
 				"loadMoreError": "Không thể tải thêm nội dung.",

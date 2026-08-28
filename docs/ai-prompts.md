@@ -163,6 +163,20 @@ Anforderungen:
 Output: Die refaktorisierte Datei.
 ```
 
+### Internationalisierung (i18n)
+
+```text
+Fuge neue UI-Texte in `src/lib/i18n/ui.json` hinzu.
+
+Anforderungen:
+- Immer alle unterstutzten Locales aktualisieren (de-DE, en-US, es-ES, fr-FR, vi-VN)
+- Kurze, pragnante Formulierungen verwenden
+- Keine Hardcoded Strings im Code - immer i18n-Keys verwenden
+- Bei Unsicherheit zur Ubersetzung: kurze Rucksprache halten
+
+Output: Geanderte ui.json mit Eintragen in allen Locales.
+```
+
 ## Dos and Don'ts
 
 ### Dos

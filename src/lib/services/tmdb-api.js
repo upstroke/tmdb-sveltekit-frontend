@@ -161,9 +161,9 @@ export function createTmdbApi(fetchFn, apiKey, language = 'de-DE') {
 
 			if (regionData) {
 				const mappedProviders = [
-					...mapWatchProviderList(regionData.flatrate, 'Flatrate', regionData.link),
-					...mapWatchProviderList(regionData.rent, 'Leihen', regionData.link),
-					...mapWatchProviderList(regionData.buy, 'Kaufen', regionData.link)
+					...mapWatchProviderList(regionData.flatrate, 'flatrate', regionData.link),
+					...mapWatchProviderList(regionData.rent, 'rent', regionData.link),
+					...mapWatchProviderList(regionData.buy, 'buy', regionData.link)
 				];
 
 				providers = mappedProviders.length
