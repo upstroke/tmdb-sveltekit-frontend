@@ -222,7 +222,7 @@
 											{:else}
 												<strong>{provider.providerName}</strong>
 											{/if}
-											<span> — {provider.type}</span>
+											<span> — {labels[`providerType${provider.type.charAt(0).toUpperCase() + provider.type.slice(1)}`]}</span>
 										</div>
 									</div>
 								</li>

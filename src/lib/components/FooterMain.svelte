@@ -19,9 +19,12 @@
 			<div class="ui inverted secondary text menu">
 				<span class="item">Conditions of Use</span>
 				<span class="item">Privacy Policy</span>
-				<a class="item" href="https://www.imdb.com/" rel="noopener noreferrer" target="_blank"
-					>Content: © by IMDb.com, Inc.</a
-				>
+				<a class="item" href="https://www.imdb.com/" rel="noopener noreferrer" target="_blank">
+					Content: © by IMDb.com, Inc.
+				</a>
+				<a class="item" href="https://www.justwatch.com/" rel="noopener noreferrer" target="_blank">
+					Streaming-Provider: © by JustWatch.
+				</a>
 			</div>
 		</div>
 	</footer>
@@ -46,6 +49,10 @@
 
 			.secondary.menu {
 				justify-content: center;
+
+				> a:hover {
+					text-decoration: underline;
+				}
 			}
 		}
 	}
