@@ -10,6 +10,7 @@ Diese Datei dokumentiert bewehrte Prompt-Muster für KI-gesttzte Entwicklung im
 - **Beispiele nutzen:** 2–3 Beispiele der gewnüschten Ausgabe sind oft hilfreicher als lange Erklärungen.
 - **Iterativ und minimal arbeiten:** Starte mit einer knappen, klaren Anfrage und ergänze nur das, was für ein besseres Ergebnis wirklich fehlt.
 
+`docs/ai-prompt-examples.md` für konkrete Prompt-Beispiele nach Rolle
 ## Projektkontext
 
 Dieses Projekt nutzt:
@@ -189,16 +190,3 @@ Output: Die refaktorisierte Datei.
 
 - `docs/testing.md` für das Testvorgehen im Projekt
 - `README.md` für Projektkontext und Tech Stack
-
-## Prompt-Bibliothek
-
-Wiederkehrende Prompts können hier als Vorlagen gesammelt werden.
-
-### [Prompt-Name]
-
-```text
-[Template]
-```
-
-**Verwendung:** [kurze Beschreibung]
-**Beispiel:** [Link zu PR oder Datei]

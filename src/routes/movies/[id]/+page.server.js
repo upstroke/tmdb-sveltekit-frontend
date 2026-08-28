@@ -31,6 +31,7 @@ export async function load({ fetch, params, url }) {
 
 		return {
 			movie: details,
+			providers: api.getWatchProviders('movie', params.id),
 			error: null
 		};
 	} catch (error) {
