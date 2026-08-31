@@ -13,7 +13,7 @@ import {
 } from '../mocks/paged-media-data.mocks';
 
 /**
- * Teststrategie: Anweisungsüberdeckung (Statement Coverage).
+ * Teststrategie: Anweisungs- und Zweigüberdeckung (Statement & Branch Coverage).
  * Die Tests decken Standardwerte, gültige und ungültige Storage-Werte,
  * Fehler beim Storage, Seitennachladen, unvollständige Daten,
  * leere Antworten und weitergereichte Fetch-Fehler ab.
@@ -25,16 +25,19 @@ describe('pageStateRestore', () => {
 	});
 
 	describe('getStoredPage', () => {
+		// Anweisungsüberdeckung: Ohne gespeicherten Wert wird Seite 1 verwendet.
 		it('liefert 1, wenn kein Wert im Session Storage vorhanden ist', () => {
 			expect(getStoredPage('movies-page')).toBe(1);
 		});
 
+		// Anweisungs- und Zweigüberdeckung: Ein gespeicherter Seitenwert wird zurückgegeben.
 		it('liefert den gespeicherten Seitenwert zurück', () => {
 			sessionStorage.setItem('movies-page', '3');
 
 			expect(getStoredPage('movies-page')).toBe(3);
 		});
 
+		// Zweigüberdeckung: Ungültige Werte werden auf mindestens 1 normalisiert.
 		it('fällt bei ungültigen Werten auf mindestens 1 zurück', () => {
 			sessionStorage.setItem('movies-page', '0');
 			expect(getStoredPage('movies-page')).toBe(1);
@@ -46,6 +49,7 @@ describe('pageStateRestore', () => {
 			expect(getStoredPage('movies-page')).toBe(1);
 		});
 
+		// Zweigüberdeckung: Fehler im Session Storage führen zu Seite 1.
 		it('fällt bei Session-Storage-Fehlern auf 1 zurück', () => {
 			vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
 				throw new Error('storage blocked');
@@ -56,6 +60,7 @@ describe('pageStateRestore', () => {
 	});
 
 	describe('restorePagedList', () => {
+		// Anweisungsüberdeckung: Ohne spätere Seite werden die initialen Daten zurückgegeben.
 		it('gibt die initialen Daten zurück, wenn keine spätere Seite gespeichert ist', async () => {
 			const fetchPageData = vi.fn();
 
@@ -74,6 +79,7 @@ describe('pageStateRestore', () => {
 			expect(fetchPageData).not.toHaveBeenCalled();
 		});
 
+		// Anweisungs- und Zweigüberdeckung: Fehlende Seiten werden nachgeladen und dedupliziert.
 		it('lädt fehlende Seiten über fetchPageData nach und entfernt Duplikate', async () => {
 			sessionStorage.setItem('movies-page', '3');
 			const fetchPageData = vi
@@ -102,6 +108,7 @@ describe('pageStateRestore', () => {
 			});
 		});
 
+		// Zweigüberdeckung: Unvollständige Karten werden übersprungen.
 		it('ignoriert unvollständige Karten in den initialen Daten', async () => {
 			const fetchPageData = vi.fn();
 
@@ -120,6 +127,7 @@ describe('pageStateRestore', () => {
 			expect(fetchPageData).not.toHaveBeenCalled();
 		});
 
+		// Zweigüberdeckung: Antworten ohne Karten werden als leere Seite verarbeitet.
 		it('verarbeitet nachgeladene Antworten ohne cards als leere Seite', async () => {
 			sessionStorage.setItem('movies-page', '2');
 			const fetchPageData = vi.fn().mockResolvedValueOnce(pagedMovieResponseWithoutCardsMock);
@@ -140,6 +148,7 @@ describe('pageStateRestore', () => {
 			});
 		});
 
+		// Zweigüberdeckung: Fehler von fetchPageData werden weitergereicht.
 		it('gibt einen Fehler aus fetchPageData an den Aufrufer weiter', async () => {
 			sessionStorage.setItem('movies-page', '2');
 			const fetchPageData = vi.fn().mockRejectedValueOnce(fetchPageDataErrorMock);

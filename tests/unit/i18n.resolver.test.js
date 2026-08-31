@@ -4,11 +4,12 @@ import { DEFAULT_LOCALE } from '$lib/i18n/config';
 import { getLocaleText } from '$lib/i18n/resolver';
 
 /**
- * Teststrategie: Anweisungsüberdeckung (Statement Coverage).
+ * Teststrategie: Anweisungs- und Zweigüberdeckung (Statement & Branch Coverage).
  * Die Tests decken die Standard-Locale, eine unterstützte Fremd-Locale und
  * den Fallback auf die Standardtexte bei unbekannten Locales ab.
  */
 describe('i18n resolver', () => {
+	// Anweisungs- und Zweigüberdeckung: Ohne Eingabe wird die Standard-Locale aufgelöst.
 	it('liefert ohne Eingabe die Texte der Standard-Locale', () => {
 		expect(getLocaleText()).toEqual({
 			locale: DEFAULT_LOCALE,
@@ -21,6 +22,7 @@ describe('i18n resolver', () => {
 		});
 	});
 
+	// Anweisungs- und Zweigüberdeckung: Unterstützte Locales liefern ihre eigenen Texte.
 	it('liefert die Texte für eine unterstützte Locale', () => {
 		expect(getLocaleText('en-US')).toEqual({
 			locale: 'en-US',
@@ -33,6 +35,7 @@ describe('i18n resolver', () => {
 		});
 	});
 
+	// Zweigüberdeckung: Unbekannte Locales fallen auf Standardtexte zurück, die angefragte Locale bleibt erhalten.
 	it('fällt bei unbekannter Locale auf die Standardtexte zurück und behält die angefragte Locale bei', () => {
 		expect(getLocaleText('pt-BR')).toEqual({
 			locale: 'pt-BR',

@@ -32,6 +32,7 @@ Dabei gilt:
 - Fachliche Varianten werden über sprechende `describe`- und `it`-Blöcke abgebildet.
 - Zusätzliche Metadateien oder ein Testgenerator werden nicht verwendet.
 - Kommentare im Test sind erlaubt, wenn sie das fachliche Ziel eines Falls knapp erklären.
+- Die Testdokumentation in der Testdatei soll die Testtechnik nennen und zusätzlich kurz zwischen Happy Path und negativen bzw. Fallback-Fällen unterscheiden.
 
 ## Testdesign-Techniken
 

@@ -10,11 +10,6 @@
 				"notAvailable": "N/A"
 			}
 		},
-		"vi-VN": {
-			"fallbacks": {
-				"notAvailable": "Không có"
-			}
-		},
 		"es-ES": {
 			"fallbacks": {
 				"notAvailable": "N/D"
@@ -23,6 +18,16 @@
 		"fr-FR": {
 			"fallbacks": {
 				"notAvailable": "N/D"
+			}
+		},
+		"ru-RU": {
+			"fallbacks": {
+				"notAvailable": "Н/Д"
+			}
+		},
+		"vi-VN": {
+			"fallbacks": {
+				"notAvailable": "Không có"
 			}
 		}
 	},
@@ -139,6 +144,147 @@
 				}
 			}
 		},
+		"ES": {
+			"name": "ICAA Spain Ratings",
+			"ratings": {
+				"7": {
+					"label": "7",
+					"description": "No recomendada para menores de 7 años",
+					"color": "#8bc34a",
+					"textColor": "#ffffff"
+				},
+				"12": {
+					"label": "12",
+					"description": "No recomendada para menores de 12 años",
+					"color": "#f9a825",
+					"textColor": "#000000"
+				},
+				"16": {
+					"label": "16",
+					"description": "No recomendada para menores de 16 años",
+					"color": "#ef6c00",
+					"textColor": "#ffffff"
+				},
+				"18": {
+					"label": "18",
+					"description": "No recomendada para menores de 18 años",
+					"color": "#c62828",
+					"textColor": "#ffffff"
+				},
+				"A": {
+					"label": "A",
+					"description": "Apta para todos los públicos (All Audiences)",
+					"color": "#2e7d32",
+					"textColor": "#ffffff"
+				},
+				"APTA": {
+					"label": "APTA",
+					"description": "Apta para todos los públicos (Alternative TMDB key)",
+					"color": "#2e7d32",
+					"textColor": "#ffffff"
+				},
+				"X": {
+					"label": "X",
+					"description": "Contenido X / Pornografía (Adults Only)",
+					"color": "#6a1b9a",
+					"textColor": "#ffffff"
+				}
+			}
+		},
+		"FR": {
+			"name": "CNC France Ratings",
+			"ratings": {
+				"10": {
+					"label": "-10",
+					"description": "Interdit aux moins de 10 ans",
+					"color": "#f9a825",
+					"textColor": "#000000"
+				},
+				"12": {
+					"label": "-12",
+					"description": "Interdit aux moins de 12 ans",
+					"color": "#ef6c00",
+					"textColor": "#ffffff"
+				},
+				"16": {
+					"label": "-16",
+					"description": "Interdit aux moins de 16 ans",
+					"color": "#c62828",
+					"textColor": "#ffffff"
+				},
+				"18": {
+					"label": "-18",
+					"description": "Interdit aux moins de 18 ans",
+					"color": "#6a1b9a",
+					"textColor": "#ffffff"
+				},
+				"TP": {
+					"label": "TP",
+					"description": "Tous publics (All Audiences)",
+					"color": "#2e7d32",
+					"textColor": "#ffffff"
+				},
+				"U": {
+					"label": "U",
+					"description": "Tous publics (Universal / alternative TMDB key)",
+					"color": "#2e7d32",
+					"textColor": "#ffffff"
+				},
+				"X": {
+					"label": "X",
+					"description": "Classement X (Pornographic / Incitement to violence)",
+					"color": "#880e4f",
+					"textColor": "#ffffff"
+				},
+				"NR": {
+					"label": "NR",
+					"description": "Non classé / Not Rated",
+					"color": "#757575",
+					"textColor": "#ffffff"
+				}
+			}
+		},
+		"RU": {
+			"name": "Возрастная классификация (RARS)",
+			"ratings": {
+				"0+": {
+					"label": "0+",
+					"description": "Для детей всех возрастов (For children of all ages)",
+					"color": "#ffffff",
+					"textColor": "#000000"
+				},
+				"6+": {
+					"label": "6+",
+					"description": "Для детей старше 6 лет (For children 6 and older)",
+					"color": "#8bc34a",
+					"textColor": "#ffffff"
+				},
+				"12+": {
+					"label": "12+",
+					"description": "Для детей старше 12 лет (For children 12 and older)",
+					"color": "#f9a825",
+					"textColor": "#000000"
+				},
+				"16+": {
+					"label": "16+",
+					"description": "Для детей старше 16 лет (For children 16 and older)",
+					"color": "#ef6c00",
+					"textColor": "#ffffff"
+				},
+				"NR": {
+					"label": "NR",
+					"description": "Не классифицировано / Not Rated",
+					"color": "#757575",
+					"textColor": "#ffffff"
+				},
+				"18+": {
+					"label": "18+",
+					"description": "Запрещено для детей (Banned for children / Adults only)",
+					"color": "#c62828",
+					"textColor": "#ffffff"
+				}
+			}
+		},
 		"VN": {
 			"name": "Vietnam Cinema Department Ratings",
 			"ratings": {
@@ -181,106 +327,6 @@
 				"NR": {
 					"label": "NR",
 					"description": "Chưa phân loại / Not Rated",
-					"color": "#757575",
-					"textColor": "#ffffff"
-				}
-			}
-		},
-		"ES": {
-			"name": "ICAA Spain Ratings",
-			"ratings": {
-				"A": {
-					"label": "A",
-					"description": "Apta para todos los públicos (All Audiences)",
-					"color": "#2e7d32",
-					"textColor": "#ffffff"
-				},
-				"APTA": {
-					"label": "APTA",
-					"description": "Apta para todos los públicos (Alternative TMDB key)",
-					"color": "#2e7d32",
-					"textColor": "#ffffff"
-				},
-				"7": {
-					"label": "7",
-					"description": "No recomendada para menores de 7 años",
-					"color": "#8bc34a",
-					"textColor": "#ffffff"
-				},
-				"12": {
-					"label": "12",
-					"description": "No recomendada para menores de 12 años",
-					"color": "#f9a825",
-					"textColor": "#000000"
-				},
-				"16": {
-					"label": "16",
-					"description": "No recomendada para menores de 16 años",
-					"color": "#ef6c00",
-					"textColor": "#ffffff"
-				},
-				"18": {
-					"label": "18",
-					"description": "No recomendada para menores de 18 años",
-					"color": "#c62828",
-					"textColor": "#ffffff"
-				},
-				"X": {
-					"label": "X",
-					"description": "Contenido X / Pornografía (Adults Only)",
-					"color": "#6a1b9a",
-					"textColor": "#ffffff"
-				}
-			}
-		},
-		"FR": {
-			"name": "CNC France Ratings",
-			"ratings": {
-				"TP": {
-					"label": "TP",
-					"description": "Tous publics (All Audiences)",
-					"color": "#2e7d32",
-					"textColor": "#ffffff"
-				},
-				"U": {
-					"label": "U",
-					"description": "Tous publics (Universal / alternative TMDB key)",
-					"color": "#2e7d32",
-					"textColor": "#ffffff"
-				},
-				"10": {
-					"label": "-10",
-					"description": "Interdit aux moins de 10 ans",
-					"color": "#f9a825",
-					"textColor": "#000000"
-				},
-				"12": {
-					"label": "-12",
-					"description": "Interdit aux moins de 12 ans",
-					"color": "#ef6c00",
-					"textColor": "#ffffff"
-				},
-				"16": {
-					"label": "-16",
-					"description": "Interdit aux moins de 16 ans",
-					"color": "#c62828",
-					"textColor": "#ffffff"
-				},
-				"18": {
-					"label": "-18",
-					"description": "Interdit aux moins de 18 ans",
-					"color": "#6a1b9a",
-					"textColor": "#ffffff"
-				},
-				"X": {
-					"label": "X",
-					"description": "Classement X (Pornographic / Incitement to violence)",
-					"color": "#880e4f",
-					"textColor": "#ffffff"
-				},
-				"NR": {
-					"label": "NR",
-					"description": "Non classé / Not Rated",
 					"color": "#757575",
 					"textColor": "#ffffff"
 				}
