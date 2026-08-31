@@ -339,7 +339,8 @@
 				"loadMore": "Plus de résultats",
 				"dialogErrorTitle": "Erreur de chargement",
 				"dialogOk": "OK",
-				"loadMoreLoading": "Chargement de résultats supplémentaires …"},
+				"loadMoreLoading": "Chargement de résultats supplémentaires …"
+			},
 			"formats": {
 				"outOfTen": "sur 10",
 				"minutes": "minutes",
@@ -357,6 +358,96 @@
 			},
 			"buttons": {
 				"watchTrailer": "Voir la bande-annonce"
+			}
+		},
+		"ru-RU": {
+			"languageCode": "ru-RU",
+			"languageShortCode": "RU",
+			"fallbacks": {
+				"notAvailable": "N/A",
+				"dateFallback": "- -"
+			},
+			"labels": {
+				"rating": "Рейтинг",
+				"genre": "Жанр",
+				"genres": "Жанры",
+				"releaseDate": "Дата выхода",
+				"productionCompanies": "Кинокомпании",
+				"moreInfo": "Подробнее",
+				"officialWebsite": "Официальный сайт",
+				"firstAirDate": "Дата первого показа",
+				"mediaType": "Тип медиа",
+				"overview": "Описание",
+				"homepage": "Главная страница",
+				"trailer": "Трейлер",
+				"production": "Производство",
+				"runtime": "Длительность",
+				"cast": "Актёры",
+				"actor": "Актёр",
+				"role": "Роль",
+				"crew": "Съёмочная группа",
+				"job": "Должность",
+				"certification": "Возрастной рейтинг",
+				"searchInput": "Поиск",
+				"languageSelect": "Выбрать язык",
+				"navigationToggle": "Открыть или закрыть навигацию",
+				"mainNavigation": "Основная навигация",
+				"movie": "Фильм",
+				"tvShow": "ТВ",
+				"streamingProviders": "Стриминговые сервисы",
+				"streamingDataProvidedBy": "Предоставлено",
+				"providerTypeFlatrate": "Подписка",
+				"providerTypeRent": "Аренда",
+				"providerTypeBuy": "Покупка"
+			},
+			"messages": {
+				"loadMoreError": "Не удалось загрузить больше контента.",
+				"unknownError": "Неизвестная ошибка",
+				"pageSaveWarning": "Не удалось сохранить состояние страницы:",
+				"loadTimeout": "Загрузка заняла слишком много времени.",
+				"noTvShows": "ТВ-шоу не найдены.",
+				"noGenres": "Жанры недоступны.",
+				"noRole": "Информация о роли недоступна.",
+				"noCast": "Данные об актёрах недоступны.",
+				"noCrew": "Данные о съёмочной группе недоступны.",
+				"noJob": "Информация о должности недоступна.",
+				"searchLoading": "Идёт поиск …",
+				"searchError": "Не удалось загрузить поиск.",
+				"searchNoResults": "Результаты не найдены.",
+				"noContent": "Контент не найден.",
+				"noMoviesFound": "Фильмы не найдены.",
+				"apiKeyMissing": "Отсутствует TMDB_API_KEY",
+				"contentLoadError": "Не удалось загрузить контент",
+				"moviesLoadError": "Не удалось загрузить фильмы",
+				"movieLoadError": "Не удалось загрузить фильм",
+				"moreMoviesLoadError": "Не удалось загрузить больше фильмов.",
+				"tvShowsLoadError": "Не удалось загрузить ТВ-шоу",
+				"tvShowLoadError": "Не удалось загрузить ТВ-шоу",
+				"moreTvShowsLoadError": "Не удалось загрузить больше ТВ-шоу.",
+				"searchHint": "Введите минимум четыре символа.",
+				"searchResults": "Результаты поиска",
+				"loadMore": "Загрузить ещё",
+				"dialogErrorTitle": "Ошибка загрузки",
+				"dialogOk": "OK",
+				"loadMoreLoading": "Загрузка дополнительных результатов …"
+			},
+			"formats": {
+				"outOfTen": "из 10",
+				"minutes": "минут",
+				"detailsSuffix": "подробности"
+			},
+			"titles": {
+				"home": "Главная",
+				"movies": "Фильмы",
+				"movieDetails": "Подробности фильма",
+				"tvShowDetails": "Подробности ТВ-шоу",
+				"tvShows": "ТВ-шоу",
+				"topRatedProductions": "Самые высокооценённые проекты",
+				"featuredToday": "Сегодня в центре внимания",
+				"trendingToday": "Популярное сегодня"
+			},
+			"buttons": {
+				"watchTrailer": "Смотреть трейлер"
 			}
 		},
 		"vi-VN": {

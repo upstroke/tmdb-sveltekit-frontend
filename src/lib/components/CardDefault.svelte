@@ -144,8 +144,8 @@
 					<dd
 						class="meta certification"
 						style={certificationMeta
-							? `--certification-icon-color: ${certificationMeta.color === '#ffffff' ? 'transparent' : certificationMeta.color}; --certification-icon-border-color: ${certificationMeta.color === '#ffffff' ? 'var(--color-text-muted, #9b9b9b)' : certificationMeta.color}`
-							: `--certification-icon-color: transparent; --certification-icon-border-color: var(--color-text-muted, #9b9b9b)`}
+							? `--certification-icon-color: ${certificationMeta.color === '#ffffff' ? 'transparent' : certificationMeta.color}; --certification-icon-border-color: ${certificationMeta.color === '#ffffff' ? '#999' : certificationMeta.color}`
+							: `--certification-icon-color: #dedede; --certification-icon-border-color: #dedede`}
 					>
 						<span class="certification-content">
 							<span class="certification-icon" aria-hidden="true"></span>

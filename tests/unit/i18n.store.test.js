@@ -40,7 +40,7 @@ vi.mock('$lib/i18n/resolver', () => ({
 import { i18n } from '$lib/stores/i18n';
 
 /**
- * Teststrategie: Anweisungsüberdeckung (Statement Coverage).
+ * Teststrategie: Anweisungs- und Zweigüberdeckung (Statement & Branch Coverage).
  * Der Test prüft, dass der abgeleitete Store die aktuelle Locale an den
  * Resolver weitergibt und sich bei Locale-Änderungen aktualisiert.
  */
@@ -51,6 +51,7 @@ describe('i18n store', () => {
 		getLocaleTextMock.mockImplementation((locale) => ({ locale, labels: {} }));
 	});
 
+	// Anweisungs- und Zweigüberdeckung: Der Store liefert Texte für die aktuelle Locale und reagiert auf Änderungen.
 	it('liefert für die aktuelle Locale die aufgelösten Texte und reagiert auf Änderungen', () => {
 		expect(get(i18n)).toEqual({ locale: 'de-DE', labels: {} });
 		expect(getLocaleTextMock).toHaveBeenCalledWith('de-DE');
