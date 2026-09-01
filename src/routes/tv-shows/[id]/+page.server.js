@@ -27,11 +27,14 @@ export async function load({ fetch, params, url }) {
 	try {
 		const api = createTmdbApi(fetch, TMDB_API_KEY, locale);
 
-		const details = await api.getTVShowDetails(params.id);
+		const [details, providers] = await Promise.all([
+			api.getTVShowDetails(params.id),
+			api.getWatchProviders('tv', params.id)
+		]);
 
 		return {
 			tvShow: details,
-			providers: api.getWatchProviders('tv', params.id),
+			providers,
 			error: null
 		};
 	} catch (error) {

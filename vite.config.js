@@ -1,14 +1,27 @@
 import { sveltekit } from '@sveltejs/kit/vite';
+import { svelteTesting } from '@testing-library/svelte/vite';
 import { defineConfig } from 'vitest/config';
 import { fileURLToPath } from 'node:url';
 
 const testsDir = fileURLToPath(new URL('./tests', import.meta.url));
 
 export default defineConfig({
-	plugins: [sveltekit()],
+	plugins: [sveltekit(), svelteTesting()],
 	resolve: {
 		alias: {
-			$tests: testsDir
+			$tests: testsDir,
+			'$lib/components/CardFeatured.svelte': fileURLToPath(
+				new URL('./tests/unit/routes/_mock-card-featured.svelte', import.meta.url)
+			),
+			'$lib/components/CardDefault.svelte': fileURLToPath(
+				new URL('./tests/unit/routes/_mock-card-default.svelte', import.meta.url)
+			),
+			'$lib/components/LoadMore.svelte': fileURLToPath(
+				new URL('./tests/unit/routes/_mock-load-more.svelte', import.meta.url)
+			),
+			'$lib/components/DialogMessage.svelte': fileURLToPath(
+				new URL('./tests/unit/routes/_mock-dialog-message.svelte', import.meta.url)
+			)
 		}
 	},
 	test: {
