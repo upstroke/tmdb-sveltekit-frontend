@@ -51,7 +51,7 @@ Lokal verfügbare CLI-Werkzeuge:
 - **ISTQB-Begriffe für Überdeckung verwenden:** In Prompts und Testkommentaren die Bezeichnungen `Anweisungsüberdeckung` und `Zweigüberdeckung` nach ISTQB verwenden; gemischte Eigenformulierungen vermeiden.
 - **100 % Anweisungsüberdeckung als Mindestziel:** Bei neuer Testerstellung sollen alle ausführbaren Anweisungen des betroffenen Codes mindestens einmal ausgeführt werden. Fehlende Ausführungspfade sind zuerst durch zusätzliche Testfälle zu schließen, bevor weitere Verfeinerungen erfolgen.
 - **Zweigüberdeckung gezielt ergänzen:** Zusätzliche Testfälle für Zweigüberdeckung werden dort ergänzt, wo Alternativ-, Fehler-, Fallback-, Grenz- oder Verwerfungszweige fachlich oder technisch relevant sind. Kein pauschales Verdoppeln von Tests ohne erkennbaren neuen Entscheidungszweig.
-- **Kommentare pro Testfall eindeutig halten:** Jeder `it`-Block bekommt genau eine kurze Kommentarzeile direkt darüber. Standardfälle werden als `Anweisungsüberdeckung` bezeichnet, separate Alternativ- oder Fehlerpfade als `Zweigüberdeckung`.
+- **Kommentare pro Testfall eindeutig halten:** Jeder `it`-Block bekommt genau eine kurze Kommentarzeile direkt darüber. Tests, die zur Erreichung von 100 % Anweisungsüberdeckung beitragen, werden als `Anweisungsüberdeckung` bezeichnet — auch wenn sie technisch einen zusätzlichen Entscheidungs- oder Alternativpfad ausführen. Nur Tests, die ausschließlich zusätzliche Entscheidungsalternativen über das Anweisungsüberdeckungsziel hinaus prüfen, werden als `Zweigüberdeckung` bezeichnet.
 
 ## Session-Start-Prompt
 

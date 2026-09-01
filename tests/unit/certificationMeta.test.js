@@ -3,9 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { getCertificationMeta } from '$lib/utils/certificationMeta';
 
 /**
- * Teststrategie: Anweisungs- und Zweigüberdeckung (Statement & Branch Coverage).
- *
- * Die Tests führen alle Anweisungen und Rückgabepfade von
+ * Die Tests führen die ausführbaren Anweisungen von
  * getCertificationMeta aus: leerer Wert, bekanntes Rating,
  * normalisiertes Rating-System sowie unbekanntes Rating/System.
  */

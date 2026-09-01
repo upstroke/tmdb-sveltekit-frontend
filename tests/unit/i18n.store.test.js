@@ -40,7 +40,7 @@ vi.mock('$lib/i18n/resolver', () => ({
 import { i18n } from '$lib/stores/i18n';
 
 /**
- * Teststrategie: Anweisungs- und Zweigüberdeckung (Statement & Branch Coverage).
+ * Teststrategie: Anweisungs- und Zweigüberdeckung.
  * Der Test prüft, dass der abgeleitete Store die aktuelle Locale an den
  * Resolver weitergibt und sich bei Locale-Änderungen aktualisiert.
  */

@@ -4,7 +4,7 @@ import { DEFAULT_LOCALE } from '$lib/i18n/config';
 import { getLocaleText } from '$lib/i18n/resolver';
 
 /**
- * Teststrategie: Anweisungs- und Zweigüberdeckung (Statement & Branch Coverage).
+ * Teststrategie: Anweisungs- und Zweigüberdeckung.
  * Die Tests decken die Standard-Locale, eine unterstützte Fremd-Locale und
  * den Fallback auf die Standardtexte bei unbekannten Locales ab.
  */
