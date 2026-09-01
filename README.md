@@ -52,6 +52,14 @@ Beim Sprachwechsel bleibt die aktuelle Route erhalten. Ist in der Typeahead-Such
 
 Die angezeigten Streaming-Anbieter und Watch-Links werden über die TMDB-API bereitgestellt. Die Streaming-Daten stammen von JustWatch und werden auf den Detailseiten für Filme und TV-Shows mit "Provided by JustWatch" gekennzeichnet.
 
+## Testing-Hinweis
+
+Für Svelte-5-Komponententests unter Vitest wird im Testmodus die Browser-Resolver-Condition aktiviert. Dadurch lädt Vitest die Browser-Variante der Svelte-Module und vermeidet den Fehler `mount(...) is not available on the server` bei jsdom-basierten UI-Tests.
+
+## Testing-Hinweis
+
+Für Svelte-5-Komponententests unter Vitest wird das offizielle Vite-Plugin `svelteTesting()` aus `@testing-library/svelte/vite` verwendet. Es ergänzt die Testumgebung für DOM-basierte Svelte-Tests automatisch um Cleanup und die Browser-Resolver-Condition, damit UI-Tests unter `jsdom` korrekt die Browser-Variante der Svelte-Module laden.
+
 ## Tech Stack
 
 - SvelteKit 2.63
