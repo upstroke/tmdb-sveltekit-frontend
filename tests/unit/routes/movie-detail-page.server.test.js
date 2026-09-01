@@ -94,7 +94,7 @@ describe('movie detail route load', () => {
 		});
 	});
 
-	// Zweigüberdeckung: Fehlt trailerUrls in den Details, ergänzt die Route ein leeres Array als Fallback.
+	// Anweisungsüberdeckung: Fehlt trailerUrls in den Details, ergänzt die Route ein leeres Array als Fallback.
 	it('ergänzt ein leeres Trailer-Array als Fallback', async () => {
 		const providers = null;
 		const movieDetailsWithoutTrailers = createMovieDetails({ trailerUrls: undefined });
@@ -115,7 +115,7 @@ describe('movie detail route load', () => {
 		expect(result.providers).toBeNull();
 	});
 
-	// Zweigüberdeckung: Schlägt die Detail- oder Providerladung fehl, wird die Fehlermeldung aus dem Error-Objekt zurückgegeben.
+	// Anweisungsüberdeckung: Schlägt die Detail- oder Providerladung fehl, wird die Fehlermeldung aus dem Error-Objekt zurückgegeben.
 	it('gibt bei fehlgeschlagener Movie-Ladung die Error-Nachricht zurück', async () => {
 		const api = {
 			getMovieDetails: vi.fn().mockRejectedValue(new Error('movie details failed')),

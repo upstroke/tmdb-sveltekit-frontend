@@ -75,7 +75,7 @@ describe('trending server route GET', () => {
 		});
 	});
 
-	// Zweigüberdeckung: Ungültige Seitenzahlen werden auf Seite eins normalisiert und fehlende API-Seitenangaben fallen auf den Request-Wert zurück.
+	// Anweisungsüberdeckung: Ungültige Seitenzahlen werden auf Seite eins normalisiert und fehlende API-Seitenangaben fallen auf den Request-Wert zurück.
 	it('normalisiert ungültige Seitenzahlen auf eins', async () => {
 		const api = {
 			getTrendingAll: vi.fn().mockResolvedValue({
@@ -100,7 +100,7 @@ describe('trending server route GET', () => {
 		});
 	});
 
-	// Zweigüberdeckung: Schlägt die Trending-Ladung fehl, liefert die Route Status 500 und die lokalisierte Fehlermeldung zurück.
+	// Anweisungsüberdeckung: Schlägt die Trending-Ladung fehl, liefert die Route Status 500 und die lokalisierte Fehlermeldung zurück.
 	it('liefert bei Ladefehlern eine lokalisierte Fehlermeldung zurück', async () => {
 		const api = {
 			getTrendingAll: vi.fn().mockRejectedValue(new Error('trending failed'))

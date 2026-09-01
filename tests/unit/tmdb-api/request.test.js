@@ -25,7 +25,7 @@ describe('tmdb api request', () => {
 			expect(requestUrl.searchParams.get('language')).toBe('de-DE');
 		});
 
-		// Zweigüberdeckung: Zusätzliche Query-Parameter werden als Strings übernommen.
+		// Anweisungsüberdeckung: Zusätzliche Query-Parameter werden als Strings übernommen.
 		it('fügt zusätzliche Query-Parameter zur Anfrage hinzu', async () => {
 			const fetchFn = vi.fn().mockResolvedValue(createJsonResponse({ page: 2 }));
 			const api = createTmdbApi(fetchFn, 'test-api-key', 'en-US');
@@ -42,7 +42,7 @@ describe('tmdb api request', () => {
 			expect(requestUrl.searchParams.get('include_adult')).toBe('false');
 		});
 
-		// Zweigüberdeckung: Leere oder nicht gesetzte Parameter werden nicht in die Anfrage übernommen.
+		// Anweisungsüberdeckung: Leere oder nicht gesetzte Parameter werden nicht in die Anfrage übernommen.
 		it('ignoriert undefined-, null- und Leerstring-Parameter', async () => {
 			const fetchFn = vi.fn().mockResolvedValue(createJsonResponse({ page: 1 }));
 			const api = createTmdbApi(fetchFn, 'test-api-key', 'de-DE');
@@ -61,7 +61,7 @@ describe('tmdb api request', () => {
 			expect(requestUrl.searchParams.get('page')).toBe('1');
 		});
 
-		// Zweigüberdeckung: Fehlerhafte HTTP-Antworten werden als Error weitergegeben.
+		// Anweisungsüberdeckung: Fehlerhafte HTTP-Antworten werden als Error weitergegeben.
 		it('wirft einen Fehler, wenn die TMDB-Anfrage fehlschlägt', async () => {
 			const fetchFn = vi.fn().mockResolvedValue({
 				ok: false,

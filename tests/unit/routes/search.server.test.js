@@ -39,7 +39,7 @@ describe('search server route GET', () => {
 		mockGetLocaleText.mockReturnValue({ messages: createMessages() });
 	});
 
-	// Zweigüberdeckung: Fehlt die Query oder ist sie kürzer als vier Zeichen, liefert die Route sofort leere Ergebnislisten zurück.
+	// Anweisungsüberdeckung: Fehlt die Query oder ist sie kürzer als vier Zeichen, liefert die Route sofort leere Ergebnislisten zurück.
 	it('liefert bei leerer oder zu kurzer Query leere Ergebnislisten zurück', async () => {
 		const { GET } = await import('../../../src/routes/search/+server.js');
 
@@ -96,7 +96,7 @@ describe('search server route GET', () => {
 		});
 	});
 
-	// Zweigüberdeckung: Schlägt die Suche fehl, liefert die Route eine lokalisierte Fehlermeldung mit Status 500 zurück.
+	// Anweisungsüberdeckung: Schlägt die Suche fehl, liefert die Route eine lokalisierte Fehlermeldung mit Status 500 zurück.
 	it('liefert bei Suchfehlern eine lokalisierte Fehlermeldung zurück', async () => {
 		const api = {
 			searchMedia: vi.fn().mockRejectedValue(new Error('search failed'))

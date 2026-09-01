@@ -14,7 +14,7 @@ describe('deduplicateMedia', () => {
 		]);
 	});
 
-	// Zweigüberdeckung: Gleiche mediaType-/ID-Kombinationen werden dedupliziert.
+	// Anweisungsüberdeckung: Gleiche mediaType-/ID-Kombinationen werden dedupliziert.
 	it('entfernt spätere Duplikate mit gleichem mediaType und id', () => {
 		expect(
 			deduplicateMedia([
@@ -29,7 +29,7 @@ describe('deduplicateMedia', () => {
 		expect(deduplicateMedia([{ id: 1 }, { mediaType: 'movie' }, null])).toEqual([]);
 	});
 
-	// Zweigüberdeckung: Unterschiedliche Medientypen mit gleicher ID bleiben getrennt.
+	// Anweisungsüberdeckung: Unterschiedliche Medientypen mit gleicher ID bleiben getrennt.
 	it('behält gleiche ids mit unterschiedlichem mediaType', () => {
 		expect(
 			deduplicateMedia([

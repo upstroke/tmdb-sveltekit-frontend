@@ -28,7 +28,7 @@ describe('certificationMeta', () => {
 			});
 		});
 
-		// Zweigüberdeckung: Normalisierung des Rating-Systems wird geprüft.
+		// Anweisungsüberdeckung: Normalisierung des Rating-Systems wird geprüft.
 		it('normalisiert das Rating-System und akzeptiert Kleinbuchstaben sowie Leerzeichen', () => {
 			expect(getCertificationMeta('PG-13', ' us ')).toEqual({
 				value: 'PG-13',
@@ -39,7 +39,7 @@ describe('certificationMeta', () => {
 			});
 		});
 
-		// Zweigüberdeckung: Fallback bei fehlendem oder ungültigem Rating-System.
+		// Anweisungsüberdeckung: Fallback bei fehlendem oder ungültigem Rating-System.
 		it('verwendet DE als Fallback bei fehlendem oder ungültigem Rating-System', () => {
 			expect(getCertificationMeta('16', undefined)).toEqual({
 				value: '16',
@@ -57,7 +57,7 @@ describe('certificationMeta', () => {
 			});
 		});
 
-		// Zweigüberdeckung: Unbekannte Ratings führen zu neutralem Fallback.
+		// Anweisungsüberdeckung: Unbekannte Ratings führen zu neutralem Fallback.
 		it('gibt bei unbekannten Ratings eine neutrale Fallback-Metadatenstruktur zurück', () => {
 			expect(getCertificationMeta('XYZ', 'DE')).toEqual({
 				value: 'XYZ',

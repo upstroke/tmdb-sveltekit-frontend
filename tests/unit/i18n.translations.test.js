@@ -7,7 +7,7 @@ import uiText from '$lib/i18n/ui.json';
  * Schlüsselmengen wie die Standard-Locale bereitstellen.
  */
 describe('i18n translations', () => {
-	// Anweisungsüberdeckung: Testfall für den folgenden it-Block.
+	// Anweisungsüberdeckung: Testfall für den folgenden it-Block.
 	it('enthält in allen Locales dieselben UI-Bereiche und Übersetzungsschlüssel', () => {
 		const locales = Object.entries(uiText.locales);
 		const [, defaultCatalog] = locales[0];

@@ -43,7 +43,7 @@ describe('tmdb/helpers', () => {
 	});
 
 	it('returns an empty string for missing image paths and builds a full TMDB image URL otherwise', () => {
-		// Grenzwertanalyse: Ein leerer, fehlender oder undefinierter Bildpfad liefert keine URL; ein vorhandener Pfad wird mit Standard- und Alternativgröße zusammengesetzt.
+		// Anweisungsüberdeckung: Ein leerer, fehlender oder undefinierter Bildpfad liefert keine URL; ein vorhandener Pfad wird mit Standard- und Alternativgröße zusammengesetzt.
 		expect(getImageUrl('')).toBe('');
 		expect(getImageUrl(undefined)).toBe('');
 		expect(getImageUrl(null)).toBe('');

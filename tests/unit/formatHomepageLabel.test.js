@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { formatHomepageLabel } from '$lib/utils/formatHomepageLabel';
 
 /**
- * Teststrategie: Anweisungs- und Zweigüberdeckung.
+ * Teststrategie: Anweisungsüberdeckung.
  * Die Tests decken fehlende URLs, beide Protokolle sowie URLs
  * mit Pfad, Query und Fragment ab.
  */
@@ -12,13 +12,13 @@ describe('formatHomepageLabel', () => {
 		expect(formatHomepageLabel()).toBe('');
 	});
 
-	// Anweisungs- und Zweigüberdeckung: HTTPS wird aus der Anzeige entfernt.
+	// Anweisungsüberdeckung: HTTPS wird aus der Anzeige entfernt.
 	it('entfernt das https-Protokoll', () => {
 		expect(formatHomepageLabel('https://example.com')).toBe('example.com');
 	});
 
-	// Anweisungs- und Zweigüberdeckung: HTTP wird aus der Anzeige entfernt.
-	// Anweisungsüberdeckung: Auch HTTP-URLs laufen durch den Protokoll-Entfernungszweig.
+	// Anweisungsüberdeckung: HTTP wird aus der Anzeige entfernt.
+	// Anweisungsüberdeckung: Auch HTTP-URLs laufen durch den Protokoll-Entfernungszweig.
 	it('entfernt das http-Protokoll', () => {
 		expect(formatHomepageLabel('http://example.com')).toBe('example.com');
 	});

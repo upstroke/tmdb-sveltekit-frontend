@@ -11,12 +11,12 @@ describe('deduplicateById', () => {
 		expect(deduplicateById([{ id: 1 }])).toEqual([{ id: 1 }]);
 	});
 
-	// Zweigüberdeckung: Elemente ohne auswertbare ID werden im Filterpfad verworfen.
+	// Anweisungsüberdeckung: Elemente ohne auswertbare ID werden im Filterpfad verworfen.
 	it('entfernt ein Element ohne ID', () => {
 		expect(deduplicateById([{}])).toEqual([]);
 	});
 
-	// Zweigüberdeckung: Spätere Duplikate mit derselben ID werden entfernt.
+	// Anweisungsüberdeckung: Spätere Duplikate mit derselben ID werden entfernt.
 	it('entfernt ein späteres Element mit doppelter ID', () => {
 		expect(deduplicateById([{ id: 1 }, { id: 1 }])).toEqual([{ id: 1 }]);
 	});
