@@ -9,6 +9,13 @@ node_modules
 /.svelte-kit
 /build
 
+# Local coverage and run artifacts
+.coverage-per-test/
+coverage/
+.run/
+.pnpm-store/
+SESSION_START_TEMPLATE.md
+
 # OS
 .DS_Store
 Thumbs.db
