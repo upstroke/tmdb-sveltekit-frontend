@@ -24,7 +24,7 @@ async function loadLocaleStore() {
 }
 
 /**
- * Teststrategie: Anweisungs- und Zweigüberdeckung (Statement & Branch Coverage).
+ * Teststrategie: Anweisungs- und Zweigüberdeckung.
  * Die Tests decken SSR-Fallback, Session-Storage-Auslesen, Fallback bei
  * fehlendem Storage-Wert sowie das Speichern neuer Werte ab.
  */

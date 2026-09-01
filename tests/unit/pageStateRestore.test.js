@@ -13,7 +13,7 @@ import {
 } from '../mocks/paged-media-data.mocks';
 
 /**
- * Teststrategie: Anweisungs- und Zweigüberdeckung (Statement & Branch Coverage).
+ * Teststrategie: Anweisungs- und Zweigüberdeckung.
  * Die Tests decken Standardwerte, gültige und ungültige Storage-Werte,
  * Fehler beim Storage, Nicht-Browser-Fall, Seitennachladen, unvollständige Daten,
  * leere Antworten und weitergereichte Fetch-Fehler ab.

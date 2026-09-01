@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { formatHomepageLabel } from '$lib/utils/formatHomepageLabel';
 
 /**
- * Teststrategie: Anweisungs- und Zweigüberdeckung (Statement & Branch Coverage).
+ * Teststrategie: Anweisungs- und Zweigüberdeckung.
  * Die Tests decken fehlende URLs, beide Protokolle sowie URLs
  * mit Pfad, Query und Fragment ab.
  */

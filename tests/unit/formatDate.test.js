@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest';
 import { formatDate } from '$lib/utils/formatDate';
 
 /**
- * Teststrategie: Anweisungs- und Zweigüberdeckung (Statement & Branch Coverage).
  * Die Tests decken leere, ungültige, unvollständige und gültige Datumswerte
  * mit unterschiedlichen Locales ab und sichern die neuen Hilfsfunktionen
  * indirekt über verschiedene formatDate-Fälle ab.
