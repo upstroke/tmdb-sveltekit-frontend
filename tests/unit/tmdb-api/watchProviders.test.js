@@ -7,7 +7,7 @@ function createApi() {
 
 describe('tmdb api watch provider mapping', () => {
 	describe('mapWatchProvider', () => {
-		// Zweigüberdeckung: Fehlende Pflichtfelder führen zum Null-Fallback.
+		// Anweisungsüberdeckung: Fehlende Pflichtfelder führen zum Null-Fallback.
 		it('gibt null zurück, wenn die provider_id fehlt', () => {
 			const api = createApi();
 
@@ -24,7 +24,7 @@ describe('tmdb api watch provider mapping', () => {
 			).toBeNull();
 		});
 
-		// Zweigüberdeckung: Fehlende Pflichtfelder führen zum Null-Fallback.
+		// Anweisungsüberdeckung: Fehlende Pflichtfelder führen zum Null-Fallback.
 		it('gibt null zurück, wenn der provider_name fehlt', () => {
 			const api = createApi();
 
@@ -66,7 +66,7 @@ describe('tmdb api watch provider mapping', () => {
 			});
 		});
 
-		// Zweigüberdeckung: Optionale Felder werden auf null normalisiert.
+		// Anweisungsüberdeckung: Optionale Felder werden auf null normalisiert.
 		it('setzt optionale Provider-Felder auf null, wenn sie nicht vorhanden sind', () => {
 			const api = createApi();
 
@@ -134,7 +134,7 @@ describe('tmdb api watch provider mapping', () => {
 			]);
 		});
 
-		// Zweigüberdeckung: Ungültige Einträge werden beim Listen-Mapping herausgefiltert.
+		// Anweisungsüberdeckung: Ungültige Einträge werden beim Listen-Mapping herausgefiltert.
 		it('filtert ungültige Watch-Provider aus der Ergebnisliste heraus', () => {
 			const api = createApi();
 
@@ -168,7 +168,7 @@ describe('tmdb api watch provider mapping', () => {
 			]);
 		});
 
-		// Zweigüberdeckung: Eine fehlende Providerliste liefert eine leere Ergebnisliste.
+		// Anweisungsüberdeckung: Eine fehlende Providerliste liefert eine leere Ergebnisliste.
 		it('gibt eine leere Liste zurück, wenn keine Provider übergeben werden', () => {
 			const api = createApi();
 

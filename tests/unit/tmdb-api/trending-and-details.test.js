@@ -15,7 +15,7 @@ describe('tmdb api trending and details', () => {
 	});
 
 	describe('getTrendingAll', () => {
-		// Anweisungsüberdeckung: Trendlisten werden über den All-Day-Endpunkt geladen und als Kartenliste zurückgegeben.
+		// Anweisungsüberdeckung: Trendlisten werden über den All-Day-Endpunkt geladen und als Kartenliste zurückgegeben.
 		it('lädt die Daily-Trending-Liste über den all-Endpunkt', async () => {
 			const fetchFn = vi
 				.fn()
@@ -44,7 +44,7 @@ describe('tmdb api trending and details', () => {
 	});
 
 	describe('getTrendingMovies', () => {
-		// Anweisungsüberdeckung: Film-Trends werden über den Movie-Day-Endpunkt geladen und inklusive Zertifizierung normalisiert zurückgegeben.
+		// Anweisungsüberdeckung: Film-Trends werden über den Movie-Day-Endpunkt geladen und inklusive Zertifizierung normalisiert zurückgegeben.
 		it('lädt die Daily-Trending-Filmliste über den movie-Endpunkt', async () => {
 			const fetchFn = vi
 				.fn()
@@ -73,7 +73,7 @@ describe('tmdb api trending and details', () => {
 	});
 
 	describe('getTrendingTVShows', () => {
-		// Anweisungsüberdeckung: Serien-Trends werden über den TV-Day-Endpunkt geladen und mit TV-Freigabe als Kartenliste zurückgegeben.
+		// Anweisungsüberdeckung: Serien-Trends werden über den TV-Day-Endpunkt geladen und mit TV-Freigabe als Kartenliste zurückgegeben.
 		it('lädt die Daily-Trending-Serienliste über den tv-Endpunkt', async () => {
 			const fetchFn = vi
 				.fn()
@@ -102,7 +102,7 @@ describe('tmdb api trending and details', () => {
 	});
 
 	describe('getPopularMovies', () => {
-		// Anweisungsüberdeckung: Die Popular-Filmliste wird über den Movie-Popular-Endpunkt geladen und angereichert zurückgegeben.
+		// Anweisungsüberdeckung: Die Popular-Filmliste wird über den Movie-Popular-Endpunkt geladen und angereichert zurückgegeben.
 		it('lädt die Popular-Filmliste über den popular-Endpunkt', async () => {
 			const fetchFn = vi
 				.fn()
@@ -131,7 +131,7 @@ describe('tmdb api trending and details', () => {
 	});
 
 	describe('getTopRatedMovies', () => {
-		// Anweisungsüberdeckung: Die Top-Rated-Filmliste wird über den Movie-Top-Rated-Endpunkt geladen und mit Zertifizierung zurückgegeben.
+		// Anweisungsüberdeckung: Die Top-Rated-Filmliste wird über den Movie-Top-Rated-Endpunkt geladen und mit Zertifizierung zurückgegeben.
 		it('lädt die Top-Rated-Filmliste über den top-rated-Endpunkt', async () => {
 			const fetchFn = vi
 				.fn()
@@ -160,7 +160,7 @@ describe('tmdb api trending and details', () => {
 	});
 
 	describe('getPopularTVShows', () => {
-		// Anweisungsüberdeckung: Die Popular-Serienliste wird über den TV-Popular-Endpunkt geladen und mit TV-Freigabe normalisiert.
+		// Anweisungsüberdeckung: Die Popular-Serienliste wird über den TV-Popular-Endpunkt geladen und mit TV-Freigabe normalisiert.
 		it('lädt die Popular-Serienliste über den popular-Endpunkt', async () => {
 			const fetchFn = vi
 				.fn()
@@ -189,7 +189,7 @@ describe('tmdb api trending and details', () => {
 	});
 
 	describe('getTopRatedTVShows', () => {
-		// Anweisungsüberdeckung: Die Top-Rated-Serienliste wird über den TV-Top-Rated-Endpunkt geladen und als TV-Kartenliste zurückgegeben.
+		// Anweisungsüberdeckung: Die Top-Rated-Serienliste wird über den TV-Top-Rated-Endpunkt geladen und als TV-Kartenliste zurückgegeben.
 		it('lädt die Top-Rated-Serienliste über den top-rated-Endpunkt', async () => {
 			const fetchFn = vi
 				.fn()
@@ -218,7 +218,7 @@ describe('tmdb api trending and details', () => {
 	});
 
 	describe('getFeaturedToday', () => {
-		// Anweisungsüberdeckung: Das heutige Featured-Element wird aus der Trending-Liste gewählt, im Detail nachgeladen und vollständig angereichert.
+		// Anweisungsüberdeckung: Das heutige Featured-Element wird aus der Trending-Liste gewählt, im Detail nachgeladen und vollständig angereichert.
 		it('lädt den heutigen Featured-Film aus der Trending-Liste samt Details und Providern', async () => {
 			const fetchFn = vi
 				.fn()
@@ -266,7 +266,7 @@ describe('tmdb api trending and details', () => {
 	});
 
 	describe('getMovieDetails', () => {
-		// Anweisungsüberdeckung: Filmdetails werden inklusive Zertifizierung und Providern vollständig angereichert.
+		// Anweisungsüberdeckung: Filmdetails werden inklusive Zertifizierung und Providern vollständig angereichert.
 		it('lädt Filmdetails samt Zertifizierung und Watch-Providern', async () => {
 			const fetchFn = vi
 				.fn()
@@ -305,7 +305,7 @@ describe('tmdb api trending and details', () => {
 	});
 
 	describe('getTVShowDetails', () => {
-		// Anweisungsüberdeckung: Seriendetails werden inklusive Content-Rating und Providern vollständig angereichert.
+		// Anweisungsüberdeckung: Seriendetails werden inklusive Content-Rating und Providern vollständig angereichert.
 		it('lädt TV-Details samt Zertifizierung und Watch-Providern', async () => {
 			const fetchFn = vi
 				.fn()

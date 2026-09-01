@@ -98,7 +98,7 @@ describe('homepage route load', () => {
 		});
 	});
 
-	// Zweigüberdeckung: Ein TV-Featured-Eintrag verwendet den TV-Detailpfad statt des Movie-Detailpfads.
+	// Anweisungsüberdeckung: Ein TV-Featured-Eintrag verwendet den TV-Detailpfad statt des Movie-Detailpfads.
 	it('lädt Featured-Details über den TV-Pfad für TV-Einträge', async () => {
 		const tvDetails = createFeaturedDetails({
 			id: 420,
@@ -126,7 +126,7 @@ describe('homepage route load', () => {
 		expect(result.featured).toEqual(tvDetails);
 	});
 
-	// Zweigüberdeckung: Schlägt nur das Featured-Detail nach der Listenladung fehl, bleibt die Kartenliste erhalten und Featured wird null.
+	// Anweisungsüberdeckung: Schlägt nur das Featured-Detail nach der Listenladung fehl, bleibt die Kartenliste erhalten und Featured wird null.
 	it('fällt bei fehlgeschlagenen Featured-Details auf null zurück', async () => {
 		const api = {
 			getTrendingAll: vi.fn().mockResolvedValue({
@@ -155,7 +155,7 @@ describe('homepage route load', () => {
 		);
 	});
 
-	// Zweigüberdeckung: Schlägt die eigentliche Listenladung fehl, liefert die Route den lokalisierten Fehlerzustand zurück.
+	// Anweisungsüberdeckung: Schlägt die eigentliche Listenladung fehl, liefert die Route den lokalisierten Fehlerzustand zurück.
 	it('liefert bei fehlgeschlagener Listenladung einen Fehlerzustand zurück', async () => {
 		const api = {
 			getTrendingAll: vi.fn().mockRejectedValue(new Error('list failed')),

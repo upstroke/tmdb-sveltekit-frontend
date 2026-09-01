@@ -87,7 +87,7 @@ describe('tmdb api providers and certifications', () => {
 			expect(fetchFn).toHaveBeenCalledTimes(1);
 		});
 
-		// Zweigüberdeckung: Die Antwort wird pro Medium und ID gecacht und nicht erneut geladen.
+		// Anweisungsüberdeckung: Die Antwort wird pro Medium und ID gecacht und nicht erneut geladen.
 		it('liefert Watch-Provider beim zweiten Aufruf aus dem Cache', async () => {
 			const fetchFn = vi.fn().mockResolvedValue(
 				createJsonResponse({
@@ -110,7 +110,7 @@ describe('tmdb api providers and certifications', () => {
 			expect(fetchFn).toHaveBeenCalledTimes(1);
 		});
 
-		// Zweigüberdeckung: Für die abgeleitete Region ohne Providerdaten wird null zurückgegeben.
+		// Anweisungsüberdeckung: Für die abgeleitete Region ohne Providerdaten wird null zurückgegeben.
 		it('gibt null zurück, wenn für die Sprachregion keine Providerdaten vorhanden sind', async () => {
 			const fetchFn = vi.fn().mockResolvedValue(
 				createJsonResponse({
@@ -127,7 +127,7 @@ describe('tmdb api providers and certifications', () => {
 			await expect(api.getWatchProviders('movie', 550)).resolves.toBeNull();
 		});
 
-		// Zweigüberdeckung: Fehlerhafte Provider-Anfragen werden abgefangen und als null gecacht.
+		// Anweisungsüberdeckung: Fehlerhafte Provider-Anfragen werden abgefangen und als null gecacht.
 		it('fängt Fehler beim Laden der Watch-Provider ab und gibt null zurück', async () => {
 			const fetchFn = vi.fn().mockResolvedValue({
 				ok: false,
@@ -177,7 +177,7 @@ describe('tmdb api providers and certifications', () => {
 			await expect(api.getCertification('tv', 1399)).resolves.toBe('12');
 		});
 
-		// Zweigüberdeckung: Nicht unterstützte Medientypen liefern den leeren String als Fallback.
+		// Anweisungsüberdeckung: Nicht unterstützte Medientypen liefern den leeren String als Fallback.
 		it('gibt für nicht unterstützte Medientypen einen leeren String zurück', async () => {
 			const fetchFn = vi.fn();
 			const api = createTmdbApi(fetchFn, 'test-api-key', 'de-DE');
@@ -186,7 +186,7 @@ describe('tmdb api providers and certifications', () => {
 			expect(fetchFn).not.toHaveBeenCalled();
 		});
 
-		// Zweigüberdeckung: Zertifizierungen werden pro Medium und ID gecacht und nicht erneut geladen.
+		// Anweisungsüberdeckung: Zertifizierungen werden pro Medium und ID gecacht und nicht erneut geladen.
 		it('liefert Zertifizierungen beim zweiten Aufruf aus dem Cache', async () => {
 			const fetchFn = vi.fn().mockResolvedValue(
 				createJsonResponse({
@@ -207,7 +207,7 @@ describe('tmdb api providers and certifications', () => {
 			expect(fetchFn).toHaveBeenCalledTimes(1);
 		});
 
-		// Zweigüberdeckung: Fehlerhafte Zertifizierungs-Anfragen werden abgefangen und liefern einen leeren String.
+		// Anweisungsüberdeckung: Fehlerhafte Zertifizierungs-Anfragen werden abgefangen und liefern einen leeren String.
 		it('fängt Fehler beim Laden der Zertifizierung ab und gibt einen leeren String zurück', async () => {
 			const fetchFn = vi.fn().mockResolvedValue({
 				ok: false,

@@ -56,7 +56,7 @@ describe('tv show detail route load', () => {
 		mockGetLocaleText.mockReturnValue({ messages: createMessages() });
 	});
 
-	// Anweisungsüberdeckung: Die TV-Detailroute lädt TV-Details und hängt die Provider-Rückgabe an die Response an.
+	// Anweisungsüberdeckung: Die TV-Detailroute lädt TV-Details und hängt die Provider-Rückgabe an die Response an.
 	it('lädt TV-Details und Provider erfolgreich', async () => {
 		const providers = {
 			link: rawResponses.tvWatchProviders.results.DE.link,
@@ -94,7 +94,7 @@ describe('tv show detail route load', () => {
 		expect(result.providers).toEqual(providers);
 	});
 
-	// Zweigüberdeckung: Auch eine leere Provider-Rückgabe wird an die Response weitergereicht.
+	// Anweisungsüberdeckung: Auch eine leere Provider-Rückgabe wird an die Response weitergereicht.
 	it('reicht eine leere Provider-Rückgabe unverändert weiter', async () => {
 		const api = {
 			getTVShowDetails: vi.fn().mockResolvedValue(createTvDetails({ trailerUrls: [] })),
@@ -112,7 +112,7 @@ describe('tv show detail route load', () => {
 		expect(result.providers).toBeNull();
 	});
 
-	// Zweigüberdeckung: Schlägt die TV-Detail-Ladung fehl, liefert die Route die lokalisierte Fehlermeldung zurück.
+	// Anweisungsüberdeckung: Schlägt die TV-Detail-Ladung fehl, liefert die Route die lokalisierte Fehlermeldung zurück.
 	it('liefert bei fehlgeschlagener TV-Ladung die lokalisierte Fehlermeldung zurück', async () => {
 		const api = {
 			getTVShowDetails: vi.fn().mockRejectedValue(new Error('tv details failed')),

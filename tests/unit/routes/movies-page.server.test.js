@@ -96,7 +96,7 @@ describe('movies page route load', () => {
 		});
 	});
 
-	// Zweigüberdeckung: Fehlt der bevorzugte Featured-Kandidat, fällt die Route auf den nächsten verfügbaren Index zurück.
+	// Anweisungsüberdeckung: Fehlt der bevorzugte Featured-Kandidat, fällt die Route auf den nächsten verfügbaren Index zurück.
 	it('fällt bei der Featured-Auswahl auf Index 2 und dann 0 zurück', async () => {
 		const api = {
 			getTrendingMovies: vi
@@ -124,7 +124,7 @@ describe('movies page route load', () => {
 		expect(result.featured).toMatchObject({ id: 13, title: 'Forrest Gump' });
 	});
 
-	// Zweigüberdeckung: Schlägt nur das Featured-Detail fehl, bleiben Kartenliste und Seitendaten erhalten.
+	// Anweisungsüberdeckung: Schlägt nur das Featured-Detail fehl, bleiben Kartenliste und Seitendaten erhalten.
 	it('behält Karten bei, wenn Featured-Movie-Details fehlschlagen', async () => {
 		const api = {
 			getTrendingMovies: vi.fn().mockResolvedValue({
@@ -152,7 +152,7 @@ describe('movies page route load', () => {
 		);
 	});
 
-	// Zweigüberdeckung: Schlägt die Movie-Listenladung fehl, gibt die Route den lokalisierten Fehlerzustand zurück.
+	// Anweisungsüberdeckung: Schlägt die Movie-Listenladung fehl, gibt die Route den lokalisierten Fehlerzustand zurück.
 	it('liefert bei fehlgeschlagener Movie-Listenladung einen Fehlerzustand zurück', async () => {
 		const api = {
 			getTrendingMovies: vi.fn().mockRejectedValue(new Error('list failed')),

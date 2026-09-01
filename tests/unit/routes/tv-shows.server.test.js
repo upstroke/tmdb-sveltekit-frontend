@@ -39,7 +39,7 @@ describe('tv shows server route GET', () => {
 		mockGetLocaleText.mockReturnValue({ messages: createMessages() });
 	});
 
-	// Anweisungsüberdeckung: Die Route lädt eine TV-Seite, dedupliziert Karten per id-mediaType und gibt Paging-Daten zurück.
+	// Anweisungsüberdeckung: Die Route lädt eine TV-Seite, dedupliziert Karten per id-mediaType und gibt Paging-Daten zurück.
 	it('lädt TV-Shows dedupliziert mit Paging-Daten', async () => {
 		const api = {
 			getTrendingTVShows: vi.fn().mockResolvedValue({
@@ -74,7 +74,7 @@ describe('tv shows server route GET', () => {
 		});
 	});
 
-	// Zweigüberdeckung: Ungültige Seitenzahlen werden auf Seite eins normalisiert und fehlende API-Seitenangaben fallen auf den Request-Wert zurück.
+	// Anweisungsüberdeckung: Ungültige Seitenzahlen werden auf Seite eins normalisiert und fehlende API-Seitenangaben fallen auf den Request-Wert zurück.
 	it('normalisiert ungültige Seitenzahlen auf eins', async () => {
 		const api = {
 			getTrendingTVShows: vi.fn().mockResolvedValue({
@@ -99,7 +99,7 @@ describe('tv shows server route GET', () => {
 		});
 	});
 
-	// Zweigüberdeckung: Schlägt die TV-Ladung fehl, liefert die Route Status 500 und die lokalisierte Fehlermeldung zurück.
+	// Anweisungsüberdeckung: Schlägt die TV-Ladung fehl, liefert die Route Status 500 und die lokalisierte Fehlermeldung zurück.
 	it('liefert bei Ladefehlern eine lokalisierte Fehlermeldung zurück', async () => {
 		const api = {
 			getTrendingTVShows: vi.fn().mockRejectedValue(new Error('tv page failed'))
