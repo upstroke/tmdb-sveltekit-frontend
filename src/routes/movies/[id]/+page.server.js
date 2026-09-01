@@ -27,11 +27,17 @@ export async function load({ fetch, params, url }) {
 	try {
 		const api = createTmdbApi(fetch, TMDB_API_KEY, locale);
 
-		const details = await api.getDetails('movie', params.id);
+		const [details, providers] = await Promise.all([
+			api.getMovieDetails(params.id),
+			api.getWatchProviders('movie', params.id)
+		]);
 
 		return {
-			movie: details,
-			providers: api.getWatchProviders('movie', params.id),
+			movie: {
+				...details,
+				trailerUrls: details.trailerUrls ?? []
+			},
+			providers,
 			error: null
 		};
 	} catch (error) {
@@ -39,7 +45,7 @@ export async function load({ fetch, params, url }) {
 
 		return {
 			movie: null,
-			error: messages.movieLoadError
+			error: error instanceof Error ? error.message : messages.movieLoadError
 		};
 	}
 }

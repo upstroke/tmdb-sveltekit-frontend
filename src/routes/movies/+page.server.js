@@ -59,7 +59,7 @@ export async function load({ fetch, url }) {
 
 		if (source) {
 			try {
-				const details = await api.getDetails('movie', source.id);
+				const details = await api.getMovieDetails(source.id);
 
 				featured = {
 					id: details.id,

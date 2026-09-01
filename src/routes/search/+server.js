@@ -41,7 +41,8 @@ export async function GET({ fetch, url }) {
 	try {
 		const api = createTmdbApi(fetch, TMDB_API_KEY, locale);
 
-		const results = await api.searchMulti(query);
+		const searchResult = await api.searchMedia(query);
+		const results = searchResult.results ?? [];
 
 		return json({
 			movies: results.filter((item) => item.mediaType === 'movie'),

@@ -1,9 +1,18 @@
 import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vitest/config';
+import { fileURLToPath } from 'node:url';
+
+const testsDir = fileURLToPath(new URL('./tests', import.meta.url));
 
 export default defineConfig({
 	plugins: [sveltekit()],
+	resolve: {
+		alias: {
+			$tests: testsDir
+		}
+	},
 	test: {
+		pool: 'threads',
 		globals: true,
 		environment: 'jsdom',
 		setupFiles: ['./vitest.setup.js'],

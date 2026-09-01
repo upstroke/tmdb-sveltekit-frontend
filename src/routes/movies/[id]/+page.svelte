@@ -7,6 +7,7 @@
 	import MediaTypeLabel from '$lib/components/MediaTypeLabel.svelte';
 	import notAvailable from '$lib/assets/not-available.png';
 	import { i18n } from '$lib/stores/i18n';
+	import { formatDate } from '$lib/utils/formatDate';
 	import { getCertificationMeta } from '$lib/utils/certificationMeta';
 
 	let { data } = $props();
@@ -15,7 +16,9 @@
 
 	let movie = $derived(data.movie ?? null);
 	let error = $derived(data.error ?? null);
-	let activeRegion = $derived((page.url.searchParams.get('locale') ?? 'de-DE').split('-')[1] ?? 'DE');
+	let activeRegion = $derived(
+		(page.url.searchParams.get('locale') ?? 'de-DE').split('-')[1] ?? 'DE'
+	);
 	let certificationMeta = $derived(getCertificationMeta(movie?.certification, activeRegion));
 	let certificationStyle = $derived.by(() =>
 		certificationMeta
@@ -31,8 +34,13 @@
 	let genres = $derived(deduplicateById(movie?.genres ?? []));
 	let overview = $derived(movie?.overview ?? '');
 	let homepage = $derived(movie?.homepage ?? '');
-	let trailerUrl = $derived(movie?.trailerUrl ?? '');
+	let trailerUrls = $derived(movie?.trailerUrls ?? []);
 	let releaseDate = $derived(movie?.releaseDate ?? '');
+	let formattedReleaseDate = $derived(
+		releaseDate?.trim()
+			? formatDate(releaseDate, page.url.searchParams.get('locale') ?? 'de-DE')
+			: ''
+	);
 	let streamingProviders = $derived(data.providers ?? null);
 	let productionCompanies = $derived(deduplicateById(movie?.productionCompanies ?? []));
 	let runtime = $derived(movie?.runtime ?? null);
@@ -47,7 +55,7 @@
 </svelte:head>
 
 {#if error}
-	<DialogMessage message={error}/>
+	<DialogMessage message={error} />
 {:else if movie}
 	<DetailsHero
 		{title}
@@ -63,7 +71,7 @@
 				<div>
 					<dt class="u-sr-only">{labels.mediaType}</dt>
 					<dd>
-						<MediaTypeLabel {mediaType}/>
+						<MediaTypeLabel {mediaType} />
 					</dd>
 				</div>
 
@@ -149,21 +157,20 @@
 			>
 				{labels.trailer}
 			</h3>
-			<p>
-				{#if trailerUrl}
-					<a
-						class="ui red button {buttons.watchTrailer ? '' : 'u-not-available'}"
-						href={trailerUrl}
-						target="_blank"
-						rel="noopener noreferrer"
-					>
-						<i class="youtube icon" aria-hidden="true"></i>
-						{buttons.watchTrailer}
-					</a>
-				{:else}
-					<span class="u-not-available">{fallbacks.notAvailable}</span>
-				{/if}
-			</p>
+			{#if trailerUrls.length}
+				<ul class="ui list trailer-list">
+					{#each trailerUrls as trailer, index (`movie-trailer-${index}`)}
+						<li>
+							<a class="ui red button" href={trailer.url} target="_blank" rel="noopener noreferrer">
+								<i class="youtube icon" aria-hidden="true"></i>
+								{buttons.watchTrailer.replace('{index}', String(index + 1))}
+							</a>
+						</li>
+					{/each}
+				</ul>
+			{:else}
+				<p class="u-not-available">{fallbacks.notAvailable}</p>
+			{/if}
 		</section>
 
 		<section aria-labelledby="release-heading">
@@ -174,8 +181,9 @@
 				{labels.releaseDate}
 			</h3>
 			<p>
-				<time class={releaseDate ? '' : 'u-not-available'} datetime={releaseDate || undefined}
-				>{releaseDate || fallbacks.notAvailable}</time
+				<time
+					class={formattedReleaseDate ? '' : 'u-not-available'}
+					datetime={releaseDate || undefined}>{formattedReleaseDate || fallbacks.notAvailable}</time
 				>
 			</p>
 		</section>
@@ -183,7 +191,9 @@
 		<section aria-labelledby="watch-providers-heading">
 			<h3 id="watch-providers-heading" class="ui medium dividing header">
 				{labels.streamingProviders}
-				<small class="justwatch-attribution">{labels.streamingDataProvidedBy} <strong>&copy;JustWatch</strong></small>
+				<small class="justwatch-attribution"
+					>{labels.streamingDataProvidedBy} <strong>&copy;JustWatch</strong></small
+				>
 			</h3>
 			{#if streamingProviders}
 				{#await streamingProviders}
@@ -216,7 +226,11 @@
 											{:else}
 												<strong>{provider.providerName}</strong>
 											{/if}
-											<span> — {labels[`providerType${provider.type.charAt(0).toUpperCase() + provider.type.slice(1)}`]}</span>
+											<span>
+												— {labels[
+													`providerType${provider.type.charAt(0).toUpperCase() + provider.type.slice(1)}`
+												]}</span
+											>
 										</div>
 									</div>
 								</li>
@@ -270,7 +284,12 @@
 		</section>
 
 		<section aria-labelledby="cast-heading">
-			<h3 id="cast-heading" class="ui medium dividing header">Cast</h3>
+			<h3
+				id="cast-heading"
+				class="ui medium dividing header {labels.cast ? '' : 'u-not-available'}"
+			>
+				{labels.cast}
+			</h3>
 			{#if castMembers.length}
 				<ul class="ui relaxed divided list">
 					{#each castMembers as member (`movie-cast-${member.creditId ?? member.id ?? member.name}`)}
@@ -288,7 +307,12 @@
 		</section>
 
 		<section aria-labelledby="crew-heading">
-			<h3 id="crew-heading" class="ui medium dividing header">Crew</h3>
+			<h3
+				id="crew-heading"
+				class="ui medium dividing header {labels.crew ? '' : 'u-not-available'}"
+			>
+				{labels.crew}
+			</h3>
 			{#if crew.length}
 				<ul class="ui relaxed divided list">
 					{#each crew as member (`movie-crew-${member.creditId ?? member.id ?? member.name}`)}
@@ -306,3 +330,21 @@
 		</section>
 	</main>
 {/if}
+
+<style>
+	.ui.list.trailer-list {
+		list-style-type: none;
+		display: flex;
+		gap: 0.5rem;
+		flex-wrap: wrap;
+		margin: 0;
+
+		& > li {
+			padding: 0;
+
+			&::before {
+				display: none;
+			}
+		}
+	}
+</style>

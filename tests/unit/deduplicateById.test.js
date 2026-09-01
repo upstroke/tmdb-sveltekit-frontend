@@ -2,16 +2,16 @@ import { describe, expect, it } from 'vitest';
 import { deduplicateById } from '$lib/utils/deduplicateById';
 
 /**
- * Teststrategie: Anweisungs- und Zweigüberdeckung (Statement & Branch Coverage).
+ * Teststrategie: Anweisungsüberdeckung und Zweigüberdeckung.
  * Die Tests decken gültige IDs, fehlende IDs und doppelte IDs ab.
  */
 describe('deduplicateById', () => {
-	// Anweisungs- und Zweigüberdeckung: Ein gültiges Element bleibt erhalten.
+	// Anweisungsüberdeckung: Ein gültiges Element bleibt erhalten.
 	it('behält ein Element mit gültiger ID', () => {
 		expect(deduplicateById([{ id: 1 }])).toEqual([{ id: 1 }]);
 	});
 
-	// Anweisungs- und Zweigüberdeckung: Elemente ohne ID werden entfernt.
+	// Zweigüberdeckung: Elemente ohne auswertbare ID werden im Filterpfad verworfen.
 	it('entfernt ein Element ohne ID', () => {
 		expect(deduplicateById([{}])).toEqual([]);
 	});

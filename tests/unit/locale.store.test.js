@@ -58,15 +58,35 @@ describe('locale store', () => {
 		expect(get(locale)).toBe(DEFAULT_LOCALE);
 	});
 
-	// Anweisungs- und Zweigüberdeckung: Gesetzte Werte werden im Store und im Session Storage gespeichert.
-	it('speichert gesetzte Werte zusätzlich im Session Storage', async () => {
-		const setItemSpy = vi.spyOn(window.sessionStorage.__proto__, 'setItem');
+	// Zweigüberdeckung: Fehler beim Lesen aus dem Session Storage führen zum Fallback auf die Standard-Locale.
+	it('fällt bei einem Session-Storage-Lesefehler auf die Standard-Locale zurück', async () => {
+		const getItemSpy = vi
+			.spyOn(window.sessionStorage.__proto__, 'getItem')
+			.mockImplementation(() => {
+				throw new Error('storage unavailable');
+			});
+
 		const locale = await loadLocaleStore();
 
-		locale.set('vi-VN');
+		expect(get(locale)).toBe(DEFAULT_LOCALE);
+		expect(getItemSpy).toHaveBeenCalledWith('app-locale');
+	});
 
-		expect(get(locale)).toBe('vi-VN');
-		expect(setItemSpy).toHaveBeenCalledWith('app-locale', 'vi-VN');
-		expect(sessionStorage.getItem('app-locale')).toBe('vi-VN');
+	// Zweigüberdeckung: Fehler beim Speichern werden protokolliert und blockieren die Aktualisierung des Stores nicht.
+	it('aktualisiert den Store auch dann, wenn das Speichern im Session Storage fehlschlägt', async () => {
+		const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+		const setItemSpy = vi
+			.spyOn(window.sessionStorage.__proto__, 'setItem')
+			.mockImplementation(() => {
+				throw new Error('quota exceeded');
+			});
+		const locale = await loadLocaleStore();
+
+		locale.set('fr-FR');
+
+		expect(get(locale)).toBe('fr-FR');
+		expect(setItemSpy).toHaveBeenCalledWith('app-locale', 'fr-FR');
+		expect(warnSpy).toHaveBeenCalledOnce();
+		expect(warnSpy.mock.calls[0][0]).toContain('The locale could not be saved: Error: quota exceeded');
 	});
 });

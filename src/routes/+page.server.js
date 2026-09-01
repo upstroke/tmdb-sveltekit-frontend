@@ -58,7 +58,10 @@ export async function load({ fetch, url }) {
 
 		if (source) {
 			try {
-				const details = await api.getDetails(source.mediaType, source.id);
+				const details =
+					source.mediaType === 'tv'
+						? await api.getTVShowDetails(source.id)
+						: await api.getMovieDetails(source.id);
 
 				featured = {
 					id: details.id,

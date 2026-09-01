@@ -91,7 +91,7 @@ export function createTmdbApi(fetchFn, apiKey, language = 'de-DE') {
 	 *
 	 * @param {Object} item - Rohdaten eines Films oder einer Serie.
 	 * @param {string|null} [fallbackMediaType=null] - Alternativer Medientyp.
-	 * @returns {Object} Normalisiertes Kartenobjekt.
+	 * @returns {Object|null} Normalisiertes Kartenobjekt oder null.
 	 */
 	function mapCardItem(item, fallbackMediaType = null) {
 		const mediaType = getMediaType(item, fallbackMediaType);
@@ -117,6 +117,14 @@ export function createTmdbApi(fetchFn, apiKey, language = 'de-DE') {
 		};
 	}
 
+	/**
+	 * Wandelt einen Watch-Provider in ein UI-freundliches Objekt um.
+	 *
+	 * @param {Object} provider - TMDB-Providerdaten.
+	 * @param {string} type - Provider-Typ, z. B. `flatrate`, `rent` oder `buy`.
+	 * @param {string|null} baseLink - Link zur Provider-Liste.
+	 * @returns {Object|null} Normalisierter Provider oder null.
+	 */
 	function mapWatchProvider(provider, type, baseLink) {
 		if (!provider?.provider_id || !provider?.provider_name) {
 			return null;
@@ -132,6 +140,14 @@ export function createTmdbApi(fetchFn, apiKey, language = 'de-DE') {
 		};
 	}
 
+	/**
+	 * Wandelt eine Liste von Watch-Providern in UI-freundliche Objekte um.
+	 *
+	 * @param {Object[]} [providers=[]] - Providerliste aus TMDB.
+	 * @param {string} type - Provider-Typ.
+	 * @param {string|null} baseLink - Link zur Provider-Liste.
+	 * @returns {Object[]} Normalisierte Providerliste.
+	 */
 	function mapWatchProviderList(providers = [], type, baseLink) {
 		return providers.map((provider) => mapWatchProvider(provider, type, baseLink)).filter(Boolean);
 	}
@@ -153,6 +169,7 @@ export function createTmdbApi(fetchFn, apiKey, language = 'de-DE') {
 			return watchProvidersCache.get(cacheKey);
 		}
 
+		const region = language.split('-')[1] ?? language.split('_')[1] ?? 'DE';
 		let providers = null;
 
 		try {
@@ -168,9 +185,9 @@ export function createTmdbApi(fetchFn, apiKey, language = 'de-DE') {
 
 				providers = mappedProviders.length
 					? {
-						link: regionData.link ?? '',
-						providers: mappedProviders
-					  }
+							link: regionData.link ?? '',
+							providers: mappedProviders
+						}
 					: null;
 			}
 		} catch (error) {
@@ -234,10 +251,7 @@ export function createTmdbApi(fetchFn, apiKey, language = 'de-DE') {
 	}
 
 	/**
-	 * Wandelt Detaildaten in ein Featured-Objekt um.
-	 *
-	 * Das Featured-Objekt enthält getrennte Bildquellen für das breite
-	 * Hintergrundbild und das Posterbild.
+	 * Wandelt ein Featured-Detailobjekt in das UI-Format um.
 	 *
 	 * @param {Object} details - TMDB-Detaildaten.
 	 * @param {string|null} [fallbackMediaType=null] - Alternativer Medientyp.
@@ -260,22 +274,20 @@ export function createTmdbApi(fetchFn, apiKey, language = 'de-DE') {
 	}
 
 	/**
-	 * Ermittelt die beste verfügbare Trailer-URL aus den Videodaten.
+	 * Ermittelt alle verfügbaren Trailer-URLs aus den Videodaten.
 	 *
-	 * Bevorzugt offizielle YouTube-Trailer, sonst den ersten passenden Trailer.
+	 * Es werden alle passenden YouTube-Trailer in ihrer gelieferten Reihenfolge
+	 * übernommen.
 	 *
 	 * @param {Object} details - TMDB-Detaildaten.
-	 * @returns {string} YouTube-URL oder leerer String.
+	 * @returns {string[]} Liste von YouTube-URLs.
 	 */
-	function getTrailerUrl(details) {
+	function getTrailerUrls(details) {
 		const videos = details.videos?.results ?? [];
 
-		const trailer =
-			videos.find(
-				(video) => video.site === 'YouTube' && video.type === 'Trailer' && video.official === true
-			) ?? videos.find((video) => video.site === 'YouTube' && video.type === 'Trailer');
-
-		return trailer ? `https://www.youtube.com/watch?v=${trailer.key}` : '';
+		return videos
+			.filter((video) => video.site === 'YouTube' && video.type === 'Trailer' && video.key)
+			.map((video) => `https://www.youtube.com/watch?v=${video.key}`);
 	}
 
 	/**
@@ -295,7 +307,7 @@ export function createTmdbApi(fetchFn, apiKey, language = 'de-DE') {
 			releaseDate: getDate(details),
 			overview: details.overview ?? '',
 			homepage: details.homepage ?? '',
-			trailerUrl: getTrailerUrl(details),
+			trailerUrls: getTrailerUrls(details),
 			genres: details.genres ?? [],
 			rating: details.vote_average ?? 0,
 			runtime: details.runtime ?? null,
@@ -371,64 +383,165 @@ export function createTmdbApi(fetchFn, apiKey, language = 'de-DE') {
 		};
 	}
 
+	/**
+	 * Liefert die aktuell verfügbaren Trend-, Popular- und Top-Rated-Listen.
+	 *
+	 * @param {number} [page=1] - Seitenzahl.
+	 * @returns {Promise<Object>} Normalisierte Listenantwort.
+	 */
 	async function getTrendingAll(page = 1) {
 		return getList('/trending/all/day', page);
 	}
 
+	/**
+	 * Liefert die aktuellen Film-Trends.
+	 *
+	 * @param {number} [page=1] - Seitenzahl.
+	 * @returns {Promise<Object>} Normalisierte Listenantwort.
+	 */
 	async function getTrendingMovies(page = 1) {
 		return getList('/trending/movie/day', page, 'movie');
 	}
 
+	/**
+	 * Liefert die aktuellen Serien-Trends.
+	 *
+	 * @param {number} [page=1] - Seitenzahl.
+	 * @returns {Promise<Object>} Normalisierte Listenantwort.
+	 */
 	async function getTrendingTVShows(page = 1) {
 		return getList('/trending/tv/day', page, 'tv');
 	}
 
+	/**
+	 * Liefert die populärsten Filme.
+	 *
+	 * @param {number} [page=1] - Seitenzahl.
+	 * @returns {Promise<Object>} Normalisierte Listenantwort.
+	 */
 	async function getPopularMovies(page = 1) {
 		return getList('/movie/popular', page, 'movie');
 	}
 
+	/**
+	 * Liefert die populärsten Serien.
+	 *
+	 * @param {number} [page=1] - Seitenzahl.
+	 * @returns {Promise<Object>} Normalisierte Listenantwort.
+	 */
 	async function getPopularTVShows(page = 1) {
 		return getList('/tv/popular', page, 'tv');
 	}
 
+	/**
+	 * Liefert die bestbewerteten Filme.
+	 *
+	 * @param {number} [page=1] - Seitenzahl.
+	 * @returns {Promise<Object>} Normalisierte Listenantwort.
+	 */
 	async function getTopRatedMovies(page = 1) {
 		return getList('/movie/top_rated', page, 'movie');
 	}
 
+	/**
+	 * Liefert die bestbewerteten Serien.
+	 *
+	 * @param {number} [page=1] - Seitenzahl.
+	 * @returns {Promise<Object>} Normalisierte Listenantwort.
+	 */
 	async function getTopRatedTVShows(page = 1) {
 		return getList('/tv/top_rated', page, 'tv');
 	}
 
-	async function searchMovies(query, page = 1) {
-		return getList('/search/movie', page, 'movie', { query, include_adult: true });
+	/**
+	 * Liefert das hervorgehobene Element des Tages.
+	 *
+	 * @returns {Promise<Object|null>} Normalisiertes Featured-Objekt oder null.
+	 */
+	async function getFeaturedToday() {
+		const data = await request('/trending/all/day');
+		const items = data.results ?? [];
+		const featured =
+			items.find((item) => item.media_type === 'movie' && item.backdrop_path) ??
+			items.find((item) => item.media_type === 'tv' && item.backdrop_path) ??
+			items[0] ??
+			null;
+
+		if (!featured) {
+			return null;
+		}
+
+		const mediaType = getMediaType(featured, featured.media_type);
+		const details = await request(`/${mediaType}/${featured.id}`, {
+			append_to_response: 'videos,credits'
+		});
+		const mapFn = mediaType === 'movie' ? mapDetails : mapFeaturedItem;
+		const mapped = mapFn({ ...featured, ...details }, mediaType);
+		const productionCompanies = details.production_companies ?? [];
+		const certification = await getCertification(mediaType, featured.id);
+		const providers = await getWatchProviders(mediaType, featured.id);
+
+		return {
+			...mapped,
+			productionCompanies,
+			certification,
+			providers,
+			trailerUrls: mapped.trailerUrls ?? getTrailerUrls({ ...featured, ...details })
+		};
 	}
 
-	async function searchTVShows(query, page = 1) {
-		return getList('/search/tv', page, 'tv', { query, include_adult: true });
+	/**
+	 * Liefert die Detaildaten eines Films.
+	 *
+	 * @param {number|string} id - TMDB-ID des Films.
+	 * @returns {Promise<Object>} Normalisiertes Film-Detailobjekt.
+	 */
+	async function getMovieDetails(id) {
+		const details = await request(`/movie/${id}`, { append_to_response: 'videos,credits' });
+		const mapped = mapDetails(details, 'movie');
+		const certification = await getCertification('movie', id);
+		const providers = await getWatchProviders('movie', id);
+
+		return {
+			...mapped,
+			certification,
+			providers
+		};
 	}
 
-	async function searchMulti(query, page = 1) {
+	/**
+	 * Liefert die Detaildaten einer TV-Serie.
+	 *
+	 * @param {number|string} id - TMDB-ID der Serie.
+	 * @returns {Promise<Object>} Normalisiertes Serien-Detailobjekt.
+	 */
+	async function getTVShowDetails(id) {
+		const details = await request(`/tv/${id}`, { append_to_response: 'videos,credits' });
+		const mapped = mapDetails(details, 'tv');
+		const certification = await getCertification('tv', id);
+		const providers = await getWatchProviders('tv', id);
+
+		return {
+			...mapped,
+			certification,
+			providers
+		};
+	}
+
+	async function searchMedia(query, page = 1) {
+		const data = await request('/search/multi', { query, page, include_adult: false });
+		const items = data.results ?? [];
 		await loadGenreMaps();
+		const results = items
+			.map((item) => mapCardItem(item, item.media_type))
+			.filter(Boolean)
+			.map((item) => ({ ...item, mediaType: item.mediaType === 'movie' ? 'movie' : 'tv' }));
 
-		const data = await request('/search/multi', { query, page, include_adult: true });
-
-		return (data.results || [])
-			.filter((item) => item.media_type === 'movie' || item.media_type === 'tv')
-			.map((item) => ({
-				...mapCardItem(item),
-				posterUrl: getImageUrl(item.poster_path ?? '', 'w342')
-			}))
-			.filter(Boolean);
-	}
-
-	async function getDetails(mediaType, id) {
-		const endpoint = mediaType === 'tv' ? `/tv/${id}` : `/movie/${id}`;
-		const [data, certification] = await Promise.all([
-			request(endpoint, { append_to_response: 'videos,credits' }),
-			getCertification(mediaType, id)
-		]);
-		const normalizedMediaType = getMediaType(data, mediaType);
-		return mapDetails({ ...data, mediaType: normalizedMediaType, certification }, mediaType);
+		return {
+			page: data.page ?? page,
+			results,
+			hasMore: (data.page ?? page) < (data.total_pages ?? data.page ?? page)
+		};
 	}
 
 	return {
@@ -436,11 +549,13 @@ export function createTmdbApi(fetchFn, apiKey, language = 'de-DE') {
 		loadGenreMaps,
 		resolveGenres,
 		mapCardItem,
+		mapWatchProvider,
+		mapWatchProviderList,
 		getCertification,
 		getWatchProviders,
 		enrichCardCertifications,
 		mapFeaturedItem,
-		getTrailerUrl,
+		getTrailerUrls,
 		mapDetails,
 		mapCast,
 		mapCrew,
@@ -452,9 +567,9 @@ export function createTmdbApi(fetchFn, apiKey, language = 'de-DE') {
 		getPopularTVShows,
 		getTopRatedMovies,
 		getTopRatedTVShows,
-		searchMovies,
-		searchTVShows,
-		searchMulti,
-		getDetails
+		getFeaturedToday,
+		getMovieDetails,
+		getTVShowDetails,
+		searchMedia
 	};
 }

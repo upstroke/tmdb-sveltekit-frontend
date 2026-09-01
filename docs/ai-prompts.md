@@ -44,7 +44,14 @@ Lokal verfügbare CLI-Werkzeuge:
 - `bat` für lesbares Anzeigen von Dateien
 - `delta` für gut lesbare Git-Diffs
 - `sd` für einfache, gezielte Textnderungen
-- `just` für projektbezogene Befehle aus dem `justfile`
+- **Fixtures und Mocks gezielt wiederverwenden:** Vor neuen Hilfsdaten oder Testdoubles immer zuerst im vorhandenen `tests/fixtures`- und `tests/mocks`-Bereich nachsehen. Existiert dort schon ein passendes Beispiel, wird es bevorzugt genutzt oder erweitert, statt ein neues Duplikat anzulegen.
+- **Fixtures enthalten stabile Testdaten:** Verwende Fixtures für fachliche Beispieldaten, die in mehreren Tests wiederkehren und keine Logik enthalten.
+- **Mocks und Stubs kapseln Technik:** Verwende Mocks oder Stubs für technische Abhängigkeiten wie `fetch`, API-Clients, Browser-APIs oder andere externen Schnittstellen.
+- **Einmaligkeit vor Ordnung:** Eine neue Fixture oder ein neuer Mock wird nur angelegt, wenn wirklich kein vorhandenes Beispiel passt und die Wiederverwendung unpraktisch wäre.
+- **ISTQB-Begriffe für Überdeckung verwenden:** In Prompts und Testkommentaren die Bezeichnungen `Anweisungsüberdeckung` und `Zweigüberdeckung` nach ISTQB verwenden; gemischte Eigenformulierungen vermeiden.
+- **100 % Anweisungsüberdeckung als Mindestziel:** Bei neuer Testerstellung sollen alle ausführbaren Anweisungen des betroffenen Codes mindestens einmal ausgeführt werden. Fehlende Ausführungspfade sind zuerst durch zusätzliche Testfälle zu schließen, bevor weitere Verfeinerungen erfolgen.
+- **Zweigüberdeckung gezielt ergänzen:** Zusätzliche Testfälle für Zweigüberdeckung werden dort ergänzt, wo Alternativ-, Fehler-, Fallback-, Grenz- oder Verwerfungszweige fachlich oder technisch relevant sind. Kein pauschales Verdoppeln von Tests ohne erkennbaren neuen Entscheidungszweig.
+- **Kommentare pro Testfall eindeutig halten:** Jeder `it`-Block bekommt genau eine kurze Kommentarzeile direkt darüber. Standardfälle werden als `Anweisungsüberdeckung` bezeichnet, separate Alternativ- oder Fehlerpfade als `Zweigüberdeckung`.
 
 ## Session-Start-Prompt
 
