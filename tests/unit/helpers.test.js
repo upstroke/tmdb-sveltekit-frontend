@@ -19,11 +19,13 @@ describe('tmdb helpers', () => {
 		});
 
 		// Zweigüberdeckung: title-basierte Ableitung wird geprüft.
+			// Anweisungsüberdeckung: Fehlt media_type, wird bei vorhandenem title auf movie geschlossen.
 		it('leitet movie aus einem vorhandenen title ab', () => {
 			expect(getMediaType({ title: 'Inception' })).toBe('movie');
 		});
 
 		// Zweigüberdeckung: name-basierte Ableitung wird geprüft.
+			// Anweisungsüberdeckung: Fehlt media_type, wird bei vorhandenem name auf tv geschlossen.
 		it('leitet tv aus einem vorhandenen name ab', () => {
 			expect(getMediaType({ name: 'Dark' })).toBe('tv');
 		});

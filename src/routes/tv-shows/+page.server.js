@@ -67,7 +67,7 @@ export async function load({ fetch, url }) {
 
 		if (featuredSource) {
 			try {
-				const featuredDetails = await api.getDetails('tv', featuredSource.id);
+				const featuredDetails = await api.getTVShowDetails(featuredSource.id);
 
 				featured = {
 					id: featuredDetails.id,

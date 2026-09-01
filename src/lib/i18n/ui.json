@@ -22,7 +22,7 @@
 				"trailer": "Trailer",
 				"production": "Produktion",
 				"runtime": "Laufzeit",
-				"cast": "Cast",
+				"cast": "Besetzung",
 				"actor": "Darsteller",
 				"role": "Rolle",
 				"crew": "Crew",
@@ -87,7 +87,7 @@
 				"trendingToday": "Heute im Trend"
 			},
 			"buttons": {
-				"watchTrailer": "Trailer ansehen"
+				"watchTrailer": "Trailer {index} ansehen"
 			}
 		},
 		"en-US": {
@@ -177,7 +177,7 @@
 				"trendingToday": "Trending today"
 			},
 			"buttons": {
-				"watchTrailer": "Watch trailer"
+				"watchTrailer": "Watch trailer {index}"
 			}
 		},
 		"es-ES": {
@@ -267,7 +267,7 @@
 				"trendingToday": "Tendencias de hoy"
 			},
 			"buttons": {
-				"watchTrailer": "Ver tráiler"
+				"watchTrailer": "Ver tráiler {index}"
 			}
 		},
 		"fr-FR": {
@@ -357,7 +357,7 @@
 				"trendingToday": "Tendances du jour"
 			},
 			"buttons": {
-				"watchTrailer": "Voir la bande-annonce"
+				"watchTrailer": "Voir la bande-annonce {index}"
 			}
 		},
 		"ru-RU": {
@@ -447,7 +447,7 @@
 				"trendingToday": "Популярное сегодня"
 			},
 			"buttons": {
-				"watchTrailer": "Смотреть трейлер"
+				"watchTrailer": "Смотреть трейлер {index}"
 			}
 		},
 		"vi-VN": {
@@ -537,7 +537,7 @@
 				"trendingToday": "Xu hướng hôm nay"
 			},
 			"buttons": {
-				"watchTrailer": "Xem trailer"
+				"watchTrailer": "Xem trailer {index}"
 			}
 		}
 	}

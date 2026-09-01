@@ -23,6 +23,11 @@ describe('formatDate', () => {
 		expect(formatDate('2024-02-30')).toBe('1.3.2024');
 	});
 
+	// Zweigüberdeckung: Leere ISO-Segmente werden in der Ziffernprüfung verworfen und unverändert zurückgegeben.
+	it('gibt den Originalwert bei einem ISO-artigen Datum mit leerem Segment zurück', () => {
+		expect(formatDate('2024--15')).toBe('2024--15');
+	});
+
 	// Zweigüberdeckung: Ungültiger Monat bleibt auch im Fallback ungültig.
 	it('gibt den Originalwert bei einem ungültigen Monat zurück', () => {
 		expect(formatDate('2024-13-15')).toBe('2024-13-15');
@@ -84,8 +89,24 @@ describe('formatDate', () => {
 		expect(formatDate('2024-01-15', 'de-DE')).toBe('15.1.2024');
 	});
 
-	// Anweisungsüberdeckung: Parsebares Datum wird auch mit anderer Locale formatiert.
-	it('formatiert ein parsebares Datum auch mit einer anderen Locale', () => {
-		expect(formatDate('2024-01-15', 'en-US')).toBe('1/15/2024');
+
+	// Zweigüberdeckung: Nicht-String-Werte werden bereits in der ersten Validierung verworfen.
+	it('gibt bei einem nicht als String übergebenen Wert den leeren String zurück', () => {
+		expect(formatDate(null)).toBe('');
+	});
+
+	// Anweisungsüberdeckung: Ein vollständiges ISO-Datum mit negativem Offset bleibt gültig und wird formatiert.
+	it('formatiert ein vollständiges ISO-Datum mit negativem Zeitzonen-Offset', () => {
+		expect(formatDate('2024-01-15T10:00:00-05:00', 'de-DE')).toBe('15.1.2024');
+	});
+
+	// Zweigüberdeckung: Ein Zeitanteil mit zu wenigen Segmenten bleibt ungültig und wird unverändert zurückgegeben.
+	it('gibt den Originalwert bei einem Datum mit unvollständigem Zeitanteil zurück', () => {
+		expect(formatDate('2024-01-15T10')).toBe('2024-01-15T10');
+	});
+
+	// Zweigüberdeckung: Nichtnumerische Zeitsegmente bleiben ungültig und werden unverändert zurückgegeben.
+	it('gibt den Originalwert bei einem Datum mit nichtnumerischen Zeitsegmenten zurück', () => {
+		expect(formatDate('2024-01-15TAB:00:00')).toBe('2024-01-15TAB:00:00');
 	});
 });

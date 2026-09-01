@@ -2,12 +2,12 @@ import { describe, expect, it } from 'vitest';
 import { deduplicateMedia } from '$lib/utils/deduplicateMedia';
 
 /**
- * Teststrategie: Anweisungs- und Zweigüberdeckung (Statement & Branch Coverage).
+ * Teststrategie: Anweisungsüberdeckung und Zweigüberdeckung.
  * Die Tests decken gültige Elemente, ungültige Schlüssel,
  * Duplikate und gleiche IDs mit unterschiedlichem Medientyp ab.
  */
 describe('deduplicateMedia', () => {
-	// Anweisungs- und Zweigüberdeckung: Ein gültiges Media-Element bleibt erhalten.
+	// Anweisungsüberdeckung: Ein gültiges Media-Element bleibt erhalten.
 	it('behält ein gültiges Media-Element', () => {
 		expect(deduplicateMedia([{ id: 1, mediaType: 'movie' }])).toEqual([
 			{ id: 1, mediaType: 'movie' }

@@ -27,7 +27,7 @@ export async function load({ fetch, params, url }) {
 	try {
 		const api = createTmdbApi(fetch, TMDB_API_KEY, locale);
 
-		const details = await api.getDetails('tv', params.id);
+		const details = await api.getTVShowDetails(params.id);
 
 		return {
 			tvShow: details,

@@ -95,7 +95,11 @@ function isValidTimePart(timePart) {
 	const [hours, minutes, secondsWithMs] = timeSegments;
 	const seconds = secondsWithMs?.split('.')[0];
 
-	if (!isDigits(hours, 2) || !isDigits(minutes, 2) || (seconds !== undefined && !isDigits(seconds, 2))) {
+	if (
+		!isDigits(hours, 2) ||
+		!isDigits(minutes, 2) ||
+		(seconds !== undefined && !isDigits(seconds, 2))
+	) {
 		return false;
 	}
 

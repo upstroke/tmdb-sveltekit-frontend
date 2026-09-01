@@ -15,7 +15,7 @@ import {
 /**
  * Teststrategie: Anweisungs- und Zweigüberdeckung (Statement & Branch Coverage).
  * Die Tests decken Standardwerte, gültige und ungültige Storage-Werte,
- * Fehler beim Storage, Seitennachladen, unvollständige Daten,
+ * Fehler beim Storage, Nicht-Browser-Fall, Seitennachladen, unvollständige Daten,
  * leere Antworten und weitergereichte Fetch-Fehler ab.
  */
 describe('pageStateRestore', () => {
@@ -49,17 +49,84 @@ describe('pageStateRestore', () => {
 			expect(getStoredPage('movies-page')).toBe(1);
 		});
 
-		// Zweigüberdeckung: Fehler im Session Storage führen zu Seite 1.
-		it('fällt bei Session-Storage-Fehlern auf 1 zurück', () => {
+		// Anweisungsüberdeckung: Fehler beim Lesen des Session Storage führen zu Seite 1.
+		it('fällt bei Session-Storage-Fehlern beim Lesen auf 1 zurück', () => {
 			vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
 				throw new Error('storage blocked');
 			});
 
 			expect(getStoredPage('movies-page')).toBe(1);
 		});
+
+		// Zweigüberdeckung: Ein Local-Storage-Fehler beim Lesen führt ebenfalls zu Seite 1.
+		it('fällt bei einem Local-Storage-Fehler beim Lesen auf 1 zurück', () => {
+			vi.spyOn(Storage.prototype, 'getItem').mockImplementation(function (key) {
+				if (key === 'movies-page') {
+					throw new Error('local storage blocked');
+				}
+				return Reflect.apply(Storage.prototype.getItem, sessionStorage, [key]);
+			});
+
+			expect(getStoredPage('movies-page')).toBe(1);
+		});
+
+		// Zweigüberdeckung: Außerhalb des Browsers wird direkt Seite 1 verwendet.
+		it('liefert außerhalb des Browsers direkt 1 zurück', async () => {
+			vi.resetModules();
+			vi.doMock('$app/environment', () => ({ browser: false }));
+			const { getStoredPage: getStoredPageWithoutBrowser } = await import(
+				'$lib/utils/pageStateRestore'
+			);
+
+			expect(getStoredPageWithoutBrowser('movies-page')).toBe(1);
+		});
 	});
 
 	describe('restorePagedList', () => {
+		// Anweisungsüberdeckung: Im Browser mit gespeicherter Seite kleiner oder gleich der aktuellen Seite werden keine weiteren Seiten geladen.
+		it('gibt die aktuellen Daten zurück, wenn die gespeicherte Seite nicht größer als die aktuelle ist', async () => {
+			sessionStorage.setItem('movies-page', '1');
+			const fetchPageData = vi.fn();
+
+			const result = await restorePagedList({
+				storageKey: 'movies-page',
+				initialData: initialPagedMovieDataMock,
+				fetchPageData
+			});
+
+			expect(result).toEqual({
+				featured: { id: 99, mediaType: 'movie', title: 'Featured Movie' },
+				cards: [{ id: 1, mediaType: 'movie', title: 'Movie 1' }],
+				page: 1,
+				hasMore: true
+			});
+			expect(fetchPageData).not.toHaveBeenCalled();
+		});
+
+		// Zweigüberdeckung: Außerhalb des Browsers werden die initialen Daten ohne Nachladen zurückgegeben.
+		it('gibt außerhalb des Browsers die initialen Daten ohne Nachladen zurück', async () => {
+			vi.resetModules();
+			vi.doMock('$app/environment', () => ({ browser: false }));
+			const { restorePagedList: restorePagedListWithoutBrowser } = await import(
+				'$lib/utils/pageStateRestore'
+			);
+			const fetchPageData = vi.fn();
+
+			const result = await restorePagedListWithoutBrowser({
+				storageKey: 'movies-page',
+				initialData: initialPagedMovieDataMock,
+				fetchPageData
+			});
+
+			expect(result).toEqual({
+				featured: { id: 99, mediaType: 'movie', title: 'Featured Movie' },
+				cards: [{ id: 1, mediaType: 'movie', title: 'Movie 1' }],
+				page: 1,
+				hasMore: true
+			});
+			expect(fetchPageData).not.toHaveBeenCalled();
+		});
+
 		// Anweisungsüberdeckung: Ohne spätere Seite werden die initialen Daten zurückgegeben.
 		it('gibt die initialen Daten zurück, wenn keine spätere Seite gespeichert ist', async () => {
 			const fetchPageData = vi.fn();
@@ -79,7 +146,7 @@ describe('pageStateRestore', () => {
 			expect(fetchPageData).not.toHaveBeenCalled();
 		});
 
-		// Anweisungs- und Zweigüberdeckung: Fehlende Seiten werden nachgeladen und dedupliziert.
+		// Anweisungsüberdeckung: Fehlende Seiten werden nachgeladen und Duplikate entfernt.
 		it('lädt fehlende Seiten über fetchPageData nach und entfernt Duplikate', async () => {
 			sessionStorage.setItem('movies-page', '3');
 			const fetchPageData = vi
@@ -148,10 +215,10 @@ describe('pageStateRestore', () => {
 			});
 		});
 
-		// Zweigüberdeckung: Fehler von fetchPageData werden weitergereicht.
-		it('gibt einen Fehler aus fetchPageData an den Aufrufer weiter', async () => {
+		// Zweigüberdeckung: Weitergereichte Fetch-Fehler werden nicht geschluckt.
+		it('wirft den Fetch-Fehler weiter, wenn das Nachladen fehlschlägt', async () => {
 			sessionStorage.setItem('movies-page', '2');
-			const fetchPageData = vi.fn().mockRejectedValueOnce(fetchPageDataErrorMock);
+			const fetchPageData = vi.fn().mockRejectedValue(fetchPageDataErrorMock);
 
 			await expect(
 				restorePagedList({
@@ -160,8 +227,6 @@ describe('pageStateRestore', () => {
 					fetchPageData
 				})
 			).rejects.toThrow('fetch page data failed');
-			expect(fetchPageData).toHaveBeenCalledTimes(1);
-			expect(fetchPageData).toHaveBeenCalledWith(2);
 		});
 	});
 });

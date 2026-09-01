@@ -116,10 +116,10 @@
 					}
 				});
 
-				featured = restored.featured;
-				cards = restored.cards;
-				currentPage = restored.page;
-				hasMore = restored.hasMore;
+				featured = restored.featured ?? null;
+				cards = restored.cards ?? [];
+				currentPage = restored.page ?? 1;
+				hasMore = restored.hasMore ?? false;
 			} catch (restoreError) {
 				error = restoreError instanceof Error ? restoreError.message : messages.unknownError;
 			} finally {

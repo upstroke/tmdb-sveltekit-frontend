@@ -18,6 +18,7 @@ describe('formatHomepageLabel', () => {
 	});
 
 	// Anweisungs- und Zweigüberdeckung: HTTP wird aus der Anzeige entfernt.
+	// Anweisungsüberdeckung: Auch HTTP-URLs laufen durch den Protokoll-Entfernungszweig.
 	it('entfernt das http-Protokoll', () => {
 		expect(formatHomepageLabel('http://example.com')).toBe('example.com');
 	});
