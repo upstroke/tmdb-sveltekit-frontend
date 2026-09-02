@@ -1,21 +1,21 @@
-import { cleanupAll as vitestCleanupAll, resetAll as vitestResetAll } from '$tests/setup/vitest.setup.js';
+import { cleanup } from '@testing-library/svelte';
 
 /**
  * Cleanup-Funktion fuer afterEach
  *
  * Fuehrt alle noetigen Cleanup-Operationen aus:
- * - vitest: cleanupAll()
+ * - @testing-library/svelte: cleanup()
  */
 export const cleanupAll = () => {
-	vitestCleanupAll();
+	cleanup();
 };
 
 /**
  * Reset-Funktion fuer beforeEach
  *
  * Fuehrt alle noetigen Reset-Operationen aus:
- * - vitest: resetAll()
+ * - vitest: clearAllMocks()
  */
 export const resetAll = () => {
-	vitestResetAll();
+	vi.clearAllMocks();
 };
