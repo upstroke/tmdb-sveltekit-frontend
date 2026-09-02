@@ -218,24 +218,23 @@ describe('CardFeatured', () => {
 
 	// Anweisungsueberdeckung: Poster Bild wird korrekt gerendert
 	it('rendert Poster Bild korrekt', () => {
-		const posterUrl = '/poster.jpg';
-		render(CardFeatured, {
+		const { container } = render(CardFeatured, {
 			props: {
 				id: 123,
 				mediaType: 'movie',
 				title: 'Inception',
-				posterUrl,
+				posterUrl: '/poster.jpg',
 				imageUrl: '/image.jpg'
 			}
 		});
 
-		const posterImg = screen.getByAltText('Inception Poster');
-		expect(posterImg).toHaveAttribute('src', posterUrl);
+		const posterImg = container.querySelector('.featured-card-poster > img');
+		expect(posterImg).toHaveAttribute('src', '/poster.jpg');
 	});
 
 	// Anweisungsueberdeckung: Poster Fallback wenn kein posterUrl
 	it('rendert Poster Fallback wenn kein posterUrl', () => {
-		render(CardFeatured, {
+		const { container } = render(CardFeatured, {
 			props: {
 				id: 123,
 				mediaType: 'movie',
@@ -244,7 +243,7 @@ describe('CardFeatured', () => {
 			}
 		});
 
-		const posterImg = screen.getByAltText('Inception Poster');
+		const posterImg = container.querySelector('.featured-card-poster > img');
 		expect(posterImg).toHaveAttribute('src', notAvailable);
 	});
 
