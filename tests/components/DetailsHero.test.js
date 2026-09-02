@@ -1,16 +1,18 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen } from '@testing-library/svelte';
 import DetailsHero from '$lib/components/DetailsHero.svelte';
-import { getI18nLabels } from '$tests/mocks/i18n.mocks.js';
+import { getLocaleText } from '$lib/i18n/resolver.js';
+import { DEFAULT_LOCALE } from '$lib/i18n/config';
 import { cleanupAll, resetAll } from '$tests/setup/test-utils.js';
 import notAvailable from '$lib/assets/not-available.png';
 
-const labels = getI18nLabels();
+const localeData = getLocaleText(DEFAULT_LOCALE);
+const labels = localeData.fallbacks;
 
 vi.mock('$lib/stores/i18n', async () => ({
 	i18n: {
 		subscribe(run) {
-			run(labels);
+			run(localeData);
 			return () => {};
 		}
 	}
