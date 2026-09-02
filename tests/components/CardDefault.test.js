@@ -248,7 +248,7 @@ describe('CardDefault', () => {
 			}
 		});
 
-		const typeLabel = container.querySelector('.ui.label.movie');
+		const typeLabel = container.querySelector('.ui.card.default-card .image .ui.label');
 		expect(typeLabel).toHaveTextContent(labels.movie);
 	});
 
@@ -262,7 +262,7 @@ describe('CardDefault', () => {
 			}
 		});
 
-		const typeLabel = container.querySelector('.ui.label.tv');
+		const typeLabel = container.querySelector('.ui.card.default-card .image .ui.label');
 		expect(typeLabel).toHaveTextContent(labels.tvShow);
 	});
 
