@@ -68,6 +68,7 @@ describe('TypeHeadSearch', () => {
 	afterEach(() => {
 		cleanupAll();
 		vi.clearAllMocks();
+		vi.useRealTimers();
 	});
 
 	// 100% Anweisungsueberdeckung: Component rendert mit Suchfeld
@@ -115,29 +116,28 @@ describe('TypeHeadSearch', () => {
 
 		// Warte auf Loading-Message
 		await vi.waitFor(() => {
-			const loading = screen.queryByRole('status');
+			const loading = screen.getByRole('status');
 			expect(loading).toBeInTheDocument();
 		}, { timeout: 500 });
 	});
 
 	// 100% Anweisungsueberdeckung: Error State bei failed fetch
 	it('zeigt Error State bei fehlgeschlagenem Fetch', async () => {
-		vi.spyOn(global, 'fetch').mockImplementationOnce(() =>
-			Promise.resolve({
-				ok: false,
-				status: 500
-			})
-		);
+		vi.useFakeTimers();
+
+		vi.spyOn(global, 'fetch').mockResolvedValueOnce({
+			ok: false,
+			status: 500
+		});
 
 		render(TypeHeadSearch);
 
 		const input = screen.getByRole('searchbox');
 		await fireEvent.input(input, { target: { value: 'test' } });
 
-		await vi.waitFor(() => {
-			const error = screen.queryByRole('alert');
-			expect(error).toBeInTheDocument();
-		}, { timeout: 1000 });
+		await vi.advanceTimersByTimeAsync(300);
+
+		expect(await screen.findByRole('alert')).toHaveTextContent(messages.searchError);
 	});
 
 	// 100% Anweisungsueberdeckung: Ergebnisse werden angezeigt
@@ -222,7 +222,7 @@ describe('TypeHeadSearch', () => {
 		await fireEvent.input(input, { target: { value: 'inception' } });
 
 		await vi.waitFor(() => {
-			const results = screen.queryByLabelText(messages.searchResults);
+			const results = screen.getByLabelText(messages.searchResults);
 			expect(results).toBeInTheDocument();
 		}, { timeout: 1000 });
 
@@ -240,7 +240,7 @@ describe('TypeHeadSearch', () => {
 		await fireEvent.input(input, { target: { value: 'inception' } });
 
 		await vi.waitFor(() => {
-			const results = screen.queryByLabelText(messages.searchResults);
+			const results = screen.getByLabelText(messages.searchResults);
 			expect(results).toBeInTheDocument();
 		}, { timeout: 1000 });
 
@@ -259,7 +259,7 @@ describe('TypeHeadSearch', () => {
 		await fireEvent.input(input, { target: { value: 'inception' } });
 
 		await vi.waitFor(() => {
-			const results = screen.queryByLabelText(messages.searchResults);
+			const results = screen.getByLabelText(messages.searchResults);
 			expect(results).toBeInTheDocument();
 		}, { timeout: 1000 });
 
@@ -288,7 +288,7 @@ describe('TypeHeadSearch', () => {
 		await fireEvent.input(input, { target: { value: 'nothingfound' } });
 
 		await vi.waitFor(() => {
-			const noResults = screen.queryByText(messages.searchNoResults);
+			const noResults = screen.getByText(messages.searchNoResults);
 			expect(noResults).toBeInTheDocument();
 		}, { timeout: 1000 });
 	});
@@ -369,7 +369,7 @@ describe('TypeHeadSearch', () => {
 		await fireEvent.input(input, { target: { value: 'invaliddate' } });
 
 		await vi.waitFor(() => {
-			const date = screen.queryByText(fallbacks.dateFallback);
+			const date = screen.getByText(fallbacks.dateFallback);
 			expect(date).toBeInTheDocument();
 		}, { timeout: 1000 });
 	});
@@ -396,7 +396,7 @@ describe('TypeHeadSearch', () => {
 		await fireEvent.input(input, { target: { value: 'nullrating' } });
 
 		await vi.waitFor(() => {
-			const rating = screen.queryByText('0.0');
+			const rating = screen.getByText('0.0');
 			expect(rating).toBeInTheDocument();
 		}, { timeout: 1000 });
 	});
