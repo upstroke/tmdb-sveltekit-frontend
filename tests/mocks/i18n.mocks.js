@@ -1,15 +1,14 @@
-// tests/mocks/i18n.mocks.js
-import uiJson from '$lib/i18n/ui.json';
+import { getLocaleText } from '$lib/i18n/resolver.js';
 import { DEFAULT_LOCALE } from '$lib/i18n/config';
 
-// Labels aus der echten ui.json holen
-const labels = uiJson.locales[DEFAULT_LOCALE].labels;
+// Hole die echten i18n-Daten aus der ui.json
+const localeData = getLocaleText(DEFAULT_LOCALE);
 
-// Zentraler i18n-Mock für alle Tests
+// Zentrale Mock-Daten für i18n
 export const i18nMockDefault = {
 	i18n: {
 		subscribe(run) {
-			run({ labels });
+			run(localeData);
 			return () => {};
 		}
 	}
@@ -17,5 +16,12 @@ export const i18nMockDefault = {
 
 // Helper für Test-Assertions
 export function getI18nLabels() {
-	return labels;
+	return {
+		...localeData.labels,
+		...localeData.messages,
+		...localeData.titles,
+		...localeData.buttons,
+		...localeData.formats,
+		...localeData.fallbacks
+	};
 }
