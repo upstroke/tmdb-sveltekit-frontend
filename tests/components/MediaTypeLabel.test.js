@@ -2,11 +2,12 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/svelte';
 import MediaTypeLabel from '$lib/components/MediaTypeLabel.svelte';
 import uiJson from '$lib/i18n/ui.json';
+import { DEFAULT_LOCALE } from '$lib/i18n/config';
 
-// Mock für den i18n-Store (technische Abhngigkeit)
-// Verwendet Labels direkt aus src/lib/i18n/ui.json
-// Keys: /locales/de-DE/labels/movie und /locales/de-DE/labels/tvShow
-const labels = uiJson.locales['de-DE'].labels;
+// Mock für den i18n-Store (technische Abhängigkeit)
+// Verwendet Labels direkt aus src/lib/i18n/ui.json für die konfigurierte DEFAULT_LOCALE
+// Keys: /locales/{DEFAULT_LOCALE}/labels/movie und /locales/{DEFAULT_LOCALE}/labels/tvShow
+const labels = uiJson.locales[DEFAULT_LOCALE].labels;
 
 vi.mock('$lib/stores/i18n', () => ({
 	i18n: {
@@ -24,42 +25,42 @@ vi.mock('$lib/stores/i18n', () => ({
 
 describe('MediaTypeLabel', () => {
 	describe('Rendering bei verschiedenen mediaType-Werten', () => {
-		// Anweisungsberdeckung: render mit undefined, kein Label erwartet
+		// Anweisungsüberdeckung: render mit undefined, kein Label erwartet
 		it('rendert kein Label bei undefined mediaType', () => {
-			// Anweisungsberdeckung
+			// Anweisungsüberdeckung
 			render(MediaTypeLabel, { props: { mediaType: undefined } });
 			expect(screen.queryByText(labels.movie)).toBeNull();
 			expect(screen.queryByText(labels.tvShow)).toBeNull();
 		});
 
-		// Anweisungsberdeckung: render mit null, kein Label erwartet
+		// Anweisungsüberdeckung: render mit null, kein Label erwartet
 		it('rendert kein Label bei null mediaType', () => {
-			// Anweisungsberdeckung
+			// Anweisungsüberdeckung
 			render(MediaTypeLabel, { props: { mediaType: null } });
 			expect(screen.queryByText(labels.movie)).toBeNull();
 			expect(screen.queryByText(labels.tvShow)).toBeNull();
 		});
 
-		// Anweisungsberdeckung: render mit unbekanntem Typ, kein Label erwartet
+		// Anweisungsüberdeckung: render mit unbekanntem Typ, kein Label erwartet
 		it('rendert kein Label bei unbekanntem mediaType', () => {
-			// Anweisungsberdeckung
+			// Anweisungsüberdeckung
 			render(MediaTypeLabel, { props: { mediaType: 'unknown' } });
 			expect(screen.queryByText(labels.movie)).toBeNull();
 			expect(screen.queryByText(labels.tvShow)).toBeNull();
 		});
 
-		// Anweisungsberdeckung: movie-Pfad mit Label, Text und Klassen
+		// Anweisungsüberdeckung: movie-Pfad mit Label, Text und Klassen
 		it('rendert blaues Label für movie', () => {
-			// Anweisungsberdeckung
+			// Anweisungsüberdeckung
 			render(MediaTypeLabel, { props: { mediaType: 'movie' } });
 			const label = screen.getByText(labels.movie);
 			expect(label).toBeInTheDocument();
 			expect(label).toHaveClass('ui', 'label', 'blue');
 		});
 
-		// Anweisungsberdeckung: tv-Pfad mit Label, Text und Klassen
+		// Anweisungsüberdeckung: tv-Pfad mit Label, Text und Klassen
 		it('rendert türkises Label für tv', () => {
-			// Anweisungsberdeckung
+			// Anweisungsüberdeckung
 			render(MediaTypeLabel, { props: { mediaType: 'tv' } });
 			const label = screen.getByText(labels.tvShow);
 			expect(label).toBeInTheDocument();
@@ -68,9 +69,9 @@ describe('MediaTypeLabel', () => {
 	});
 
 	describe('Zusatzfunktionen', () => {
-		// Anweisungsberdeckung: class-Prop wird angewendet
+		// Anweisungsüberdeckung: class-Prop wird angewendet
 		it('wendet zusätzliche class-Prop korrekt an', () => {
-			// Anweisungsberdeckung
+			// Anweisungsüberdeckung
 			render(MediaTypeLabel, {
 				props: { mediaType: 'movie', class: 'featured-card-type' }
 			});
@@ -78,9 +79,9 @@ describe('MediaTypeLabel', () => {
 			expect(label).toHaveClass('featured-card-type');
 		});
 
-		// Zweigberdeckung: span-Tag und Klassenstruktur
+		// Zweigüberdeckung: span-Tag und Klassenstruktur
 		it('verwendet span-Tag mit korrekter Klassenstruktur', () => {
-			// Zweigberdeckung
+			// Zweigüberdeckung
 			render(MediaTypeLabel, { props: { mediaType: 'tv' } });
 			const label = screen.getByText(labels.tvShow);
 			expect(label.tagName.toLowerCase()).toBe('span');
