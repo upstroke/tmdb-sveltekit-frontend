@@ -1,17 +1,20 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/svelte';
 import MediaTypeLabel from '$lib/components/MediaTypeLabel.svelte';
+import uiJson from '$lib/i18n/ui.json';
 
 // Mock für den i18n-Store (technische Abhngigkeit)
-// Simuliert die subscribe-Methode des Stores mit Werten aus src/lib/i18n/ui.json
-// Verwendete Keys: labels.movie (z. B. "Film") und labels.tvShow (z. B. "Serie")
+// Verwendet Labels direkt aus src/lib/i18n/ui.json
+// Keys: /locales/de-DE/labels/movie und /locales/de-DE/labels/tvShow
+const labels = uiJson.locales['de-DE'].labels;
+
 vi.mock('$lib/stores/i18n', () => ({
 	i18n: {
 		subscribe(run) {
 			run({
 				labels: {
-					movie: 'Film',
-					tvShow: 'Serie'
+					movie: labels.movie,
+					tvShow: labels.tvShow
 				}
 			});
 			return () => {};
@@ -46,7 +49,7 @@ describe('MediaTypeLabel', () => {
 		it('rendert blaues Label für movie', () => {
 			// Anweisungsberdeckung
 			render(MediaTypeLabel, { props: { mediaType: 'movie' } });
-			const label = screen.getByText('Film');
+			const label = screen.getByText(labels.movie);
 			expect(label).toBeInTheDocument();
 			expect(label).toHaveClass('ui', 'label', 'blue');
 		});
@@ -55,7 +58,7 @@ describe('MediaTypeLabel', () => {
 		it('rendert türkises Label für tv', () => {
 			// Anweisungsberdeckung
 			render(MediaTypeLabel, { props: { mediaType: 'tv' } });
-			const label = screen.getByText('Serie');
+			const label = screen.getByText(labels.tvShow);
 			expect(label).toBeInTheDocument();
 			expect(label).toHaveClass('ui', 'label', 'teal');
 		});
@@ -68,7 +71,7 @@ describe('MediaTypeLabel', () => {
 			render(MediaTypeLabel, {
 				props: { mediaType: 'movie', class: 'featured-card-type' }
 			});
-			const label = screen.getByText('Film');
+			const label = screen.getByText(labels.movie);
 			expect(label).toHaveClass('featured-card-type');
 		});
 
@@ -76,7 +79,7 @@ describe('MediaTypeLabel', () => {
 		it('verwendet span-Tag mit korrekter Klassenstruktur', () => {
 			// Zweigberdeckung
 			render(MediaTypeLabel, { props: { mediaType: 'tv' } });
-			const label = screen.getByText('Serie');
+			const label = screen.getByText(labels.tvShow);
 			expect(label.tagName.toLowerCase()).toBe('span');
 			expect(label.className).toMatch(/ui\s+label\s+teal/);
 		});
