@@ -5,29 +5,11 @@ import { getLocaleText } from '$lib/i18n/resolver.js';
 import { DEFAULT_LOCALE } from '$lib/i18n/config';
 import { cleanupAll, resetAll } from '$tests/setup/test-utils.js';
 import notAvailable from '$lib/assets/not-available.png';
-import ratingsData from '$lib/i18n/ratings.json';
-import { resolveLocale } from '$lib/i18n/helpers.js';
 
 const localeData = getLocaleText(DEFAULT_LOCALE);
 const labels = localeData.labels;
 const formats = localeData.formats;
 const fallbacks = localeData.fallbacks;
-
-/**
- * Extrahiert die Region aus einer Locale (z.B. "de-DE" -> "DE").
- */
-function getRegionFromLocale(locale) {
-	return locale.split('-')[1] ?? 'DE';
-}
-
-/**
- * Liefert das Rating-System für eine gegebene Locale.
- */
-function getRatingsForLocale(locale = DEFAULT_LOCALE) {
-	const resolvedLocale = resolveLocale(locale);
-	const region = getRegionFromLocale(resolvedLocale);
-	return ratingsData.ratingSystems[region] ?? ratingsData.ratingSystems.DE;
-}
 
 vi.mock('$lib/stores/i18n', async () => ({
 	i18n: {
@@ -58,7 +40,14 @@ vi.mock('$app/state', async () => ({
 }));
 
 vi.mock('$lib/utils/certificationMeta', async () => {
-	const ratings = getRatingsForLocale(DEFAULT_LOCALE);
+	const ratingsData = await import('$lib/i18n/ratings.json');
+	const { resolveLocale } = await import('$lib/i18n/helpers.js');
+	const { DEFAULT_LOCALE: DEFAULT } = await import('$lib/i18n/config.js');
+
+	const getRegionFromLocale = (locale) => locale.split('-')[1] ?? 'DE';
+	const resolvedLocale = resolveLocale(DEFAULT);
+	const region = getRegionFromLocale(resolvedLocale);
+	const ratings = ratingsData.default.ratingSystems[region] ?? ratingsData.default.ratingSystems.DE;
 
 	return {
 		getCertificationMeta: vi.fn((certification) => {
