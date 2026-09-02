@@ -35,21 +35,21 @@ describe('DetailsHero', () => {
 		
 		render(DetailsHero, { props: { title, backdrop, posterUrl } });
 		
-		expect(screen.getByText(title)).toBeInTheDocument();
+		expect(screen.getByText(title, { selector: 'h1#details-hero-title' })).toBeInTheDocument();
 	});
 
 	// Anweisungsueberdeckung: Title wird zu notAvailable wenn leer
 	it('zeigt notAvailable-Text wenn title leer ist', () => {
 		render(DetailsHero, { props: { title: '', backdrop: '/backdrop.jpg', posterUrl: '/poster.jpg' } });
 		
-		expect(screen.getByText(labels.notAvailable)).toBeInTheDocument();
+		expect(screen.getByText(labels.notAvailable, { selector: 'h1#details-hero-title' })).toBeInTheDocument();
 	});
 
 	// Anweisungsueberdeckung: Title wird zu notAvailable wenn nur whitespace
 	it('zeigt notAvailable-Text wenn title nur whitespace ist', () => {
 		render(DetailsHero, { props: { title: '   ', backdrop: '/backdrop.jpg', posterUrl: '/poster.jpg' } });
 		
-		expect(screen.getByText(labels.notAvailable)).toBeInTheDocument();
+		expect(screen.getByText(labels.notAvailable, { selector: 'h1#details-hero-title' })).toBeInTheDocument();
 	});
 
 	// Anweisungsueberdeckung: Produktionsfirmen werden gerendert
@@ -82,7 +82,7 @@ describe('DetailsHero', () => {
 			emptyLabel 
 		}});
 		
-		expect(screen.getByText(emptyLabel)).toBeInTheDocument();
+		expect(screen.getByText(emptyLabel, { selector: 'li.details-hero-company' })).toBeInTheDocument();
 	});
 
 	// Anweisungsueberdeckung: notAvailable-Text wird gerendert wenn emptyLabel leer und keine Produktionsfirmen
@@ -95,7 +95,7 @@ describe('DetailsHero', () => {
 			emptyLabel: '' 
 		}});
 		
-		expect(screen.getByText(labels.notAvailable)).toBeInTheDocument();
+		expect(screen.getByText(labels.notAvailable, { selector: 'li.details-hero-company' })).toBeInTheDocument();
 	});
 
 	// Anweisungsueberdeckung: Backdrop wird als Hintergrund verwendet
