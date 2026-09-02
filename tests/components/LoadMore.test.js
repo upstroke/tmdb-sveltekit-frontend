@@ -31,6 +31,7 @@ describe('LoadMore', () => {
 		cleanupAll();
 	});
 
+	// Anweisungsueberdeckung: Button wird nicht gerendert wenn hasMore=false
 	it('rendert keinen Button wenn hasMore=false', () => {
 		// Arrange
 		render(LoadMore, { props: { hasMore: false, loading: false, onload: null } });
@@ -39,6 +40,7 @@ describe('LoadMore', () => {
 		expect(screen.queryByRole('button')).not.toBeInTheDocument();
 	});
 
+	// Anweisungsueberdeckung: Button wird gerendert wenn hasMore=true
 	it('rendert Button wenn hasMore=true', () => {
 		// Arrange
 		render(LoadMore, { props: { hasMore: true, loading: false, onload: null } });
@@ -49,6 +51,7 @@ describe('LoadMore', () => {
 		expect(button).not.toBeDisabled();
 	});
 
+	// Anweisungsueberdeckung: Button zeigt LoadMore-Text wenn loading=false
 	it('zeigt LoadMore-Text wenn loading=false', () => {
 		// Arrange
 		render(LoadMore, { props: { hasMore: true, loading: false, onload: null } });
@@ -57,6 +60,7 @@ describe('LoadMore', () => {
 		expect(screen.getByRole('button')).toHaveTextContent(labels.loadMore);
 	});
 
+	// Anweisungsueberdeckung: Button zeigt Lade-Text wenn loading=true
 	it('zeigt Lade-Text wenn loading=true', () => {
 		// Arrange
 		render(LoadMore, { props: { hasMore: true, loading: true, onload: null } });
@@ -65,6 +69,7 @@ describe('LoadMore', () => {
 		expect(screen.getByRole('button')).toHaveTextContent(labels.loadMoreLoading);
 	});
 
+	// Zweigueberdeckung: Button ist disabled wenn loading=true
 	it('ist disabled wenn loading=true', () => {
 		// Arrange
 		render(LoadMore, { props: { hasMore: true, loading: true, onload: null } });
@@ -73,6 +78,7 @@ describe('LoadMore', () => {
 		expect(screen.getByRole('button')).toBeDisabled();
 	});
 
+	// Anweisungsueberdeckung: onload wird aufgerufen beim Klick
 	it('ruft onload auf beim Klick', async () => {
 		// Arrange
 		const onloadMock = vi.fn();
@@ -85,6 +91,7 @@ describe('LoadMore', () => {
 		expect(onloadMock).toHaveBeenCalledTimes(1);
 	});
 
+	// Zweigueberdeckung: onload wird NICHT aufgerufen wenn loading=true
 	it('ruft onload NICHT auf wenn loading=true', async () => {
 		// Arrange
 		const onloadMock = vi.fn();
@@ -97,6 +104,7 @@ describe('LoadMore', () => {
 		expect(onloadMock).not.toHaveBeenCalled();
 	});
 
+	// Zweigueberdeckung: onload wird NICHT aufgerufen wenn onload=null
 	it('ruft onload NICHT auf wenn onload=null', async () => {
 		// Arrange
 		render(LoadMore, { props: { hasMore: true, loading: false, onload: null } });
