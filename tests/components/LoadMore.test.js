@@ -18,8 +18,9 @@ vi.mock('$lib/stores/i18n', async () => ({
 describe('LoadMore', () => {
 	/**
 	 * Testtechnik: Komponenten-Test mit Vitest
-	 * - Happy Path: Button wird gerendert und ist klickbar
-	 * - Negative FÃ¤lle: Button wird nicht gerendert, ist disabled
+	 * Ziel: 100% Anweisungsueberdeckung
+	 * - Anweisungsueberdeckung: Button wird gerendert und ist klickbar
+	 * - Zweigueberdeckung: Button wird nicht gerendert, ist disabled
 	 */
 
 	beforeEach(() => {
