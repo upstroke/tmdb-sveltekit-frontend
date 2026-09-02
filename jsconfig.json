@@ -4,12 +4,6 @@
 		"allowJs": true,
 		"checkJs": false,
 		"moduleResolution": "bundler",
-		"strict": true,
-		"paths": {
-			"$lib": ["./src/lib"],
-			"$lib/*": ["./src/lib/*"],
-			"$tests": ["./tests"],
-			"$tests/*": ["./tests/*"]
-		}
+		"strict": true
 	}
 }
