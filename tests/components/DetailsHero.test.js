@@ -10,7 +10,7 @@ const labels = getI18nLabels();
 vi.mock('$lib/stores/i18n', async () => ({
 	i18n: {
 		subscribe(run) {
-			run({ messages: labels });
+			run(labels);
 			return () => {};
 		}
 	}
@@ -40,14 +40,14 @@ describe('DetailsHero', () => {
 	it('zeigt notAvailable-Text wenn title leer ist', () => {
 		render(DetailsHero, { props: { title: '', backdrop: '/backdrop.jpg', posterUrl: '/poster.jpg' } });
 		
-		expect(screen.getByText(labels.notAvailable)).toBeInTheDocument();
+		expect(screen.getByText(labels.fallbacks.notAvailable)).toBeInTheDocument();
 	});
 
 	// Anweisungsueberdeckung: Title wird zu notAvailable wenn nur whitespace
 	it('zeigt notAvailable-Text wenn title nur whitespace ist', () => {
 		render(DetailsHero, { props: { title: '   ', backdrop: '/backdrop.jpg', posterUrl: '/poster.jpg' } });
 		
-		expect(screen.getByText(labels.notAvailable)).toBeInTheDocument();
+		expect(screen.getByText(labels.fallbacks.notAvailable)).toBeInTheDocument();
 	});
 
 	// Anweisungsueberdeckung: Produktionsfirmen werden gerendert
@@ -93,7 +93,7 @@ describe('DetailsHero', () => {
 			emptyLabel: '' 
 		}});
 		
-		expect(screen.getByText(labels.notAvailable)).toBeInTheDocument();
+		expect(screen.getByText(labels.fallbacks.notAvailable)).toBeInTheDocument();
 	});
 
 	// Anweisungsueberdeckung: Backdrop wird als Hintergrund verwendet
