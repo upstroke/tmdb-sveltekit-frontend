@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen } from '@testing-library/svelte';
 import DetailsHero from '$lib/components/DetailsHero.svelte';
 import { getI18nLabels } from '$tests/mocks/i18n.mocks.js';
@@ -40,14 +40,14 @@ describe('DetailsHero', () => {
 	it('zeigt notAvailable-Text wenn title leer ist', () => {
 		render(DetailsHero, { props: { title: '', backdrop: '/backdrop.jpg', posterUrl: '/poster.jpg' } });
 		
-		expect(screen.getByText(labels.fallbacks.notAvailable)).toBeInTheDocument();
+		expect(screen.getByText(labels.notAvailable)).toBeInTheDocument();
 	});
 
 	// Anweisungsueberdeckung: Title wird zu notAvailable wenn nur whitespace
 	it('zeigt notAvailable-Text wenn title nur whitespace ist', () => {
 		render(DetailsHero, { props: { title: '   ', backdrop: '/backdrop.jpg', posterUrl: '/poster.jpg' } });
 		
-		expect(screen.getByText(labels.fallbacks.notAvailable)).toBeInTheDocument();
+		expect(screen.getByText(labels.notAvailable)).toBeInTheDocument();
 	});
 
 	// Anweisungsueberdeckung: Produktionsfirmen werden gerendert
@@ -93,7 +93,7 @@ describe('DetailsHero', () => {
 			emptyLabel: '' 
 		}});
 		
-		expect(screen.getByText(labels.fallbacks.notAvailable)).toBeInTheDocument();
+		expect(screen.getByText(labels.notAvailable)).toBeInTheDocument();
 	});
 
 	// Anweisungsueberdeckung: Backdrop wird als Hintergrund verwendet
