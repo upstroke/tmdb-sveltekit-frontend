@@ -27,12 +27,12 @@ describe('DialogMessage', () => {
 		// Äquivalenzklassenbildung: Ohne expliziten Titel nutzt die Komponente den Standardtitel aus dem i18n-Store.
 		render(DialogMessage, {
 			props: {
-				message: labels.unknownError
+				message: labels.unknownError // ← Aus ui.json!
 			}
 		});
 
 		expect(screen.getByRole('dialog', { name: labels.dialogErrorTitle })).toBeInTheDocument();
-		expect(screen.getByText(labels.unknownError)).toBeInTheDocument();
+		expect(screen.getByText(labels.unknownError)).toBeInTheDocument(); // ← Aus ui.json!
 		expect(screen.getByRole('button', { name: labels.dialogOk })).toBeInTheDocument();
 	});
 
@@ -40,20 +40,20 @@ describe('DialogMessage', () => {
 		// Äquivalenzklassenbildung: Ein gesetzter Titel überschreibt den Default-Titel vollständig.
 		render(DialogMessage, {
 			props: {
-				message: labels.contentLoadError,
+				message: labels.contentLoadError, // ← Aus ui.json!
 				title: 'Benutzerdefinierte Meldung'
 			}
 		});
 
 		expect(screen.getByRole('dialog', { name: 'Benutzerdefinierte Meldung' })).toBeInTheDocument();
-		expect(screen.getByText(labels.contentLoadError)).toBeInTheDocument();
+		expect(screen.getByText(labels.contentLoadError)).toBeInTheDocument(); // ← Aus ui.json!
 	});
 
 	it('öffnet den Dialog clientseitig, wenn eine Meldung vorhanden ist und der Dialog geschlossen ist', () => {
 		// Anweisungsüberdeckung: Bei vorhandener Meldung und geschlossenem Dialog wird showModal genau einmal aufgerufen.
 		render(DialogMessage, {
 			props: {
-				message: labels.loadMoreError
+				message: labels.loadMoreError // ← Aus ui.json!
 			}
 		});
 
