@@ -310,13 +310,13 @@ describe('TypeHeadSearch', () => {
 			})
 		);
 
-		render(TypeHeadSearch);
+		const { container } = render(TypeHeadSearch);
 
 		const input = screen.getByRole('searchbox');
 		await fireEvent.input(input, { target: { value: 'noposter' } });
 
 		await vi.waitFor(() => {
-			const img = screen.queryByRole('img', { hidden: true });
+			const img = container.querySelector('.category img');
 			expect(img).toHaveAttribute('src', '/fallback.jpg');
 		}, { timeout: 1000 });
 	});
