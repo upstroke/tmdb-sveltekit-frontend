@@ -8,9 +8,9 @@ Diese Datei dokumentiert bewehrte Prompt-Muster für KI-gesttzte Entwicklung im 
 - **Ziel zuerst:** Definiere die eine klare Aufgabe und die Erfolgskriterien.
 - **Kontext zuerst:** Nenne Tech Stack, relevante Dateien, bestehende Muster und fachliche Randbedingungen früh.
 - **Beispiele nutzen:** 2–3 Beispiele der gewnnschten Ausgabe sind oft hilfreicher als lange Erklrungen.
-- **Iterativ und minimal arbeiten:** Starte mit einer knappen, klaren Anfrage und ergnze nur das, was fr ein besseres Ergebnis wirklich fehlt.
+- **Iterativ und minimal arbeiten:** Starte mit einer knappen, klaren Anfrage und ergnze nur das, was für ein besseres Ergebnis wirklich fehlt.
 
-`docs/ai-prompt-examples.md` fr konkrete Prompt-Beispiele nach Rolle
+`docs/ai-prompt-examples.md` für konkrete Prompt-Beispiele nach Rolle
 
 ## Projektkontext
 
@@ -18,18 +18,18 @@ Dieses Projekt nutzt:
 
 - SvelteKit 2.63 mit Svelte 5
 - Vite als Build-Tool
-- Sass/SCSS fr Styles
+- Sass/SCSS für Styles
 - PostCSS mit Autoprefixer
 - Fomantic UI / Semantic UI Klassen
-- Playwright fr Acceptance-Tests
-- Vitest fr Komponenten-, Integrations- und Unit-Tests
+- Playwright für Acceptance-Tests
+- Vitest für Komponenten-, Integrations- und Unit-Tests
 
 Wichtige Projektpfade:
 
-- `src/routes` fr Routen
-- `src/lib/components` fr UI-Komponenten
-- `src/lib` fr gemeinsam genutzte Logik
-- `src/css` fr globale Styles
+- `src/routes` für Routen
+- `src/lib/components` für UI-Komponenten
+- `src/lib` für gemeinsam genutzte Logik
+- `src/css` für globale Styles
 
 ## Test-Hilfsmittel
 
@@ -46,16 +46,16 @@ Die TMDB-Testdaten liegen zentral in:
 tests/fixtures/tmdb/tmdb.fixtures.js
 ```
 
-Verwende fr Imports den `$tests`-Alias:
+Verwende für Imports den `$tests`-Alias:
 
 ```js
 import {
 	movieDetails,
 	tvShowDetails
-} from '$tests/fixtures/tmdb/tmdb.fixtures.js';
+} fürom '$tests/fixtures/tmdb/tmdb.fixtures.js';
 ```
 
-Verwende Fixtures als Eingabe fr Funktionen, API-Mocks oder Component-Props:
+Verwende Fixtures als Eingabe für Funktionen, API-Mocks oder Component-Props:
 
 ```js
 import { movieDetails } from '$tests/fixtures/tmdb/tmdb.fixtures.js';
@@ -79,7 +79,7 @@ const movieWithoutPoster = {
 };
 ```
 
-- Fixtures nicht fr Mock-Verhalten verwenden; dafr gehren Mocks nach `tests/mocks/`.
+- Fixtures nicht für Mock-Verhalten verwenden; dafür gehren Mocks nach `tests/mocks/`.
 
 ### Zentrale Mocks
 
@@ -135,26 +135,26 @@ import { movieDetails } from '$tests/fixtures/tmdb/tmdb.fixtures.js';
 - Marktanteil ber 0,5 %
 - keine veralteten Browser
 
-## Lokal verfgbare CLI-Werkzeuge
+## Lokal verfügbare CLI-Werkzeuge
 
-- `rg` (ripgrep) fr schnelle Textsuche
-- `fd` fr schnelle Datei- und Ordnersuche
-- `fzf` fr interaktive Auswahl und Filterung
-- `bat` fr lesbares Anzeigen von Dateien
-- `delta` fr gut lesbare Git-Diffs
-- `sd` fr einfache, gezielte Textnderungen
+- `rg` (ripgrep) für schnelle Textsuche
+- `fd` für schnelle Datei- und Ordnersuche
+- `fzf` für interaktive Auswahl und Filterung
+- `bat` für lesbares Anzeigen von Dateien
+- `delta` für gut lesbare Git-Diffs
+- `sd` für einfache, gezielte Textnderungen
 - **Fixtures und Mocks gezielt wiederverwenden:** Vor neuen Hilfsdaten oder Testdoubles immer zuerst im vorhandenen `tests/fixtures`- und `tests/mocks`-Bereich nachsehen. Existiert dort schon ein passendes Beispiel, wird es bevorzugt genutzt oder erweitert, statt ein neues Duplikat anzulegen.
-- **Fixtures enthalten stabile Testdaten:** Verwende Fixtures fr fachliche Beispieldaten, die in mehreren Tests wiederkehren und keine Logik enthalten.
-- **Mocks und Stubs kapseln Technik:** Verwende Mocks oder Stubs fr technische Abhngigkeiten wie `fetch`, API-Clients, Browser-APIs oder andere externen Schnittstellen.
+- **Fixtures enthalten stabile Testdaten:** Verwende Fixtures für fachliche Beispieldaten, die in mehreren Tests wiederkehren und keine Logik enthalten.
+- **Mocks und Stubs kapseln Technik:** Verwende Mocks oder Stubs für technische Abhngigkeiten wie `fetch`, API-Clients, Browser-APIs oder andere externen Schnittstellen.
 - **Einmaligkeit vor Ordnung:** Eine neue Fixture oder ein neuer Mock wird nur angelegt, wenn wirklich kein vorhandenes Beispiel passt und die Wiederverwendung unpraktisch wre.
-- **ISTQB-Begriffe fr berdeckung verwenden:** In Prompts und Testkommentaren die Bezeichnungen `Anweisungsberdeckung` und `Zweigberdeckung` nach ISTQB verwenden; gemischte Eigenformulierungen vermeiden.
+- **ISTQB-Begriffe für berdeckung verwenden:** In Prompts und Testkommentaren die Bezeichnungen `Anweisungsberdeckung` und `Zweigberdeckung` nach ISTQB verwenden; gemischte Eigenformulierungen vermeiden.
 - **100 % Anweisungsberdeckung als Mindestziel:** Bei neuer Testerstellung sollen alle ausfhrbaren Anweisungen des betroffenen Codes mindestens einmal ausgefhrt werden. Fehlende Ausfhrungspfade sind zuerst durch zustzliche Testflle zu schlieen, bevor weitere Verfeinerungen erfolgen.
-- **Zweigberdeckung gezielt ergnzen:** Zustzliche Testflle fr Zweigberdeckung werden dort ergnzt, wo Alternativ-, Fehler-, Fallback-, Grenz- oder Verwerfungszweige fachlich oder technisch relevant sind. Kein pauschales Verdoppeln von Tests ohne erkennbaren neuen Entscheidungszweig.
-- **Kommentare pro Testfall eindeutig halten:** Jeder `it`-Block bekommt genau eine kurze Kommentarzeile direkt darber. Fr die Klassifikation gilt: Alle Tests einer Quelldatei werden in fester Reihenfolge analysiert, whrend die bisher abgedeckten Statement-IDs gesammelt werden. Ein Test wird als `Anweisungsberdeckung` bezeichnet, sobald er mindestens eine neue Statement-ID zur 100-%-Anweisungsberdeckung der Quelldatei beitrgt. Nur wenn er keine neue Statement-ID beitrgt, aber einen zustzlichen fachlich oder technisch relevanten Pfad testet, wird er als `Zweigberdeckung` bezeichnet. Eine zustzliche Zweiprfung ndert die Bezeichnung nicht, wenn der Test zugleich neue Statements abdeckt. Gemischte Bezeichnungen werden nicht verwendet.
+- **Zweigberdeckung gezielt ergnzen:** Zustzliche Testflle für Zweigberdeckung werden dort ergnzt, wo Alternativ-, Fehler-, Fallback-, Grenz- oder Verwerfungszweige fachlich oder technisch relevant sind. Kein pauschales Verdoppeln von Tests ohne erkennbaren neuen Entscheidungszweig.
+- **Kommentare pro Testfall eindeutig halten:** Jeder `it`-Block bekommt genau eine kurze Kommentarzeile direkt darber. für die Klassifikation gilt: Alle Tests einer Quelldatei werden in fester Reihenfolge analysiert, whrend die bisher abgedeckten Statement-IDs gesammelt werden. Ein Test wird als `Anweisungsberdeckung` bezeichnet, sobald er mindestens eine neue Statement-ID zur 100-%-Anweisungsberdeckung der Quelldatei beitrgt. Nur wenn er keine neue Statement-ID beitrgt, aber einen zustzlichen fachlich oder technisch relevanten Pfad testet, wird er als `Zweigberdeckung` bezeichnet. Eine zustzliche Zweiprfung ndert die Bezeichnung nicht, wenn der Test zugleich neue Statements abdeckt. Gemischte Bezeichnungen werden nicht verwendet.
 
 ## Session-Start-Prompt
 
-Dieser Prompt dient als empfohlene Startvorlage fr neue KI-Sessions in diesem Projekt.
+Dieser Prompt dient als empfohlene Startvorlage für neue KI-Sessions in diesem Projekt.
 
 ```text
 Bitte lies zuerst README.md, package.json, justfile und bei Testthemen zustzlich playwright.config.js.
@@ -170,7 +170,7 @@ Hinweise zur Ausfhrung:
 - Wenn die angegebenen CLI-Werkzeuge nicht lokal installiert sind - prfe ob diese installiert werden, Rcksprache am Anfang der Session nehmen.
 - Sind die Werkzeuge lokal installiert, knnen sie verwendet werden.
 - Wenn weitere lokal installierbare Werkzeuge die Arbeit sprbar beschleunigen wrden, soll das aktiv angesprochen und kurz begrndet werden.
-- Wenn eine Aufgabe voraussichtlich mehr Bearbeitungsschritte braucht, als in einem Durchlauf sinnvoll sind, soll das frh gesagt und in kleine Pakete aufgeteilt werden.
+- Wenn eine Aufgabe voraussichtlich mehr Bearbeitungsschritte braucht, als in einem Durchlauf sinnvoll sind, soll das früh gesagt und in kleine Pakete aufgeteilt werden.
 
 Fehler- und Retry-Umgang:
 - Wenn ein Tool-Aufruf abbricht oder fehlschlgt, soll das sofort klar benannt werden, inklusive vermuteter Ursache, Auswirkung und nchstem sinnvollen Schritt.
@@ -182,11 +182,11 @@ Fehler- und Retry-Umgang:
 
 Strategie bei Code-Erzeugung und Code-nderungen:
 - Vorhandene Muster, Konventionen und Architektur bevorzugen.
-- Best Practices fr SvelteKit- und Svelte-Projekte anwenden; dazu gehren saubere Fehlerbehandlung und passende Nutzung bestehender Hooks-Strukturen.
-- JavaScript soll gut lesbar, transparent und fr Menschen leicht nachvollziehbar bleiben.
+- Best Practices für SvelteKit- und Svelte-Projekte anwenden; dazu gehren saubere Fehlerbehandlung und passende Nutzung bestehender Hooks-Strukturen.
+- JavaScript soll gut lesbar, transparent und für Menschen leicht nachvollziehbar bleiben.
 - Kein TypeScript verwenden, sofern nicht ausdrcklich anders abgestimmt.
 - Mit dem arbeiten, was im Projekt und lokal bereits vorhanden ist; zuerst vorhandene Browser-APIs nutzen, zustzliche Libraries oder Tools nicht ungefragt einfhren oder installieren.
-- Vorschlge fr sinnvolle zustzliche Libraries oder Tools knnen gemacht werden, aber Nutzung oder Installation nur nach Rcksprache.
+- Vorschlge für sinnvolle zustzliche Libraries oder Tools knnen gemacht werden, aber Nutzung oder Installation nur nach Rcksprache.
 - Wenn `switch`/`case` die Logik klarer und transparenter macht, soll diese Struktur bevorzugt werden.
 - Neu erstellte oder wesentlich genderte Funktionen mit JSDoc dokumentieren.
 - Die zu einer Methode oder Funktion zugehrige JSDoc-Dokumentation wird als Einheit betrachtet.
@@ -224,7 +224,7 @@ Output: Eine `.svelte`-Datei im Ordner `src/lib/components`.
 ### Test schreiben
 
 ```text
-Erstelle einen Vitest-Test fr [Funktion/Komponente].
+Erstelle einen Vitest-Test für [Funktion/Komponente].
 
 Kontext:
 - Die Funktion befindet sich in `src/lib/...`
@@ -241,7 +241,7 @@ Output: Eine `.test.js`-Datei im passenden Testordner.
 ### CSS-nderung
 
 ```text
-ndere das CSS in `src/css/app.scss` fr [Ziel].
+ndere das CSS in `src/css/app.scss` für [Ziel].
 
 Anforderungen:
 - Verwende unsere Sass-Variablen und Mixins
@@ -254,7 +254,7 @@ Output: Die genderte SCSS-Datei.
 ### Refactoring
 
 ```text
-Refaktorisiere [Funktion/Komponente] fr bessere Lesbarkeit.
+Refaktorisiere [Funktion/Komponente] für bessere Lesbarkeit.
 
 Ziel:
 - [konkretes Ziel, z. B. „weniger Verschachtelung" oder „bessere Fehlerbehandlung"]
@@ -286,8 +286,8 @@ Output: Genderte ui.json mit Eintragen in allen Locales.
 ### Dos
 
 - Klare, spezifische Aufgaben formulieren.
-- Tech Stack und Kontext frh nennen.
-- Beispiele fr gewnschte Ausgabe geben.
+- Tech Stack und Kontext früh nennen.
+- Beispiele für gewnschte Ausgabe geben.
 - Iterativ vorgehen und Zwischenergebnisse prfen.
 - KI-generierten Code wie externen Code reviewen.
 
@@ -302,9 +302,9 @@ Output: Genderte ui.json mit Eintragen in allen Locales.
 
 - **Keine Secrets:** API-Keys, Passwrter oder andere sensible Daten niemals in Prompts verwenden.
 - **Review-Pflicht:** Jeder KI-generierte Code muss vor dem Merge geprft werden.
-- **CI-Scans:** Automatische SAST- und Secret-Scans fr KI-beeinflusste nderungen sind sinnvoll.
+- **CI-Scans:** Automatische SAST- und Secret-Scans für KI-beeinflusste nderungen sind sinnvoll.
 
 ## Weiteres
 
-- `docs/testing.md` fr das Testvorgehen im Projekt
-- `README.md` fr Projektkontext und Tech Stack
+- `docs/testing.md` für das Testvorgehen im Projekt
+- `README.md` für Projektkontext und Tech Stack
