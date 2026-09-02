@@ -93,7 +93,8 @@ describe('CardDefault', () => {
 			}
 		});
 
-		const title = container.querySelector('.header');
+		const card = container.querySelector('.ui.card.default-card');
+		const title = card.querySelector('.header');
 		expect(title).toHaveTextContent('Inception');
 	});
 
@@ -107,7 +108,8 @@ describe('CardDefault', () => {
 			}
 		});
 
-		const title = container.querySelector('.header');
+		const card = container.querySelector('.ui.card.default-card');
+		const title = card.querySelector('.header');
 		expect(title).toHaveTextContent(fallbacks.notAvailable);
 	});
 
@@ -127,7 +129,8 @@ describe('CardDefault', () => {
 			}
 		});
 
-		const genresMeta = container.querySelector('.meta.genres');
+		const card = container.querySelector('.ui.card.default-card');
+		const genresMeta = card.querySelector('.meta.genres');
 		expect(genresMeta).toHaveTextContent('Action / Thriller');
 	});
 
@@ -142,7 +145,8 @@ describe('CardDefault', () => {
 			}
 		});
 
-		const genresMeta = container.querySelector('.meta.genres');
+		const card = container.querySelector('.ui.card.default-card');
+		const genresMeta = card.querySelector('.meta.genres');
 		expect(genresMeta).toHaveTextContent(fallbacks.notAvailable);
 	});
 
@@ -158,7 +162,8 @@ describe('CardDefault', () => {
 			}
 		});
 
-		const dateMeta = container.querySelector('.meta.date');
+		const card = container.querySelector('.ui.card.default-card');
+		const dateMeta = card.querySelector('.meta.date');
 		expect(dateMeta).toHaveTextContent('15.1.2024');
 	});
 
@@ -173,7 +178,8 @@ describe('CardDefault', () => {
 			}
 		});
 
-		const dateMeta = container.querySelector('.meta.date');
+		const card = container.querySelector('.ui.card.default-card');
+		const dateMeta = card.querySelector('.meta.date');
 		expect(dateMeta).toHaveTextContent(fallbacks.notAvailable);
 	});
 
@@ -188,9 +194,11 @@ describe('CardDefault', () => {
 			}
 		});
 
-		const rating = container.querySelector('.rating-value');
+		const card = container.querySelector('.ui.card.default-card');
+		const rating = card.querySelector('.rating-value');
+		const footer = card.querySelector('.extra.content');
 		expect(rating).toHaveTextContent('8.5');
-		expect(container.querySelector('.extra.content')).toHaveTextContent(formats.outOfTen);
+		expect(footer).toHaveTextContent(formats.outOfTen);
 	});
 
 	// 100% Anweisungsueberdeckung: Rating Fallback wenn 0
@@ -204,7 +212,8 @@ describe('CardDefault', () => {
 			}
 		});
 
-		const footer = container.querySelector('.extra.content');
+		const card = container.querySelector('.ui.card.default-card');
+		const footer = card.querySelector('.extra.content');
 		expect(footer).toHaveTextContent(fallbacks.notAvailable);
 	});
 
@@ -219,7 +228,8 @@ describe('CardDefault', () => {
 			}
 		});
 
-		const certification = container.querySelector('.certification-text');
+		const card = container.querySelector('.ui.card.default-card');
+		const certification = card.querySelector('.certification-text');
 		expect(certification).toHaveTextContent('FSK 12');
 	});
 
@@ -234,7 +244,8 @@ describe('CardDefault', () => {
 			}
 		});
 
-		const certification = container.querySelector('.certification-text');
+		const card = container.querySelector('.ui.card.default-card');
+		const certification = card.querySelector('.certification-text');
 		expect(certification).toHaveTextContent(fallbacks.notAvailable);
 	});
 
@@ -248,7 +259,8 @@ describe('CardDefault', () => {
 			}
 		});
 
-		const typeLabel = container.querySelector('.ui.card.default-card .image .ui.label');
+		const card = container.querySelector('.ui.card.default-card');
+		const typeLabel = card.querySelector('.image .ui.label');
 		expect(typeLabel).toHaveTextContent(labels.movie);
 	});
 
@@ -262,7 +274,8 @@ describe('CardDefault', () => {
 			}
 		});
 
-		const typeLabel = container.querySelector('.ui.card.default-card .image .ui.label');
+		const card = container.querySelector('.ui.card.default-card');
+		const typeLabel = card.querySelector('.image .ui.label');
 		expect(typeLabel).toHaveTextContent(labels.tvShow);
 	});
 
@@ -276,8 +289,8 @@ describe('CardDefault', () => {
 			}
 		});
 
-		const link = container.querySelector('a.default-card');
-		expect(link).toHaveAttribute('href', '/movies/123?locale=de-DE');
+		const card = container.querySelector('.ui.card.default-card');
+		expect(card).toHaveAttribute('href', '/movies/123?locale=de-DE');
 	});
 
 	// 100% Anweisungsueberdeckung: Poster Bild wird korrekt gerendert
@@ -292,7 +305,8 @@ describe('CardDefault', () => {
 			}
 		});
 
-		const img = container.querySelector('.image img');
+		const card = container.querySelector('.ui.card.default-card');
+		const img = card.querySelector('.image img');
 		expect(img).toHaveAttribute('src', imageUrl);
 	});
 
@@ -307,7 +321,8 @@ describe('CardDefault', () => {
 			}
 		});
 
-		const img = container.querySelector('.image img');
+		const card = container.querySelector('.ui.card.default-card');
+		const img = card.querySelector('.image img');
 		expect(img).toHaveAttribute('src', notAvailable);
 	});
 
@@ -322,7 +337,7 @@ describe('CardDefault', () => {
 			}
 		});
 
-		const card = container.querySelector('a.default-card');
+		const card = container.querySelector('.ui.card.default-card');
 		expect(card).toHaveClass('is-loading');
 	});
 
@@ -337,7 +352,7 @@ describe('CardDefault', () => {
 			}
 		});
 
-		const card = container.querySelector('a#home-card-5');
-		expect(card).toBeInTheDocument();
+		const card = container.querySelector('.ui.card.default-card');
+		expect(card).toHaveAttribute('id', 'home-card-5');
 	});
 });
