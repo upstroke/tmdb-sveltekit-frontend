@@ -102,9 +102,8 @@ describe('DetailsHero', () => {
 	it('setzt backdrop als Hintergrund', () => {
 		const backdrop = '/backdrop.jpg';
 		
-		render(DetailsHero, { props: { title: 'Inception', backdrop, posterUrl: '/poster.jpg' } });
-		
-		const section = screen.getByLabelText('details-hero-title', { selector: 'section' });
+		const { container } = render(DetailsHero, { props: { title: 'Inception', backdrop, posterUrl: '/poster.jpg' } });
+		const section = container.querySelector('.details-hero');
 		expect(section).toHaveStyle(`--details-hero-backdrop: url('${backdrop}')`);
 	});
 
@@ -112,17 +111,15 @@ describe('DetailsHero', () => {
 	it('verwendet posterUrl als Fallback wenn kein backdrop', () => {
 		const posterUrl = '/poster.jpg';
 		
-		render(DetailsHero, { props: { title: 'Inception', backdrop: '', posterUrl } });
-		
-		const section = screen.getByLabelText('details-hero-title', { selector: 'section' });
+		const { container } = render(DetailsHero, { props: { title: 'Inception', backdrop: '', posterUrl } });
+		const section = container.querySelector('.details-hero');
 		expect(section).toHaveStyle(`--details-hero-backdrop: url('${posterUrl}')`);
 	});
 
 	// Anweisungsueberdeckung: notAvailable.png wird als Fallback verwendet wenn kein backdrop und kein posterUrl
 	it('verwendet notAvailable.png als Fallback wenn kein backdrop und kein posterUrl', () => {
-		render(DetailsHero, { props: { title: 'Inception', backdrop: '', posterUrl: '' } });
-		
-		const section = screen.getByLabelText('details-hero-title', { selector: 'section' });
+		const { container } = render(DetailsHero, { props: { title: 'Inception', backdrop: '', posterUrl: '' } });
+		const section = container.querySelector('.details-hero');
 		expect(section).toHaveStyle(`--details-hero-backdrop: url('${notAvailable}')`);
 	});
 
