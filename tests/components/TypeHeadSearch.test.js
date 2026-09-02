@@ -9,7 +9,6 @@ const localeData = getLocaleText(DEFAULT_LOCALE);
 const texts = localeData.labels;
 const messages = localeData.messages;
 const titles = localeData.titles;
-const formats = localeData.formats;
 const fallbacks = localeData.fallbacks;
 
 vi.mock('$lib/stores/i18n', async () => ({
