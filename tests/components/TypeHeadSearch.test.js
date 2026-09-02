@@ -33,19 +33,17 @@ vi.mock('$app/paths', async () => ({
 	})
 }));
 
-const mockPageState = {
-	url: new URL('http://localhost:3000/?locale=de-DE'),
-	params: {}
-};
-
-vi.mock('$app/state', async () => ({
-	page: {
-		get url() {
-			return mockPageState.url;
-		},
-		params: mockPageState.params
-	}
-}));
+vi.mock('$app/state', async () => {
+	const mockUrl = new URL('http://localhost:3000/?locale=de-DE');
+	return {
+		page: {
+			get url() {
+				return mockUrl;
+			},
+			params: {}
+		}
+	};
+});
 
 const mockFetchData = {
 	movies: [
@@ -60,7 +58,6 @@ const mockFetchData = {
 describe('TypeHeadSearch', () => {
 	beforeEach(() => {
 		resetAll();
-		mockPageState.url = new URL('http://localhost:3000/?locale=de-DE');
 		vi.spyOn(global, 'fetch').mockImplementation(() =>
 			Promise.resolve({
 				ok: true,
@@ -403,5 +400,47 @@ describe('TypeHeadSearch', () => {
 			const rating = screen.queryByText('0.0');
 			expect(rating).toBeInTheDocument();
 		}, { timeout: 1000 });
+	});
+
+	// 100% Anweisungsueberdeckung: Placeholder-Text wird gesetzt
+	it('Input hat korrekten Placeholder-Text', () => {
+		render(TypeHeadSearch);
+
+		const input = screen.getByRole('searchbox');
+		expect(input).toHaveAttribute('placeholder', texts.searchInput);
+	});
+
+	// 100% Anweisungsueberdeckung: deduplicateById entfernt Duplikate
+	it('entfernt Duplikate in Suchergebnissen', async () => {
+		const dataWithDuplicates = {
+			movies: [
+				{ id: 1, title: 'Inception', date: '2010-07-16', rating: 8.8, mediaType: 'movie', posterUrl: '/poster1.jpg' },
+				{ id: 1, title: 'Inception Duplicate', date: '2010-07-16', rating: 8.8, mediaType: 'movie', posterUrl: '/poster1.jpg' },
+				{ id: 1, title: 'Inception Triple', date: '2010-07-16', rating: 8.8, mediaType: 'movie', posterUrl: '/poster1.jpg' }
+			],
+			tvShows: []
+		};
+
+		vi.spyOn(global, 'fetch').mockImplementationOnce(() =>
+			Promise.resolve({
+				ok: true,
+				json: () => Promise.resolve(dataWithDuplicates)
+			})
+		);
+
+		render(TypeHeadSearch);
+
+		const input = screen.getByRole('searchbox');
+		await fireEvent.input(input, { target: { value: 'duplicate' } });
+
+		await vi.waitFor(() => {
+			const movieItems = screen.queryAllByRole('listitem');
+			// Sollte nur 1 Item sein (dedupliziert), nicht 3
+			expect(movieItems).toHaveLength(1);
+		}, { timeout: 1000 });
+
+		// Original-Titel sollte angezeigt werden, nicht Duplicate
+		const movieTitle = screen.getByText('Inception');
+		expect(movieTitle).toBeInTheDocument();
 	});
 });
