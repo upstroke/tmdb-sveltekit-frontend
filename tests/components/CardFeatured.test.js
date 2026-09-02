@@ -233,6 +233,21 @@ describe('CardFeatured', () => {
 		expect(posterImg).toHaveAttribute('src', posterUrl);
 	});
 
+	// Anweisungsueberdeckung: Poster Fallback wenn kein posterUrl
+	it('rendert Poster Fallback wenn kein posterUrl', () => {
+		render(CardFeatured, {
+			props: {
+				id: 123,
+				mediaType: 'movie',
+				title: 'Inception',
+				imageUrl: '/image.jpg'
+			}
+		});
+
+		const posterImg = screen.getByAltText('Inception Poster');
+		expect(posterImg).toHaveAttribute('src', notAvailable);
+	});
+
 	// Anweisungsueberdeckung: Background Image wird gesetzt
 	it('setzt Background Image', () => {
 		const imageUrl = '/image.jpg';
@@ -248,6 +263,21 @@ describe('CardFeatured', () => {
 
 		const article = container.querySelector('.featured-card');
 		expect(article).toHaveStyle(`--featured-card-image: url('${imageUrl}')`);
+	});
+
+	// Anweisungsueberdeckung: Background Fallback wenn kein imageUrl
+	it('setzt Background Fallback wenn kein imageUrl', () => {
+		const { container } = render(CardFeatured, {
+			props: {
+				id: 123,
+				mediaType: 'movie',
+				title: 'Inception',
+				posterUrl: '/poster.jpg'
+			}
+		});
+
+		const article = container.querySelector('.featured-card');
+		expect(article).toHaveStyle(`--featured-card-image: url('${notAvailable}')`);
 	});
 
 	// Anweisungsueberdeckung: Article hat korrekte aria-labelledby
