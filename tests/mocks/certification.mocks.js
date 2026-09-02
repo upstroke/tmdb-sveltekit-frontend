@@ -1,8 +1,9 @@
 import ratingsData from '$lib/i18n/ratings.json';
+import { resolveLocale } from '$lib/i18n/helpers.js';
 import { DEFAULT_LOCALE } from '$lib/i18n/config';
 
 /**
- * Extrahiert die Region aus einer Locale (z.B. "de-DE" -> "DE").
+ * Extrahiert die Region aus einer aufgelöı¨ısten Locale (z.B. "de-DE" -> "DE").
  *
  * @param {string} locale - Locale-String.
  * @returns {string} Region-Code.
@@ -18,7 +19,8 @@ function getRegionFromLocale(locale) {
  * @returns {Object} Rating-System mit name und ratings.
  */
 export function getRatingsForLocale(locale = DEFAULT_LOCALE) {
-	const region = getRegionFromLocale(locale);
+	const resolvedLocale = resolveLocale(locale);
+	const region = getRegionFromLocale(resolvedLocale);
 	return ratingsData.ratingSystems[region] ?? ratingsData.ratingSystems.DE;
 }
 
