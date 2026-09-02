@@ -5,6 +5,7 @@ import { getLocaleText } from '$lib/i18n/resolver.js';
 import { DEFAULT_LOCALE } from '$lib/i18n/config';
 import { cleanupAll, resetAll } from '$tests/setup/test-utils.js';
 import notAvailable from '$lib/assets/not-available.png';
+import { createCertificationMetaMock } from '$tests/mocks/certification.mocks.js';
 
 const localeData = getLocaleText(DEFAULT_LOCALE);
 const labels = localeData.labels;
@@ -40,9 +41,7 @@ vi.mock('$app/state', async () => ({
 }));
 
 vi.mock('$lib/utils/certificationMeta', async () => ({
-	getCertificationMeta: vi.fn((cert) =>
-		cert ? { label: cert, color: '#ffffff' } : null
-	)
+	getCertificationMeta: createCertificationMetaMock()
 }));
 
 describe('CardDefault', () => {
