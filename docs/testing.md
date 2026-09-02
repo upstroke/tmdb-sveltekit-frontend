@@ -62,14 +62,14 @@ Duplikate in Testdateien und machen Tests leichter lesbar.
 
 ```js
 import {
-	movieDetails,
-	tvShowDetails
+  movieDetails,
+  tvShowDetails
 } from '$tests/fixtures/tmdb/tmdb.fixtures.js';
 
 it('verarbeitet Filmdetails', () => {
-	const result = mapMovieDetails(movieDetails);
+  const result = mapMovieDetails(movieDetails);
 
-	expect(result.title).toBe(movieDetails.title);
+  expect(result.title).toBe(movieDetails.title);
 });
 ```
 
@@ -81,8 +81,8 @@ it('verarbeitet Filmdetails', () => {
 
 ```js
 const movieWithoutPoster = {
-	...movieDetails,
-	poster_path: null
+  ...movieDetails,
+  poster_path: null
 };
 ```
 
@@ -108,12 +108,12 @@ import { i18nMockDefault, getI18nLabels } from '$tests/mocks/i18n.mocks.js';
 const labels = getI18nLabels();
 
 vi.mock('$lib/stores/i18n', async () => ({
-	i18n: {
-		subscribe(run) {
-			run({ labels: labels });
-			return () => {};
-		}
-	}
+  i18n: {
+    subscribe(run) {
+      run({ labels: labels });
+      return () => {};
+    }
+  }
 }));
 ```
 
@@ -133,12 +133,12 @@ vi.mock('$lib/stores/i18n', async () => ({
 import { i18nData } from '$tests/fixtures/i18n.fixture.js';
 
 vi.mock('$lib/stores/i18n', async () => ({
-	i18n: {
-		subscribe: (run) => {
-			run({ labels: i18nData.labels });
-			return () => {};
-		}
-	}
+  i18n: {
+    subscribe: (run) => {
+      run({ labels: i18nData.labels });
+      return () => {};
+    }
+  }
 }));
 ```
 
@@ -173,17 +173,17 @@ Setup-Utilities enthalten Helper-Funktionen fuer `beforeEach` und `afterEach` Bl
 import { cleanupAll, resetAll } from '$tests/setup/test-utils.js';
 
 describe('Component', () => {
-	beforeEach(() => {
-		resetAll();
-	});
+  beforeEach(() => {
+    resetAll();
+  });
 
-	afterEach(() => {
-		cleanupAll();
-	});
+  afterEach(() => {
+    cleanupAll();
+  });
 
-	it('test', () => {
-		// Test code
-	});
+  it('test', () => {
+    // Test code
+  });
 });
 ```
 
@@ -211,21 +211,21 @@ Je nach Funktion kommen unter anderem diese Techniken zum Einsatz:
 
 Nicht jede Funktion benoetigt alle Techniken. Die gewaehlte Technik wird bei Bedarf direkt im Test oder in der fachlichen Doku knapp begruendet.
 
-### ISTQB-Begriffe fuer Ueberdeckung verwenden
+### ISTQB-Begriffe fuer Überdeckung verwenden
 
-In Prompts und Testkommentaren die Bezeichnungen `Anweisungsueberdeckung` und `Zweigueberdeckung` nach ISTQB verwenden; gemischte Eigenformulierungen vermeiden.
+In Prompts und Testkommentaren die Bezeichnungen `Anweisungsueberdeckung` und `Zweigueberdeckung` nach ISTQB verwenden; gemischte Eigenformulierungen sind nicht erlaubt.
 
-### 100 % Anweisungsueberdeckung als Mindestziel
+### 100 % Anweisungsüberdeckung als Mindestziel
 
 Bei neuer Testerstellung sollen alle ausfuehrbaren Anweisungen des betroffenen Codes mindestens einmal ausgefuehrt werden. Fehlende Ausfuehrungspfade sind zuerst durch zusaetzliche Testfaelle zu schliessen, bevor weitere Verfeinerungen erfolgen.
 
-### Zweigueberdeckung gezielt ergaenzen
+### Zweigüberdeckung gezielt ergaenzen
 
-Zusaetzliche Testfaelle fuer Zweigueberdeckung werden dort ergaenzt, wo Alternativ-, Fehler-, Fallback-, Grenz- oder Verwerfungszweige fachlich oder technisch relevant sind. Kein pauschales Verdoppeln von Tests ohne erkennbaren neuen Entscheidungszweig.
+Zusaetzliche Testfaelle fuer Zweigüberdeckung werden dort ergaenzt, wo Alternativ-, Fehler-, Fallback-, Grenz- oder Verwerfungszweige fachlich oder technisch relevant sind. Kein pauschales Verdoppeln von Tests ohne erkennbaren neuen Entscheidungszweig.
 
 ### Kommentare pro Testfall eindeutig halten
 
-Jeder `it`-Block bekommt genau eine kurze Kommentarzeile direkt darueber. Fuer die Klassifikation gilt: Alle Tests einer Quelldatei werden in fester Reihenfolge analysiert, waehrend die bisher abgedeckten Statement-IDs gesammelt werden. Ein Test wird als `Anweisungsueberdeckung` bezeichnet, sobald er mindestens eine neue Statement-ID zur 100-%-Anweisungsueberdeckung der Quelldatei beitrgt. Nur wenn er keine neue Statement-ID beitrgt, aber einen zusaetzlichen fachlich oder technisch relevanten Pfad testet, wird er als `Zweigueberdeckung` bezeichnet. Eine zusaetzliche Zweipruefung aendert die Bezeichnung nicht, wenn der Test zugleich neue Statements abdeckt. Gemischte Bezeichnungen werden nicht verwendet.
+Jeder `it`-Block bekommt genau eine kurze Kommentarzeile direkt darueber. Fuer die Klassifikation gilt: Alle Tests einer Quelldatei werden in fester Reihenfolge analysiert, waehrend die bisher abgedeckten Statement-IDs gesammelt werden. Ein Test wird als `Anweisungsüberdeckung` bezeichnet, sobald er mindestens eine neue Statement-ID zur 100-%-Anweisungsueberdeckung der Quelldatei beiträgt. Nur wenn er keine neue Statement-ID beiträgt, aber einen zusaetzlichen fachlich oder technisch relevanten Pfad testet, wird er als `Zweigüberdeckung` bezeichnet. Eine zusaetzliche Zweipruefung aendert die Bezeichnung nicht, wenn der Test zugleich neue Statements abdeckt. Gemischte Bezeichnungen werden nicht verwendet.
 
 ## Coverage
 
