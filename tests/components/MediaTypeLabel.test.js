@@ -28,21 +28,24 @@ describe('MediaTypeLabel', () => {
 		it('rendert kein Label bei undefined mediaType', () => {
 			// Anweisungsberdeckung
 			render(MediaTypeLabel, { props: { mediaType: undefined } });
-			expect(screen.queryByRole('generic')).toBeNull();
+			expect(screen.queryByText(labels.movie)).toBeNull();
+			expect(screen.queryByText(labels.tvShow)).toBeNull();
 		});
 
 		// Anweisungsberdeckung: render mit null, kein Label erwartet
 		it('rendert kein Label bei null mediaType', () => {
 			// Anweisungsberdeckung
 			render(MediaTypeLabel, { props: { mediaType: null } });
-			expect(screen.queryByRole('generic')).toBeNull();
+			expect(screen.queryByText(labels.movie)).toBeNull();
+			expect(screen.queryByText(labels.tvShow)).toBeNull();
 		});
 
 		// Anweisungsberdeckung: render mit unbekanntem Typ, kein Label erwartet
 		it('rendert kein Label bei unbekanntem mediaType', () => {
 			// Anweisungsberdeckung
 			render(MediaTypeLabel, { props: { mediaType: 'unknown' } });
-			expect(screen.queryByRole('generic')).toBeNull();
+			expect(screen.queryByText(labels.movie)).toBeNull();
+			expect(screen.queryByText(labels.tvShow)).toBeNull();
 		});
 
 		// Anweisungsberdeckung: movie-Pfad mit Label, Text und Klassen
