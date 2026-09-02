@@ -27,7 +27,6 @@ describe('MediaTypeLabel', () => {
 	describe('Rendering bei verschiedenen mediaType-Werten', () => {
 		// Anweisungsüberdeckung: render mit undefined, kein Label erwartet
 		it('rendert kein Label bei undefined mediaType', () => {
-			// Anweisungsüberdeckung
 			render(MediaTypeLabel, { props: { mediaType: undefined } });
 			expect(screen.queryByText(labels.movie)).toBeNull();
 			expect(screen.queryByText(labels.tvShow)).toBeNull();
@@ -35,7 +34,6 @@ describe('MediaTypeLabel', () => {
 
 		// Anweisungsüberdeckung: render mit null, kein Label erwartet
 		it('rendert kein Label bei null mediaType', () => {
-			// Anweisungsüberdeckung
 			render(MediaTypeLabel, { props: { mediaType: null } });
 			expect(screen.queryByText(labels.movie)).toBeNull();
 			expect(screen.queryByText(labels.tvShow)).toBeNull();
@@ -43,7 +41,6 @@ describe('MediaTypeLabel', () => {
 
 		// Anweisungsüberdeckung: render mit unbekanntem Typ, kein Label erwartet
 		it('rendert kein Label bei unbekanntem mediaType', () => {
-			// Anweisungsüberdeckung
 			render(MediaTypeLabel, { props: { mediaType: 'unknown' } });
 			expect(screen.queryByText(labels.movie)).toBeNull();
 			expect(screen.queryByText(labels.tvShow)).toBeNull();
@@ -51,7 +48,6 @@ describe('MediaTypeLabel', () => {
 
 		// Anweisungsüberdeckung: movie-Pfad mit Label, Text und Klassen
 		it('rendert blaues Label für movie', () => {
-			// Anweisungsüberdeckung
 			render(MediaTypeLabel, { props: { mediaType: 'movie' } });
 			const label = screen.getByText(labels.movie);
 			expect(label).toBeInTheDocument();
@@ -60,7 +56,6 @@ describe('MediaTypeLabel', () => {
 
 		// Anweisungsüberdeckung: tv-Pfad mit Label, Text und Klassen
 		it('rendert türkises Label für tv', () => {
-			// Anweisungsüberdeckung
 			render(MediaTypeLabel, { props: { mediaType: 'tv' } });
 			const label = screen.getByText(labels.tvShow);
 			expect(label).toBeInTheDocument();
@@ -71,7 +66,6 @@ describe('MediaTypeLabel', () => {
 	describe('Zusatzfunktionen', () => {
 		// Anweisungsüberdeckung: class-Prop wird angewendet
 		it('wendet zusätzliche class-Prop korrekt an', () => {
-			// Anweisungsüberdeckung
 			render(MediaTypeLabel, {
 				props: { mediaType: 'movie', class: 'featured-card-type' }
 			});
@@ -81,7 +75,6 @@ describe('MediaTypeLabel', () => {
 
 		// Zweigüberdeckung: span-Tag und Klassenstruktur
 		it('verwendet span-Tag mit korrekter Klassenstruktur', () => {
-			// Zweigüberdeckung
 			render(MediaTypeLabel, { props: { mediaType: 'tv' } });
 			const label = screen.getByText(labels.tvShow);
 			expect(label.tagName.toLowerCase()).toBe('span');
