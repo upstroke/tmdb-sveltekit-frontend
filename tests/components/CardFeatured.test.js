@@ -239,7 +239,8 @@ describe('CardFeatured', () => {
 				id: 123,
 				mediaType: 'movie',
 				title: 'Inception',
-				imageUrl: '/image.jpg'
+				imageUrl: '',
+				posterUrl: ''
 			}
 		});
 
@@ -271,6 +272,7 @@ describe('CardFeatured', () => {
 				id: 123,
 				mediaType: 'movie',
 				title: 'Inception',
+				imageUrl: '',
 				posterUrl: '/poster.jpg'
 			}
 		});
