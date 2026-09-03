@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/svelte';
-import { rawResponses, mappedFixtures } from '$tests/fixtures/tmdb/tmdb.fixtures.js';
+import { mappedFixtures } from '$tests/fixtures/tmdb/tmdb.fixtures.js';
 import { getI18nLabels } from '$tests/mocks/i18n.mocks.js';
 import TvShowDetailsPage from '../../../src/routes/tv-shows/[id]/+page.svelte';
 
