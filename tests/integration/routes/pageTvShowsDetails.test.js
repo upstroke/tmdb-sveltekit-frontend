@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/svelte';
 import { rawResponses, mappedFixtures } from '$tests/fixtures/tmdb/tmdb.fixtures.js';
 import { getI18nLabels } from '$tests/mocks/i18n.mocks.js';
-import TvShowDetailsPage from '$routes/tv-shows/[id]/+page.svelte';
+import TvShowDetailsPage from '../../../src/routes/tv-shows/[id]/+page.svelte';
 
 // Mock für $app/state damit page.url.origin definiert ist
 vi.mock('$app/state', () => ({
@@ -54,8 +54,48 @@ describe('TvShowDetailsPage (Integration)', () => {
 		expect(homeLink).toHaveAttribute('href', mappedFixtures.tvShowDetails.homepage);
 
 		// Trailer
-		expect(
-			screen.getByText(i18n.watchTrailer.replace('{index}', '1'))
-		).toBeInTheDocument();
-		expect(
-			screen.getByText(i18n.watchTrailer.replace('{index}', '2'))
+		expect(screen.getByText(i18n.watchTrailer.replace('{index}', '1'))).toBeInTheDocument();
+		expect(screen.getByText(i18n.watchTrailer.replace('{index}', '2'))).toBeInTheDocument();
+
+		// Release date – Intl gibt z. B. "1.12.2017" aus, nicht "01.12.2017"
+		await waitFor(() => {
+			expect(screen.getByText(/\d{1,2}\.12\.2017/)).toBeInTheDocument();
+		});
+
+		// Streaming-Provider
+		await waitFor(async () => {
+			expect(await screen.findByText('Netflix')).toBeInTheDocument();
+		});
+
+		// Production
+		expect(screen.getByText('Wiedemann & Berg Television')).toBeInTheDocument();
+
+		// Runtime
+		expect(screen.getByText('60 min')).toBeInTheDocument();
+
+		// Cast (erster Eintrag)
+		expect(screen.getByText(mappedFixtures.cast[0].name)).toBeInTheDocument();
+
+		// Crew (erster Eintrag)
+		expect(screen.getByText(mappedFixtures.crew[0].name)).toBeInTheDocument();
+	});
+
+	it('zeigt Serverfehler im Dialog an', async () => {
+		const data = createData({ error: i18n.contentLoadError });
+		render(TvShowDetailsPage, { props: { data } });
+
+		await waitFor(() => {
+			expect(screen.getByText(i18n.contentLoadError)).toBeInTheDocument();
+		});
+	});
+
+	it('zeigt Fallback, wenn keine Show da ist (kein Error)', async () => {
+		const data = createData({ tvShow: null });
+		render(TvShowDetailsPage, { props: { data } });
+
+		await waitFor(() => {
+			expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+			expect(screen.getByText(i18n.notAvailable)).toBeInTheDocument();
+		});
+	});
+});
