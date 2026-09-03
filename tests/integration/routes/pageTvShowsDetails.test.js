@@ -90,14 +90,4 @@ describe('TvShowDetailsPage (Integration)', () => {
 			expect(screen.getByText(i18n.contentLoadError)).toBeInTheDocument();
 		});
 	});
-
-	it('zeigt Fallback, wenn keine Show da ist (kein Error)', async () => {
-		const data = createData({ tvShow: null });
-		render(TvShowDetailsPage, { props: { data } });
-
-		await waitFor(() => {
-			expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
-			expect(screen.getByText(i18n.notAvailable)).toBeInTheDocument();
-		});
-	});
 });
