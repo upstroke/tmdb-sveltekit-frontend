@@ -21,7 +21,7 @@
 		"test:vitest:coverage": "vitest run --coverage",
 		"test": "vitest run",
 		"test:unit": "vitest run tests/unit --pool=threads",
-		"test:components": "vitest run tests/components",
+		"test:components": "vitest run tests/integration/components",
 		"test:integration": "vitest run tests/integration",
 		"test:all": "npm run test:unit && npm run test:components && npm run test:integration && npm run test:acceptance"
 	},

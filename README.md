@@ -271,7 +271,7 @@ Die Teststruktur orientiert sich an Testarten und fachlicher Ebene, nicht an tec
 - `tests/acceptance/`  
   Acceptance-Tests mit Playwright für fachliche Nutzerflüsse
 
-- `tests/components/`  
+- `tests/integration/components/`  
   Komponententests mit Vitest für isolierte Svelte-Komponenten
 
 - `tests/integration/`  
