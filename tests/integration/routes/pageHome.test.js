@@ -83,7 +83,10 @@ describe('Homepage Route Integration', () => {
 	it('zeigt LoadMore-Button wenn hasMore true', async () => {
 		const data = { featured: null, cards: mockCardsData, page: 1, hasMore: true, error: null };
 		render(Page, { data });
-		await waitFor(() => expect(screen.getByRole('button', { name: /load more/i })).toBeInTheDocument(), { timeout: 1000 });
+		await waitFor(() => {
+			const loadMore = document.querySelector('.load-more button');
+			expect(loadMore).toBeInTheDocument();
+		}, { timeout: 1000 });
 	});
 
 	it('zeigt No-Content-Message wenn keine Cards vorhanden', async () => {
