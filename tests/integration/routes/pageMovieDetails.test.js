@@ -24,10 +24,7 @@ describe('MovieDetailsPage (Integration)', () => {
 		genres: mappedFixtures.details.genres,
 		overview: mappedFixtures.details.overview,
 		homepage: mappedFixtures.details.homepage,
-		trailerUrls: [
-			{ url: 'https://youtube.com/watch?v=firstTrailer' },
-			{ url: 'https://youtube.com/watch?v=secondTrailer' }
-		],
+		trailerUrls: mappedFixtures.details.videos.results,
 		releaseDate: mappedFixtures.details.release_date,
 		runtime: mappedFixtures.details.runtime,
 		productionCompanies: mappedFixtures.details.production_companies,
@@ -40,7 +37,7 @@ describe('MovieDetailsPage (Integration)', () => {
 
 	const createData = (overrides = {}) => ({
 		movie: movieDetails,
-		providers: Promise.resolve({ providers: movieDetails.providers }),
+		providers: Promise.resolve({ providers: movieDetails.providers }), // werden von der API nachgeladen
 		error: null,
 		...overrides
 	});
