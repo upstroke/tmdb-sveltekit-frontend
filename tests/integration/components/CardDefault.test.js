@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen } from '@testing-library/svelte';
 import CardDefault from '$lib/components/CardDefault.svelte';
 import { getLocaleText } from '$lib/i18n/resolver.js';
-import { DEFAULT_LOCALE } from '$lib/i18n/config';
+import { DEFAULT_LOCALE } from '$lib/i18n/config.js';
 import { cleanupAll, resetAll } from '$tests/setup/test-utils.js';
 import notAvailable from '$lib/assets/not-available.png';
 

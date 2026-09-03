@@ -6,6 +6,7 @@ const config = {
 		alias: {
 			'$lib': 'src/lib',
 			'$lib/*': 'src/lib/*',
+			'$routes': 'src/routes',
 			'$tests': 'tests',
 			'$tests/*': 'tests/*'
 		}
