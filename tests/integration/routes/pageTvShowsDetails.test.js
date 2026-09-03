@@ -31,8 +31,7 @@ describe('TvShowDetailsPage (Integration)', () => {
 	});
 
 	it('rendert TV-Show-Detailseite mit allen Sektionen', async () => {
-		const data = createData();
-		render(TvShowDetailsPage, { props: { data } });
+		const { container } = render(TvShowDetailsPage, { props: { data: createData() } });
 
 		// Titel im <title>
 		await waitFor(() => {
@@ -67,8 +66,11 @@ describe('TvShowDetailsPage (Integration)', () => {
 			expect(await screen.findByText('Netflix')).toBeInTheDocument();
 		});
 
-		// Production
-		expect(screen.getByText('Wiedemann & Berg Television')).toBeInTheDocument();
+		// Production – gezielter über container, um Duplikate zu vermeiden
+		await waitFor(() => {
+			const productionSection = container.querySelector('[data-testid="production"]') || container;
+			expect(productionSection.textContent).toContain('Wiedemann & Berg Television');
+		});
 
 		// Runtime
 		expect(screen.getByText('60 min')).toBeInTheDocument();
