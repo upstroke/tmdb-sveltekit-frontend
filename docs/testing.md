@@ -7,7 +7,7 @@ Diese Datei beschreibt das pragmatische Vorgehen fuer Tests in diesem Projekt.
 Das Projekt nutzt vier Testarten:
 
 - Acceptance-Tests in `tests/acceptance/` mit Playwright
-- Komponenten-Tests in `tests/components/` mit Vitest
+- Komponenten-Tests in `../tests/integration/components/` mit Vitest
 - Integrations-Tests in `tests/integration/` mit Vitest
 - Unit-Tests in `tests/unit/` mit Vitest
 

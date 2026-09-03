@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen } from '@testing-library/svelte';
 import DetailsHero from '$lib/components/DetailsHero.svelte';
 import { getLocaleText } from '$lib/i18n/resolver.js';
-import { DEFAULT_LOCALE } from '$lib/i18n/config';
+import { DEFAULT_LOCALE } from '$lib/i18n/config.js';
 import { cleanupAll, resetAll } from '$tests/setup/test-utils.js';
 import notAvailable from '$lib/assets/not-available.png';
 
@@ -32,23 +32,23 @@ describe('DetailsHero', () => {
 		const title = 'Inception';
 		const backdrop = '/backdrop.jpg';
 		const posterUrl = '/poster.jpg';
-		
+
 		render(DetailsHero, { props: { title, backdrop, posterUrl } });
-		
+
 		expect(screen.getByText(title, { selector: 'h1#details-hero-title' })).toBeInTheDocument();
 	});
 
 	// Anweisungsueberdeckung: Title wird zu notAvailable wenn leer
 	it('zeigt notAvailable-Text wenn title leer ist', () => {
 		render(DetailsHero, { props: { title: '', backdrop: '/backdrop.jpg', posterUrl: '/poster.jpg' } });
-		
+
 		expect(screen.getByText(labels.notAvailable, { selector: 'h1#details-hero-title' })).toBeInTheDocument();
 	});
 
 	// Anweisungsueberdeckung: Title wird zu notAvailable wenn nur whitespace
 	it('zeigt notAvailable-Text wenn title nur whitespace ist', () => {
 		render(DetailsHero, { props: { title: '   ', backdrop: '/backdrop.jpg', posterUrl: '/poster.jpg' } });
-		
+
 		expect(screen.getByText(labels.notAvailable, { selector: 'h1#details-hero-title' })).toBeInTheDocument();
 	});
 
@@ -58,14 +58,14 @@ describe('DetailsHero', () => {
 			{ id: 1, name: 'Warner Bros.' },
 			{ id: 2, name: 'Legendary Pictures' }
 		];
-		
-		render(DetailsHero, { props: { 
-			title: 'Inception', 
-			backdrop: '/backdrop.jpg', 
+
+		render(DetailsHero, { props: {
+			title: 'Inception',
+			backdrop: '/backdrop.jpg',
 			posterUrl: '/poster.jpg',
-			productionCompanies 
+			productionCompanies
 		}});
-		
+
 		expect(screen.getByText('Warner Bros.')).toBeInTheDocument();
 		expect(screen.getByText('Legendary Pictures')).toBeInTheDocument();
 	});
@@ -73,35 +73,35 @@ describe('DetailsHero', () => {
 	// Anweisungsueberdeckung: emptyLabel wird gerendert wenn keine Produktionsfirmen
 	it('zeigt emptyLabel wenn keine Produktionsfirmen', () => {
 		const emptyLabel = 'Keine Informationen';
-		
-		render(DetailsHero, { props: { 
-			title: 'Inception', 
-			backdrop: '/backdrop.jpg', 
+
+		render(DetailsHero, { props: {
+			title: 'Inception',
+			backdrop: '/backdrop.jpg',
 			posterUrl: '/poster.jpg',
 			productionCompanies: [],
-			emptyLabel 
+			emptyLabel
 		}});
-		
+
 		expect(screen.getByText(emptyLabel, { selector: 'li.details-hero-company' })).toBeInTheDocument();
 	});
 
 	// Anweisungsueberdeckung: notAvailable-Text wird gerendert wenn emptyLabel leer und keine Produktionsfirmen
 	it('zeigt notAvailable-Text wenn emptyLabel leer und keine Produktionsfirmen', () => {
-		render(DetailsHero, { props: { 
-			title: 'Inception', 
-			backdrop: '/backdrop.jpg', 
+		render(DetailsHero, { props: {
+			title: 'Inception',
+			backdrop: '/backdrop.jpg',
 			posterUrl: '/poster.jpg',
 			productionCompanies: [],
-			emptyLabel: '' 
+			emptyLabel: ''
 		}});
-		
+
 		expect(screen.getByText(labels.notAvailable, { selector: 'li.details-hero-company' })).toBeInTheDocument();
 	});
 
 	// Anweisungsueberdeckung: Backdrop wird als Hintergrund verwendet
 	it('setzt backdrop als Hintergrund', () => {
 		const backdrop = '/backdrop.jpg';
-		
+
 		const { container } = render(DetailsHero, { props: { title: 'Inception', backdrop, posterUrl: '/poster.jpg' } });
 		const section = container.querySelector('.details-hero');
 		expect(section).toHaveStyle(`--details-hero-backdrop: url('${backdrop}')`);
@@ -110,7 +110,7 @@ describe('DetailsHero', () => {
 	// Anweisungsueberdeckung: Poster wird als Fallback verwendet wenn kein backdrop
 	it('verwendet posterUrl als Fallback wenn kein backdrop', () => {
 		const posterUrl = '/poster.jpg';
-		
+
 		const { container } = render(DetailsHero, { props: { title: 'Inception', backdrop: '', posterUrl } });
 		const section = container.querySelector('.details-hero');
 		expect(section).toHaveStyle(`--details-hero-backdrop: url('${posterUrl}')`);
@@ -126,9 +126,9 @@ describe('DetailsHero', () => {
 	// Anweisungsueberdeckung: Poster-Bild wird korrekt gerendert
 	it('rendert Poster-Bild korrekt', () => {
 		const posterUrl = '/poster.jpg';
-		
+
 		render(DetailsHero, { props: { title: 'Inception', backdrop: '/backdrop.jpg', posterUrl } });
-		
+
 		const posterImg = screen.getByAltText('');
 		expect(posterImg).toHaveAttribute('src', posterUrl);
 	});
@@ -136,7 +136,7 @@ describe('DetailsHero', () => {
 	// Anweisungsueberdeckung: notAvailable.png wird als Poster-Fallback verwendet
 	it('verwendet notAvailable.png als Poster-Fallback', () => {
 		render(DetailsHero, { props: { title: 'Inception', backdrop: '/backdrop.jpg', posterUrl: '' } });
-		
+
 		const posterImg = screen.getByAltText('');
 		expect(posterImg).toHaveAttribute('src', notAvailable);
 	});
