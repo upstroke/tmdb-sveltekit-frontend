@@ -1,134 +1,121 @@
-import { describe, it, expect, beforeEach } from 'vitest';
-import { render, screen, waitFor, fireEvent } from '@testing-library/svelte';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { render, screen, waitFor } from '@testing-library/svelte';
+
 import { rawResponses, mappedFixtures } from '$tests/fixtures/tmdb/tmdb.fixtures.js';
-import MoviesPage from './+page.svelte';
-import { createI18n } from '$lib/i18n/i18n.js';
-import ui from '$lib/i18n/ui.json';
+import { getI18nLabels } from '$tests/mocks/i18n.mocks.js';
+import MoviesPage from '$routes/movies/+page.svelte';
+
+vi.mock('$lib/utils/pageStateRestore', () => ({
+	restorePagedList: vi.fn()
+}));
+
+import { restorePagedList } from '$lib/utils/pageStateRestore';
+
+// Mock für $app/state damit page.url.origin definiert ist
+vi.mock('$app/state', () => ({
+	page: {
+		url: new URL('https://example.com/')
+	}
+}));
 
 describe('MoviesPage', () => {
-	const i18n = createI18n('de-DE', ui);
+	const labels = getI18nLabels();
 
-	const mockFeaturedData = {
+	const featured = {
 		id: rawResponses.featuredTodayMovieList.results[0].id,
 		mediaType: rawResponses.featuredTodayMovieList.results[0].media_type,
 		title: rawResponses.featuredTodayMovieList.results[0].title,
 		releaseDate: rawResponses.featuredTodayMovieList.results[0].release_date,
-		overview: mappedFixtures.featuredItem.overview,
-		homepage: mappedFixtures.featuredItem.homepage,
-		genres: mappedFixtures.featuredItem.genres,
+		overview: mappedFixtures.details.overview,
+		homepage: mappedFixtures.details.homepage,
+		genres: mappedFixtures.details.genres,
 		imageUrl: rawResponses.featuredTodayMovieList.results[0].backdrop_path,
 		posterUrl: rawResponses.featuredTodayMovieList.results[0].poster_path
 	};
 
-	const mockCardsData = rawResponses.topRatedMovieList.results.map((movie) => ({
+	// FIX: rawResponses.movieList statt rawResponses.topRatedMovieList
+	const cards = rawResponses.movieList.results.map((movie) => ({
 		id: movie.id,
-		mediaType: movie.media_type,
+		mediaType: 'movie',
 		title: movie.title,
-		releaseDate: movie.release_date,
-		imageUrl: movie.poster_path,
-		posterUrl: movie.poster_path
+		date: movie.release_date,
+		rating: movie.vote_average,
+		genres: movie.genre_ids,
+		imageUrl: movie.poster_path
 	}));
 
-	const mockLoadData = {
-		featured: mockFeaturedData,
-		cards: mockCardsData
-	};
-
-	let loadMoreMock;
+	const createData = (overrides = {}) => ({
+		featured,
+		cards,
+		page: 1,
+		hasMore: false,
+		error: null,
+		...overrides
+	});
 
 	beforeEach(() => {
-		loadMoreMock = vitest.fn();
+		vi.clearAllMocks();
+		restorePagedList.mockImplementation(async ({ initialData }) => initialData);
+		vi.stubGlobal('fetch', vi.fn());
 	});
 
-	it('zeigt Featured-Film mit korrekten Daten an', async () => {
-		render(MoviesPage, {
-			context: new Map([['i18n', i18n]]),
-			props: { data: mockLoadData }
-		});
+	afterEach(() => {
+		vi.unstubAllGlobals();
+	});
+
+	it('rendert Featured-Film mit korrekten Daten', async () => {
+		render(MoviesPage, { props: { data: createData() } });
 
 		await waitFor(() => {
-			expect(screen.getByText(mockFeaturedData.title)).toBeInTheDocument();
-			expect(screen.getByText(mockFeaturedData.overview)).toBeInTheDocument();
+			expect(screen.getByText(featured.title)).toBeInTheDocument();
+			expect(screen.getByText(featured.overview)).toBeInTheDocument();
 		});
 	});
 
-	it('zeigt Film-Cards mit korrekten Daten an', async () => {
-		render(MoviesPage, {
-			context: new Map([['i18n', i18n]]),
-			props: { data: mockLoadData }
-		});
+	it('rendert Film-Cards mit korrekten Daten', async () => {
+		render(MoviesPage, { props: { data: createData() } });
 
 		await waitFor(() => {
-			mockCardsData.forEach((card) => {
+			cards.forEach((card) => {
 				expect(screen.getByText(card.title)).toBeInTheDocument();
 			});
 		});
 	});
 
-	it('zeigt UI-Texte korrekt an', async () => {
-		render(MoviesPage, {
-			context: new Map([['i18n', i18n]]),
-			props: { data: mockLoadData }
-		});
+	it('rendert die Überschriften aus ui.json', async () => {
+		render(MoviesPage, { props: { data: createData() } });
 
 		await waitFor(() => {
-			expect(screen.getByText(i18n.t('titles.movies'))).toBeInTheDocument();
-			expect(screen.getByText(i18n.t('titles.topRatedProductions'))).toBeInTheDocument();
+			expect(screen.getByText(labels.movies)).toBeInTheDocument();
+			expect(screen.getByText(labels.topRatedProductions)).toBeInTheDocument();
 		});
 	});
 
-	it('zeigt LoadMore-Button wenn hasMore=true', async () => {
-		const propsWithMore = {
-			...mockLoadData,
-			hasMore: true,
-			loadMore: loadMoreMock,
-			loadMoreLoading: false,
-			loadMoreError: null
-		};
-
-		render(MoviesPage, {
-			context: new Map([['i18n', i18n]]),
-			props: { data: propsWithMore }
-		});
+	it('zeigt LoadMore bei weiteren verfügbaren Karten', async () => {
+		render(MoviesPage, { props: { data: createData({ hasMore: true }) } });
 
 		await waitFor(() => {
-			expect(screen.getByText(i18n.t('loadMore'))).toBeInTheDocument();
+			expect(screen.getByRole('button', { name: labels.loadMore })).toBeInTheDocument();
 		});
 	});
 
-	it('zeigt keinen LoadMore-Button wenn hasMore=false', async () => {
-		const propsWithoutMore = {
-			...mockLoadData,
-			hasMore: false,
-			loadMore: loadMoreMock,
-			loadMoreLoading: false,
-			loadMoreError: null
-		};
-
-		render(MoviesPage, {
-			context: new Map([['i18n', i18n]]),
-			props: { data: propsWithoutMore }
-		});
+	it('zeigt LoadMore nicht ohne weitere verfügbare Karten', async () => {
+		render(MoviesPage, { props: { data: createData({ hasMore: false }) } });
 
 		await waitFor(() => {
-			expect(screen.queryByText(i18n.t('loadMore'))).not.toBeInTheDocument();
+			expect(screen.queryByRole('button', { name: labels.loadMore })).not.toBeInTheDocument();
 		});
 	});
 
-	it('zeigt Error-Dialog bei contentError', async () => {
-		const propsWithError = {
-			...mockLoadData,
-			contentError: true,
-			contentErrorMessage: i18n.t('messages.contentLoadError')
-		};
-
+	it('zeigt Serverfehler im Dialog an', async () => {
 		render(MoviesPage, {
-			context: new Map([['i18n', i18n]]),
-			props: { data: propsWithError }
+			props: { data: createData({ featured: null, cards: [], error: labels.contentLoadError }) }
 		});
 
 		await waitFor(() => {
-			expect(screen.getByText(i18n.t('messages.contentLoadError'))).toBeInTheDocument();
+			expect(screen.getByText(labels.contentLoadError)).toBeInTheDocument();
 		});
 	});
+
+	// TODO: Die Interaktion mit LoadMore (Klick, Nachladen, Scrollen) wird später als Playwright-Test abgedeckt.
 });
