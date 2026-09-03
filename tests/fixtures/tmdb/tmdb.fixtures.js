@@ -219,7 +219,16 @@ export const mappedFixtures = {
 		credits: {
 			cast: [],
 			crew: []
-		}
+		},
+		providers: [
+			{
+				providerId: 8,
+				providerName: 'Netflix',
+				logoPath: '/netflix.png',
+				link: 'https://netflix.com/de/title/80100172',
+				type: 'flatrate'
+			}
+		]
 	},
 	trailerDetailsWithSingleMatch: {
 		videos: {
