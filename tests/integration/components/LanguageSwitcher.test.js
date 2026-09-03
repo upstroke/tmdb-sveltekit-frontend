@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { cleanup, render, screen } from '@testing-library/svelte';
 import LanguageSwitcher from '$lib/components/LanguageSwitcher.svelte';
-import { getSupportedLocales } from '$lib/i18n/helpers';
+import { getSupportedLocales } from '$lib/i18n/helpers.js';
 
 // Mocks ganz oben mit vi.hoisted
 const mocks = vi.hoisted(() => ({

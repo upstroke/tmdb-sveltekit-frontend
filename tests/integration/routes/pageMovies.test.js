@@ -1,126 +1,134 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/svelte';
-import { cleanupAll, resetAll } from '$tests/setup/test-utils.js';
-import { getLocaleText } from '$lib/i18n/resolver';
-import { DEFAULT_LOCALE } from '$lib/i18n/config';
-import { rawResponses } from '$tests/fixtures/tmdb/tmdb.fixtures';
-import Page from '$routes/movies/+page.svelte';
+import { describe, it, expect, beforeEach } from 'vitest';
+import { render, screen, waitFor, fireEvent } from '@testing-library/svelte';
+import { rawResponses, mappedFixtures } from '$tests/fixtures/tmdb/tmdb.fixtures.js';
+import MoviesPage from './+page.svelte';
+import { createI18n } from '$lib/i18n/i18n.js';
+import ui from '$lib/i18n/ui.json';
 
-const localeData = getLocaleText(DEFAULT_LOCALE);
-const titles = localeData.titles;
-const messages = localeData.messages;
+describe('MoviesPage', () => {
+	const i18n = createI18n('de-DE', ui);
 
-vi.mock('$lib/stores/i18n', async () => ({
-	i18n: {
-		subscribe(run) {
-			run(localeData);
-			return () => {};
-		}
-	}
-}));
+	const mockFeaturedData = {
+		id: rawResponses.featuredTodayMovieList.results[0].id,
+		mediaType: rawResponses.featuredTodayMovieList.results[0].media_type,
+		title: rawResponses.featuredTodayMovieList.results[0].title,
+		releaseDate: rawResponses.featuredTodayMovieList.results[0].release_date,
+		overview: mappedFixtures.featuredItem.overview,
+		homepage: mappedFixtures.featuredItem.homepage,
+		genres: mappedFixtures.featuredItem.genres,
+		imageUrl: rawResponses.featuredTodayMovieList.results[0].backdrop_path,
+		posterUrl: rawResponses.featuredTodayMovieList.results[0].poster_path
+	};
 
-vi.mock('$app/environment', async () => ({
-	browser: false
-}));
+	const mockCardsData = rawResponses.topRatedMovieList.results.map((movie) => ({
+		id: movie.id,
+		mediaType: movie.media_type,
+		title: movie.title,
+		releaseDate: movie.release_date,
+		imageUrl: movie.poster_path,
+		posterUrl: movie.poster_path
+	}));
 
-vi.mock('$app/state', async () => ({
-	page: {
-		get url() {
-			return new URL('http://localhost:3000/?locale=de-DE');
-		},
-		params: {}
-	}
-}));
+	const mockLoadData = {
+		featured: mockFeaturedData,
+		cards: mockCardsData
+	};
 
-const featuredMovie = rawResponses.featuredTodayMovieList.results[0];
+	let loadMoreMock;
 
-const mockFeaturedData = {
-	id: featuredMovie.id,
-	mediaType: featuredMovie.media_type,
-	title: featuredMovie.title,
-	releaseDate: featuredMovie.release_date,
-	overview: 'Test overview',
-	homepage: 'https://example.com',
-	genres: [{ id: 53, name: 'Thriller' }],
-	imageUrl: featuredMovie.backdrop_path,
-	posterUrl: featuredMovie.poster_path
-};
-
-const movieCard1 = rawResponses.movieList.results[0];
-const movieCard2 = rawResponses.multiSearch.results.find(r => r.media_type === 'movie');
-
-const mockCardsData = [
-	{
-		id: movieCard1.id,
-		mediaType: 'movie',
-		title: movieCard1.title,
-		date: movieCard1.release_date,
-		rating: movieCard1.vote_average,
-		imageUrl: movieCard1.poster_path
-	},
-	{
-		id: movieCard2.id,
-		mediaType: 'movie',
-		title: movieCard2.title,
-		date: movieCard2.release_date,
-		rating: movieCard2.vote_average,
-		imageUrl: movieCard2.poster_path
-	}
-];
-
-describe('Movies Route Integration', () => {
 	beforeEach(() => {
-		resetAll();
+		loadMoreMock = vitest.fn();
 	});
 
-	afterEach(() => {
-		cleanupAll();
-		vi.clearAllMocks();
-	});
+	it('zeigt Featured-Film mit korrekten Daten an', async () => {
+		render(MoviesPage, {
+			context: new Map([['i18n', i18n]]),
+			props: { data: mockLoadData }
+		});
 
-	it('rendert Featured-Section wenn data.featured vorhanden', async () => {
-		const data = { featured: mockFeaturedData, cards: [], page: 1, hasMore: false, error: null };
-		render(Page, { data });
-		await waitFor(() => expect(screen.getByText(titles.movies)).toBeInTheDocument(), { timeout: 1000 });
-		expect(screen.getByText(featuredMovie.title)).toBeInTheDocument();
-	});
-
-	it('rendert Movie-Cards-Liste wenn data.cards vorhanden', async () => {
-		const data = { featured: null, cards: mockCardsData, page: 1, hasMore: false, error: null };
-		render(Page, { data });
-		await waitFor(() => expect(screen.getByText(titles.topRatedProductions)).toBeInTheDocument(), { timeout: 1000 });
-		expect(screen.getByText(movieCard1.title)).toBeInTheDocument();
-		expect(screen.getByText(movieCard2.title)).toBeInTheDocument();
-	});
-
-	it('zeigt Error-Dialog wenn data.error gesetzt', async () => {
-		const data = { featured: null, cards: [], page: 1, hasMore: false, error: messages.contentLoadError };
-		render(Page, { data });
-		await waitFor(() => expect(screen.getByText(messages.contentLoadError)).toBeInTheDocument(), { timeout: 1000 });
-	});
-
-	it('zeigt LoadMore-Button wenn hasMore true', async () => {
-		const data = { featured: null, cards: mockCardsData, page: 1, hasMore: true, error: null };
-		render(Page, { data });
 		await waitFor(() => {
-			const loadMore = document.querySelector('.load-more button');
-			expect(loadMore).toBeInTheDocument();
-		}, { timeout: 1000 });
+			expect(screen.getByText(mockFeaturedData.title)).toBeInTheDocument();
+			expect(screen.getByText(mockFeaturedData.overview)).toBeInTheDocument();
+		});
 	});
 
-	it('zeigt No-Movies-Found-Message wenn keine Karten vorhanden', async () => {
-		const data = { featured: null, cards: [], page: 1, hasMore: false, error: null };
-		render(Page, { data });
-		await waitFor(() => expect(screen.getByText(messages.noMoviesFound)).toBeInTheDocument(), { timeout: 1000 });
-	});
+	it('zeigt Film-Cards mit korrekten Daten an', async () => {
+		render(MoviesPage, {
+			context: new Map([['i18n', i18n]]),
+			props: { data: mockLoadData }
+		});
 
-	it('rendert Featured und Cards zusammen', async () => {
-		const data = { featured: mockFeaturedData, cards: mockCardsData, page: 1, hasMore: false, error: null };
-		render(Page, { data });
 		await waitFor(() => {
-			expect(screen.getByText(titles.movies)).toBeInTheDocument();
-			expect(screen.getByText(titles.topRatedProductions)).toBeInTheDocument();
-		}, { timeout: 1000 });
-		expect(screen.getByText(featuredMovie.title)).toBeInTheDocument();
+			mockCardsData.forEach((card) => {
+				expect(screen.getByText(card.title)).toBeInTheDocument();
+			});
+		});
+	});
+
+	it('zeigt UI-Texte korrekt an', async () => {
+		render(MoviesPage, {
+			context: new Map([['i18n', i18n]]),
+			props: { data: mockLoadData }
+		});
+
+		await waitFor(() => {
+			expect(screen.getByText(i18n.t('titles.movies'))).toBeInTheDocument();
+			expect(screen.getByText(i18n.t('titles.topRatedProductions'))).toBeInTheDocument();
+		});
+	});
+
+	it('zeigt LoadMore-Button wenn hasMore=true', async () => {
+		const propsWithMore = {
+			...mockLoadData,
+			hasMore: true,
+			loadMore: loadMoreMock,
+			loadMoreLoading: false,
+			loadMoreError: null
+		};
+
+		render(MoviesPage, {
+			context: new Map([['i18n', i18n]]),
+			props: { data: propsWithMore }
+		});
+
+		await waitFor(() => {
+			expect(screen.getByText(i18n.t('loadMore'))).toBeInTheDocument();
+		});
+	});
+
+	it('zeigt keinen LoadMore-Button wenn hasMore=false', async () => {
+		const propsWithoutMore = {
+			...mockLoadData,
+			hasMore: false,
+			loadMore: loadMoreMock,
+			loadMoreLoading: false,
+			loadMoreError: null
+		};
+
+		render(MoviesPage, {
+			context: new Map([['i18n', i18n]]),
+			props: { data: propsWithoutMore }
+		});
+
+		await waitFor(() => {
+			expect(screen.queryByText(i18n.t('loadMore'))).not.toBeInTheDocument();
+		});
+	});
+
+	it('zeigt Error-Dialog bei contentError', async () => {
+		const propsWithError = {
+			...mockLoadData,
+			contentError: true,
+			contentErrorMessage: i18n.t('messages.contentLoadError')
+		};
+
+		render(MoviesPage, {
+			context: new Map([['i18n', i18n]]),
+			props: { data: propsWithError }
+		});
+
+		await waitFor(() => {
+			expect(screen.getByText(i18n.t('messages.contentLoadError'))).toBeInTheDocument();
+		});
 	});
 });
