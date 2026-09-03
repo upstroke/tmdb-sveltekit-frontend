@@ -33,10 +33,19 @@ export const rawResponses = {
 				vote_average: 8.2,
 				genre_ids: [9648],
 				poster_path: '/dark.jpg'
+			},
+			{
+				id: 421,
+				name: 'Die Fliege',
+				first_air_date: '1996-02-11',
+				vote_average: 9.0,
+				genre_ids: [53],
+				poster_path: '/die-fliege-poster.jpg'
 			}
 		],
 		page: 1,
-		total_pages: 1
+		total_pages: 1,
+		hasMore: true
 	},
 	emptyTvGenres: {
 		genres: []
@@ -93,6 +102,16 @@ export const rawResponses = {
 				genre_ids: [53],
 				backdrop_path: '/pulp-fiction-backdrop.jpg',
 				poster_path: '/pulp-fiction-poster.jpg'
+			},
+			{
+				id: 681,
+				media_type: 'movie',
+				title: 'Die Fliege',
+				release_date: '1996-02-11',
+				vote_average: 9.0,
+				genre_ids: [53],
+				backdrop_path: '/die-fliege-backdrop.jpg',
+				poster_path: '/die-fliege-poster.jpg'
 			}
 		],
 		page: 1,
@@ -129,7 +148,8 @@ export const rawResponses = {
 	},
 	tvGenres: {
 		genres: [{ id: 9648, name: 'Mystery' }]
-	}
+	},
+
 };
 
 /**
@@ -238,4 +258,40 @@ mappedFixtures.detailsWithCredits = {
 		cast: mappedFixtures.cast,
 		crew: mappedFixtures.crew
 	}
+};
+
+// TV-spezifische Details-Fixture
+mappedFixtures.tvShowDetails = {
+	id: 420,
+	title: 'Dark',
+	mediaType: 'tv',
+	rating: 8.2,
+	certification: 'FSK 16',
+	genres: [{ id: 9648, name: 'Mystery' }],
+	overview: 'Ein vermisstes Kind bringt düstere Geheimnisse ans Licht.',
+	homepage: 'https://example.com/dark',
+	trailerUrls: [
+		{ url: 'https://youtube.com/watch?v=trailer1' },
+		{ url: 'https://youtube.com/watch?v=trailer2' }
+	],
+	releaseDate: '2017-12-01',
+	runtime: 60,
+	productionCompanies: [{ id: 1, name: 'Wiedemann & Berg Television' }],
+	cast: mappedFixtures.cast.slice(0, 5), // z. B. nur erste 5
+	crew: mappedFixtures.crew.slice(0, 5),
+	imageUrl: '/dark-backdrop.jpg',
+	posterUrl: '/dark-poster.jpg'
+};
+
+// Provider-Fixture für TV
+mappedFixtures.tvProviders = {
+	providers: [
+		{
+			providerId: 8,
+			providerName: 'Netflix',
+			logoPath: '/netflix.png',
+			link: 'https://netflix.com/de/title/80100172',
+			type: 'flatrate'
+		}
+	]
 };

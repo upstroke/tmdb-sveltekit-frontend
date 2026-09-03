@@ -4,12 +4,15 @@ import { defineConfig } from 'vitest/config';
 import { fileURLToPath } from 'node:url';
 
 const testsDir = fileURLToPath(new URL('./tests', import.meta.url));
+const srcDir = fileURLToPath(new URL('./src', import.meta.url));
 
 export default defineConfig({
 	plugins: [sveltekit(), svelteTesting()],
 	resolve: {
 		alias: {
-			$tests: testsDir
+			$tests: testsDir,
+			$routes: `${srcDir}/routes`,
+			$lib: `${srcDir}/lib` // optional, falls SvelteKit es nicht automatisch setzt
 		}
 	},
 	test: {
