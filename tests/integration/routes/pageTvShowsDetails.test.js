@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/svelte';
 import { mappedFixtures } from '$tests/fixtures/tmdb/tmdb.fixtures.js';
 import { getI18nLabels } from '$tests/mocks/i18n.mocks.js';
-import TvShowDetailsPage from '../../../src/routes/tv-shows/[id]/+page.svelte';
+import TvShowDetailsPage from '$routes/tv-shows/[id]/+page.svelte';
 
 // Mock für $app/state damit page.url.origin definiert ist
 vi.mock('$app/state', () => ({
