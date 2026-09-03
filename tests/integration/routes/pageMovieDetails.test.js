@@ -34,25 +34,13 @@ describe('MovieDetailsPage (Integration)', () => {
 		cast: mappedFixtures.cast.slice(0, 5),
 		crew: mappedFixtures.crew.slice(0, 5),
 		imageUrl: mappedFixtures.details.backdrop_path,
-		posterUrl: mappedFixtures.details.poster_path
-	};
-
-	// Provider-Fixture für Movies (basierend auf rawResponses.movieWatchProviders)
-	const movieProviders = {
-		providers: [
-			{
-				providerId: 8,
-				providerName: 'Netflix',
-				logoPath: '/netflix.png',
-				link: 'https://netflix.com/de/title/680',
-				type: 'flatrate'
-			}
-		]
+		posterUrl: mappedFixtures.details.poster_path,
+		providers: mappedFixtures.details.providers
 	};
 
 	const createData = (overrides = {}) => ({
 		movie: movieDetails,
-		providers: Promise.resolve(movieProviders),
+		providers: Promise.resolve({ providers: movieDetails.providers }),
 		error: null,
 		...overrides
 	});
