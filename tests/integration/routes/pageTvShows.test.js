@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/svelte';
-
 import { rawResponses, mappedFixtures } from '$tests/fixtures/tmdb/tmdb.fixtures.js';
 import { getI18nLabels } from '$tests/mocks/i18n.mocks.js';
 import TvShowsPage from '$routes/tv-shows/+page.svelte';
@@ -33,7 +32,8 @@ describe('TvShowsPage', () => {
 		posterUrl: mappedFixtures.featuredItem.poster_path
 	};
 
-	const cards = rawResponses.tvList.results.map((show) => ({
+	// hol dir den zweiten Eintrag da die Fixture Daten sonst den gleichen film wie featuredCard hat
+	const cards = rawResponses.tvList.results.slice(1, 2).map((show) => ({
 		id: show.id,
 		mediaType: 'tv',
 		title: show.name,
