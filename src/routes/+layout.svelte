@@ -1,18 +1,25 @@
-<script lang="ts">
+<!-- src/routes/+layout.svelte -->
+<script>
 	import { page } from '$app/stores';
-	import { NavList } from '$components';
-	import { titles } from '$lib/constants';
+	import favicon from '$lib/assets/favicon.svg';
+	import TypeHeadSearch from '$lib/components/TypeHeadSearch.svelte';
+	import FooterMain from '$lib/components/FooterMain.svelte';
+	import HeaderMain from '$lib/components/HeaderMain.svelte';
+	import { i18n } from '$lib/stores/i18n';
+	import '$css/app.scss';
 
-	import type { NavItem } from '$lib/types';
+	let { children } = $props();
 
-	const navItems: NavItem[] = $derived([
+	const { titles } = $derived($i18n);
+
+	const navItems = $derived([
 		{
 			id: 'home',
 			label: titles.home,
 			icon: 'home',
 			path: '/',
 			storageKey: 'home-page',
-			active: (pathname: string) => pathname === '/'
+			active: (pathname) => pathname === '/'
 		},
 		{
 			id: 'movies',
@@ -20,7 +27,7 @@
 			icon: 'film',
 			path: '/movies',
 			storageKey: 'movies-page',
-			active: (pathname: string) => pathname === '/movies' || pathname.startsWith('/movies/')
+			active: (pathname) => pathname === '/movies' || pathname.startsWith('/movies/')
 		},
 		{
 			id: 'tvshows',
@@ -28,7 +35,7 @@
 			icon: 'tv',
 			path: '/tv-shows',
 			storageKey: 'tv-shows-page',
-			active: (pathname: string) => pathname === '/tv-shows' || pathname.startsWith('/tv-shows/')
+			active: (pathname) => pathname === '/tv-shows' || pathname.startsWith('/tv-shows/')
 		}
 	]);
 
@@ -40,39 +47,14 @@
 </script>
 
 <svelte:head>
+	<link href={favicon} rel="icon" />
 	<title>{pageTitle} | TMDB</title>
 </svelte:head>
 
-<div class="app">
-	<header>
-		<NavList {navItems} />
-	</header>
+<HeaderMain {navItems}>
+	<TypeHeadSearch />
+</HeaderMain>
 
-	<main>
-		<slot />
-	</main>
-</div>
+{@render children()}
 
-<style>
-	.app {
-		display: flex;
-		flex-direction: column;
-		min-height: 100vh;
-	}
-
-	header {
-		position: sticky;
-		top: 0;
-		z-index: 100;
-		background-color: var(--color-bg-primary);
-		border-bottom: 1px solid var(--color-border-secondary);
-	}
-
-	main {
-		flex: 1;
-		padding: 1.5rem;
-		max-width: 1400px;
-		margin: 0 auto;
-		width: 100%;
-	}
-</style>
+<FooterMain />
