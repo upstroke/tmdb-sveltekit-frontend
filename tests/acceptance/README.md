@@ -9,17 +9,17 @@
 - **Datum:** 2026-09-04
 
 ### 2. Introduction
-Zweck dieses Testplans ist die Validierung der Hauptnavigation aus User-Sicht. Die Tests stellen sicher, dass die Navigation zwischen den Hauptseiten (Home, Movies, TV Shows) auf Desktop und mobilen Geräten korrekt funktioniert.
+Zweck dieses Testplans ist die Validierung der Hauptnavigation aus User-Sicht. Die Tests stellen sicher, dass die Navigation zwischen den Hauptseiten (Home, Movies, TV Shows) auf Desktop und mobilen Geraeten korrekt funktioniert.
 
 ### 3. Test Items
 - `HeaderMain.svelte` — Globale Kopfzeile mit Navigation
 - Navigation Routes: `/`, `/movies`, `/tv-shows`
-- Mobile Menü (Burger-Icon)
+- Mobile Menue (Burger-Icon)
 - Aktiver Link-Status (`aria-current="page"`)
 
 ### 4. Features to be tested
 - Navigation zwischen Hauptseiten (Desktop)
-- Mobile Menü öffnen/schliessen (Burger)
+- Mobile Menue oeffnen/schliessen (Burger)
 - Navigation im Mobile-Modus
 - Korrekte Seitentitel pro Route
 - Aktiver Link visuell hervorgehoben
@@ -27,12 +27,12 @@ Zweck dieses Testplans ist die Validierung der Hauptnavigation aus User-Sicht. D
 ### 5. Features not to be tested
 - LanguageSwitcher (separater Test geplant)
 - TypeHeadSearch (separater Test geplant)
-- Detailseiten für Filme/Serien (spä¬¨ter)
-- Pagination / Load More (spä¬¨ter)
+- Detailseiten fuer Filme/Serien (spaeter)
+- Pagination / Load More (spaeter)
 
 ### 6. Approach
 - **Tool:** Playwright
-- **Syntax:** Gherkin für User Stories
+- **Syntax:** Gherkin fuer User Stories
 - **Browser:** Chromium (default)
 - **Viewports:** Desktop (default) + Mobile (375x667)
 - **Selektoren:** CSS-ID-basiert (`#home`, `#movies`, `#tvshows`, `#menu-toggle`)
@@ -48,12 +48,12 @@ Zweck dieses Testplans ist die Validierung der Hauptnavigation aus User-Sicht. D
 ### Feature: Hauptnavigation (F-NAV)
 
 **Als** Besucher der TMDB-Website  
-**Mö¬¨¬chte** ich zwischen den Hauptseiten (Home, Movies, TV Shows) navigieren können  
+**Moechte** ich zwischen den Hauptseiten (Home, Movies, TV Shows) navigieren koennen  
 **Damit** ich Filme und Serien entdecken kann
 
 ```
 Background:
-  Given die App ist im Browser verfügbar
+  Given die App ist im Browser verfuegbar
 
 @TC-NAV-001
 Scenario: Desktop-Navigation funktioniert
@@ -76,13 +76,13 @@ Scenario: Desktop-Navigation funktioniert
 @TC-NAV-002
 Scenario: Mobile-Navigation funktioniert
   Given ich bin auf der Startseite "/"
-  And ich habe eine mobile Bildschirmgrö¬¬¬ß¬ö¬¬¬e (375x667)
-  When ich das Burger-Menö¬¬¬u öffne (klicke auf #menu-toggle)
+  And ich habe eine mobile Bildschirmgroesse (375x667)
+  When ich das Burger-Menue oeffne (klicke auf #menu-toggle)
   And ich auf den "Movies" Navigationslink klicke
   Then sollte die URL "/movies" sein
   And der Seitentitel sollte "Movies TMDB" enthalten
 
-  When ich das Burger-Menö¬¬¬u erneut öffne
+  When ich das Burger-Menue erneut oeffne
   And ich auf den "TV Shows" Navigationslink klicke
   Then sollte die URL "/tv-shows" sein
   And der Seitentitel sollte "TV TMDB" enthalten
@@ -95,7 +95,7 @@ Scenario: Mobile-Navigation funktioniert
 ### TC-NAV-001: Desktop-Navigation funktioniert
 
 **Pre-Conditions:**
-- App läuft auf `localhost:4173`
+- App laeuft auf `localhost:4173`
 - Browser: Chromium, Desktop-Viewport
 
 **Test Steps:**
@@ -122,7 +122,7 @@ Scenario: Mobile-Navigation funktioniert
 ### TC-NAV-002: Mobile-Navigation funktioniert
 
 **Pre-Conditions:**
-- App läuft auf `localhost:4173`
+- App laeuft auf `localhost:4173`
 - Browser: Chromium, Viewport: 375x667 (Mobile)
 
 **Test Steps:**
@@ -140,12 +140,12 @@ Scenario: Mobile-Navigation funktioniert
 
 **Pass/Fail Criteria:**
 - Alle Steps erfolgreich
-- Mobile Menü öffnet/schliesst korrekt
+- Mobile Menue oeffnet/schliesst korrekt
 - Keine Errors im Browser Console Log
 
 ---
 
-## Tests ausfuhren
+## Tests ausfuehren
 
 ```bash
 # Alle Acceptance Tests
