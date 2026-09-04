@@ -1,6 +1,5 @@
 <!-- src/routes/+layout.svelte -->
 <script>
-	import { onMount } from 'svelte';
 	import favicon from '$lib/assets/favicon.svg';
 	import TypeHeadSearch from '$lib/components/TypeHeadSearch.svelte';
 	import FooterMain from '$lib/components/FooterMain.svelte';
@@ -38,22 +37,6 @@
 			active: (pathname) => pathname === '/tv-shows' || pathname.startsWith('/tv-shows/')
 		}
 	]);
-
-	onMount(() => {
-		const updateTitle = () => {
-			const activeNavItem = navItems.find((item) => item.active(window.location.pathname));
-			const pageTitle = activeNavItem?.label ?? 'TMDB';
-			document.title = `${pageTitle} | TMDB`;
-		};
-
-		updateTitle();
-
-		// Optional: Update title on navigation
-		const observer = new MutationObserver(updateTitle);
-		observer.observe(document.body, { subtree: true, childList: true });
-
-		return () => observer.disconnect();
-	});
 </script>
 
 <svelte:head>
