@@ -1,56 +1,56 @@
-set shell := ["zsh", "-cu"]
-
-# Entwicklungsserver starten
+# Development recipes
 dev:
+	@echo "Starting development server..."
 	npm run dev
 
-# Produktionsbuild erstellen
+# Build recipes
 build:
+	@echo "Building project..."
 	npm run build
 
-# Produktionsbuild lokal anzeigen
 preview:
+	@echo "Starting preview server..."
 	npm run preview
 
-# SvelteKit-Projekt synchronisieren
-prepare:
-	npm run prepare
-
-# Formatierung und Linting prüfen
+# Linting recipes
 lint:
+	@echo "Running linters..."
 	npm run lint
 
-# Dateien mit Prettier formatieren
 format:
+	@echo "Running formatters..."
 	npm run format
 
-# Formatierung und ESLint automatisch korrigieren
-lint-fix:
-	npm run lint:fix
-
-# Vitest ausführen
-test-vitest:
-	npm run test:vitest
+# Testing recipes
+test:
+	@echo "Running all tests..."
+	npm run test:all
 
 test-unit:
+	@echo "Running unit tests..."
 	npm run test:unit
 
 test-components:
+	@echo "Running component tests..."
 	npm run test:components
 
 test-integration:
+	@echo "Running integration tests..."
 	npm run test:integration
 
 test-acceptance:
+	@echo "Running acceptance tests..."
 	npm run test:acceptance
 
+test-acceptance-ui:
+	@echo "Running acceptance tests in UI mode..."
+	npm run test:acceptance:ui
+
+# Combined recipes
 test-all:
+	@echo "Running all tests..."
 	npm run test:all
 
-# Vitest mit Coverage ausführen
-test-coverage:
-	npm run test:vitest:coverage
-
-# Playwright Acceptance-Tests ausführen
-test-acceptance-ui:
+test-all-ui:
+	@echo "Running all tests with UI..."
 	npm run test:acceptance:ui
