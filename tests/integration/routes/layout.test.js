@@ -14,10 +14,8 @@ vi.mock('$app/state', () => ({
 describe('Layout (+layout.svelte)', () => {
 	const labels = getI18nLabels();
 
-	const mockChildren = {
-		$set: vi.fn(),
-		$destroy: vi.fn()
-	};
+	// Svelte 5: children ist ein $props() Objekt mit getter
+	const mockChildren = { children: { current: {} } };
 
 	beforeEach(() => {
 		vi.clearAllMocks();
@@ -29,7 +27,7 @@ describe('Layout (+layout.svelte)', () => {
 	});
 
 	it('rendert HeaderMain mit Navigation', async () => {
-		render(Layout, { props: { children: mockChildren } });
+		render(Layout, { props: { children: mockChildren.children } });
 
 		await waitFor(() => {
 			// HeaderMain sollte gerendert werden
@@ -42,7 +40,7 @@ describe('Layout (+layout.svelte)', () => {
 	});
 
 	it('rendert TypeHeadSearch im Header', async () => {
-		render(Layout, { props: { children: mockChildren } });
+		render(Layout, { props: { children: mockChildren.children } });
 
 		await waitFor(() => {
 			// TypeHeadSearch sollte ein Suchinput haben
@@ -53,7 +51,7 @@ describe('Layout (+layout.svelte)', () => {
 	});
 
 	it('rendert FooterMain', async () => {
-		render(Layout, { props: { children: mockChildren } });
+		render(Layout, { props: { children: mockChildren.children } });
 
 		await waitFor(() => {
 			// FooterMain sollte gerendert werden
@@ -62,10 +60,7 @@ describe('Layout (+layout.svelte)', () => {
 	});
 
 	it('bettet children Slot korrekt ein', async () => {
-		const customChildren = {
-			$set: vi.fn(),
-			$destroy: vi.fn()
-		};
+		const customChildren = { current: {} };
 
 		render(Layout, { props: { children: customChildren } });
 
@@ -76,12 +71,12 @@ describe('Layout (+layout.svelte)', () => {
 			expect(screen.getByRole('contentinfo')).toBeInTheDocument();
 		});
 
-		// children.$set sollte aufgerufen werden (Svelte 5 $props() pattern)
-		expect(customChildren.$set).toBeDefined();
+		// children sollte ein gültiges Objekt sein
+		expect(customChildren.current).toBeDefined();
 	});
 
 	it('Navigation hat korrekte Pfade', async () => {
-		render(Layout, { props: { children: mockChildren } });
+		render(Layout, { props: { children: mockChildren.children } });
 
 		await waitFor(() => {
 			const homeLink = screen.getByRole('link', { name: labels.home });
@@ -95,7 +90,7 @@ describe('Layout (+layout.svelte)', () => {
 	});
 
 	it('setzt Favicon im svelte:head', async () => {
-		render(Layout, { props: { children: mockChildren } });
+		render(Layout, { props: { children: mockChildren.children } });
 
 		await waitFor(() => {
 			const favicon = document.querySelector('link[rel="icon"]');
