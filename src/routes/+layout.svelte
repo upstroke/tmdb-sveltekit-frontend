@@ -1,6 +1,6 @@
 <!-- src/routes/+layout.svelte -->
 <script>
-	import { page } from '$app/stores';
+	import { onMount } from 'svelte';
 	import favicon from '$lib/assets/favicon.svg';
 	import TypeHeadSearch from '$lib/components/TypeHeadSearch.svelte';
 	import FooterMain from '$lib/components/FooterMain.svelte';
@@ -39,16 +39,26 @@
 		}
 	]);
 
-	const activeNavItem = $derived(
-		navItems.find((item) => item.active(page.url.pathname))
-	);
+	onMount(() => {
+		const updateTitle = () => {
+			const activeNavItem = navItems.find((item) => item.active(window.location.pathname));
+			const pageTitle = activeNavItem?.label ?? 'TMDB';
+			document.title = `${pageTitle} | TMDB`;
+		};
 
-	const pageTitle = $derived(activeNavItem?.label ?? 'TMDB');
+		updateTitle();
+
+		// Optional: Update title on navigation
+		const observer = new MutationObserver(updateTitle);
+		observer.observe(document.body, { subtree: true, childList: true });
+
+		return () => observer.disconnect();
+	});
 </script>
 
 <svelte:head>
 	<link href={favicon} rel="icon" />
-	<title>{pageTitle} | TMDB</title>
+	<title>TMDB</title>
 </svelte:head>
 
 <HeaderMain {navItems}>
