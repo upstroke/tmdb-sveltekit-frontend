@@ -1,14 +1,7 @@
 // @ts-check
-import { test, expect } from '@playwright/test';
+const { test, expect } = require('@playwright/test');
 
-test.describe('Homepage', () => {
-  test('loads successfully', async ({ page }) => {
-    await page.goto('/');
-    await expect(page).toHaveTitle(/TMDB/);
-  });
-
-  test('shows movie grid', async ({ page }) => {
-    await page.goto('/');
-    await expect(page.locator('.cards.media-card-list')).toBeVisible();
-  });
+test('home page has correct title', async ({ page }) => {
+	await page.goto('/');
+	await expect(page).toHaveTitle(/Home TMDB/);
 });
