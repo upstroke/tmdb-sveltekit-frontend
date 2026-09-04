@@ -9,6 +9,6 @@ test.describe('Homepage', () => {
 
   test('shows movie grid', async ({ page }) => {
     await page.goto('/');
-    await expect(page.locator('.movie-grid')).toBeVisible();
+    await expect(page.locator('.cards.media-card-list')).toBeVisible();
   });
 });
