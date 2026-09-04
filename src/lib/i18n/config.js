@@ -1,1 +1,1 @@
-export const DEFAULT_LOCALE = 'de-DE';
+export const DEFAULT_LOCALE = 'en-US';

@@ -41,7 +41,7 @@ test.describe('Hauptnavigation', () => {
 		await page.goto('/');
 
 		// Burger klicken zum Oeffnen
-		await page.locator('#menu-toggle').click();
+		await page.locator('label.burger-icon').click();
 
 		// Navigation zu Movies
 		await page.locator('#movies a').click();
@@ -49,7 +49,7 @@ test.describe('Hauptnavigation', () => {
 		await expect(page).toHaveTitle(/Movies.*TMDB/);
 
 		// Burger wieder oeffnen
-		await page.locator('#menu-toggle').click();
+		await page.locator('label.burger-icon').click();
 
 		// Navigation zu TV Shows
 		await page.locator('#tvshows a').click();
