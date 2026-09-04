@@ -25,7 +25,7 @@ test.describe('Hauptnavigation', () => {
 		await expect(page).toHaveTitle(/TV.*TMDB/);
 		await expect(page.locator('#tvshows a')).toHaveAttribute('aria-current', 'page');
 
-		// Zurück zu Home
+		// Zurueck zu Home
 		await page.locator('#home a').click();
 		await expect(page).toHaveURL('/');
 		await expect(page).toHaveTitle(/Home.*TMDB/);
@@ -33,14 +33,14 @@ test.describe('Hauptnavigation', () => {
 	});
 
 	// TC-NAV-002
-	test('Mobile: Burger-Menö°¶¿ öffnet und Navigation funktioniert', async ({ page }) => {
+	test('Mobile: Burger-Menue oeffnet und Navigation funktioniert', async ({ page }) => {
 		// Mobile Viewport
 		await page.setViewportSize({ width: 375, height: 667 });
 
 		// Start auf Home
 		await page.goto('/');
 
-		// Burger klicken zum Öffnen
+		// Burger klicken zum Oeffnen
 		await page.locator('#menu-toggle').click();
 
 		// Navigation zu Movies
@@ -48,7 +48,7 @@ test.describe('Hauptnavigation', () => {
 		await expect(page).toHaveURL('/movies');
 		await expect(page).toHaveTitle(/Movies.*TMDB/);
 
-		// Burger wieder öffnen
+		// Burger wieder oeffnen
 		await page.locator('#menu-toggle').click();
 
 		// Navigation zu TV Shows
