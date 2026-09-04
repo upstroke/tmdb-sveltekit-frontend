@@ -274,7 +274,7 @@
 </script>
 
 <svelte:head>
-	<title>{titles.tvShows}</title>
+	<title>{titles.tvShows} TMDB</title>
 </svelte:head>
 
 <main class="ui container fluid tv-shows-page">
