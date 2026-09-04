@@ -19,4 +19,10 @@ export default defineConfig({
     },
   ],
   reporter: 'list',
+  webServer: {
+    command: 'npm run dev:acceptance',
+    port: 4173,
+    reuseExistingServer: !process.env.CI,
+    timeout: 60 * 1000,
+  },
 });
