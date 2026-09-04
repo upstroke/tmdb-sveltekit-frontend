@@ -5,7 +5,7 @@
 	import FooterMain from '$lib/components/FooterMain.svelte';
 	import HeaderMain from '$lib/components/HeaderMain.svelte';
 	import { i18n } from '$lib/stores/i18n';
-	import '../css/app.scss';
+	import '$css/app.scss';
 
 	let { children } = $props();
 

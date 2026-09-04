@@ -12,7 +12,8 @@ export default defineConfig({
 		alias: {
 			$tests: testsDir,
 			$routes: `${srcDir}/routes`,
-			$lib: `${srcDir}/lib` // optional, falls SvelteKit es nicht automatisch setzt
+			$lib: `${srcDir}/lib`, // optional, falls SvelteKit es nicht automatisch setzt
+			$css: `${srcDir}/css`
 		}
 	},
 	test: {
