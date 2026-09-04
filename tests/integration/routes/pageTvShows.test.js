@@ -33,7 +33,7 @@ describe('TvShowsPage', () => {
 	};
 
 	// hol dir den zweiten Eintrag da die Fixture Daten sonst den gleichen film wie featuredCard hat
-	const cards = rawResponses.tvList.results.slice(1, 2).map((show) => ({
+	const cards = rawResponses.tvList.results.map((show) => ({
 		id: show.id,
 		mediaType: 'tv',
 		title: show.name,
@@ -96,10 +96,11 @@ describe('TvShowsPage', () => {
 	it('zeigt LoadMore bei weiteren verfügbaren Karten', async () => {
 		render(TvShowsPage, { props: { data: createData({ hasMore: true }) } });
 
-		await waitFor(() => {
-			expect(screen.getByRole('button', { name: labels.loadMore })).toBeInTheDocument();
-		});
+		// findByRole wartet automatisch asynchron auf das Element
+		const button = await screen.findByRole('button', { name: labels.loadMore });
+		expect(button).toBeInTheDocument();
 	});
+
 
 	it('zeigt LoadMore nicht ohne weitere verfügbare Karten', async () => {
 		render(TvShowsPage, { props: { data: createData({ hasMore: false }) } });

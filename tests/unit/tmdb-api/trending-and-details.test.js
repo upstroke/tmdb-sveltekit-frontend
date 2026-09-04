@@ -73,8 +73,7 @@ describe('tmdb api trending and details', () => {
 	});
 
 	describe('getTrendingTVShows', () => {
-		// Anweisungsüberdeckung: Serien-Trends werden über den TV-Day-Endpunkt geladen und mit TV-Freigabe als Kartenliste zurückgegeben.
-		it('lädt die Daily-Trending-Serienliste über den tv-Endpunkt', async () => {
+		it('lädt die Daily-Trending-Serienliste über den tv-Endpunkt', async () => {
 			const fetchFn = vi
 				.fn()
 				.mockResolvedValueOnce(createJsonResponse(rawResponses.tvList))
@@ -90,9 +89,9 @@ describe('tmdb api trending and details', () => {
 				hasMore: false,
 				results: [
 					{
-						id: 420,
+						id: 421,
 						mediaType: 'tv',
-						title: 'Dark',
+						title: 'Die Fliege',
 						certification: '16'
 					}
 				]
@@ -100,6 +99,7 @@ describe('tmdb api trending and details', () => {
 			expect(fetchFn.mock.calls[0][0]).toContain('/trending/tv/day');
 		});
 	});
+
 
 	describe('getPopularMovies', () => {
 		// Anweisungsüberdeckung: Die Popular-Filmliste wird über den Movie-Popular-Endpunkt geladen und angereichert zurückgegeben.
@@ -177,9 +177,9 @@ describe('tmdb api trending and details', () => {
 				hasMore: false,
 				results: [
 					{
-						id: 420,
+						id: 421,
 						mediaType: 'tv',
-						title: 'Dark',
+						title: 'Die Fliege',
 						certification: '16'
 					}
 				]
@@ -206,9 +206,9 @@ describe('tmdb api trending and details', () => {
 				hasMore: false,
 				results: [
 					{
-						id: 420,
+						id: 421,
 						mediaType: 'tv',
-						title: 'Dark',
+						title: 'Die Fliege',
 						certification: '16'
 					}
 				]

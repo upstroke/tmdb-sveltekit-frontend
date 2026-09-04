@@ -27,14 +27,6 @@ export const rawResponses = {
 	tvList: {
 		results: [
 			{
-				id: 420,
-				name: 'Dark',
-				first_air_date: '2017-12-01',
-				vote_average: 8.2,
-				genre_ids: [9648],
-				poster_path: '/dark.jpg'
-			},
-			{
 				id: 421,
 				name: 'Die Fliege',
 				first_air_date: '1996-02-11',
@@ -188,7 +180,7 @@ export const mappedFixtures = {
 		id: 420,
 		name: 'Dark',
 		first_air_date: '2017-12-01',
-		overview: 'Ein vermisstes Kind bringt d�stere Geheimnisse ans Licht.',
+		overview: 'Ein vermisstes Kind bringt düstere Geheimnisse ans Licht.',
 		homepage: 'https://example.com/dark',
 		genres: [{ id: 9648, name: 'Mystery' }],
 		backdrop_path: '/dark-backdrop.jpg',
