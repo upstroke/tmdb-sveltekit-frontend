@@ -1,7 +1,13 @@
 // @ts-check
 import { test, expect } from '@playwright/test';
 
+/**
+ * Test Case: TC-NAV-001 — Desktop-Navigation funktioniert
+ * Test Case: TC-NAV-002 — Mobile-Navigation funktioniert
+ */
+
 test.describe('Hauptnavigation', () => {
+	// TC-NAV-001
 	test('Desktop: Alle Hauptseiten sind erreichbar', async ({ page }) => {
 		// Start auf Home
 		await page.goto('/');
@@ -26,7 +32,8 @@ test.describe('Hauptnavigation', () => {
 		await expect(page.locator('#home a')).toHaveAttribute('aria-current', 'page');
 	});
 
-	test('Mobile: Burger-Menöııı öffnet und Navigation funktioniert', async ({ page }) => {
+	// TC-NAV-002
+	test('Mobile: Burger-Menö°¶¿ öffnet und Navigation funktioniert', async ({ page }) => {
 		// Mobile Viewport
 		await page.setViewportSize({ width: 375, height: 667 });
 
