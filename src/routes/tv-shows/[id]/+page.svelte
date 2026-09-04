@@ -51,8 +51,8 @@
 <svelte:head>
 	<title>
 		{title !== fallbacks.notAvailable
-			? `${title} — ${formats.detailsSuffix}`
-			: titles.tvShowDetails}
+			? `${title} — ${formats.detailsSuffix} TMDB`
+			: `${titles.tvShowDetails} TMDB`}
 	</title>
 </svelte:head>
 

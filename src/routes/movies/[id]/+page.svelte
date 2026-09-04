@@ -50,7 +50,7 @@
 
 <svelte:head>
 	<title>
-		{title !== fallbacks.notAvailable ? `${title} — ${formats.detailsSuffix}` : titles.movieDetails}
+		{title !== fallbacks.notAvailable ? `${title} — ${formats.detailsSuffix} TMDB` : `${titles.movieDetails} TMDB`}
 	</title>
 </svelte:head>
 

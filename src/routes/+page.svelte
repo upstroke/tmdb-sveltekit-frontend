@@ -280,7 +280,7 @@
 </script>
 
 <svelte:head>
-	<title>{titles.home}</title>
+	<title>{titles.home} TMDB</title>
 </svelte:head>
 
 <main class="ui container fluid home-page">
