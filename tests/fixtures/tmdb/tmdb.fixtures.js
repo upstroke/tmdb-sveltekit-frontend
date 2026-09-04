@@ -45,7 +45,7 @@ export const rawResponses = {
 		],
 		page: 1,
 		total_pages: 1,
-		hasMore: true
+		hasMore: false
 	},
 	emptyTvGenres: {
 		genres: []
@@ -148,8 +148,7 @@ export const rawResponses = {
 	},
 	tvGenres: {
 		genres: [{ id: 9648, name: 'Mystery' }]
-	},
-
+	}
 };
 
 /**
@@ -175,7 +174,7 @@ export const mappedFixtures = {
 		backdrop_path: '/fight-club-backdrop.jpg'
 	},
 	invalidCardItem: {
-		title: 'Ungültiger Eintrag ohne ID',
+		title: 'Ung�ltiger Eintrag ohne ID',
 		poster_path: '/invalid.jpg'
 	},
 	fallbackCardItem: {
@@ -189,7 +188,7 @@ export const mappedFixtures = {
 		id: 420,
 		name: 'Dark',
 		first_air_date: '2017-12-01',
-		overview: 'Ein vermisstes Kind bringt düstere Geheimnisse ans Licht.',
+		overview: 'Ein vermisstes Kind bringt d�stere Geheimnisse ans Licht.',
 		homepage: 'https://example.com/dark',
 		genres: [{ id: 9648, name: 'Mystery' }],
 		backdrop_path: '/dark-backdrop.jpg',
@@ -277,7 +276,7 @@ mappedFixtures.tvShowDetails = {
 	rating: 8.2,
 	certification: 'FSK 16',
 	genres: [{ id: 9648, name: 'Mystery' }],
-	overview: 'Ein vermisstes Kind bringt düstere Geheimnisse ans Licht.',
+	overview: 'Ein vermisstes Kind bringt d�stere Geheimnisse ans Licht.',
 	homepage: 'https://example.com/dark',
 	trailerUrls: [
 		{ url: 'https://youtube.com/watch?v=trailer1' },
@@ -292,7 +291,7 @@ mappedFixtures.tvShowDetails = {
 	posterUrl: '/dark-poster.jpg'
 };
 
-// Provider-Fixture für TV
+// Provider-Fixture f�r TV
 mappedFixtures.tvProviders = {
 	providers: [
 		{
