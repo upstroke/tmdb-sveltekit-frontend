@@ -459,6 +459,9 @@
 			margin-right: 0.5rem;
 			line-height: 0;
 			width: 50%;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
 
 			&:focus-visible {
 				outline: 2px solid #2185d0 !important;
@@ -604,6 +607,14 @@
 		#status-messages .result,
 		#status-messages .result-error {
 			margin: 0;
+		}
+
+		@media only screen and (max-width: 767.98px) {
+			#typeahead-search-results {
+				min-width: unset;
+				max-width: unset;
+				width: 100vw;
+			}
 		}
 	}
 </style>

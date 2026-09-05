@@ -170,7 +170,7 @@
 						<li>
 							<a
 								class="ui red button {buttons.watchTrailer ? '' : 'u-not-available'}"
-								href={trailer.url}
+								href={trailer}
 								target="_blank"
 								rel="noopener noreferrer"
 							>
