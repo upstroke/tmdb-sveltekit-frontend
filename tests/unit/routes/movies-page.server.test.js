@@ -21,10 +21,21 @@ vi.mock('$lib/services/tmdb-api.js', () => ({
 	createTmdbApi: mockCreateTmdbApi
 }));
 
+/**
+ * Creates a test URL for the movies route.
+ *
+ * @param {string} [search] - Search query string.
+ * @returns {URL}
+ */
 function createUrl(search = '') {
 	return new URL(`https://example.com/movies${search}`);
 }
 
+/**
+ * Creates a mock messages object for i18n.
+ *
+ * @returns {{ apiKeyMissing: string, moviesLoadError: string }}
+ */
 function createMessages() {
 	return {
 		apiKeyMissing: 'API key missing',
@@ -32,6 +43,12 @@ function createMessages() {
 	};
 }
 
+/**
+ * Creates a mock movie details object with optional overrides.
+ *
+ * @param {Object} [overrides] - Properties to override.
+ * @returns {Object}
+ */
 function createMovieDetails(overrides = {}) {
 	return {
 		id: mappedFixtures.details.id,
@@ -51,12 +68,12 @@ describe('movies page route load', () => {
 	beforeEach(() => {
 		vi.resetModules();
 		vi.clearAllMocks();
-		mockResolveLocale.mockReturnValue('de-DE');
+		mockResolveLocale.mockReturnValue('en-US');
 		mockGetLocaleText.mockReturnValue({ messages: createMessages() });
 	});
 
-	// Anweisungsüberdeckung: Die Movie-Route lädt alle angeforderten Trending-Seiten und nutzt den bevorzugten Featured-Auswahlpfad ab Index 1.
-	it('lädt mehrere Movie-Seiten und nutzt den bevorzugten Featured-Kandidaten', async () => {
+	// Statement coverage: the movie route loads all requested trending pages and uses the preferred featured selection path from index 1.
+	it('loads multiple movie pages and uses the preferred featured candidate', async () => {
 		const api = {
 			getTrendingMovies: vi
 				.fn()
@@ -77,7 +94,7 @@ describe('movies page route load', () => {
 		mockCreateTmdbApi.mockReturnValue(api);
 		const { load } = await import('../../../src/routes/movies/+page.server.js');
 
-		const result = await load({ fetch: vi.fn(), url: createUrl('?page=2&locale=de') });
+		const result = await load({ fetch: vi.fn(), url: createUrl('?page=2&locale=en') });
 
 		expect(api.getTrendingMovies).toHaveBeenNthCalledWith(1, 1);
 		expect(api.getTrendingMovies).toHaveBeenNthCalledWith(2, 2);
@@ -96,8 +113,8 @@ describe('movies page route load', () => {
 		});
 	});
 
-	// Anweisungsüberdeckung: Fehlt der bevorzugte Featured-Kandidat, fällt die Route auf den nächsten verfügbaren Index zurück.
-	it('fällt bei der Featured-Auswahl auf Index 2 und dann 0 zurück', async () => {
+	// Statement coverage: if the preferred featured candidate is missing, the route falls back to the next available index.
+	it('falls back to index 2 and then 0 for featured selection', async () => {
 		const api = {
 			getTrendingMovies: vi
 				.fn()
@@ -113,7 +130,9 @@ describe('movies page route load', () => {
 					results: [],
 					hasMore: false
 				}),
-			getMovieDetails: vi.fn().mockResolvedValue(createMovieDetails({ id: 13, title: 'Forrest Gump' }))
+			getMovieDetails: vi
+				.fn()
+				.mockResolvedValue(createMovieDetails({ id: 13, title: 'Forrest Gump' }))
 		};
 		mockCreateTmdbApi.mockReturnValue(api);
 		const { load } = await import('../../../src/routes/movies/+page.server.js');
@@ -124,8 +143,8 @@ describe('movies page route load', () => {
 		expect(result.featured).toMatchObject({ id: 13, title: 'Forrest Gump' });
 	});
 
-	// Anweisungsüberdeckung: Schlägt nur das Featured-Detail fehl, bleiben Kartenliste und Seitendaten erhalten.
-	it('behält Karten bei, wenn Featured-Movie-Details fehlschlagen', async () => {
+	// Statement coverage: if only the featured detail fails, the card list and page data are preserved.
+	it('preserves cards when featured movie details fail', async () => {
 		const api = {
 			getTrendingMovies: vi.fn().mockResolvedValue({
 				results: [{ id: 680, mediaType: 'movie', title: 'Pulp Fiction' }],
@@ -152,8 +171,8 @@ describe('movies page route load', () => {
 		);
 	});
 
-	// Anweisungsüberdeckung: Schlägt die Movie-Listenladung fehl, gibt die Route den lokalisierten Fehlerzustand zurück.
-	it('liefert bei fehlgeschlagener Movie-Listenladung einen Fehlerzustand zurück', async () => {
+	// Statement coverage: if the movie list loading fails, the route returns the localized error state.
+	it('returns an error state when movie list loading fails', async () => {
 		const api = {
 			getTrendingMovies: vi.fn().mockRejectedValue(new Error('list failed')),
 			getMovieDetails: vi.fn()

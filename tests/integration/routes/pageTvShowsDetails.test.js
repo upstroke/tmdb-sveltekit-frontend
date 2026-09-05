@@ -4,7 +4,7 @@ import { mappedFixtures } from '$tests/fixtures/tmdb/tmdb.fixtures.js';
 import { getI18nLabels } from '$tests/mocks/i18n.mocks.js';
 import TvShowDetailsPage from '$routes/tv-shows/[id]/+page.svelte';
 
-// Mock für $app/state damit page.url.origin definiert ist
+// Mock for $app/state so page.url.origin is defined
 vi.mock('$app/state', () => ({
 	page: {
 		url: new URL('https://example.com/')
@@ -30,43 +30,44 @@ describe('TvShowDetailsPage (Integration)', () => {
 		vi.unstubAllGlobals();
 	});
 
-	it('rendert TV-Show-Detailseite mit allen Sektionen', async () => {
+	// Statement coverage: TV show detail page is rendered with all sections
+	it('renders TV show detail page with all sections', async () => {
 		const { container } = render(TvShowDetailsPage, { props: { data: createData() } });
 
-		// Titel im <title>
+		// Title in <title>
 		await waitFor(() => {
 			expect(document.title).toContain(mappedFixtures.tvShowDetails.title);
 			expect(document.title).toContain(i18n.detailsSuffix);
 		});
 
-		// Basis-Meta
+		// Basic meta
 		expect(screen.getByText(mappedFixtures.tvShowDetails.title)).toBeInTheDocument();
 		expect(screen.getByText('Mystery')).toBeInTheDocument();
-		expect(screen.getByText('FSK 16')).toBeInTheDocument();
+		expect(screen.getByText('PG')).toBeInTheDocument();
 		expect(screen.getByText('8.2')).toBeInTheDocument();
 
 		// Overview
 		expect(screen.getByText(mappedFixtures.tvShowDetails.overview)).toBeInTheDocument();
 
-		// Homepage-Link
+		// Homepage link
 		const homeLink = screen.getByRole('link', { name: /example\.com/i });
 		expect(homeLink).toHaveAttribute('href', mappedFixtures.tvShowDetails.homepage);
 
-		// Trailer
+		// Trailers
 		expect(screen.getByText(i18n.watchTrailer.replace('{index}', '1'))).toBeInTheDocument();
 		expect(screen.getByText(i18n.watchTrailer.replace('{index}', '2'))).toBeInTheDocument();
 
-		// Release date – Intl gibt z. B. "1.12.2017" aus, nicht "01.12.2017"
+		// Release date – Intl outputs e.g. "1.12.2017", not "01.12.2017"
 		await waitFor(() => {
 			expect(screen.getByText(/\d{1,2}\.12\.2017/)).toBeInTheDocument();
 		});
 
-		// Streaming-Provider
+		// Streaming providers
 		await waitFor(async () => {
 			expect(await screen.findByText('Netflix')).toBeInTheDocument();
 		});
 
-		// Production – gezielter über container, um Duplikate zu vermeiden
+		// Production – more specific via container to avoid duplicates
 		await waitFor(() => {
 			const productionSection = container.querySelector('[data-testid="production"]') || container;
 			expect(productionSection.textContent).toContain('Wiedemann & Berg Television');
@@ -75,14 +76,15 @@ describe('TvShowDetailsPage (Integration)', () => {
 		// Runtime
 		expect(screen.getByText('60 min')).toBeInTheDocument();
 
-		// Cast (erster Eintrag)
+		// Cast (first entry)
 		expect(screen.getByText(mappedFixtures.cast[0].name)).toBeInTheDocument();
 
-		// Crew (erster Eintrag)
+		// Crew (first entry)
 		expect(screen.getByText(mappedFixtures.crew[0].name)).toBeInTheDocument();
 	});
 
-	it('zeigt Serverfehler im Dialog an', async () => {
+	// Branch coverage: server error is displayed in dialog (error state)
+	it('shows server error in dialog', async () => {
 		const data = createData({ error: i18n.contentLoadError });
 		render(TvShowDetailsPage, { props: { data } });
 

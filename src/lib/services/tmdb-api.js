@@ -44,7 +44,7 @@ export function createTmdbApi(fetchFn, apiKey, language = 'de-DE') {
 		const response = await fetchFn(url.toString());
 
 		if (!response.ok) {
-			throw new Error(`TMDB-Anfrage fehlgeschlagen: ${response.status} ${response.statusText}`);
+			throw new Error(`TMDB request failed: ${response.status} ${response.statusText}`);
 		}
 
 		return response.json();

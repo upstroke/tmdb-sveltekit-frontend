@@ -2,6 +2,12 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createTmdbApi } from '$lib/services/tmdb-api';
 import { rawResponses, mappedFixtures } from '$tests/fixtures/tmdb/tmdb.fixtures';
 
+/**
+ * Creates a mock JSON response object for fetch operations.
+ *
+ * @param {any} data - The data to be returned by the mocked json() method.
+ * @returns {{ ok: boolean, json: import('vitest').Mock<() => Promise<any>> }}
+ */
 function createJsonResponse(data) {
 	return {
 		ok: true,
@@ -15,44 +21,46 @@ describe('tmdb api trending and details', () => {
 	});
 
 	describe('getTrendingAll', () => {
-		// Anweisungsüberdeckung: Trendlisten werden über den All-Day-Endpunkt geladen und als Kartenliste zurückgegeben.
-		it('lädt die Daily-Trending-Liste über den all-Endpunkt', async () => {
+		// Statement coverage: trending lists are loaded via the all-day endpoint and returned as a card list.
+		it('loads the daily trending list via the all endpoint', async () => {
 			const fetchFn = vi
 				.fn()
-				.mockResolvedValueOnce(createJsonResponse({
-					...rawResponses.movieList,
-					results: [
-						{
-							...rawResponses.movieList.results[0],
-							media_type: 'movie'
-						}
-					],
-					total_pages: 1
-				}))
+				.mockResolvedValueOnce(
+					createJsonResponse({
+						...rawResponses.movieList,
+						results: [
+							{
+								...rawResponses.movieList.results[0],
+								media_type: 'movie'
+							}
+						],
+						total_pages: 1
+					})
+				)
 				.mockResolvedValueOnce(createJsonResponse(rawResponses.movieGenres))
 				.mockResolvedValueOnce(createJsonResponse(rawResponses.emptyTvGenres))
 				.mockResolvedValueOnce(createJsonResponse(rawResponses.movieCertification));
-			const api = createTmdbApi(fetchFn, 'test-api-key', 'de-DE');
+			const api = createTmdbApi(fetchFn, 'test-api-key', 'en-US');
 
 			const result = await api.getTrendingAll();
 
 			expect(result.results).toHaveLength(1);
 			expect(result.results[0].mediaType).toBe('movie');
-			expect(result.results[0].certification).toBe('FSK 16');
+			expect(result.results[0].certification).toBe('PG');
 			expect(fetchFn.mock.calls[0][0]).toContain('/trending/all/day');
 		});
 	});
 
 	describe('getTrendingMovies', () => {
-		// Anweisungsüberdeckung: Film-Trends werden über den Movie-Day-Endpunkt geladen und inklusive Zertifizierung normalisiert zurückgegeben.
-		it('lädt die Daily-Trending-Filmliste über den movie-Endpunkt', async () => {
+		// Statement coverage: movie trends are loaded via the movie-day endpoint and returned normalized including certification.
+		it('loads the daily trending movie list via the movie endpoint', async () => {
 			const fetchFn = vi
 				.fn()
 				.mockResolvedValueOnce(createJsonResponse(rawResponses.movieList))
 				.mockResolvedValueOnce(createJsonResponse(rawResponses.movieGenres))
 				.mockResolvedValueOnce(createJsonResponse(rawResponses.emptyTvGenres))
 				.mockResolvedValueOnce(createJsonResponse(rawResponses.movieCertification));
-			const api = createTmdbApi(fetchFn, 'test-api-key', 'de-DE');
+			const api = createTmdbApi(fetchFn, 'test-api-key', 'en-US');
 
 			const result = await api.getTrendingMovies();
 
@@ -64,7 +72,7 @@ describe('tmdb api trending and details', () => {
 						id: 550,
 						mediaType: 'movie',
 						title: 'Fight Club',
-						certification: 'FSK 16'
+						certification: 'PG'
 					}
 				]
 			});
@@ -73,14 +81,14 @@ describe('tmdb api trending and details', () => {
 	});
 
 	describe('getTrendingTVShows', () => {
-		it('lädt die Daily-Trending-Serienliste über den tv-Endpunkt', async () => {
+		it('loads the daily trending TV show list via the tv endpoint', async () => {
 			const fetchFn = vi
 				.fn()
 				.mockResolvedValueOnce(createJsonResponse(rawResponses.tvList))
 				.mockResolvedValueOnce(createJsonResponse(rawResponses.movieGenres))
 				.mockResolvedValueOnce(createJsonResponse(rawResponses.tvGenres))
 				.mockResolvedValueOnce(createJsonResponse(rawResponses.tvCertification));
-			const api = createTmdbApi(fetchFn, 'test-api-key', 'de-DE');
+			const api = createTmdbApi(fetchFn, 'test-api-key', 'en-US');
 
 			const result = await api.getTrendingTVShows();
 
@@ -91,8 +99,8 @@ describe('tmdb api trending and details', () => {
 					{
 						id: 421,
 						mediaType: 'tv',
-						title: 'Die Fliege',
-						certification: '16'
+						title: 'The Fly',
+						certification: 'PG'
 					}
 				]
 			});
@@ -100,17 +108,16 @@ describe('tmdb api trending and details', () => {
 		});
 	});
 
-
 	describe('getPopularMovies', () => {
-		// Anweisungsüberdeckung: Die Popular-Filmliste wird über den Movie-Popular-Endpunkt geladen und angereichert zurückgegeben.
-		it('lädt die Popular-Filmliste über den popular-Endpunkt', async () => {
+		// Statement coverage: the popular movie list is loaded via the movie-popular endpoint and returned enriched.
+		it('loads the popular movie list via the popular endpoint', async () => {
 			const fetchFn = vi
 				.fn()
 				.mockResolvedValueOnce(createJsonResponse(rawResponses.movieList))
 				.mockResolvedValueOnce(createJsonResponse(rawResponses.movieGenres))
 				.mockResolvedValueOnce(createJsonResponse(rawResponses.emptyTvGenres))
 				.mockResolvedValueOnce(createJsonResponse(rawResponses.movieCertification));
-			const api = createTmdbApi(fetchFn, 'test-api-key', 'de-DE');
+			const api = createTmdbApi(fetchFn, 'test-api-key', 'en-US');
 
 			const result = await api.getPopularMovies();
 
@@ -122,7 +129,7 @@ describe('tmdb api trending and details', () => {
 						id: 550,
 						mediaType: 'movie',
 						title: 'Fight Club',
-						certification: 'FSK 16'
+						certification: 'PG'
 					}
 				]
 			});
@@ -131,15 +138,15 @@ describe('tmdb api trending and details', () => {
 	});
 
 	describe('getTopRatedMovies', () => {
-		// Anweisungsüberdeckung: Die Top-Rated-Filmliste wird über den Movie-Top-Rated-Endpunkt geladen und mit Zertifizierung zurückgegeben.
-		it('lädt die Top-Rated-Filmliste über den top-rated-Endpunkt', async () => {
+		// Statement coverage: the top-rated movie list is loaded via the movie-top-rated endpoint and returned with certification.
+		it('loads the top-rated movie list via the top-rated endpoint', async () => {
 			const fetchFn = vi
 				.fn()
 				.mockResolvedValueOnce(createJsonResponse(rawResponses.movieList))
 				.mockResolvedValueOnce(createJsonResponse(rawResponses.movieGenres))
 				.mockResolvedValueOnce(createJsonResponse(rawResponses.emptyTvGenres))
 				.mockResolvedValueOnce(createJsonResponse(rawResponses.movieCertification));
-			const api = createTmdbApi(fetchFn, 'test-api-key', 'de-DE');
+			const api = createTmdbApi(fetchFn, 'test-api-key', 'en-US');
 
 			const result = await api.getTopRatedMovies();
 
@@ -151,7 +158,7 @@ describe('tmdb api trending and details', () => {
 						id: 550,
 						mediaType: 'movie',
 						title: 'Fight Club',
-						certification: 'FSK 16'
+						certification: 'PG'
 					}
 				]
 			});
@@ -160,15 +167,15 @@ describe('tmdb api trending and details', () => {
 	});
 
 	describe('getPopularTVShows', () => {
-		// Anweisungsüberdeckung: Die Popular-Serienliste wird über den TV-Popular-Endpunkt geladen und mit TV-Freigabe normalisiert.
-		it('lädt die Popular-Serienliste über den popular-Endpunkt', async () => {
+		// Statement coverage: the popular TV show list is loaded via the tv-popular endpoint and normalized with TV rating.
+		it('loads the popular TV show list via the popular endpoint', async () => {
 			const fetchFn = vi
 				.fn()
 				.mockResolvedValueOnce(createJsonResponse(rawResponses.tvList))
 				.mockResolvedValueOnce(createJsonResponse(rawResponses.movieGenres))
 				.mockResolvedValueOnce(createJsonResponse(rawResponses.tvGenres))
 				.mockResolvedValueOnce(createJsonResponse(rawResponses.tvCertification));
-			const api = createTmdbApi(fetchFn, 'test-api-key', 'de-DE');
+			const api = createTmdbApi(fetchFn, 'test-api-key', 'en-US');
 
 			const result = await api.getPopularTVShows();
 
@@ -179,8 +186,8 @@ describe('tmdb api trending and details', () => {
 					{
 						id: 421,
 						mediaType: 'tv',
-						title: 'Die Fliege',
-						certification: '16'
+						title: 'The Fly',
+						certification: 'PG'
 					}
 				]
 			});
@@ -189,15 +196,15 @@ describe('tmdb api trending and details', () => {
 	});
 
 	describe('getTopRatedTVShows', () => {
-		// Anweisungsüberdeckung: Die Top-Rated-Serienliste wird über den TV-Top-Rated-Endpunkt geladen und als TV-Kartenliste zurückgegeben.
-		it('lädt die Top-Rated-Serienliste über den top-rated-Endpunkt', async () => {
+		// Statement coverage: the top-rated TV show list is loaded via the tv-top-rated endpoint and returned as a TV card list.
+		it('loads the top-rated TV show list via the top-rated endpoint', async () => {
 			const fetchFn = vi
 				.fn()
 				.mockResolvedValueOnce(createJsonResponse(rawResponses.tvList))
 				.mockResolvedValueOnce(createJsonResponse(rawResponses.movieGenres))
 				.mockResolvedValueOnce(createJsonResponse(rawResponses.tvGenres))
 				.mockResolvedValueOnce(createJsonResponse(rawResponses.tvCertification));
-			const api = createTmdbApi(fetchFn, 'test-api-key', 'de-DE');
+			const api = createTmdbApi(fetchFn, 'test-api-key', 'en-US');
 
 			const result = await api.getTopRatedTVShows();
 
@@ -208,8 +215,8 @@ describe('tmdb api trending and details', () => {
 					{
 						id: 421,
 						mediaType: 'tv',
-						title: 'Die Fliege',
-						certification: '16'
+						title: 'The Fly',
+						certification: 'PG'
 					}
 				]
 			});
@@ -218,25 +225,27 @@ describe('tmdb api trending and details', () => {
 	});
 
 	describe('getFeaturedToday', () => {
-		// Anweisungsüberdeckung: Das heutige Featured-Element wird aus der Trending-Liste gewählt, im Detail nachgeladen und vollständig angereichert.
-		it('lädt den heutigen Featured-Film aus der Trending-Liste samt Details und Providern', async () => {
+		// Statement coverage: today's featured item is selected from the trending list, loaded in detail, and fully enriched.
+		it("loads today's featured movie from the trending list including details and providers", async () => {
 			const fetchFn = vi
 				.fn()
 				.mockResolvedValueOnce(createJsonResponse(rawResponses.featuredTodayMovieList))
-				.mockResolvedValueOnce(createJsonResponse({
-					...mappedFixtures.details,
-					media_type: 'movie',
-					credits: { cast: [], crew: [] }
-				}))
+				.mockResolvedValueOnce(
+					createJsonResponse({
+						...mappedFixtures.details,
+						media_type: 'movie',
+						credits: { cast: [], crew: [] }
+					})
+				)
 				.mockResolvedValueOnce(createJsonResponse(rawResponses.movieCertification))
 				.mockResolvedValueOnce(createJsonResponse(rawResponses.movieWatchProviders));
-			const api = createTmdbApi(fetchFn, 'test-api-key', 'de-DE');
+			const api = createTmdbApi(fetchFn, 'test-api-key', 'en-US');
 
 			await expect(api.getFeaturedToday()).resolves.toMatchObject({
 				id: 680,
 				mediaType: 'movie',
 				title: 'Pulp Fiction',
-				certification: 'FSK 16',
+				certification: 'PG',
 				providers: {
 					link: 'https://example.com/watch/de',
 					providers: [
@@ -248,14 +257,17 @@ describe('tmdb api trending and details', () => {
 						}
 					]
 				},
-				trailerUrls: ['https://www.youtube.com/watch?v=firstTrailer', 'https://www.youtube.com/watch?v=secondTrailer']
+				trailerUrls: [
+					'https://www.youtube.com/watch?v=firstTrailer',
+					'https://www.youtube.com/watch?v=secondTrailer'
+				]
 			});
 			expect(fetchFn.mock.calls[0][0]).toContain('/trending/all/day');
 			expect(fetchFn.mock.calls[1][0]).toContain('/movie/680');
 		});
 
-		// Zweigüberdeckung: Eine leere Trending-Liste liefert ohne weitere Detail-Requests kein Featured-Element.
-		it('gibt null zurück, wenn die Trending-Liste kein Featured-Element enthält', async () => {
+		// Branch coverage: an empty trending list returns no featured item without further detail requests.
+		it('returns null when the trending list contains no featured item', async () => {
 			const fetchFn = vi.fn().mockResolvedValueOnce(createJsonResponse({ results: [] }));
 			const api = createTmdbApi(fetchFn, 'test-api-key', 'de-DE');
 
@@ -266,28 +278,30 @@ describe('tmdb api trending and details', () => {
 	});
 
 	describe('getMovieDetails', () => {
-		// Anweisungsüberdeckung: Filmdetails werden inklusive Zertifizierung und Providern vollständig angereichert.
-		it('lädt Filmdetails samt Zertifizierung und Watch-Providern', async () => {
+		// Statement coverage: movie details are fully enriched including certification and providers.
+		it('loads movie details including certification and watch providers', async () => {
 			const fetchFn = vi
 				.fn()
-				.mockResolvedValueOnce(createJsonResponse({
-					...mappedFixtures.details,
-					media_type: 'movie',
-					episode_run_time: [],
-					credits: {
-						cast: [],
-						crew: []
-					}
-				}))
+				.mockResolvedValueOnce(
+					createJsonResponse({
+						...mappedFixtures.details,
+						media_type: 'movie',
+						episode_run_time: [],
+						credits: {
+							cast: [],
+							crew: []
+						}
+					})
+				)
 				.mockResolvedValueOnce(createJsonResponse(rawResponses.movieCertification))
 				.mockResolvedValueOnce(createJsonResponse(rawResponses.movieWatchProviders));
-			const api = createTmdbApi(fetchFn, 'test-api-key', 'de-DE');
+			const api = createTmdbApi(fetchFn, 'test-api-key', 'en-US');
 
 			await expect(api.getMovieDetails(680)).resolves.toMatchObject({
 				id: 680,
 				mediaType: 'movie',
 				title: 'Pulp Fiction',
-				certification: 'FSK 16',
+				certification: 'PG',
 				providers: {
 					link: 'https://example.com/watch/de',
 					providers: [
@@ -299,39 +313,44 @@ describe('tmdb api trending and details', () => {
 						}
 					]
 				},
-				trailerUrls: ['https://www.youtube.com/watch?v=firstTrailer', 'https://www.youtube.com/watch?v=secondTrailer']
+				trailerUrls: [
+					'https://www.youtube.com/watch?v=firstTrailer',
+					'https://www.youtube.com/watch?v=secondTrailer'
+				]
 			});
 		});
 	});
 
 	describe('getTVShowDetails', () => {
-		// Anweisungsüberdeckung: Seriendetails werden inklusive Content-Rating und Providern vollständig angereichert.
-		it('lädt TV-Details samt Zertifizierung und Watch-Providern', async () => {
+		// Statement coverage: TV details are fully enriched including content rating and providers.
+		it('loads TV details including certification and watch providers', async () => {
 			const fetchFn = vi
 				.fn()
-				.mockResolvedValueOnce(createJsonResponse({
-					...mappedFixtures.featuredItem,
-					media_type: 'tv',
-					vote_average: 8.2,
-					episode_run_time: [45],
-					production_companies: [{ id: 1, name: 'Wiedemann & Berg' }],
-					videos: {
-						results: [{ site: 'YouTube', type: 'Trailer', key: 'darkTrailer' }]
-					},
-					credits: {
-						cast: [],
-						crew: []
-					}
-				}))
+				.mockResolvedValueOnce(
+					createJsonResponse({
+						...mappedFixtures.featuredItem,
+						media_type: 'tv',
+						vote_average: 8.2,
+						episode_run_time: [45],
+						production_companies: [{ id: 1, name: 'Wiedemann & Berg' }],
+						videos: {
+							results: [{ site: 'YouTube', type: 'Trailer', key: 'darkTrailer' }]
+						},
+						credits: {
+							cast: [],
+							crew: []
+						}
+					})
+				)
 				.mockResolvedValueOnce(createJsonResponse(rawResponses.tvCertification))
 				.mockResolvedValueOnce(createJsonResponse(rawResponses.tvWatchProviders));
-			const api = createTmdbApi(fetchFn, 'test-api-key', 'de-DE');
+			const api = createTmdbApi(fetchFn, 'test-api-key', 'en-US');
 
 			await expect(api.getTVShowDetails(420)).resolves.toMatchObject({
 				id: 420,
 				mediaType: 'tv',
 				title: 'Dark',
-				certification: '16',
+				certification: 'PG',
 				providers: {
 					link: 'https://example.com/watch/dark',
 					providers: [

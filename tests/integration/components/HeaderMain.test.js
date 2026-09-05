@@ -3,13 +3,13 @@ import { cleanup, render, screen } from '@testing-library/svelte';
 import * as environment from '$app/environment';
 import HeaderMain from '$lib/components/HeaderMain.svelte';
 
-// Mock-Variablen mit vi.hoisted (wird vor vi.mock ausgef端hrt!)
+// Mock variables with vi.hoisted (executed before vi.mock!)
 const mocks = vi.hoisted(() => ({
 	mockResolveLocale: vi.fn(),
 	mockGetLocaleText: vi.fn()
 }));
 
-// Mocks m端ssen ganz oben stehen (werden hoisted!)
+// Mocks must be at the top (they get hoisted!)
 vi.mock('$lib/i18n/helpers', async (importOriginal) => {
 	const actual = await importOriginal();
 	return {
@@ -38,7 +38,7 @@ vi.mock('$app/state', async (importOriginal) => {
 
 import { page } from '$app/state';
 
-// Test-Daten f端r navItems
+// Test data for navItems
 const createNavItems = () => [
 	{
 		id: 'home',
@@ -73,10 +73,10 @@ describe('HeaderMain', () => {
 		cleanup();
 
 		// i18n Mock Setup
-		mocks.mockResolveLocale.mockReturnValue('de-DE');
+		mocks.mockResolveLocale.mockReturnValue('en-US');
 		mocks.mockGetLocaleText.mockReturnValue({
 			labels: {
-				mainNavigation: 'Hauptnavigation'
+				mainNavigation: 'Main navigation'
 			}
 		});
 
@@ -89,8 +89,8 @@ describe('HeaderMain', () => {
 		sessionStorage.clear();
 	});
 
-	// Anweisungsberdeckung: Header rendert Navigationsitems mit korrekten Labels und Icons.
-	it('rendert Navigationsitems mit Labels und Icons', () => {
+	// Statement coverage: Header renders navigation items with correct labels and icons.
+	it('renders navigation items with labels and icons', () => {
 		const navItems = createNavItems();
 		render(HeaderMain, { props: { navItems } });
 
@@ -102,8 +102,8 @@ describe('HeaderMain', () => {
 		expect(homeLink.querySelector('.home.icon')).toBeInTheDocument();
 	});
 
-	// Anweisungsberdeckung: Der aktive Navigationslink erh盲lt die Klasse link-active und aria-current="page".
-	it('markiert den aktiven Link mit link-active und aria-current', () => {
+	// Statement coverage: The active navigation link receives the link-active class and aria-current="page".
+	it('marks the active link with link-active and aria-current', () => {
 		page.url = new URL('https://example.com/movies');
 
 		const navItems = createNavItems();
@@ -118,8 +118,8 @@ describe('HeaderMain', () => {
 		expect(homeLink).not.toHaveAttribute('aria-current');
 	});
 
-	// Anweisungsberdeckung: getNavHref f端gt gespeicherte Seitennummer als Query-Parameter hinzu.
-	it('verwendet gespeicherte Seitennummer in der URL', () => {
+	// Statement coverage: getNavHref adds stored page number as a query parameter.
+	it('uses stored page number in the URL', () => {
 		sessionStorage.setItem('movies-page', '3');
 		const navItems = createNavItems();
 		render(HeaderMain, { props: { navItems } });
@@ -128,20 +128,20 @@ describe('HeaderMain', () => {
 		expect(moviesLink).toHaveAttribute('href', '/movies?page=3');
 	});
 
-	// Anweisungsberdeckung: getNavHref entfernt vorhandene page-Parameter und ersetzt sie durch den gespeicherten Wert.
-	it('ersetzt vorhandene page-Parameter durch gespeicherten Wert', () => {
-		page.url = new URL('https://example.com/?page=2&locale=de');
+	// Statement coverage: getNavHref removes existing page parameters and replaces them with the stored value.
+	it('replaces existing page parameters with stored value', () => {
+		page.url = new URL('https://example.com/?page=2&locale=en');
 		sessionStorage.setItem('movies-page', '5');
 
 		const navItems = createNavItems();
 		render(HeaderMain, { props: { navItems } });
 
 		const moviesLink = screen.getByRole('link', { name: /movies/i });
-		expect(moviesLink).toHaveAttribute('href', '/movies?locale=de&page=5');
+		expect(moviesLink).toHaveAttribute('href', '/movies?locale=en&page=5');
 	});
 
-	// Anweisungsberdeckung: getNavHref gibt Pfad ohne Query-Parameter zur端ck wenn keine Seite gespeichert ist.
-	it('rendert URL ohne Query-Parameter wenn keine Seite gespeichert ist', () => {
+	// Statement coverage: getNavHref returns path without query parameters when no page is stored.
+	it('renders URL without query parameters when no page is stored', () => {
 		const navItems = createNavItems();
 		render(HeaderMain, { props: { navItems } });
 
@@ -149,8 +149,8 @@ describe('HeaderMain', () => {
 		expect(homeLink).toHaveAttribute('href', '/');
 	});
 
-	// Anweisungsberdeckung: getStoredPage gibt 1 zur端ck wenn kein Browser-Kontext verf端gbar ist.
-	it('verwendet Seite 1 wenn browser false ist', async () => {
+	// Statement coverage: getStoredPage returns 1 when no browser context is available.
+	it('uses page 1 when browser is false', async () => {
 		vi.spyOn(environment, 'browser', 'get').mockReturnValue(false);
 		sessionStorage.setItem('movies-page', '10');
 
@@ -161,44 +161,44 @@ describe('HeaderMain', () => {
 		expect(moviesLink).toHaveAttribute('href', '/movies');
 	});
 
-	// Hinweis: children Slot wird nicht im Detail getestet (Svelte 5 Snippet Komplexit盲t).
-	// Integrationstests oder E2E-Tests 端berpr端fen die korrekte Rendering von TypeHeadSearch
-	// und anderen Child-Komponenten im HeaderMain-Kontext.
-	// Siehe: tests/integration/header-with-children.test.js (TODO)
-	it('akzeptiert children Slot ohne Fehler', () => {
+	// Note: children slot is not tested in detail (Svelte 5 snippet complexity).
+	// Integration tests or E2E tests verify the correct rendering of TypeHeadSearch
+	// and other child components in the HeaderMain context.
+	// See: tests/integration/header-with-children.test.js (TODO)
+	it('accepts children slot without errors', () => {
 		const navItems = createNavItems();
 		const children = () => 'Test Content';
-		
-		// Sollte ohne Fehler rendern
+
+		// Should render without errors
 		expect(() => {
 			render(HeaderMain, { props: { navItems, children } });
 		}).not.toThrow();
 	});
 
-	// Hinweis: LanguageSwitcher wird nicht im Detail getestet (eigene Test-Datei).
-	// Die Komponente wird hier nur als "Black Box" verwendet.
-	// Siehe: tests/components/LanguageSwitcher.test.js (TODO)
-	it('rendert LanguageSwitcher', () => {
+	// Note: LanguageSwitcher is not tested in detail (own test file).
+	// The component is only used as a "black box" here.
+	// See: tests/components/LanguageSwitcher.test.js (TODO)
+	it('renders LanguageSwitcher', () => {
 		const navItems = createNavItems();
 		const { container } = render(HeaderMain, { props: { navItems } });
 
-		// LanguageSwitcher ist im DOM vorhanden (wir pr端fen nur dass kein Fehler auftritt)
+		// LanguageSwitcher is present in the DOM (we only check that no error occurs)
 		expect(container).toBeInTheDocument();
 	});
 
-	// Anweisungsberdeckung: handleWindowPointerdown schlie脽t Men端 bei Klick au脽erhalb.
-	it('schlie脽t Men端 bei Pointer-Event au脽erhalb des Headers', () => {
+	// Statement coverage: handleWindowPointerdown closes menu on click outside.
+	it('closes menu on pointer event outside the header', () => {
 		const navItems = createNavItems();
 		const { container } = render(HeaderMain, { props: { navItems } });
 
 		const menuToggle = container.querySelector('#menu-toggle');
 		expect(menuToggle).toBeInTheDocument();
 
-		// Men端 枚ffnen
+		// Open menu
 		menuToggle.checked = true;
 		expect(menuToggle.checked).toBe(true);
 
-		// Pointer-Event au脽erhalb simulieren
+		// Simulate pointer event outside
 		const outsideElement = document.createElement('div');
 		document.body.appendChild(outsideElement);
 
@@ -215,15 +215,15 @@ describe('HeaderMain', () => {
 		document.body.removeChild(outsideElement);
 	});
 
-	// Anweisungsberdeckung: handleWindowPointerdown schlie脽t Men端 nicht bei Klick innerhalb.
-	it('schlie脽t Men端 nicht bei Pointer-Event innerhalb des Headers', () => {
+	// Statement coverage: handleWindowPointerdown does not close menu on click inside.
+	it('does not close menu on pointer event inside the header', () => {
 		const navItems = createNavItems();
 		const { container } = render(HeaderMain, { props: { navItems } });
 
 		const menuToggle = container.querySelector('#menu-toggle');
 		menuToggle.checked = true;
 
-		// Pointer-Event innerhalb des Headers simulieren
+		// Simulate pointer event inside the header
 		const header = container.querySelector('#menuHeader');
 		const event = new PointerEvent('pointerdown', { bubbles: true });
 		Object.defineProperty(event, 'target', {
@@ -236,12 +236,12 @@ describe('HeaderMain', () => {
 		expect(menuToggle.checked).toBe(true);
 	});
 
-	// Anweisungsberdeckung: aria-label der Navigation wird aus i18n geladen.
-	it('verwendet i18n label f端r aria-label der Navigation', () => {
+	// Statement coverage: aria-label of navigation is loaded from i18n.
+	it('uses i18n label for navigation aria-label', () => {
 		const navItems = createNavItems();
 		render(HeaderMain, { props: { navItems } });
 
 		const nav = screen.getByRole('navigation');
-		expect(nav).toHaveAttribute('aria-label', 'Hauptnavigation');
+		expect(nav).toHaveAttribute('aria-label', 'Main navigation');
 	});
 });

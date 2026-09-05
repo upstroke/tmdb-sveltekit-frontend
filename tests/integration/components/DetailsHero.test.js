@@ -27,8 +27,8 @@ describe('DetailsHero', () => {
 		cleanupAll();
 	});
 
-	// Anweisungsueberdeckung: Title wird korrekt gerendert
-	it('rendert Title korrekt', () => {
+	// Statement coverage: title is rendered correctly
+	it('renders title correctly', () => {
 		const title = 'Inception';
 		const backdrop = '/backdrop.jpg';
 		const posterUrl = '/poster.jpg';
@@ -38,93 +38,117 @@ describe('DetailsHero', () => {
 		expect(screen.getByText(title, { selector: 'h1#details-hero-title' })).toBeInTheDocument();
 	});
 
-	// Anweisungsueberdeckung: Title wird zu notAvailable wenn leer
-	it('zeigt notAvailable-Text wenn title leer ist', () => {
-		render(DetailsHero, { props: { title: '', backdrop: '/backdrop.jpg', posterUrl: '/poster.jpg' } });
+	// Statement coverage: title shows notAvailable when empty
+	it('shows notAvailable text when title is empty', () => {
+		render(DetailsHero, {
+			props: { title: '', backdrop: '/backdrop.jpg', posterUrl: '/poster.jpg' }
+		});
 
-		expect(screen.getByText(labels.notAvailable, { selector: 'h1#details-hero-title' })).toBeInTheDocument();
+		expect(
+			screen.getByText(labels.notAvailable, { selector: 'h1#details-hero-title' })
+		).toBeInTheDocument();
 	});
 
-	// Anweisungsueberdeckung: Title wird zu notAvailable wenn nur whitespace
-	it('zeigt notAvailable-Text wenn title nur whitespace ist', () => {
-		render(DetailsHero, { props: { title: '   ', backdrop: '/backdrop.jpg', posterUrl: '/poster.jpg' } });
+	// Statement coverage: title shows notAvailable when only whitespace
+	it('shows notAvailable text when title is only whitespace', () => {
+		render(DetailsHero, {
+			props: { title: '   ', backdrop: '/backdrop.jpg', posterUrl: '/poster.jpg' }
+		});
 
-		expect(screen.getByText(labels.notAvailable, { selector: 'h1#details-hero-title' })).toBeInTheDocument();
+		expect(
+			screen.getByText(labels.notAvailable, { selector: 'h1#details-hero-title' })
+		).toBeInTheDocument();
 	});
 
-	// Anweisungsueberdeckung: Produktionsfirmen werden gerendert
-	it('rendert Produktionsfirmen', () => {
+	// Statement coverage: production companies are rendered
+	it('renders production companies', () => {
 		const productionCompanies = [
 			{ id: 1, name: 'Warner Bros.' },
 			{ id: 2, name: 'Legendary Pictures' }
 		];
 
-		render(DetailsHero, { props: {
-			title: 'Inception',
-			backdrop: '/backdrop.jpg',
-			posterUrl: '/poster.jpg',
-			productionCompanies
-		}});
+		render(DetailsHero, {
+			props: {
+				title: 'Inception',
+				backdrop: '/backdrop.jpg',
+				posterUrl: '/poster.jpg',
+				productionCompanies
+			}
+		});
 
 		expect(screen.getByText('Warner Bros.')).toBeInTheDocument();
 		expect(screen.getByText('Legendary Pictures')).toBeInTheDocument();
 	});
 
-	// Anweisungsueberdeckung: emptyLabel wird gerendert wenn keine Produktionsfirmen
-	it('zeigt emptyLabel wenn keine Produktionsfirmen', () => {
+	// Statement coverage: emptyLabel is rendered when no production companies
+	it('shows emptyLabel when no production companies', () => {
 		const emptyLabel = 'Keine Informationen';
 
-		render(DetailsHero, { props: {
-			title: 'Inception',
-			backdrop: '/backdrop.jpg',
-			posterUrl: '/poster.jpg',
-			productionCompanies: [],
-			emptyLabel
-		}});
+		render(DetailsHero, {
+			props: {
+				title: 'Inception',
+				backdrop: '/backdrop.jpg',
+				posterUrl: '/poster.jpg',
+				productionCompanies: [],
+				emptyLabel
+			}
+		});
 
-		expect(screen.getByText(emptyLabel, { selector: 'li.details-hero-company' })).toBeInTheDocument();
+		expect(
+			screen.getByText(emptyLabel, { selector: 'li.details-hero-company' })
+		).toBeInTheDocument();
 	});
 
-	// Anweisungsueberdeckung: notAvailable-Text wird gerendert wenn emptyLabel leer und keine Produktionsfirmen
-	it('zeigt notAvailable-Text wenn emptyLabel leer und keine Produktionsfirmen', () => {
-		render(DetailsHero, { props: {
-			title: 'Inception',
-			backdrop: '/backdrop.jpg',
-			posterUrl: '/poster.jpg',
-			productionCompanies: [],
-			emptyLabel: ''
-		}});
+	// Statement coverage: notAvailable text is rendered when emptyLabel is empty and no production companies
+	it('shows notAvailable text when emptyLabel is empty and no production companies', () => {
+		render(DetailsHero, {
+			props: {
+				title: 'Inception',
+				backdrop: '/backdrop.jpg',
+				posterUrl: '/poster.jpg',
+				productionCompanies: [],
+				emptyLabel: ''
+			}
+		});
 
-		expect(screen.getByText(labels.notAvailable, { selector: 'li.details-hero-company' })).toBeInTheDocument();
+		expect(
+			screen.getByText(labels.notAvailable, { selector: 'li.details-hero-company' })
+		).toBeInTheDocument();
 	});
 
-	// Anweisungsueberdeckung: Backdrop wird als Hintergrund verwendet
-	it('setzt backdrop als Hintergrund', () => {
+	// Statement coverage: backdrop is used as background
+	it('sets backdrop as background', () => {
 		const backdrop = '/backdrop.jpg';
 
-		const { container } = render(DetailsHero, { props: { title: 'Inception', backdrop, posterUrl: '/poster.jpg' } });
+		const { container } = render(DetailsHero, {
+			props: { title: 'Inception', backdrop, posterUrl: '/poster.jpg' }
+		});
 		const section = container.querySelector('.details-hero');
 		expect(section).toHaveStyle(`--details-hero-backdrop: url('${backdrop}')`);
 	});
 
-	// Anweisungsueberdeckung: Poster wird als Fallback verwendet wenn kein backdrop
-	it('verwendet posterUrl als Fallback wenn kein backdrop', () => {
+	// Statement coverage: posterUrl is used as fallback when no backdrop
+	it('uses posterUrl as fallback when no backdrop', () => {
 		const posterUrl = '/poster.jpg';
 
-		const { container } = render(DetailsHero, { props: { title: 'Inception', backdrop: '', posterUrl } });
+		const { container } = render(DetailsHero, {
+			props: { title: 'Inception', backdrop: '', posterUrl }
+		});
 		const section = container.querySelector('.details-hero');
 		expect(section).toHaveStyle(`--details-hero-backdrop: url('${posterUrl}')`);
 	});
 
-	// Anweisungsueberdeckung: notAvailable.png wird als Fallback verwendet wenn kein backdrop und kein posterUrl
-	it('verwendet notAvailable.png als Fallback wenn kein backdrop und kein posterUrl', () => {
-		const { container } = render(DetailsHero, { props: { title: 'Inception', backdrop: '', posterUrl: '' } });
+	// Statement coverage: notAvailable.png is used as fallback when no backdrop and no posterUrl
+	it('uses notAvailable.png as fallback when no backdrop and no posterUrl', () => {
+		const { container } = render(DetailsHero, {
+			props: { title: 'Inception', backdrop: '', posterUrl: '' }
+		});
 		const section = container.querySelector('.details-hero');
 		expect(section).toHaveStyle(`--details-hero-backdrop: url('${notAvailable}')`);
 	});
 
-	// Anweisungsueberdeckung: Poster-Bild wird korrekt gerendert
-	it('rendert Poster-Bild korrekt', () => {
+	// Statement coverage: poster image is rendered correctly
+	it('renders poster image correctly', () => {
 		const posterUrl = '/poster.jpg';
 
 		render(DetailsHero, { props: { title: 'Inception', backdrop: '/backdrop.jpg', posterUrl } });
@@ -133,25 +157,33 @@ describe('DetailsHero', () => {
 		expect(posterImg).toHaveAttribute('src', posterUrl);
 	});
 
-	// Anweisungsueberdeckung: notAvailable.png wird als Poster-Fallback verwendet
-	it('verwendet notAvailable.png als Poster-Fallback', () => {
-		render(DetailsHero, { props: { title: 'Inception', backdrop: '/backdrop.jpg', posterUrl: '' } });
+	// Statement coverage: notAvailable.png is used as poster fallback
+	it('uses notAvailable.png as poster fallback', () => {
+		render(DetailsHero, {
+			props: { title: 'Inception', backdrop: '/backdrop.jpg', posterUrl: '' }
+		});
 
 		const posterImg = screen.getByAltText('');
 		expect(posterImg).toHaveAttribute('src', notAvailable);
 	});
 
-	// Anweisungsueberdeckung: Section hat korrekte aria-labelledby
-	it('hat korrekte aria-labelledby', () => {
-		const { container } = render(DetailsHero, { props: { title: 'Inception', backdrop: '/backdrop.jpg', posterUrl: '/poster.jpg' } });
+	// Statement coverage: section has correct aria-labelledby
+	it('has correct aria-labelledby', () => {
+		const { container } = render(DetailsHero, {
+			props: { title: 'Inception', backdrop: '/backdrop.jpg', posterUrl: '/poster.jpg' }
+		});
 		const section = container.querySelector('[aria-labelledby="details-hero-title"]');
 		expect(section).toHaveAttribute('aria-labelledby', 'details-hero-title');
 	});
 
-	// Anweisungsueberdeckung: Companies Section hat korrekte aria-labelledby
-	it('hat korrekte aria-labelledby fuer companies section', () => {
-		const { container } = render(DetailsHero, { props: { title: 'Inception', backdrop: '/backdrop.jpg', posterUrl: '/poster.jpg' } });
-		const companiesSection = container.querySelector('[aria-labelledby="details-hero-companies-heading"]');
+	// Statement coverage: companies section has correct aria-labelledby
+	it('has correct aria-labelledby for companies section', () => {
+		const { container } = render(DetailsHero, {
+			props: { title: 'Inception', backdrop: '/backdrop.jpg', posterUrl: '/poster.jpg' }
+		});
+		const companiesSection = container.querySelector(
+			'[aria-labelledby="details-hero-companies-heading"]'
+		);
 		expect(companiesSection).toBeInTheDocument();
 	});
 });

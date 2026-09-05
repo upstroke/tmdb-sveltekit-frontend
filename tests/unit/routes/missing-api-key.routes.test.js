@@ -24,6 +24,19 @@ vi.mock('$lib/services/tmdb-api.js', () => ({
 	createTmdbApi: mockCreateTmdbApi
 }));
 
+/**
+ * Creates a mock messages object for i18n.
+ *
+ * @returns {{
+ *   apiKeyMissing: string,
+ *   contentLoadError: string,
+ *   movieLoadError: string,
+ *   tvShowLoadError: string,
+ *   moreMoviesLoadError: string,
+ *   moreTvShowsLoadError: string,
+ *   loadMoreError: string
+ * }}
+ */
 function createMessages() {
 	return {
 		apiKeyMissing: 'API key missing',
@@ -36,6 +49,13 @@ function createMessages() {
 	};
 }
 
+/**
+ * Creates a test URL with path and optional search params.
+ *
+ * @param {string} path - URL path.
+ * @param {string} [search] - Search query string.
+ * @returns {URL}
+ */
 function createUrl(path, search = '') {
 	return new URL(`https://example.com${path}${search}`);
 }
@@ -48,8 +68,8 @@ describe('route missing API key handling', () => {
 		mockGetLocaleText.mockReturnValue({ messages: createMessages() });
 	});
 
-	// Anweisungsüberdeckung: Fehlt der API-Key, liefert die Startseite leere Daten mit lokalisierter Fehlermeldung zurück.
-	it('liefert für die Startseite eine lokalisierte Fehlermeldung zurück', async () => {
+	// Statement coverage: missing API key returns empty data with localized error message for the homepage.
+	it('returns a localized error message for the homepage', async () => {
 		const { load } = await import('../../../src/routes/+page.server.js');
 
 		const result = await load({ fetch: vi.fn(), url: createUrl('/', '?page=3&locale=de') });
@@ -65,8 +85,8 @@ describe('route missing API key handling', () => {
 		expect(mockCreateTmdbApi).not.toHaveBeenCalled();
 	});
 
-	// Anweisungsüberdeckung: Fehlt der API-Key, liefert die Filmseite leere Daten mit lokalisierter Fehlermeldung zurück.
-	it('liefert für die Filmseite eine lokalisierte Fehlermeldung zurück', async () => {
+	// Statement coverage: missing API key returns empty data with localized error message for the movies page.
+	it('returns a localized error message for the movies page', async () => {
 		const { load } = await import('../../../src/routes/movies/+page.server.js');
 
 		const result = await load({ fetch: vi.fn(), url: createUrl('/movies', '?page=3&locale=de') });
@@ -82,8 +102,8 @@ describe('route missing API key handling', () => {
 		expect(mockCreateTmdbApi).not.toHaveBeenCalled();
 	});
 
-	// Anweisungsüberdeckung: Fehlt der API-Key, liefert die TV-Seite leere Daten mit lokalisierter Fehlermeldung zurück.
-	it('liefert für die TV-Seite eine lokalisierte Fehlermeldung zurück', async () => {
+	// Statement coverage: missing API key returns empty data with localized error message for the TV shows page.
+	it('returns a localized error message for the TV shows page', async () => {
 		const { load } = await import('../../../src/routes/tv-shows/+page.server.js');
 
 		const result = await load({ fetch: vi.fn(), url: createUrl('/tv-shows', '?page=3&locale=de') });
@@ -99,8 +119,8 @@ describe('route missing API key handling', () => {
 		expect(mockCreateTmdbApi).not.toHaveBeenCalled();
 	});
 
-	// Anweisungsüberdeckung: Fehlt der API-Key, liefert die Filmdetailseite eine lokalisierte Fehlermeldung zurück.
-	it('liefert für die Filmdetailseite eine lokalisierte Fehlermeldung zurück', async () => {
+	// Statement coverage: missing API key returns empty data with localized error message for the movie detail page.
+	it('returns a localized error message for the movie detail page', async () => {
 		const { load } = await import('../../../src/routes/movies/[id]/+page.server.js');
 
 		const result = await load({
@@ -117,8 +137,8 @@ describe('route missing API key handling', () => {
 		expect(mockCreateTmdbApi).not.toHaveBeenCalled();
 	});
 
-	// Anweisungsüberdeckung: Fehlt der API-Key, liefert die TV-Detailseite eine lokalisierte Fehlermeldung zurück.
-	it('liefert für die TV-Detailseite eine lokalisierte Fehlermeldung zurück', async () => {
+	// Statement coverage: missing API key returns empty data with localized error message for the TV show detail page.
+	it('returns a localized error message for the TV show detail page', async () => {
 		const { load } = await import('../../../src/routes/tv-shows/[id]/+page.server.js');
 
 		const result = await load({
@@ -135,8 +155,8 @@ describe('route missing API key handling', () => {
 		expect(mockCreateTmdbApi).not.toHaveBeenCalled();
 	});
 
-	// Anweisungsüberdeckung: Fehlt der API-Key, liefert die Suchroute Status 500 mit lokalisierter Fehlermeldung zurück.
-	it('liefert für die Suchroute eine lokalisierte Fehlermeldung zurück', async () => {
+	// Statement coverage: missing API key returns status 500 with localized error message for the search route.
+	it('returns a localized error message for the search route', async () => {
 		const { GET } = await import('../../../src/routes/search/+server.js');
 
 		const response = await GET({ fetch: vi.fn(), url: createUrl('/search', '?q=dark&locale=de') });
@@ -151,8 +171,8 @@ describe('route missing API key handling', () => {
 		expect(mockCreateTmdbApi).not.toHaveBeenCalled();
 	});
 
-	// Anweisungsüberdeckung: Fehlt der API-Key, liefert die Movie-API-Route Status 500 mit lokalisierter Fehlermeldung zurück.
-	it('liefert für die Movie-API-Route eine lokalisierte Fehlermeldung zurück', async () => {
+	// Statement coverage: missing API key returns status 500 with localized error message for the movies API route.
+	it('returns a localized error message for the movies API route', async () => {
 		const { GET } = await import('../../../src/routes/movies/+server.js');
 
 		const response = await GET({ fetch: vi.fn(), url: createUrl('/movies', '?page=3&locale=de') });
@@ -167,11 +187,14 @@ describe('route missing API key handling', () => {
 		expect(mockCreateTmdbApi).not.toHaveBeenCalled();
 	});
 
-	// Anweisungsüberdeckung: Fehlt der API-Key, liefert die TV-API-Route Status 500 mit lokalisierter Fehlermeldung zurück.
-	it('liefert für die TV-API-Route eine lokalisierte Fehlermeldung zurück', async () => {
+	// Statement coverage: missing API key returns status 500 with localized error message for the TV shows API route.
+	it('returns a localized error message for the TV shows API route', async () => {
 		const { GET } = await import('../../../src/routes/tv-shows/+server.js');
 
-		const response = await GET({ fetch: vi.fn(), url: createUrl('/tv-shows', '?page=3&locale=de') });
+		const response = await GET({
+			fetch: vi.fn(),
+			url: createUrl('/tv-shows', '?page=3&locale=de')
+		});
 
 		await expectMissingApiKeyJsonResponse(response, 500, {
 			cards: [],
@@ -183,11 +206,14 @@ describe('route missing API key handling', () => {
 		expect(mockCreateTmdbApi).not.toHaveBeenCalled();
 	});
 
-	// Anweisungsüberdeckung: Fehlt der API-Key, liefert die Trending-API-Route Status 500 mit lokalisierter Fehlermeldung zurück.
-	it('liefert für die Trending-API-Route eine lokalisierte Fehlermeldung zurück', async () => {
+	// Statement coverage: missing API key returns status 500 with localized error message for the trending API route.
+	it('returns a localized error message for the trending API route', async () => {
 		const { GET } = await import('../../../src/routes/trending/+server.js');
 
-		const response = await GET({ fetch: vi.fn(), url: createUrl('/trending', '?page=3&locale=de') });
+		const response = await GET({
+			fetch: vi.fn(),
+			url: createUrl('/trending', '?page=3&locale=de')
+		});
 
 		await expectMissingApiKeyJsonResponse(response, 500, {
 			cards: [],

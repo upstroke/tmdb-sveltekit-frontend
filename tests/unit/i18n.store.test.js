@@ -1,6 +1,24 @@
 import { get } from 'svelte/store';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+/**
+ * Mock implementation of the locale store for testing purposes.
+ *
+ * This mock simulates a Svelte store that holds the current locale value.
+ * It supports subscription-based reactivity and manual value updates.
+ *
+ * @type {{
+ *   store: {
+ *     subscribe: (run: (value: string) => void) => () => void
+ *   },
+ *   set: (nextLocale: string) => void,
+ *   reset: () => void
+ * }}
+ *
+ * @property store - A Svelte-readable store containing the current locale
+ * @property set - Updates the locale value and notifies all subscribers
+ * @property reset - Resets the locale to 'de-DE' and clears all subscribers
+ */
 const localeStore = vi.hoisted(() => {
 	const subscribers = new Set();
 	let value = 'de-DE';
@@ -27,6 +45,15 @@ const localeStore = vi.hoisted(() => {
 	};
 });
 
+/**
+ * Mock function for getLocaleText that simulates the i18n resolver.
+ *
+ * This mock returns a minimal text catalog object for any given locale.
+ * It is used to verify that the i18n store correctly calls the resolver
+ * with the current locale value.
+ *
+ * @type {import('vitest').Mock<(locale: string) => { locale: string, labels: Object }>}
+ */
 const getLocaleTextMock = vi.hoisted(() => vi.fn((locale) => ({ locale, labels: {} })));
 
 vi.mock('$lib/stores/locale', () => ({
@@ -51,7 +78,7 @@ describe('i18n store', () => {
 		getLocaleTextMock.mockImplementation((locale) => ({ locale, labels: {} }));
 	});
 
-	// Anweisungs- und Zweigüberdeckung: Der Store liefert Texte für die aktuelle Locale und reagiert auf Änderungen.
+	// Statement coverage: the store returns texts for the current locale and reacts to changes.
 	it('liefert für die aktuelle Locale die aufgelösten Texte und reagiert auf Änderungen', () => {
 		expect(get(i18n)).toEqual({ locale: 'de-DE', labels: {} });
 		expect(getLocaleTextMock).toHaveBeenCalledWith('de-DE');

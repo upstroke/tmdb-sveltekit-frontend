@@ -20,10 +20,21 @@ vi.mock('$lib/services/tmdb-api.js', () => ({
 	createTmdbApi: mockCreateTmdbApi
 }));
 
+/**
+ * Creates a test URL for the search route.
+ *
+ * @param {string} [search] - Search query string.
+ * @returns {URL}
+ */
 function createUrl(search = '') {
 	return new URL(`https://example.com/search${search}`);
 }
 
+/**
+ * Creates a mock messages object for i18n.
+ *
+ * @returns {{ apiKeyMissing: string, searchError: string }}
+ */
 function createMessages() {
 	return {
 		apiKeyMissing: 'API key missing',
@@ -35,24 +46,24 @@ describe('search server route GET', () => {
 	beforeEach(() => {
 		vi.resetModules();
 		vi.clearAllMocks();
-		mockResolveLocale.mockReturnValue('de-DE');
+		mockResolveLocale.mockReturnValue('en-US');
 		mockGetLocaleText.mockReturnValue({ messages: createMessages() });
 	});
 
-	// Anweisungsüberdeckung: Fehlt die Query oder ist sie kürzer als vier Zeichen, liefert die Route sofort leere Ergebnislisten zurück.
-	it('liefert bei leerer oder zu kurzer Query leere Ergebnislisten zurück', async () => {
+	// Statement coverage: if the query is missing or shorter than four characters, the route immediately returns empty result lists.
+	it('returns empty result lists for an empty or too short query', async () => {
 		const { GET } = await import('../../../src/routes/search/+server.js');
 
 		const shortQueryResponse = await GET({
 			fetch: vi.fn(),
-			url: createUrl('?q=abc&locale=de')
+			url: createUrl('?q=abc&locale=en')
 		});
 		const missingQueryResponse = await GET({
 			fetch: vi.fn(),
-			url: createUrl('?locale=de')
+			url: createUrl('?locale=en')
 		});
 
-		expect(mockResolveLocale).toHaveBeenCalledWith('de');
+		expect(mockResolveLocale).toHaveBeenCalledWith('en');
 		expect(mockCreateTmdbApi).not.toHaveBeenCalled();
 		expect(await shortQueryResponse.json()).toEqual({
 			movies: [],
@@ -66,8 +77,8 @@ describe('search server route GET', () => {
 		});
 	});
 
-	// Anweisungsüberdeckung: Die Route trennt die gemischten Suchtreffer in Filme, TV-Shows und die Gesamtliste auf.
-	it('trennt Suchergebnisse in Filme und TV-Shows auf', async () => {
+	// Statement coverage: the route separates mixed search results into movies, TV shows, and the combined list.
+	it('separates search results into movies and TV shows', async () => {
 		const results = [
 			{ id: 680, mediaType: 'movie', title: 'Pulp Fiction' },
 			{ id: 420, mediaType: 'tv', title: 'Dark' },
@@ -96,8 +107,8 @@ describe('search server route GET', () => {
 		});
 	});
 
-	// Anweisungsüberdeckung: Schlägt die Suche fehl, liefert die Route eine lokalisierte Fehlermeldung mit Status 500 zurück.
-	it('liefert bei Suchfehlern eine lokalisierte Fehlermeldung zurück', async () => {
+	// Statement coverage: if the search fails, the route returns a localized error message with status 500.
+	it('returns a localized error message when search fails', async () => {
 		const api = {
 			searchMedia: vi.fn().mockRejectedValue(new Error('search failed'))
 		};

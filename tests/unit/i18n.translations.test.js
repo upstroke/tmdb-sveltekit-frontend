@@ -2,13 +2,13 @@ import { describe, expect, it } from 'vitest';
 import uiText from '$lib/i18n/ui.json';
 
 /**
- * Teststrategie: Konsistenzprüfung der Übersetzungskataloge.
- * Der Test stellt sicher, dass alle Locales dieselben UI-Sektionen und
- * Schlüsselmengen wie die Standard-Locale bereitstellen.
+ * Test strategy: consistency check of translation catalogs.
+ * The test ensures that all locales provide the same UI sections and
+ * key sets as the default locale.
  */
 describe('i18n translations', () => {
-	// Anweisungsüberdeckung: Testfall für den folgenden it-Block.
-	it('enthält in allen Locales dieselben UI-Bereiche und Übersetzungsschlüssel', () => {
+	// Statement coverage: test case for the following it block.
+	it('contains the same UI sections and translation keys in all locales', () => {
 		const locales = Object.entries(uiText.locales);
 		const [, defaultCatalog] = locales[0];
 		const sections = ['fallbacks', 'labels', 'messages', 'formats', 'titles', 'buttons'];

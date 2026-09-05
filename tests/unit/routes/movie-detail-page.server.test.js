@@ -21,10 +21,21 @@ vi.mock('$lib/services/tmdb-api.js', () => ({
 	createTmdbApi: mockCreateTmdbApi
 }));
 
+/**
+ * Creates a test URL for the movie detail route.
+ *
+ * @param {string} [search] - Search query string.
+ * @returns {URL}
+ */
 function createUrl(search = '') {
 	return new URL(`https://example.com/movies/680${search}`);
 }
 
+/**
+ * Creates a mock messages object for i18n.
+ *
+ * @returns {{ apiKeyMissing: string, movieLoadError: string }}
+ */
 function createMessages() {
 	return {
 		apiKeyMissing: 'API key missing',
@@ -32,6 +43,12 @@ function createMessages() {
 	};
 }
 
+/**
+ * Creates a mock movie details object with optional overrides.
+ *
+ * @param {Object} [overrides] - Properties to override.
+ * @returns {Object}
+ */
 function createMovieDetails(overrides = {}) {
 	return {
 		id: mappedFixtures.details.id,
@@ -52,20 +69,20 @@ describe('movie detail route load', () => {
 	beforeEach(() => {
 		vi.resetModules();
 		vi.clearAllMocks();
-		mockResolveLocale.mockReturnValue('de-DE');
+		mockResolveLocale.mockReturnValue('en-US');
 		mockGetLocaleText.mockReturnValue({ messages: createMessages() });
 	});
 
-	// Anweisungsüberdeckung: Die Movie-Detailroute lädt Details und Provider parallel und gibt das Filmobjekt mit Trailerliste zurück.
-	it('lädt Movie-Details und Provider erfolgreich', async () => {
+	// Statement coverage: the movie detail route loads details and providers in parallel and returns the movie object with trailer list.
+	it('successfully loads movie details and providers', async () => {
 		const providers = {
-			link: rawResponses.movieWatchProviders.results.DE.link,
+			link: rawResponses.movieWatchProviders.results.US.link,
 			providers: [
 				{
 					providerId: 8,
 					providerName: 'Netflix',
 					type: 'flatrate',
-					link: rawResponses.movieWatchProviders.results.DE.link,
+					link: rawResponses.movieWatchProviders.results.US.link,
 					logoPath: '/netflix.png',
 					displayPriority: 1
 				}
@@ -81,10 +98,10 @@ describe('movie detail route load', () => {
 		const result = await load({
 			fetch: vi.fn(),
 			params: { id: '680' },
-			url: createUrl('?locale=de')
+			url: createUrl('?locale=en')
 		});
 
-		expect(mockResolveLocale).toHaveBeenCalledWith('de');
+		expect(mockResolveLocale).toHaveBeenCalledWith('en');
 		expect(api.getMovieDetails).toHaveBeenCalledWith('680');
 		expect(api.getWatchProviders).toHaveBeenCalledWith('movie', '680');
 		expect(result).toEqual({
@@ -94,8 +111,8 @@ describe('movie detail route load', () => {
 		});
 	});
 
-	// Anweisungsüberdeckung: Fehlt trailerUrls in den Details, ergänzt die Route ein leeres Array als Fallback.
-	it('ergänzt ein leeres Trailer-Array als Fallback', async () => {
+	// Statement coverage: if trailerUrls is missing in the details, the route adds an empty array as fallback.
+	it('adds an empty trailer array as fallback', async () => {
 		const providers = null;
 		const movieDetailsWithoutTrailers = createMovieDetails({ trailerUrls: undefined });
 		const api = {
@@ -115,8 +132,8 @@ describe('movie detail route load', () => {
 		expect(result.providers).toBeNull();
 	});
 
-	// Anweisungsüberdeckung: Schlägt die Detail- oder Providerladung fehl, wird die Fehlermeldung aus dem Error-Objekt zurückgegeben.
-	it('gibt bei fehlgeschlagener Movie-Ladung die Error-Nachricht zurück', async () => {
+	// Statement coverage: if detail or provider loading fails, the error message from the error object is returned.
+	it('returns the error message when movie loading fails', async () => {
 		const api = {
 			getMovieDetails: vi.fn().mockRejectedValue(new Error('movie details failed')),
 			getWatchProviders: vi.fn().mockResolvedValue(null)
@@ -135,6 +152,9 @@ describe('movie detail route load', () => {
 			movie: null,
 			error: 'movie details failed'
 		});
-		expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to load movie details:', expect.any(Error));
+		expect(consoleErrorSpy).toHaveBeenCalledWith(
+			'Failed to load movie details:',
+			expect.any(Error)
+		);
 	});
 });

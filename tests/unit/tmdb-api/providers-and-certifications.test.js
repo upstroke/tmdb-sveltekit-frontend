@@ -1,6 +1,12 @@
 import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
 import { createTmdbApi } from '$lib/services/tmdb-api';
 
+/**
+ * Creates a mock JSON response object for fetch operations.
+ *
+ * @param {any} data - The data to be returned by the mocked json() method.
+ * @returns {{ ok: boolean, json: import('vitest').Mock<() => Promise<any>> }}
+ */
 function createJsonResponse(data) {
 	return {
 		ok: true,
@@ -18,8 +24,8 @@ describe('tmdb api providers and certifications', () => {
 	});
 
 	describe('getWatchProviders', () => {
-		// Anweisungsüberdeckung: Providerdaten der gewählten Region werden gemappt und zusammengeführt.
-		it('mappt Flatrate-, Leih- und Kaufanbieter der Sprachregion in ein gemeinsames Ergebnis', async () => {
+		// Statement coverage: provider data of the selected region is mapped and merged.
+		it('maps flatrate, rent, and buy providers of the language region into a combined result', async () => {
 			const fetchFn = vi.fn().mockResolvedValue(
 				createJsonResponse({
 					results: {
@@ -87,16 +93,14 @@ describe('tmdb api providers and certifications', () => {
 			expect(fetchFn).toHaveBeenCalledTimes(1);
 		});
 
-		// Anweisungsüberdeckung: Die Antwort wird pro Medium und ID gecacht und nicht erneut geladen.
-		it('liefert Watch-Provider beim zweiten Aufruf aus dem Cache', async () => {
+		// Statement coverage: the response is cached per medium and ID and not loaded again.
+		it('returns watch providers from the cache on the second call', async () => {
 			const fetchFn = vi.fn().mockResolvedValue(
 				createJsonResponse({
 					results: {
 						DE: {
 							link: 'https://example.com/watch/de',
-							flatrate: [
-								{ provider_id: 8, provider_name: 'Netflix', logo_path: '/netflix.png' }
-							]
+							flatrate: [{ provider_id: 8, provider_name: 'Netflix', logo_path: '/netflix.png' }]
 						}
 					}
 				})
@@ -110,8 +114,8 @@ describe('tmdb api providers and certifications', () => {
 			expect(fetchFn).toHaveBeenCalledTimes(1);
 		});
 
-		// Anweisungsüberdeckung: Für die abgeleitete Region ohne Providerdaten wird null zurückgegeben.
-		it('gibt null zurück, wenn für die Sprachregion keine Providerdaten vorhanden sind', async () => {
+		// Statement coverage: null is returned for the derived region without provider data.
+		it('returns null when no provider data exists for the language region', async () => {
 			const fetchFn = vi.fn().mockResolvedValue(
 				createJsonResponse({
 					results: {
@@ -127,8 +131,8 @@ describe('tmdb api providers and certifications', () => {
 			await expect(api.getWatchProviders('movie', 550)).resolves.toBeNull();
 		});
 
-		// Anweisungsüberdeckung: Fehlerhafte Provider-Anfragen werden abgefangen und als null gecacht.
-		it('fängt Fehler beim Laden der Watch-Provider ab und gibt null zurück', async () => {
+		// Statement coverage: failed provider requests are caught and cached as null.
+		it('catches errors when loading watch providers and returns null', async () => {
 			const fetchFn = vi.fn().mockResolvedValue({
 				ok: false,
 				status: 503,
@@ -142,17 +146,14 @@ describe('tmdb api providers and certifications', () => {
 	});
 
 	describe('getCertification', () => {
-		// Anweisungsüberdeckung: Filmfreigaben werden über release_dates für die Sprachregion ermittelt.
-		it('liest die Filmzertifizierung aus den Release-Daten der Sprachregion aus', async () => {
+		// Statement coverage: movie certifications are determined via release_dates for the language region.
+		it('reads the movie certification from the release dates of the language region', async () => {
 			const fetchFn = vi.fn().mockResolvedValue(
 				createJsonResponse({
 					results: [
 						{
 							iso_3166_1: 'DE',
-							release_dates: [
-								{ certification: '' },
-								{ certification: 'FSK 16' }
-							]
+							release_dates: [{ certification: '' }, { certification: 'FSK 16' }]
 						}
 					]
 				})
@@ -162,8 +163,8 @@ describe('tmdb api providers and certifications', () => {
 			await expect(api.getCertification('movie', 550)).resolves.toBe('FSK 16');
 		});
 
-		// Anweisungsüberdeckung: Serienfreigaben werden über content_ratings für die Sprachregion ermittelt.
-		it('liest die Serienzertifizierung aus den Content-Ratings der Sprachregion aus', async () => {
+		// Statement coverage: TV certifications are determined via content_ratings for the language region.
+		it('reads the TV certification from the content ratings of the language region', async () => {
 			const fetchFn = vi.fn().mockResolvedValue(
 				createJsonResponse({
 					results: [
@@ -177,8 +178,8 @@ describe('tmdb api providers and certifications', () => {
 			await expect(api.getCertification('tv', 1399)).resolves.toBe('12');
 		});
 
-		// Anweisungsüberdeckung: Nicht unterstützte Medientypen liefern den leeren String als Fallback.
-		it('gibt für nicht unterstützte Medientypen einen leeren String zurück', async () => {
+		// Statement coverage: unsupported media types return an empty string as fallback.
+		it('returns an empty string for unsupported media types', async () => {
 			const fetchFn = vi.fn();
 			const api = createTmdbApi(fetchFn, 'test-api-key', 'de-DE');
 
@@ -186,8 +187,8 @@ describe('tmdb api providers and certifications', () => {
 			expect(fetchFn).not.toHaveBeenCalled();
 		});
 
-		// Anweisungsüberdeckung: Zertifizierungen werden pro Medium und ID gecacht und nicht erneut geladen.
-		it('liefert Zertifizierungen beim zweiten Aufruf aus dem Cache', async () => {
+		// Statement coverage: certifications are cached per medium and ID and not loaded again.
+		it('returns certifications from the cache on the second call', async () => {
 			const fetchFn = vi.fn().mockResolvedValue(
 				createJsonResponse({
 					results: [
@@ -207,8 +208,8 @@ describe('tmdb api providers and certifications', () => {
 			expect(fetchFn).toHaveBeenCalledTimes(1);
 		});
 
-		// Anweisungsüberdeckung: Fehlerhafte Zertifizierungs-Anfragen werden abgefangen und liefern einen leeren String.
-		it('fängt Fehler beim Laden der Zertifizierung ab und gibt einen leeren String zurück', async () => {
+		// Statement coverage: failed certification requests are caught and return an empty string.
+		it('catches errors when loading certifications and returns an empty string', async () => {
 			const fetchFn = vi.fn().mockResolvedValue({
 				ok: false,
 				status: 500,
@@ -222,8 +223,8 @@ describe('tmdb api providers and certifications', () => {
 	});
 
 	describe('enrichCardCertifications', () => {
-		// Anweisungsüberdeckung: Karten werden mit ihrer lokalen Zertifizierung angereichert.
-		it('reichert Karten mit den Zertifizierungen ihrer Medientypen an', async () => {
+		// Statement coverage: cards are enriched with their local certification.
+		it('enriches cards with the certifications of their media types', async () => {
 			const fetchFn = vi
 				.fn()
 				.mockResolvedValueOnce(

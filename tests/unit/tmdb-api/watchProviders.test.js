@@ -1,14 +1,19 @@
 import { describe, expect, it, vi } from 'vitest';
 import { createTmdbApi } from '$lib/services/tmdb-api';
 
+/**
+ * Creates a TMDB API instance with a mocked fetch function.
+ *
+ * @returns {ReturnType<typeof createTmdbApi>}
+ */
 function createApi() {
 	return createTmdbApi(vi.fn(), 'test-api-key');
 }
 
 describe('tmdb api watch provider mapping', () => {
 	describe('mapWatchProvider', () => {
-		// Anweisungsüberdeckung: Fehlende Pflichtfelder führen zum Null-Fallback.
-		it('gibt null zurück, wenn die provider_id fehlt', () => {
+		// Statement coverage: missing required fields result in null fallback.
+		it('returns null when provider_id is missing', () => {
 			const api = createApi();
 
 			expect(
@@ -24,8 +29,8 @@ describe('tmdb api watch provider mapping', () => {
 			).toBeNull();
 		});
 
-		// Anweisungsüberdeckung: Fehlende Pflichtfelder führen zum Null-Fallback.
-		it('gibt null zurück, wenn der provider_name fehlt', () => {
+		// Statement coverage: missing required fields result in null fallback.
+		it('returns null when provider_name is missing', () => {
 			const api = createApi();
 
 			expect(
@@ -41,8 +46,8 @@ describe('tmdb api watch provider mapping', () => {
 			).toBeNull();
 		});
 
-		// Anweisungsüberdeckung: Ein vollständiger Provider wird in das UI-Format überführt.
-		it('mappt einen vollständigen Watch-Provider in das interne Format', () => {
+		// Statement coverage: a complete provider is transformed to the UI format.
+		it('maps a complete watch provider to the internal format', () => {
 			const api = createApi();
 
 			expect(
@@ -66,8 +71,8 @@ describe('tmdb api watch provider mapping', () => {
 			});
 		});
 
-		// Anweisungsüberdeckung: Optionale Felder werden auf null normalisiert.
-		it('setzt optionale Provider-Felder auf null, wenn sie nicht vorhanden sind', () => {
+		// Statement coverage: optional fields are normalized to null.
+		it('sets optional provider fields to null when not present', () => {
 			const api = createApi();
 
 			expect(
@@ -91,8 +96,8 @@ describe('tmdb api watch provider mapping', () => {
 	});
 
 	describe('mapWatchProviderList', () => {
-		// Anweisungsüberdeckung: Eine Provider-Liste wird vollständig ins UI-Format überführt.
-		it('mappt eine Liste gültiger Watch-Provider', () => {
+		// Statement coverage: a provider list is fully transformed to the UI format.
+		it('maps a list of valid watch providers', () => {
 			const api = createApi();
 
 			expect(
@@ -134,8 +139,8 @@ describe('tmdb api watch provider mapping', () => {
 			]);
 		});
 
-		// Anweisungsüberdeckung: Ungültige Einträge werden beim Listen-Mapping herausgefiltert.
-		it('filtert ungültige Watch-Provider aus der Ergebnisliste heraus', () => {
+		// Statement coverage: invalid entries are filtered out during list mapping.
+		it('filters invalid watch providers from the result list', () => {
 			const api = createApi();
 
 			expect(
@@ -147,7 +152,7 @@ describe('tmdb api watch provider mapping', () => {
 							logo_path: '/netflix.png'
 						},
 						{
-							provider_name: 'Ungültig ohne ID'
+							provider_name: 'Invalid without ID'
 						},
 						{
 							provider_id: 15
@@ -168,11 +173,13 @@ describe('tmdb api watch provider mapping', () => {
 			]);
 		});
 
-		// Anweisungsüberdeckung: Eine fehlende Providerliste liefert eine leere Ergebnisliste.
-		it('gibt eine leere Liste zurück, wenn keine Provider übergeben werden', () => {
+		// Statement coverage: a missing provider list returns an empty result list.
+		it('returns an empty list when no providers are passed', () => {
 			const api = createApi();
 
-			expect(api.mapWatchProviderList(undefined, 'buy', 'https://example.com/providers')).toEqual([]);
+			expect(api.mapWatchProviderList(undefined, 'buy', 'https://example.com/providers')).toEqual(
+				[]
+			);
 		});
 	});
 });

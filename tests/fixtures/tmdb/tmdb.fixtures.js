@@ -51,11 +51,11 @@ export const rawResponses = {
 		]
 	},
 	tvCertification: {
-		results: [{ iso_3166_1: 'US', rating: '16' }]
+		results: [{ iso_3166_1: 'US', rating: 'PG' }]
 	},
 	movieWatchProviders: {
 		results: {
-			DE: {
+			US: {
 				link: 'https://example.com/watch/de',
 				flatrate: [
 					{
@@ -70,7 +70,7 @@ export const rawResponses = {
 	},
 	tvWatchProviders: {
 		results: {
-			DE: {
+			US: {
 				link: 'https://example.com/watch/dark',
 				buy: [
 					{

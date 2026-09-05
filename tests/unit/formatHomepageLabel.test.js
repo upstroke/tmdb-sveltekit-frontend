@@ -2,36 +2,36 @@ import { describe, expect, it } from 'vitest';
 import { formatHomepageLabel } from '$lib/utils/formatHomepageLabel';
 
 /**
- * Teststrategie: Anweisungsüberdeckung.
- * Die Tests decken fehlende URLs, beide Protokolle sowie URLs
- * mit Pfad, Query und Fragment ab.
+ * Test strategy: statement coverage.
+ * The tests cover missing URLs, both protocols, and URLs
+ * with path, query, and fragment.
  */
 describe('formatHomepageLabel', () => {
-	// Anweisungsüberdeckung: Fehlende Eingaben liefern einen leeren String.
-	it('liefert bei fehlender URL einen leeren String zurück', () => {
+	// Statement coverage: missing inputs return an empty string.
+	it('returns an empty string for a missing URL', () => {
 		expect(formatHomepageLabel()).toBe('');
 	});
 
-	// Anweisungsüberdeckung: HTTPS wird aus der Anzeige entfernt.
-	it('entfernt das https-Protokoll', () => {
+	// Statement coverage: https is removed from the display.
+	it('removes the https protocol', () => {
 		expect(formatHomepageLabel('https://example.com')).toBe('example.com');
 	});
 
-	// Anweisungsüberdeckung: HTTP wird aus der Anzeige entfernt.
-	// Anweisungsüberdeckung: Auch HTTP-URLs laufen durch den Protokoll-Entfernungszweig.
-	it('entfernt das http-Protokoll', () => {
+	// Statement coverage: http is removed from the display.
+	// Statement coverage: HTTP URLs also go through the protocol removal branch.
+	it('removes the http protocol', () => {
 		expect(formatHomepageLabel('http://example.com')).toBe('example.com');
 	});
 
-	// Zweigüberdeckung: Nur das führende Protokoll wird entfernt, Rest bleibt erhalten.
-	it('entfernt nur das führende Protokoll und erhält den restlichen Pfad', () => {
+	// Branch coverage: only the leading protocol is removed, the rest is preserved.
+	it('removes only the leading protocol and preserves the remaining path', () => {
 		expect(formatHomepageLabel('https://example.com/films?id=42#details')).toBe(
 			'example.com/films?id=42#details'
 		);
 	});
 
-	// Zweigüberdeckung: URLs ohne Protokoll bleiben unverändert.
-	it('lässt URLs ohne http- oder https-Protokoll unverändert', () => {
+	// Branch coverage: URLs without a protocol remain unchanged.
+	it('leaves URLs without http or https protocol unchanged', () => {
 		expect(formatHomepageLabel('www.example.com')).toBe('www.example.com');
 	});
 });

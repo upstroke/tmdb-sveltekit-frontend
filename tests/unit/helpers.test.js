@@ -4,46 +4,50 @@ import { getDate, getImageUrl, getMediaType, getTitle } from '$lib/services/tmdb
 
 describe('tmdb/helpers', () => {
 	it('returns the explicit fallback media type before item-derived values', () => {
-		// Äquivalenzklassenbildung: Ein expliziter Fallback übersteuert media_type und die Titel-/Namensableitung.
-		expect(getMediaType({ media_type: 'tv', title: 'Inception', name: 'Ignored' }, 'movie')).toBe('movie');
+		// Equivalence partitioning: an explicit fallback overrides media_type and title/name derivation.
+		expect(getMediaType({ media_type: 'tv', title: 'Inception', name: 'Ignored' }, 'movie')).toBe(
+			'movie'
+		);
 	});
 
 	it('returns the item media_type when no fallback is provided', () => {
-		// Äquivalenzklassenbildung: Der vorhandene Medientyp aus dem Datensatz wird direkt übernommen.
+		// Equivalence partitioning: the existing media type from the record is adopted directly.
 		expect(getMediaType({ media_type: 'tv', title: 'Ignored' })).toBe('tv');
 	});
 
 	it('derives movie when title is present and no explicit media type exists', () => {
-		// Äquivalenzklassenbildung: Ein Eintrag mit title wird als Film erkannt.
+		// Equivalence partitioning: an entry with title is recognized as a movie.
 		expect(getMediaType({ title: 'Inception' })).toBe('movie');
 	});
 
 	it('derives tv when name is present and no title or explicit media type exists', () => {
-		// Äquivalenzklassenbildung: Ein Eintrag mit name wird als Serie erkannt.
+		// Equivalence partitioning: an entry with name is recognized as a TV series.
 		expect(getMediaType({ name: 'Dark' })).toBe('tv');
 	});
 
 	it('returns null when media type cannot be determined', () => {
-		// Äquivalenzklassenbildung: Ohne Fallback, media_type, title oder name ist kein Medientyp bestimmbar.
+		// Equivalence partitioning: without fallback, media_type, title, or name, no media type can be determined.
 		expect(getMediaType({})).toBeNull();
 	});
 
 	it('returns title before name and falls back to an empty string', () => {
-		// Äquivalenzklassenbildung: title hat Vorrang vor name; ohne beide Felder wird ein leerer String geliefert.
+		// Equivalence partitioning: title takes precedence over name; without both fields, an empty string is returned.
 		expect(getTitle({ title: 'Inception', name: 'Ignored' })).toBe('Inception');
 		expect(getTitle({ name: 'Dark' })).toBe('Dark');
 		expect(getTitle({})).toBe('');
 	});
 
 	it('returns release_date before first_air_date and falls back to an empty string', () => {
-		// Äquivalenzklassenbildung: release_date hat Vorrang vor first_air_date; ohne beide Felder wird ein leerer String geliefert.
-		expect(getDate({ release_date: '2010-07-16', first_air_date: '2017-12-01' })).toBe('2010-07-16');
+		// Equivalence partitioning: release_date takes precedence over first_air_date; without both fields, an empty string is returned.
+		expect(getDate({ release_date: '2010-07-16', first_air_date: '2017-12-01' })).toBe(
+			'2010-07-16'
+		);
 		expect(getDate({ first_air_date: '2017-12-01' })).toBe('2017-12-01');
 		expect(getDate({})).toBe('');
 	});
 
 	it('returns an empty string for missing image paths and builds a full TMDB image URL otherwise', () => {
-		// Anweisungsüberdeckung: Ein leerer, fehlender oder undefinierter Bildpfad liefert keine URL; ein vorhandener Pfad wird mit Standard- und Alternativgröße zusammengesetzt.
+		// Statement coverage: an empty, missing, or undefined image path returns no URL; an existing path is combined with default and alternative sizes.
 		expect(getImageUrl('')).toBe('');
 		expect(getImageUrl(undefined)).toBe('');
 		expect(getImageUrl(null)).toBe('');

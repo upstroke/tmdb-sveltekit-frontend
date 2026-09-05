@@ -33,7 +33,7 @@ vi.mock('$app/paths', async () => ({
 
 vi.mock('$app/state', async () => ({
 	page: {
-		url: new URL('http://localhost:3000/?locale=de-DE')
+		url: new URL('http://localhost:3000/?locale=en-US')
 	}
 }));
 
@@ -46,8 +46,8 @@ describe('CardFeatured', () => {
 		cleanupAll();
 	});
 
-	// Anweisungsueberdeckung: Title wird korrekt gerendert
-	it('rendert Title korrekt', () => {
+	// Statement coverage: title is rendered correctly
+	it('renders title correctly', () => {
 		const { container } = render(CardFeatured, {
 			props: {
 				id: 123,
@@ -62,8 +62,8 @@ describe('CardFeatured', () => {
 		expect(title).toHaveTextContent('Inception');
 	});
 
-	// Anweisungsueberdeckung: Title wird zu notAvailable wenn leer
-	it('zeigt notAvailable-Text wenn title leer ist', () => {
+	// Statement coverage: title shows notAvailable when empty
+	it('shows notAvailable text when title is empty', () => {
 		const { container } = render(CardFeatured, {
 			props: {
 				id: 123,
@@ -78,8 +78,8 @@ describe('CardFeatured', () => {
 		expect(title).toHaveTextContent(fallbacks.notAvailable);
 	});
 
-	// Anweisungsueberdeckung: Overview wird korrekt gerendert
-	it('rendert Overview korrekt', () => {
+	// Statement coverage: overview is rendered correctly
+	it('renders overview correctly', () => {
 		const overview = 'A thief who steals corporate secrets...';
 		render(CardFeatured, {
 			props: {
@@ -95,8 +95,8 @@ describe('CardFeatured', () => {
 		expect(screen.getByText(overview)).toBeInTheDocument();
 	});
 
-	// Anweisungsueberdeckung: Overview wird zu notAvailable wenn leer
-	it('zeigt notAvailable-Text wenn overview leer ist', () => {
+	// Statement coverage: overview shows notAvailable when empty
+	it('shows notAvailable text when overview is empty', () => {
 		render(CardFeatured, {
 			props: {
 				id: 123,
@@ -108,11 +108,13 @@ describe('CardFeatured', () => {
 			}
 		});
 
-		expect(screen.getByText(fallbacks.notAvailable, { selector: 'p.featured-card-description' })).toBeInTheDocument();
+		expect(
+			screen.getByText(fallbacks.notAvailable, { selector: 'p.featured-card-description' })
+		).toBeInTheDocument();
 	});
 
-	// Anweisungsueberdeckung: Genres werden gerendert
-	it('rendert Genres', () => {
+	// Statement coverage: genres are rendered
+	it('renders genres', () => {
 		const genres = [
 			{ id: 1, name: 'Action' },
 			{ id: 2, name: 'Thriller' }
@@ -133,8 +135,8 @@ describe('CardFeatured', () => {
 		expect(screen.getByText('Thriller')).toBeInTheDocument();
 	});
 
-	// Anweisungsueberdeckung: ReleaseDate wird gerendert
-	it('rendert ReleaseDate', () => {
+	// Statement coverage: releaseDate is rendered
+	it('renders releaseDate', () => {
 		const releaseDate = '2024-01-15';
 		render(CardFeatured, {
 			props: {
@@ -147,11 +149,11 @@ describe('CardFeatured', () => {
 			}
 		});
 
-		expect(screen.getByText('15.1.2024')).toBeInTheDocument();
+		expect(screen.getByText('1/15/2024')).toBeInTheDocument();
 	});
 
-	// Anweisungsueberdeckung: Movie Type Badge wird gerendert
-	it('rendert Movie Type Badge', () => {
+	// Statement coverage: movie type badge is rendered
+	it('renders movie type badge', () => {
 		const { container } = render(CardFeatured, {
 			props: {
 				id: 123,
@@ -166,8 +168,8 @@ describe('CardFeatured', () => {
 		expect(typeBadge).toHaveTextContent(labels.movie);
 	});
 
-	// Anweisungsueberdeckung: TV Show Type Badge wird gerendert
-	it('rendert TV Show Type Badge', () => {
+	// Statement coverage: TV show type badge is rendered
+	it('renders TV show type badge', () => {
 		const { container } = render(CardFeatured, {
 			props: {
 				id: 456,
@@ -182,8 +184,8 @@ describe('CardFeatured', () => {
 		expect(typeBadge).toHaveTextContent(labels.tvShow);
 	});
 
-	// Anweisungsueberdeckung: More Info Button wird gerendert
-	it('rendert More Info Button', () => {
+	// Statement coverage: more info button is rendered
+	it('renders more info button', () => {
 		render(CardFeatured, {
 			props: {
 				id: 123,
@@ -194,11 +196,11 @@ describe('CardFeatured', () => {
 			}
 		});
 
-		expect(screen.getByText(labels.moreInfo)).toHaveAttribute('href', '/movies/123?locale=de-DE');
+		expect(screen.getByText(labels.moreInfo)).toHaveAttribute('href', '/movies/123?locale=en-US');
 	});
 
-	// Anweisungsueberdeckung: Official Website Button wird gerendert
-	it('rendert Official Website Button', () => {
+	// Statement coverage: official website button is rendered
+	it('renders official website button', () => {
 		const homepage = 'https://example.com';
 		render(CardFeatured, {
 			props: {
@@ -216,8 +218,8 @@ describe('CardFeatured', () => {
 		expect(screen.getByText(labels.officialWebsite)).toHaveAttribute('rel', 'noopener noreferrer');
 	});
 
-	// Anweisungsueberdeckung: Poster Bild wird korrekt gerendert
-	it('rendert Poster Bild korrekt', () => {
+	// Statement coverage: poster image is rendered correctly
+	it('renders poster image correctly', () => {
 		const { container } = render(CardFeatured, {
 			props: {
 				id: 123,
@@ -232,8 +234,8 @@ describe('CardFeatured', () => {
 		expect(posterImg).toHaveAttribute('src', '/poster.jpg');
 	});
 
-	// Anweisungsueberdeckung: Poster Fallback wenn kein posterUrl
-	it('rendert Poster Fallback wenn kein posterUrl', () => {
+	// Statement coverage: poster fallback when no posterUrl
+	it('renders poster fallback when no posterUrl', () => {
 		const { container } = render(CardFeatured, {
 			props: {
 				id: 123,
@@ -248,8 +250,8 @@ describe('CardFeatured', () => {
 		expect(posterImg).toHaveAttribute('src', notAvailable);
 	});
 
-	// Anweisungsueberdeckung: Background Image wird gesetzt
-	it('setzt Background Image', () => {
+	// Statement coverage: background image is set
+	it('sets background image', () => {
 		const imageUrl = '/image.jpg';
 		const { container } = render(CardFeatured, {
 			props: {
@@ -265,8 +267,8 @@ describe('CardFeatured', () => {
 		expect(article).toHaveStyle(`--featured-card-image: url('${imageUrl}')`);
 	});
 
-	// Anweisungsueberdeckung: Background Fallback wenn kein imageUrl
-	it('setzt Background Fallback wenn kein imageUrl', () => {
+	// Statement coverage: background fallback when no imageUrl
+	it('sets background fallback when no imageUrl', () => {
 		const { container } = render(CardFeatured, {
 			props: {
 				id: 123,
@@ -281,8 +283,8 @@ describe('CardFeatured', () => {
 		expect(article).toHaveStyle(`--featured-card-image: url('${notAvailable}')`);
 	});
 
-	// Anweisungsueberdeckung: Article hat korrekte aria-labelledby
-	it('hat korrekte aria-labelledby', () => {
+	// Statement coverage: article has correct aria-labelledby
+	it('has correct aria-labelledby', () => {
 		const { container } = render(CardFeatured, {
 			props: {
 				id: 123,

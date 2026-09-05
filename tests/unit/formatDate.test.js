@@ -2,110 +2,109 @@ import { describe, expect, it } from 'vitest';
 import { formatDate } from '$lib/utils/formatDate';
 
 /**
- * Die Tests decken leere, ungültige, unvollständige und gültige Datumswerte
- * mit unterschiedlichen Locales ab und sichern die neuen Hilfsfunktionen
- * indirekt über verschiedene formatDate-Fälle ab.
+ * The tests cover empty, invalid, incomplete, and valid date values
+ * with different locales and indirectly verify the new helper functions
+ * through various formatDate cases.
  */
 describe('formatDate', () => {
-	// Anweisungsüberdeckung: Leerer Wert führt zum leeren String.
-	it('liefert bei leerem Wert einen leeren String zurück', () => {
+	// Statement coverage: empty value returns an empty string.
+	it('returns an empty string for an empty value', () => {
 		expect(formatDate('')).toBe('');
 	});
 
-	// Zweigüberdeckung: Nicht parsebarer String führt zum Originalwert.
-	it('gibt den Originalwert bei einem nicht parsebaren String zurück', () => {
-		expect(formatDate('kein-datum')).toBe('kein-datum');
+	// Branch coverage: non-parseable string returns the original value.
+	it('returns the original value for a non-parseable string', () => {
+		expect(formatDate('am-no-date')).toBe('am-no-date');
 	});
 
-	// Zweigüberdeckung: Strikte ISO-Prüfung lehnt ungültigen Kalendertag ab, Fallback formatiert jedoch weiter.
-	it('formatiert einen ungültigen Kalendertag über den allgemeinen Date-Fallback', () => {
-		expect(formatDate('2024-02-30')).toBe('1.3.2024');
+	// Branch coverage: invalid calendar day is rejected by strict ISO check, but fallback still formats.
+	it('formats an invalid calendar day via the general Date fallback', () => {
+		expect(formatDate('2024-02-30')).toBe('3/1/2024');
 	});
 
-	// Zweigüberdeckung: Leere ISO-Segmente werden in der Ziffernprüfung verworfen und unverändert zurückgegeben.
-	it('gibt den Originalwert bei einem ISO-artigen Datum mit leerem Segment zurück', () => {
+	// Branch coverage: empty ISO segments are rejected in digit check and returned unchanged.
+	it('returns the original value for an ISO-like date with an empty segment', () => {
 		expect(formatDate('2024--15')).toBe('2024--15');
 	});
 
-	// Zweigüberdeckung: Ungültiger Monat bleibt auch im Fallback ungültig.
-	it('gibt den Originalwert bei einem ungültigen Monat zurück', () => {
+	// Branch coverage: invalid month remains invalid even in fallback.
+	it('returns the original value for an invalid month', () => {
 		expect(formatDate('2024-13-15')).toBe('2024-13-15');
 	});
 
-	// Zweigüberdeckung: Unvollständiges Jahr-Monat-Format wird vom allgemeinen Date-Fallback formatiert.
-	it('formatiert ein unvollständiges ISO-Datum im Jahr-Monat-Format über den allgemeinen Date-Fallback', () => {
-		expect(formatDate('2024-01')).toBe('1.1.2024');
+	// Branch coverage: incomplete year-month format is formatted by the general Date fallback.
+	it('formats an incomplete ISO date in year-month format via the general Date fallback', () => {
+		expect(formatDate('2024-01')).toBe('1/1/2024');
 	});
 
-	// Zweigüberdeckung: Unvollständiges Jahr-Format wird vom allgemeinen Date-Fallback formatiert.
-	it('formatiert ein unvollständiges ISO-Datum im Jahr-Format über den allgemeinen Date-Fallback', () => {
-		expect(formatDate('2024')).toBe('1.1.2024');
+	// Branch coverage: incomplete year format is formatted by the general Date fallback.
+	it('formats an incomplete ISO date in year format via the general Date fallback', () => {
+		expect(formatDate('2024')).toBe('1/1/2024');
 	});
 
-	// Zweigüberdeckung: Ungültige Uhrzeit führt zum Originalwert.
-	it('gibt den Originalwert bei einem Datum mit ungültiger Uhrzeit zurück', () => {
+	// Branch coverage: invalid time returns the original value.
+	it('returns the original value for a date with an invalid time', () => {
 		expect(formatDate('2024-01-15T25:00:00')).toBe('2024-01-15T25:00:00');
 	});
 
-	// Zweigüberdeckung: Stunde 24 wird vom allgemeinen Date-Fallback in den Folgetag überführt.
-	it('formatiert ein Datum mit Stunde 24 über den allgemeinen Date-Fallback', () => {
-		expect(formatDate('2024-01-15T24:00:00')).toBe('16.1.2024');
+	// Branch coverage: hour 24 is converted to the next day by the general Date fallback.
+	it('formats a date with hour 24 via the general Date fallback', () => {
+		expect(formatDate('2024-01-15T24:00:00')).toBe('1/16/2024');
 	});
 
-	// Zweigüberdeckung: Ungültige Minute führt zum Originalwert.
-	it('gibt den Originalwert bei einem Datum mit ungültiger Minute zurück', () => {
+	// Branch coverage: invalid minute returns the original value.
+	it('returns the original value for a date with an invalid minute', () => {
 		expect(formatDate('2024-01-15T10:60:00')).toBe('2024-01-15T10:60:00');
 	});
 
-	// Zweigüberdeckung: Ungültige Sekunden führen zum Originalwert.
-	it('gibt den Originalwert bei einem Datum mit ungültigen Sekunden zurück', () => {
+	// Branch coverage: invalid seconds return the original value.
+	it('returns the original value for a date with invalid seconds', () => {
 		expect(formatDate('2024-01-15T10:00:60')).toBe('2024-01-15T10:00:60');
 	});
 
-	// Zweigüberdeckung: Ungültige Zeitzone führt zum Originalwert.
-	it('gibt den Originalwert bei einem Datum mit ungültiger Zeitzone zurück', () => {
+	// Branch coverage: invalid timezone returns the original value.
+	it('returns the original value for a date with an invalid timezone', () => {
 		expect(formatDate('2024-01-15T10:00:00+25:00')).toBe('2024-01-15T10:00:00+25:00');
 	});
 
-	// Zweigüberdeckung: Nicht zweistellige Segmente landen im Fallback und werden dort parsebar.
-	it('formatiert ISO-ähnliche Daten ohne zweistelligen Monat oder Tag über den allgemeinen Date-Fallback', () => {
-		expect(formatDate('2024-1-15')).toBe('15.1.2024');
-		expect(formatDate('2024-01-5')).toBe('5.1.2024');
+	// Branch coverage: non-two-digit segments end up in fallback and become parseable there.
+	it('formats ISO-like dates without two-digit month or day via the general Date fallback', () => {
+		expect(formatDate('2024-1-15')).toBe('1/15/2024');
+		expect(formatDate('2024-01-5')).toBe('1/5/2024');
 	});
 
-	// Anweisungsüberdeckung: Vollständiges ISO-Datum mit UTC-Zeit wird formatiert.
-	it('formatiert ein vollständiges ISO-Datum mit UTC-Zeit', () => {
-		expect(formatDate('2024-01-15T10:00:00Z', 'de-DE')).toBe('15.1.2024');
+	// Statement coverage: complete ISO date with UTC time is formatted.
+	it('formats a complete ISO date with UTC time', () => {
+		expect(formatDate('2024-01-15T10:00:00Z', 'en-US')).toBe('1/15/2024');
 	});
 
-	// Anweisungsüberdeckung: Vollständiges ISO-Datum mit Offset wird formatiert.
-	it('formatiert ein vollständiges ISO-Datum mit Zeitzonen-Offset', () => {
-		expect(formatDate('2024-01-15T10:00:00+02:00', 'de-DE')).toBe('15.1.2024');
+	// Statement coverage: complete ISO date with offset is formatted.
+	it('formats a complete ISO date with timezone offset', () => {
+		expect(formatDate('2024-01-15T10:00:00+02:00', 'en-US')).toBe('1/15/2024');
 	});
 
-	// Anweisungsüberdeckung: Parsebares Datum wird mit übergebener Locale formatiert.
-	it('formatiert ein parsebares Datum mit der übergebenen Locale', () => {
-		expect(formatDate('2024-01-15', 'de-DE')).toBe('15.1.2024');
+	// Statement coverage: parseable date is formatted with the provided locale.
+	it('formats a parseable date with the provided locale', () => {
+		expect(formatDate('2024-01-15', 'en-US')).toBe('1/15/2024');
 	});
 
-
-	// Zweigüberdeckung: Nicht-String-Werte werden bereits in der ersten Validierung verworfen.
-	it('gibt bei einem nicht als String übergebenen Wert den leeren String zurück', () => {
+	// Branch coverage: non-string values are already rejected in the first validation.
+	it('returns an empty string for a value not passed as a string', () => {
 		expect(formatDate(null)).toBe('');
 	});
 
-	// Anweisungsüberdeckung: Ein vollständiges ISO-Datum mit negativem Offset bleibt gültig und wird formatiert.
-	it('formatiert ein vollständiges ISO-Datum mit negativem Zeitzonen-Offset', () => {
-		expect(formatDate('2024-01-15T10:00:00-05:00', 'de-DE')).toBe('15.1.2024');
+	// Statement coverage: a complete ISO date with negative offset remains valid and is formatted.
+	it('formats a complete ISO date with negative timezone offset', () => {
+		expect(formatDate('2024-01-15T10:00:00-05:00', 'en-US')).toBe('1/15/2024');
 	});
 
-	// Zweigüberdeckung: Ein Zeitanteil mit zu wenigen Segmenten bleibt ungültig und wird unverändert zurückgegeben.
-	it('gibt den Originalwert bei einem Datum mit unvollständigem Zeitanteil zurück', () => {
+	// Branch coverage: a time portion with too few segments remains invalid and is returned unchanged.
+	it('returns the original value for a date with an incomplete time portion', () => {
 		expect(formatDate('2024-01-15T10')).toBe('2024-01-15T10');
 	});
 
-	// Zweigüberdeckung: Nichtnumerische Zeitsegmente bleiben ungültig und werden unverändert zurückgegeben.
-	it('gibt den Originalwert bei einem Datum mit nichtnumerischen Zeitsegmenten zurück', () => {
+	// Branch coverage: non-numeric time segments remain invalid and are returned unchanged.
+	it('returns the original value for a date with non-numeric time segments', () => {
 		expect(formatDate('2024-01-15TAB:00:00')).toBe('2024-01-15TAB:00:00');
 	});
 });

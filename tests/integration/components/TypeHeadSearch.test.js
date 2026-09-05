@@ -33,7 +33,7 @@ vi.mock('$app/paths', async () => ({
 }));
 
 vi.mock('$app/state', async () => {
-	const mockUrl = new URL('http://localhost:3000/?locale=de-DE');
+	const mockUrl = new URL('http://localhost:3000/?locale=en-US');
 	return {
 		page: {
 			get url() {
@@ -46,11 +46,35 @@ vi.mock('$app/state', async () => {
 
 const mockFetchData = {
 	movies: [
-		{ id: 1, title: 'Inception', date: '2010-07-16', rating: 8.8, mediaType: 'movie', posterUrl: '/poster1.jpg', imageUrl: '/image1.jpg' },
-		{ id: 2, title: 'Interstellar', date: '2014-11-07', rating: 8.6, mediaType: 'movie', posterUrl: '/poster2.jpg', imageUrl: '/image2.jpg' }
+		{
+			id: 1,
+			title: 'Inception',
+			date: '2010-07-16',
+			rating: 8.8,
+			mediaType: 'movie',
+			posterUrl: '/poster1.jpg',
+			imageUrl: '/image1.jpg'
+		},
+		{
+			id: 2,
+			title: 'Interstellar',
+			date: '2014-11-07',
+			rating: 8.6,
+			mediaType: 'movie',
+			posterUrl: '/poster2.jpg',
+			imageUrl: '/image2.jpg'
+		}
 	],
 	tvShows: [
-		{ id: 3, title: 'Breaking Bad', date: '2008-01-20', rating: 9.5, mediaType: 'tv', posterUrl: '/poster3.jpg', imageUrl: '/image3.jpg' }
+		{
+			id: 3,
+			title: 'Breaking Bad',
+			date: '2008-01-20',
+			rating: 9.5,
+			mediaType: 'tv',
+			posterUrl: '/poster3.jpg',
+			imageUrl: '/image3.jpg'
+		}
 	]
 };
 
@@ -71,8 +95,8 @@ describe('TypeHeadSearch', () => {
 		vi.useRealTimers();
 	});
 
-	// 100% Anweisungsueberdeckung: Component rendert mit Suchfeld
-	it('rendert Suchfeld korrekt', () => {
+	// Statement coverage: component renders with search field
+	it('renders search field correctly', () => {
 		render(TypeHeadSearch);
 
 		const input = screen.getByRole('searchbox');
@@ -80,24 +104,24 @@ describe('TypeHeadSearch', () => {
 		expect(input).toHaveAttribute('placeholder', texts.searchInput);
 	});
 
-	// 100% Anweisungsueberdeckung: Search Icon wird gerendert
-	it('rendert Search Icon', () => {
-		const { container } = render(TypeHeadSearch);
+	// Statement coverage: search icon is rendered
+	it('renders search icon', () => {
+		render(TypeHeadSearch);
 
-		const icon = container.querySelector('.search.icon');
+		const icon = document.querySelector('.search.icon');
 		expect(icon).toBeInTheDocument();
 	});
 
-	// 100% Anweisungsueberdeckung: Search Hint wird gerendert
-	it('rendert Search Hint', () => {
-		const { container } = render(TypeHeadSearch);
+	// Statement coverage: search hint is rendered
+	it('renders search hint', () => {
+		render(TypeHeadSearch);
 
-		const hint = container.querySelector('#typeahead-search-hint');
+		const hint = document.querySelector('#typeahead-search-hint');
 		expect(hint).toHaveTextContent(messages.searchHint);
 	});
 
-	// 100% Anweisungsueberdeckung: Input mit < 4 Zeichen zeigt keine Ergebnisse
-	it('zeigt keine Ergebnisse bei weniger als 4 Zeichen', async () => {
+	// Statement coverage: input with < 4 characters shows no results
+	it('shows no results for less than 4 characters', async () => {
 		render(TypeHeadSearch);
 
 		const input = screen.getByRole('searchbox');
@@ -107,22 +131,25 @@ describe('TypeHeadSearch', () => {
 		expect(results).not.toBeInTheDocument();
 	});
 
-	// 100% Anweisungsueberdeckung: Loading State wird angezeigt
-	it('zeigt Loading State', async () => {
+	// Statement coverage: loading state is displayed
+	it('shows loading state', async () => {
 		render(TypeHeadSearch);
 
 		const input = screen.getByRole('searchbox');
 		await fireEvent.input(input, { target: { value: 'test' } });
 
-		// Warte auf Loading-Message
-		await vi.waitFor(() => {
-			const loading = screen.getByRole('status');
-			expect(loading).toBeInTheDocument();
-		}, { timeout: 500 });
+		// Wait for loading message
+		await vi.waitFor(
+			() => {
+				const loading = screen.getByRole('status');
+				expect(loading).toBeInTheDocument();
+			},
+			{ timeout: 500 }
+		);
 	});
 
-	// 100% Anweisungsueberdeckung: Error State bei failed fetch
-	it('zeigt Error State bei fehlgeschlagenem Fetch', async () => {
+	// Statement coverage: error state on failed fetch
+	it('shows error state on failed fetch', async () => {
 		vi.useFakeTimers();
 
 		vi.spyOn(global, 'fetch').mockResolvedValueOnce({
@@ -140,91 +167,109 @@ describe('TypeHeadSearch', () => {
 		expect(await screen.findByRole('alert')).toHaveTextContent(messages.searchError);
 	});
 
-	// 100% Anweisungsueberdeckung: Ergebnisse werden angezeigt
-	it('zeigt Suchergebnisse bei erfolgreichem Fetch', async () => {
+	// Statement coverage: results are displayed
+	it('shows search results on successful fetch', async () => {
 		render(TypeHeadSearch);
 
 		const input = screen.getByRole('searchbox');
 		await fireEvent.input(input, { target: { value: 'inception' } });
 
-		await vi.waitFor(() => {
-			const moviesHeading = screen.queryByText(titles.movies);
-			expect(moviesHeading).toBeInTheDocument();
-		}, { timeout: 1000 });
+		await vi.waitFor(
+			() => {
+				const moviesHeading = screen.queryByText(titles.movies);
+				expect(moviesHeading).toBeInTheDocument();
+			},
+			{ timeout: 1000 }
+		);
 
 		const movieTitle = screen.getByText('Inception');
 		expect(movieTitle).toBeInTheDocument();
 	});
 
-	// 100% Anweisungsueberdeckung: TV Shows Section wird gerendert
-	it('rendert TV Shows Section', async () => {
+	// Statement coverage: TV shows section is rendered
+	it('renders TV shows section', async () => {
 		render(TypeHeadSearch);
 
 		const input = screen.getByRole('searchbox');
 		await fireEvent.input(input, { target: { value: 'breaking' } });
 
-		await vi.waitFor(() => {
-			const tvHeading = screen.queryByText(titles.tvShows);
-			expect(tvHeading).toBeInTheDocument();
-		}, { timeout: 1000 });
+		await vi.waitFor(
+			() => {
+				const tvHeading = screen.queryByText(titles.tvShows);
+				expect(tvHeading).toBeInTheDocument();
+			},
+			{ timeout: 1000 }
+		);
 
 		const tvTitle = screen.getByText('Breaking Bad');
 		expect(tvTitle).toBeInTheDocument();
 	});
 
-	// 100% Anweisungsueberdeckung: Result Links haben korrekte href
-	it('Result Links haben korrekte href', async () => {
+	// Statement coverage: result links have correct href
+	it('result links have correct href', async () => {
 		render(TypeHeadSearch);
 
 		const input = screen.getByRole('searchbox');
 		await fireEvent.input(input, { target: { value: 'inception' } });
 
-		await vi.waitFor(() => {
-			const links = screen.queryAllByRole('link');
-			expect(links.length).toBeGreaterThan(0);
-		}, { timeout: 1000 });
+		await vi.waitFor(
+			() => {
+				const links = screen.queryAllByRole('link');
+				expect(links.length).toBeGreaterThan(0);
+			},
+			{ timeout: 1000 }
+		);
 
 		const movieLink = screen.getByText('Inception').closest('a');
-		expect(movieLink).toHaveAttribute('href', '/movies/1?locale=de-DE');
+		expect(movieLink).toHaveAttribute('href', '/movies/1?locale=en-US');
 	});
 
-	// 100% Anweisungsueberdeckung: Rating wird formatiert
-	it('Rating wird formatiert', async () => {
+	// Statement coverage: rating is formatted
+	it('rating is formatted', async () => {
 		render(TypeHeadSearch);
 
 		const input = screen.getByRole('searchbox');
 		await fireEvent.input(input, { target: { value: 'inception' } });
 
-		await vi.waitFor(() => {
-			const rating = screen.queryByText('8.8');
-			expect(rating).toBeInTheDocument();
-		}, { timeout: 1000 });
+		await vi.waitFor(
+			() => {
+				const rating = screen.queryByText('8.8');
+				expect(rating).toBeInTheDocument();
+			},
+			{ timeout: 1000 }
+		);
 	});
 
-	// 100% Anweisungsueberdeckung: Year wird formatiert
-	it('Year wird formatiert', async () => {
+	// Statement coverage: year is formatted
+	it('year is formatted', async () => {
 		render(TypeHeadSearch);
 
 		const input = screen.getByRole('searchbox');
 		await fireEvent.input(input, { target: { value: 'inception' } });
 
-		await vi.waitFor(() => {
-			const year = screen.queryByText('2010');
-			expect(year).toBeInTheDocument();
-		}, { timeout: 1000 });
+		await vi.waitFor(
+			() => {
+				const year = screen.queryByText('2010');
+				expect(year).toBeInTheDocument();
+			},
+			{ timeout: 1000 }
+		);
 	});
 
-	// 100% Anweisungsueberdeckung: Escape schliesst Ergebnisse
-	it('Escape schliesst Ergebnisse', async () => {
+	// Statement coverage: Escape closes results
+	it('Escape closes results', async () => {
 		render(TypeHeadSearch);
 
 		const input = screen.getByRole('searchbox');
 		await fireEvent.input(input, { target: { value: 'inception' } });
 
-		await vi.waitFor(() => {
-			const results = screen.getByLabelText(messages.searchResults);
-			expect(results).toBeInTheDocument();
-		}, { timeout: 1000 });
+		await vi.waitFor(
+			() => {
+				const results = screen.getByLabelText(messages.searchResults);
+				expect(results).toBeInTheDocument();
+			},
+			{ timeout: 1000 }
+		);
 
 		await fireEvent.keyDown(input, { key: 'Escape' });
 
@@ -232,49 +277,55 @@ describe('TypeHeadSearch', () => {
 		expect(results).not.toBeInTheDocument();
 	});
 
-	// 100% Anweisungsueberdeckung: Click outside schliesst Ergebnisse
-	it('Click outside schliesst Ergebnisse', async () => {
-		const { container } = render(TypeHeadSearch);
+	// Statement coverage: click outside closes results
+	it('click outside closes results', async () => {
+		render(TypeHeadSearch);
 
 		const input = screen.getByRole('searchbox');
 		await fireEvent.input(input, { target: { value: 'inception' } });
 
-		await vi.waitFor(() => {
-			const results = screen.getByLabelText(messages.searchResults);
-			expect(results).toBeInTheDocument();
-		}, { timeout: 1000 });
+		await vi.waitFor(
+			() => {
+				const results = screen.getByLabelText(messages.searchResults);
+				expect(results).toBeInTheDocument();
+			},
+			{ timeout: 1000 }
+		);
 
-		// Klick außerhalb der Komponente
+		// Click outside the component
 		await fireEvent.click(document.body);
 
 		const results = screen.queryByLabelText(messages.searchResults);
 		expect(results).not.toBeInTheDocument();
 	});
 
-	// 100% Anweisungsueberdeckung: Focus zeigt Ergebnisse wieder
-	it('Focus zeigt Ergebnisse wieder', async () => {
+	// Statement coverage: focus shows results again
+	it('focus shows results again', async () => {
 		render(TypeHeadSearch);
 
 		const input = screen.getByRole('searchbox');
 		await fireEvent.input(input, { target: { value: 'inception' } });
 
-		await vi.waitFor(() => {
-			const results = screen.getByLabelText(messages.searchResults);
-			expect(results).toBeInTheDocument();
-		}, { timeout: 1000 });
+		await vi.waitFor(
+			() => {
+				const results = screen.getByLabelText(messages.searchResults);
+				expect(results).toBeInTheDocument();
+			},
+			{ timeout: 1000 }
+		);
 
-		// Schliessen mit Escape
+		// Close with Escape
 		await fireEvent.keyDown(input, { key: 'Escape' });
 
-		// Wieder focusieren
+		// Focus again
 		await fireEvent.focus(input);
 
 		const results = screen.queryByLabelText(messages.searchResults);
 		expect(results).toBeInTheDocument();
 	});
 
-	// 100% Anweisungsueberdeckung: No Results State
-	it('zeigt No Results State', async () => {
+	// Statement coverage: no results state
+	it('shows no results state', async () => {
 		vi.spyOn(global, 'fetch').mockImplementationOnce(() =>
 			Promise.resolve({
 				ok: true,
@@ -287,17 +338,27 @@ describe('TypeHeadSearch', () => {
 		const input = screen.getByRole('searchbox');
 		await fireEvent.input(input, { target: { value: 'nothingfound' } });
 
-		await vi.waitFor(() => {
-			const noResults = screen.getByText(messages.searchNoResults);
-			expect(noResults).toBeInTheDocument();
-		}, { timeout: 1000 });
+		await vi.waitFor(
+			() => {
+				const noResults = screen.getByText(messages.searchNoResults);
+				expect(noResults).toBeInTheDocument();
+			},
+			{ timeout: 1000 }
+		);
 	});
 
-	// 100% Anweisungsueberdeckung: Poster Fallback zu imageUrl
-	it('verwendet imageUrl als Fallback wenn kein posterUrl', async () => {
+	// Statement coverage: poster fallback to imageUrl
+	it('uses imageUrl as fallback when no posterUrl', async () => {
 		const dataWithoutPoster = {
 			movies: [
-				{ id: 99, title: 'No Poster', date: '2020-01-01', rating: 7.0, mediaType: 'movie', imageUrl: '/fallback.jpg' }
+				{
+					id: 99,
+					title: 'No Poster',
+					date: '2020-01-01',
+					rating: 7.0,
+					mediaType: 'movie',
+					imageUrl: '/fallback.jpg'
+				}
 			],
 			tvShows: []
 		};
@@ -314,18 +375,19 @@ describe('TypeHeadSearch', () => {
 		const input = screen.getByRole('searchbox');
 		await fireEvent.input(input, { target: { value: 'noposter' } });
 
-		await vi.waitFor(() => {
-			const img = container.querySelector('.category img');
-			expect(img).toHaveAttribute('src', '/fallback.jpg');
-		}, { timeout: 1000 });
+		await vi.waitFor(
+			() => {
+				const img = container.querySelector('.category img');
+				expect(img).toHaveAttribute('src', '/fallback.jpg');
+			},
+			{ timeout: 1000 }
+		);
 	});
 
-	// 100% Anweisungsueberdeckung: NotAvailable Fallback
-	it('verwendet notAvailable als letzten Fallback', async () => {
+	// Statement coverage: notAvailable fallback
+	it('uses notAvailable as last fallback', async () => {
 		const dataNoImages = {
-			movies: [
-				{ id: 88, title: 'No Images', date: '2020-01-01', rating: 7.0, mediaType: 'movie' }
-			],
+			movies: [{ id: 88, title: 'No Images', date: '2020-01-01', rating: 7.0, mediaType: 'movie' }],
 			tvShows: []
 		};
 
@@ -341,17 +403,27 @@ describe('TypeHeadSearch', () => {
 		const input = screen.getByRole('searchbox');
 		await fireEvent.input(input, { target: { value: 'noimages' } });
 
-		await vi.waitFor(() => {
-			const img = container.querySelector('.category img');
-			expect(img).toHaveAttribute('src', expect.stringContaining('not-available'));
-		}, { timeout: 1000 });
+		await vi.waitFor(
+			() => {
+				const img = container.querySelector('.category img');
+				expect(img).toHaveAttribute('src', expect.stringContaining('not-available'));
+			},
+			{ timeout: 1000 }
+		);
 	});
 
-	// 100% Anweisungsueberdeckung: Date Fallback bei invalidem Datum
-	it('verwendet dateFallback bei invalidem Datum', async () => {
+	// Statement coverage: date fallback for invalid date
+	it('uses dateFallback for invalid date', async () => {
 		const dataInvalidDate = {
 			movies: [
-				{ id: 77, title: 'Invalid Date', date: 'invalid-date', rating: 7.0, mediaType: 'movie', posterUrl: '/poster.jpg' }
+				{
+					id: 77,
+					title: 'Invalid Date',
+					date: 'invalid-date',
+					rating: 7.0,
+					mediaType: 'movie',
+					posterUrl: '/poster.jpg'
+				}
 			],
 			tvShows: []
 		};
@@ -368,17 +440,27 @@ describe('TypeHeadSearch', () => {
 		const input = screen.getByRole('searchbox');
 		await fireEvent.input(input, { target: { value: 'invaliddate' } });
 
-		await vi.waitFor(() => {
-			const date = screen.getByText(fallbacks.dateFallback);
-			expect(date).toBeInTheDocument();
-		}, { timeout: 1000 });
+		await vi.waitFor(
+			() => {
+				const date = screen.getByText(fallbacks.dateFallback);
+				expect(date).toBeInTheDocument();
+			},
+			{ timeout: 1000 }
+		);
 	});
 
-	// 100% Anweisungsueberdeckung: Rating Fallback bei null
-	it('verwendet 0.0 als Fallback bei null Rating', async () => {
+	// Statement coverage: rating fallback for null
+	it('uses 0.0 as fallback for null rating', async () => {
 		const dataNullRating = {
 			movies: [
-				{ id: 66, title: 'Null Rating', date: '2020-01-01', rating: null, mediaType: 'movie', posterUrl: '/poster.jpg' }
+				{
+					id: 66,
+					title: 'Null Rating',
+					date: '2020-01-01',
+					rating: null,
+					mediaType: 'movie',
+					posterUrl: '/poster.jpg'
+				}
 			],
 			tvShows: []
 		};
@@ -395,27 +477,51 @@ describe('TypeHeadSearch', () => {
 		const input = screen.getByRole('searchbox');
 		await fireEvent.input(input, { target: { value: 'nullrating' } });
 
-		await vi.waitFor(() => {
-			const rating = screen.getByText('0.0');
-			expect(rating).toBeInTheDocument();
-		}, { timeout: 1000 });
+		await vi.waitFor(
+			() => {
+				const rating = screen.getByText('0.0');
+				expect(rating).toBeInTheDocument();
+			},
+			{ timeout: 1000 }
+		);
 	});
 
-	// 100% Anweisungsueberdeckung: Placeholder-Text wird gesetzt
-	it('Input hat korrekten Placeholder-Text', () => {
+	// Statement coverage: placeholder text is set
+	it('input has correct placeholder text', () => {
 		render(TypeHeadSearch);
 
 		const input = screen.getByRole('searchbox');
 		expect(input).toHaveAttribute('placeholder', texts.searchInput);
 	});
 
-	// 100% Anweisungsueberdeckung: deduplicateById entfernt Duplikate
-	it('entfernt Duplikate in Suchergebnissen', async () => {
+	// Statement coverage: deduplicateById removes duplicates
+	it('removes duplicates in search results', async () => {
 		const dataWithDuplicates = {
 			movies: [
-				{ id: 1, title: 'Inception', date: '2010-07-16', rating: 8.8, mediaType: 'movie', posterUrl: '/poster1.jpg' },
-				{ id: 1, title: 'Inception Duplicate', date: '2010-07-16', rating: 8.8, mediaType: 'movie', posterUrl: '/poster1.jpg' },
-				{ id: 1, title: 'Inception Triple', date: '2010-07-16', rating: 8.8, mediaType: 'movie', posterUrl: '/poster1.jpg' }
+				{
+					id: 1,
+					title: 'Inception',
+					date: '2010-07-16',
+					rating: 8.8,
+					mediaType: 'movie',
+					posterUrl: '/poster1.jpg'
+				},
+				{
+					id: 1,
+					title: 'Inception Duplicate',
+					date: '2010-07-16',
+					rating: 8.8,
+					mediaType: 'movie',
+					posterUrl: '/poster1.jpg'
+				},
+				{
+					id: 1,
+					title: 'Inception Triple',
+					date: '2010-07-16',
+					rating: 8.8,
+					mediaType: 'movie',
+					posterUrl: '/poster1.jpg'
+				}
 			],
 			tvShows: []
 		};
@@ -432,13 +538,16 @@ describe('TypeHeadSearch', () => {
 		const input = screen.getByRole('searchbox');
 		await fireEvent.input(input, { target: { value: 'duplicate' } });
 
-		await vi.waitFor(() => {
-			const movieItems = screen.queryAllByRole('listitem');
-			// Sollte nur 1 Item sein (dedupliziert), nicht 3
-			expect(movieItems).toHaveLength(1);
-		}, { timeout: 1000 });
+		await vi.waitFor(
+			() => {
+				const movieItems = screen.queryAllByRole('listitem');
+				// Should be only 1 item (deduplicated), not 3
+				expect(movieItems).toHaveLength(1);
+			},
+			{ timeout: 1000 }
+		);
 
-		// Original-Titel sollte angezeigt werden, nicht Duplicate
+		// Original title should be displayed, not Duplicate
 		const movieTitle = screen.getByText('Inception');
 		expect(movieTitle).toBeInTheDocument();
 	});

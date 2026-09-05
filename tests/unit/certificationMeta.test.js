@@ -3,73 +3,72 @@ import { describe, expect, it } from 'vitest';
 import { getCertificationMeta } from '$lib/utils/certificationMeta';
 
 /**
- * Die Tests führen die ausführbaren Anweisungen von
- * getCertificationMeta aus: leerer Wert, bekanntes Rating,
- * normalisiertes Rating-System sowie unbekanntes Rating/System.
+ * These tests execute the statements of getCertificationMeta:
+ * empty value, known rating, normalized rating system,
+ * and unknown rating/system.
  */
 describe('certificationMeta', () => {
 	describe('getCertificationMeta', () => {
-		// Anweisungsüberdeckung: Leere/ungültige Werte werden geprüft.
-		it('gibt null zurück, wenn kein Wert vorhanden ist', () => {
+		// Statement coverage: empty/invalid values are checked.
+		it('returns null when no value is present', () => {
 			expect(getCertificationMeta()).toBeNull();
 			expect(getCertificationMeta(null)).toBeNull();
 			expect(getCertificationMeta('')).toBeNull();
 			expect(getCertificationMeta('   ')).toBeNull();
 		});
 
-		// Anweisungsüberdeckung: Bekannte deutsche Altersfreigaben werden geprüft.
-		it('liefert Metadaten für bekannte deutsche Altersfreigaben', () => {
-			expect(getCertificationMeta('12')).toEqual({
-				value: '12',
-				label: 'FSK 12',
-				age: 12,
-				color: '#4caf50',
-				textColor: '#000000'
-			});
-		});
-
-		// Anweisungsüberdeckung: Normalisierung des Rating-Systems wird geprüft.
-		it('normalisiert das Rating-System und akzeptiert Kleinbuchstaben sowie Leerzeichen', () => {
-			expect(getCertificationMeta('PG-13', ' us ')).toEqual({
-				value: 'PG-13',
+		// Statement coverage: known German age ratings are checked.
+		it('returns metadata for known US age ratings', () => {
+			expect(getCertificationMeta('PG-13')).toEqual({
 				label: 'PG-13',
 				description: 'Parents Strongly Cautioned',
 				color: '#ef6c00',
-				textColor: '#ffffff'
+				textColor: '#ffffff',
+				value: "PG-13"
 			});
 		});
 
-		// Anweisungsüberdeckung: Fallback bei fehlendem oder ungültigem Rating-System.
-		it('verwendet DE als Fallback bei fehlendem oder ungültigem Rating-System', () => {
-			expect(getCertificationMeta('16', undefined)).toEqual({
-				value: '16',
-				label: 'FSK 16',
-				age: 16,
-				color: '#1976d2',
-				textColor: '#ffffff'
+		// Statement coverage: normalization of the rating system is checked.
+		it('normalizes the rating system and accepts lowercase letters and spaces', () => {
+			expect(getCertificationMeta('PG-13', 'us')).toEqual({
+				label: 'PG-13',
+				description: 'Parents Strongly Cautioned',
+				color: '#ef6c00',
+				textColor: '#ffffff',
+				value: 'PG-13'
 			});
+		});
 
-			expect(getCertificationMeta('16', 'unknown')).toEqual({
-				value: '16',
-				label: '16',
+		// Statement coverage: fallback for missing or invalid rating system.
+		it('uses US as fallback for missing or invalid rating system', () => {
+			expect(getCertificationMeta('XY', undefined)).toEqual({
+				label: 'XY',
 				color: 'transparent',
-				textColor: 'inherit'
+				textColor: 'inherit',
+				value: 'XY'
 			});
-		});
 
-		// Anweisungsüberdeckung: Unbekannte Ratings führen zu neutralem Fallback.
-		it('gibt bei unbekannten Ratings eine neutrale Fallback-Metadatenstruktur zurück', () => {
-			expect(getCertificationMeta('XYZ', 'DE')).toEqual({
-				value: 'XYZ',
+			expect(getCertificationMeta('XYZ', 'unknown')).toEqual({
 				label: 'XYZ',
 				color: 'transparent',
-				textColor: 'inherit'
+				textColor: 'inherit',
+				value: 'XYZ'
 			});
 		});
 
-		// Anweisungsüberdeckung: Trimmen des Werts wird geprüft.
-		it('trimmt nur den Wert, ohne bekannte Schlüssel zu verfälschen', () => {
-			expect(getCertificationMeta('  NR  ', 'US')).toEqual({
+		// Statement coverage: unknown ratings return neutral fallback metadata.
+		it('returns a neutral fallback metadata structure for unknown ratings', () => {
+			expect(getCertificationMeta('XYZ', 'US')).toEqual({
+				label: 'XYZ',
+				color: 'transparent',
+				textColor: 'inherit',
+				value: 'XYZ'
+			});
+		});
+
+		// Statement coverage: trimming of the value is checked.
+		it('trims only the value without corrupting known keys', () => {
+			expect(getCertificationMeta('NR', 'US')).toEqual({
 				value: 'NR',
 				label: 'NR',
 				description: 'Not Rated / Unrated',

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen } from '@testing-library/svelte';
+import { render } from '@testing-library/svelte';
 import CardDefault from '$lib/components/CardDefault.svelte';
 import { getLocaleText } from '$lib/i18n/resolver.js';
 import { DEFAULT_LOCALE } from '$lib/i18n/config.js';
@@ -34,7 +34,7 @@ vi.mock('$app/paths', async () => ({
 
 vi.mock('$app/state', async () => ({
 	page: {
-		url: new URL('http://localhost:3000/?locale=de-DE'),
+		url: new URL('http://localhost:3000/?locale=en-US'),
 		params: {}
 	}
 }));
@@ -44,7 +44,7 @@ vi.mock('$lib/utils/certificationMeta', async () => {
 	const { resolveLocale } = await import('$lib/i18n/helpers.js');
 	const { DEFAULT_LOCALE: DEFAULT } = await import('$lib/i18n/config.js');
 
-	const getRegionFromLocale = (locale) => locale.split('-')[1] ?? 'DE';
+	const getRegionFromLocale = (locale) => locale.split('-')[1] ?? 'US';
 	const resolvedLocale = resolveLocale(DEFAULT);
 	const region = getRegionFromLocale(resolvedLocale);
 	const ratings = ratingsData.default.ratingSystems[region] ?? ratingsData.default.ratingSystems.DE;
@@ -83,8 +83,8 @@ describe('CardDefault', () => {
 		cleanupAll();
 	});
 
-	// 100% Anweisungsueberdeckung: Title wird korrekt gerendert
-	it('rendert Title korrekt', () => {
+	// 100% statement coverage: title is rendered correctly
+	it('renders title correctly', () => {
 		const { container } = render(CardDefault, {
 			props: {
 				id: 123,
@@ -98,8 +98,8 @@ describe('CardDefault', () => {
 		expect(title).toHaveTextContent('Inception');
 	});
 
-	// 100% Anweisungsueberdeckung: Title Fallback wenn leer
-	it('zeigt notAvailable-Text wenn title leer ist', () => {
+	// 100% statement coverage: title fallback when empty
+	it('shows notAvailable text when title is empty', () => {
 		const { container } = render(CardDefault, {
 			props: {
 				id: 123,
@@ -113,12 +113,9 @@ describe('CardDefault', () => {
 		expect(title).toHaveTextContent(fallbacks.notAvailable);
 	});
 
-	// 100% Anweisungsueberdeckung: Genres werden gerendert
-	it('rendert Genres', () => {
-		const genres = [
-			{ name: 'Action' },
-			{ name: 'Thriller' }
-		];
+	// 100% statement coverage: genres are rendered
+	it('renders genres', () => {
+		const genres = [{ name: 'Action' }, { name: 'Thriller' }];
 
 		const { container } = render(CardDefault, {
 			props: {
@@ -134,8 +131,8 @@ describe('CardDefault', () => {
 		expect(genresMeta).toHaveTextContent('Action / Thriller');
 	});
 
-	// 100% Anweisungsueberdeckung: Genres Fallback wenn leer
-	it('zeigt notAvailable-Text wenn genres leer sind', () => {
+	// 100% statement coverage: genres fallback when empty
+	it('shows notAvailable text when genres are empty', () => {
 		const { container } = render(CardDefault, {
 			props: {
 				id: 123,
@@ -150,8 +147,8 @@ describe('CardDefault', () => {
 		expect(genresMeta).toHaveTextContent(fallbacks.notAvailable);
 	});
 
-	// 100% Anweisungsueberdeckung: ReleaseDate wird gerendert
-	it('rendert ReleaseDate', () => {
+	// 100% statement coverage: releaseDate is rendered
+	it('renders releaseDate', () => {
 		const date = '2024-01-15';
 		const { container } = render(CardDefault, {
 			props: {
@@ -164,11 +161,11 @@ describe('CardDefault', () => {
 
 		const card = container.querySelector('.ui.card.default-card');
 		const dateMeta = card.querySelector('.meta.date');
-		expect(dateMeta).toHaveTextContent('15.1.2024');
+		expect(dateMeta).toHaveTextContent('1/15/2024');
 	});
 
-	// 100% Anweisungsueberdeckung: ReleaseDate Fallback wenn leer
-	it('zeigt notAvailable-Text wenn date leer ist', () => {
+	// 100% statement coverage: releaseDate fallback when empty
+	it('shows notAvailable text when date is empty', () => {
 		const { container } = render(CardDefault, {
 			props: {
 				id: 123,
@@ -183,8 +180,8 @@ describe('CardDefault', () => {
 		expect(dateMeta).toHaveTextContent(fallbacks.notAvailable);
 	});
 
-	// 100% Anweisungsueberdeckung: Rating wird gerendert
-	it('rendert Rating', () => {
+	// 100% statement coverage: rating is rendered
+	it('renders rating', () => {
 		const { container } = render(CardDefault, {
 			props: {
 				id: 123,
@@ -201,8 +198,8 @@ describe('CardDefault', () => {
 		expect(footer).toHaveTextContent(formats.outOfTen);
 	});
 
-	// 100% Anweisungsueberdeckung: Rating Fallback wenn 0
-	it('zeigt notAvailable-Text wenn rating 0 ist', () => {
+	// 100% statement coverage: rating fallback when 0
+	it('shows notAvailable text when rating is 0', () => {
 		const { container } = render(CardDefault, {
 			props: {
 				id: 123,
@@ -217,24 +214,24 @@ describe('CardDefault', () => {
 		expect(footer).toHaveTextContent(fallbacks.notAvailable);
 	});
 
-	// 100% Anweisungsueberdeckung: Certification wird gerendert
-	it('rendert Certification', () => {
+	// 100% statement coverage: certification is rendered
+	it('renders certification', () => {
 		const { container } = render(CardDefault, {
 			props: {
 				id: 123,
 				mediaType: 'movie',
 				title: 'Inception',
-				certification: 'FSK 12'
+				certification: 'PG'
 			}
 		});
 
 		const card = container.querySelector('.ui.card.default-card');
 		const certification = card.querySelector('.certification-text');
-		expect(certification).toHaveTextContent('FSK 12');
+		expect(certification).toHaveTextContent('PG');
 	});
 
-	// 100% Anweisungsueberdeckung: Certification Fallback wenn leer
-	it('zeigt notAvailable-Text wenn certification leer ist', () => {
+	// 100% statement coverage: certification fallback when empty
+	it('shows notAvailable text when certification is empty', () => {
 		const { container } = render(CardDefault, {
 			props: {
 				id: 123,
@@ -249,8 +246,8 @@ describe('CardDefault', () => {
 		expect(certification).toHaveTextContent(fallbacks.notAvailable);
 	});
 
-	// 100% Anweisungsueberdeckung: Movie Type Badge wird gerendert
-	it('rendert Movie Type Badge', () => {
+	// 100% statement coverage: movie type badge is rendered
+	it('renders movie type badge', () => {
 		const { container } = render(CardDefault, {
 			props: {
 				id: 123,
@@ -264,8 +261,8 @@ describe('CardDefault', () => {
 		expect(typeLabel).toHaveTextContent(labels.movie);
 	});
 
-	// 100% Anweisungsueberdeckung: TV Show Type Badge wird gerendert
-	it('rendert TV Show Type Badge', () => {
+	// 100% statement coverage: TV show type badge is rendered
+	it('renders TV show type badge', () => {
 		const { container } = render(CardDefault, {
 			props: {
 				id: 456,
@@ -279,8 +276,8 @@ describe('CardDefault', () => {
 		expect(typeLabel).toHaveTextContent(labels.tvShow);
 	});
 
-	// 100% Anweisungsueberdeckung: More Info Link wird gerendert
-	it('rendert More Info Link', () => {
+	// 100% statement coverage: more info link is rendered
+	it('renders more info link', () => {
 		const { container } = render(CardDefault, {
 			props: {
 				id: 123,
@@ -290,11 +287,11 @@ describe('CardDefault', () => {
 		});
 
 		const card = container.querySelector('.ui.card.default-card');
-		expect(card).toHaveAttribute('href', '/movies/123?locale=de-DE');
+		expect(card).toHaveAttribute('href', '/movies/123?locale=en-US');
 	});
 
-	// 100% Anweisungsueberdeckung: Poster Bild wird korrekt gerendert
-	it('rendert Poster Bild korrekt', () => {
+	// 100% statement coverage: poster image is rendered correctly
+	it('renders poster image correctly', () => {
 		const imageUrl = '/poster.jpg';
 		const { container } = render(CardDefault, {
 			props: {
@@ -310,8 +307,8 @@ describe('CardDefault', () => {
 		expect(img).toHaveAttribute('src', imageUrl);
 	});
 
-	// 100% Anweisungsueberdeckung: Poster Fallback wenn kein imageUrl
-	it('rendert Poster Fallback wenn kein imageUrl', () => {
+	// 100% statement coverage: poster fallback when no imageUrl
+	it('renders poster fallback when no imageUrl', () => {
 		const { container } = render(CardDefault, {
 			props: {
 				id: 123,
@@ -326,8 +323,8 @@ describe('CardDefault', () => {
 		expect(img).toHaveAttribute('src', notAvailable);
 	});
 
-	// 100% Anweisungsueberdeckung: isLoading Klasse wird gesetzt
-	it('setzt isLoading Klasse', () => {
+	// 100% statement coverage: isLoading class is set
+	it('sets isLoading class', () => {
 		const { container } = render(CardDefault, {
 			props: {
 				id: 123,
@@ -341,8 +338,8 @@ describe('CardDefault', () => {
 		expect(card).toHaveClass('is-loading');
 	});
 
-	// 100% Anweisungsueberdeckung: scrollId wird gesetzt
-	it('setzt scrollId', () => {
+	// 100% statement coverage: scrollId is set
+	it('sets scrollId', () => {
 		const { container } = render(CardDefault, {
 			props: {
 				id: 123,

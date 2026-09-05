@@ -24,14 +24,14 @@ describe('LoadMore', () => {
 		cleanupAll();
 	});
 
-	// Anweisungsueberdeckung: Button wird nicht gerendert wenn hasMore=false
-	it('rendert keinen Button wenn hasMore=false', () => {
+	// Statement coverage: button is not rendered when hasMore=false
+	it('does not render button when hasMore=false', () => {
 		render(LoadMore, { props: { hasMore: false, loading: false, onload: null } });
 		expect(screen.queryByRole('button')).not.toBeInTheDocument();
 	});
 
-	// Anweisungsueberdeckung: Button wird gerendert wenn hasMore=true
-	it('rendert Button wenn hasMore=true', () => {
+	// Statement coverage: button is rendered when hasMore=true
+	it('renders button when hasMore=true', () => {
 		render(LoadMore, { props: { hasMore: true, loading: false, onload: null } });
 
 		const button = screen.getByRole('button');
@@ -39,39 +39,39 @@ describe('LoadMore', () => {
 		expect(button).not.toBeDisabled();
 	});
 
-	// Anweisungsueberdeckung: Button zeigt LoadMore-Text wenn loading=false
-	it('zeigt LoadMore-Text wenn loading=false', () => {
+	// Statement coverage: button shows LoadMore text when loading=false
+	it('shows LoadMore text when loading=false', () => {
 		render(LoadMore, { props: { hasMore: true, loading: false, onload: null } });
 		expect(screen.getByRole('button')).toHaveTextContent(labels.loadMore);
 	});
 
-	// Anweisungsueberdeckung: Button zeigt Lade-Text wenn loading=true
-	it('zeigt Lade-Text wenn loading=true', () => {
+	// Statement coverage: button shows loading text when loading=true
+	it('shows loading text when loading=true', () => {
 		render(LoadMore, { props: { hasMore: true, loading: true, onload: null } });
 		expect(screen.getByRole('button')).toHaveTextContent(labels.loadMoreLoading);
 	});
 
-	// Zweigueberdeckung: Button ist disabled wenn loading=true
-	it('ist disabled wenn loading=true', () => {
+	// Branch coverage: button is disabled when loading=true
+	it('is disabled when loading=true', () => {
 		render(LoadMore, { props: { hasMore: true, loading: true, onload: null } });
 		expect(screen.getByRole('button')).toBeDisabled();
 	});
 
-	// Anweisungsueberdeckung: onload wird aufgerufen beim Klick
-	it('ruft onload auf beim Klick', async () => {
+	// Statement coverage: onload is called on click
+	it('calls onload on click', async () => {
 		const onloadMock = vi.fn();
 		render(LoadMore, { props: { hasMore: true, loading: false, onload: onloadMock } });
 		await fireEvent.click(screen.getByRole('button'));
 		expect(onloadMock).toHaveBeenCalledTimes(1);
 	});
 
-	// Zweigueberdeckung: onload wird NICHT aufgerufen wenn loading=true	// Zweigueberdeckung: onload wird NICHT aufgerufen wenn onload=null
-	it('ruft onload NICHT auf wenn onload=null', async () => {
+	// Branch coverage: onload is NOT called when loading=true
+	// Branch coverage: onload is NOT called when onload=null
+	it('does NOT call onload when onload=null', async () => {
 		render(LoadMore, { props: { hasMore: true, loading: false, onload: null } });
 		await fireEvent.click(screen.getByRole('button'));
 		expect(true).toBe(true);
 	});
 });
 
-// TODO: Click-Event testing with JSDOM is limited - test user interactions (click on "Load More" button) in Playwright acceptance tests
-
+// TODO: Click-event testing with JSDOM is limited - test user interactions (click on "Load More" button) in Playwright acceptance tests

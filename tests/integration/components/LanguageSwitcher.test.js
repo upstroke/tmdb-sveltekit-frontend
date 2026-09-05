@@ -3,7 +3,7 @@ import { cleanup, render, screen } from '@testing-library/svelte';
 import LanguageSwitcher from '$lib/components/LanguageSwitcher.svelte';
 import { getSupportedLocales } from '$lib/i18n/helpers.js';
 
-// Mocks ganz oben mit vi.hoisted
+// Mocks at the top with vi.hoisted
 const mocks = vi.hoisted(() => ({
 	mockResolveLocale: vi.fn()
 }));
@@ -26,13 +26,13 @@ vi.mock('$app/state', async (importOriginal) => {
 	};
 });
 
-// i18n store mock (mit subscribe fuer $i18n auto-subscribe)
+// i18n store mock (with subscribe for $i18n auto-subscribe)
 vi.mock('$lib/stores/i18n', async () => ({
 	i18n: {
 		subscribe: (run) => {
 			run({
 				labels: {
-					languageSelect: 'Sprache auswaehlen'
+					languageSelect: 'Select language'
 				}
 			});
 			return () => {}; // unsubscribe
@@ -48,7 +48,7 @@ describe('LanguageSwitcher', () => {
 		vi.clearAllMocks();
 		cleanup();
 
-		mocks.mockResolveLocale.mockReturnValue('de-DE');
+		mocks.mockResolveLocale.mockReturnValue('en-US');
 		page.url = new URL('https://example.com/');
 	});
 
@@ -56,43 +56,43 @@ describe('LanguageSwitcher', () => {
 		cleanup();
 	});
 
-	// Anweisungsueberdeckung: LanguageSwitcher rendert Select mit allen Sprachen.
-	it('rendert Select Element mit allen Sprachen', () => {
+	// Statement coverage: LanguageSwitcher renders select with all languages.
+	it('renders select element with all languages', () => {
 		const { container } = render(LanguageSwitcher);
 
 		const select = container.querySelector('#language-select');
 		expect(select).toBeInTheDocument();
 
-		// Dynamisch alle Sprachen aus helpers holen
+		// Dynamically get all languages from helpers
 		const locales = getSupportedLocales();
 		locales.forEach((locale) => {
 			const option = container.querySelector(`option[value="${locale}"]`);
 			expect(option).toBeInTheDocument();
 		});
 
-		expect(select.value).toBe('de-DE');
+		expect(select.value).toBe('en-US');
 	});
 
-	// Anweisungsueberdeckung: aria-label wird aus i18n geladen.
-	it('verwendet i18n label fuer aria-label', () => {
+	// Statement coverage: aria-label is loaded from i18n.
+	it('uses i18n label for aria-label', () => {
 		render(LanguageSwitcher);
 
-		const select = screen.getByRole('combobox', { name: /Sprache auswaehlen/i });
-		expect(select).toHaveAttribute('aria-label', 'Sprache auswaehlen');
+		const select = screen.getByRole('combobox', { name: /Select language/i });
+		expect(select).toHaveAttribute('aria-label', 'Select language');
 	});
 
-	// Hinweis: handleChange Logik wird in Integrationstests getestet.
-	// Siehe: tests/integration/language-change.test.js (TODO)
-	it('dokumentiert dass Sprachwechsel goto aufruft', () => {
-		// handleChange ruft locale.set() und goto() auf.
-		// Die genaue Implementierung wird in Integrationstests geprueft.
+	// Note: handleChange logic is tested in integration tests.
+	// See: tests/integration/language-change.test.js (TODO)
+	it('documents that language change calls goto', () => {
+		// handleChange calls locale.set() and goto().
+		// The exact implementation is checked in integration tests.
 		expect(true).toBe(true);
 	});
 
-	// Hinweis: localStorage Persistenz wird in Integrationstests getestet.
-	// Siehe: tests/integration/language-persistence.test.js (TODO)
-	it('dokumentiert dass Sprache nicht im localStorage gespeichert wird', () => {
-		// Persistenz wird durch locale.set() und URL-Parameter uebernommen.
+	// Note: localStorage persistence is tested in integration tests.
+	// See: tests/integration/language-persistence.test.js (TODO)
+	it('documents that language is not stored in localStorage', () => {
+		// Persistence is handled by locale.set() and URL parameters.
 		expect(true).toBe(true);
 	});
 });

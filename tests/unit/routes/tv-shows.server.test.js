@@ -20,10 +20,21 @@ vi.mock('$lib/services/tmdb-api.js', () => ({
 	createTmdbApi: mockCreateTmdbApi
 }));
 
+/**
+ * Creates a test URL for the TV shows route.
+ *
+ * @param {string} [search] - Search query string.
+ * @returns {URL}
+ */
 function createUrl(search = '') {
 	return new URL(`https://example.com/tv-shows${search}`);
 }
 
+/**
+ * Creates a mock messages object for i18n.
+ *
+ * @returns {{ apiKeyMissing: string, moreTvShowsLoadError: string }}
+ */
 function createMessages() {
 	return {
 		apiKeyMissing: 'API key missing',
@@ -35,12 +46,12 @@ describe('tv shows server route GET', () => {
 	beforeEach(() => {
 		vi.resetModules();
 		vi.clearAllMocks();
-		mockResolveLocale.mockReturnValue('de-DE');
+		mockResolveLocale.mockReturnValue('en-US');
 		mockGetLocaleText.mockReturnValue({ messages: createMessages() });
 	});
 
-	// Anweisungsüberdeckung: Die Route lädt eine TV-Seite, dedupliziert Karten per id-mediaType und gibt Paging-Daten zurück.
-	it('lädt TV-Shows dedupliziert mit Paging-Daten', async () => {
+	// Statement coverage: the route loads a TV page, deduplicates cards by id-mediaType, and returns paging data.
+	it('loads TV shows deduplicated with paging data', async () => {
 		const api = {
 			getTrendingTVShows: vi.fn().mockResolvedValue({
 				results: [
@@ -57,10 +68,10 @@ describe('tv shows server route GET', () => {
 
 		const response = await GET({
 			fetch: vi.fn(),
-			url: createUrl('?page=4&locale=de')
+			url: createUrl('?page=4&locale=en')
 		});
 
-		expect(mockResolveLocale).toHaveBeenCalledWith('de');
+		expect(mockResolveLocale).toHaveBeenCalledWith('en');
 		expect(api.getTrendingTVShows).toHaveBeenCalledWith(4);
 		expect(response.status).toBe(200);
 		expect(await response.json()).toEqual({
@@ -74,8 +85,8 @@ describe('tv shows server route GET', () => {
 		});
 	});
 
-	// Anweisungsüberdeckung: Ungültige Seitenzahlen werden auf Seite eins normalisiert und fehlende API-Seitenangaben fallen auf den Request-Wert zurück.
-	it('normalisiert ungültige Seitenzahlen auf eins', async () => {
+	// Statement coverage: invalid page numbers are normalized to page one and missing API page values fall back to the request value.
+	it('normalizes invalid page numbers to one', async () => {
 		const api = {
 			getTrendingTVShows: vi.fn().mockResolvedValue({
 				results: [{ id: 66732, mediaType: 'tv', title: 'Stranger Things' }],
@@ -99,8 +110,8 @@ describe('tv shows server route GET', () => {
 		});
 	});
 
-	// Anweisungsüberdeckung: Schlägt die TV-Ladung fehl, liefert die Route Status 500 und die lokalisierte Fehlermeldung zurück.
-	it('liefert bei Ladefehlern eine lokalisierte Fehlermeldung zurück', async () => {
+	// Statement coverage: if TV loading fails, the route returns status 500 and the localized error message.
+	it('returns a localized error message when loading fails', async () => {
 		const api = {
 			getTrendingTVShows: vi.fn().mockRejectedValue(new Error('tv page failed'))
 		};
@@ -120,6 +131,9 @@ describe('tv shows server route GET', () => {
 			hasMore: false,
 			error: 'More TV shows could not be loaded.'
 		});
-		expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to load more tv shows:', expect.any(Error));
+		expect(consoleErrorSpy).toHaveBeenCalledWith(
+			'Failed to load more tv shows:',
+			expect.any(Error)
+		);
 	});
 });

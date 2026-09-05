@@ -2,20 +2,20 @@ import { describe, expect, it } from 'vitest';
 import { deduplicateMedia } from '$lib/utils/deduplicateMedia';
 
 /**
- * Teststrategie: Anweisungsüberdeckung und Zweigüberdeckung.
- * Die Tests decken gültige Elemente, ungültige Schlüssel,
- * Duplikate und gleiche IDs mit unterschiedlichem Medientyp ab.
+ * Test strategy: statement coverage and branch coverage.
+ * The tests cover valid elements, invalid keys,
+ * duplicates, and same IDs with different media types.
  */
 describe('deduplicateMedia', () => {
-	// Anweisungsüberdeckung: Ein gültiges Media-Element bleibt erhalten.
-	it('behält ein gültiges Media-Element', () => {
+	// Statement coverage: a valid media element is preserved.
+	it('preserves a valid media element', () => {
 		expect(deduplicateMedia([{ id: 1, mediaType: 'movie' }])).toEqual([
 			{ id: 1, mediaType: 'movie' }
 		]);
 	});
 
-	// Anweisungsüberdeckung: Gleiche mediaType-/ID-Kombinationen werden dedupliziert.
-	it('entfernt spätere Duplikate mit gleichem mediaType und id', () => {
+	// Statement coverage: duplicate mediaType/ID combinations are deduplicated.
+	it('removes later duplicates with the same mediaType and id', () => {
 		expect(
 			deduplicateMedia([
 				{ id: 1, mediaType: 'movie' },
@@ -24,13 +24,13 @@ describe('deduplicateMedia', () => {
 		).toEqual([{ id: 1, mediaType: 'movie' }]);
 	});
 
-	// Anweisungsüberdeckung: Ungültige Elemente werden verworfen.
-	it('entfernt Elemente ohne gültigen Schlüssel', () => {
+	// Statement coverage: invalid elements are discarded.
+	it('removes elements without a valid key', () => {
 		expect(deduplicateMedia([{ id: 1 }, { mediaType: 'movie' }, null])).toEqual([]);
 	});
 
-	// Anweisungsüberdeckung: Unterschiedliche Medientypen mit gleicher ID bleiben getrennt.
-	it('behält gleiche ids mit unterschiedlichem mediaType', () => {
+	// Statement coverage: different media types with the same ID remain separate.
+	it('preserves same ids with different mediaType', () => {
 		expect(
 			deduplicateMedia([
 				{ id: 1, mediaType: 'movie' },

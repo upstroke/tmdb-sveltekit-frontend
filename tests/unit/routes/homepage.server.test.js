@@ -21,10 +21,21 @@ vi.mock('$lib/services/tmdb-api.js', () => ({
 	createTmdbApi: mockCreateTmdbApi
 }));
 
+/**
+ * Creates a test URL with optional search params.
+ *
+ * @param {string} search - Search query string.
+ * @returns {URL}
+ */
 function createUrl(search = '') {
 	return new URL(`https://example.com/${search}`);
 }
 
+/**
+ * Creates a mock messages object for i18n.
+ *
+ * @returns {{ apiKeyMissing: string, contentLoadError: string }}
+ */
 function createMessages() {
 	return {
 		apiKeyMissing: 'API key missing',
@@ -32,6 +43,12 @@ function createMessages() {
 	};
 }
 
+/**
+ * Creates a mock featured details object with optional overrides.
+ *
+ * @param {Object} [overrides] - Properties to override.
+ * @returns {Object}
+ */
 function createFeaturedDetails(overrides = {}) {
 	return {
 		id: mappedFixtures.details.id,
@@ -55,8 +72,8 @@ describe('homepage route load', () => {
 		mockGetLocaleText.mockReturnValue({ messages: createMessages() });
 	});
 
-	// Anweisungsüberdeckung: Die Startseite lädt alle angeforderten Trending-Seiten und bildet daraus Featured- und Karten-Daten.
-	it('lädt die Startseite mit mehreren Trending-Seiten erfolgreich', async () => {
+	// Statement coverage: the homepage loads all requested trending pages and derives featured and card data.
+	it('successfully loads the homepage with multiple trending pages', async () => {
 		const api = {
 			getTrendingAll: vi
 				.fn()
@@ -98,8 +115,8 @@ describe('homepage route load', () => {
 		});
 	});
 
-	// Anweisungsüberdeckung: Ein TV-Featured-Eintrag verwendet den TV-Detailpfad statt des Movie-Detailpfads.
-	it('lädt Featured-Details über den TV-Pfad für TV-Einträge', async () => {
+	// Statement coverage: a TV featured entry uses the TV detail path instead of the movie detail path.
+	it('loads featured details via the TV path for TV entries', async () => {
 		const tvDetails = createFeaturedDetails({
 			id: 420,
 			mediaType: 'tv',
@@ -126,8 +143,8 @@ describe('homepage route load', () => {
 		expect(result.featured).toEqual(tvDetails);
 	});
 
-	// Anweisungsüberdeckung: Schlägt nur das Featured-Detail nach der Listenladung fehl, bleibt die Kartenliste erhalten und Featured wird null.
-	it('fällt bei fehlgeschlagenen Featured-Details auf null zurück', async () => {
+	// Statement coverage: if only the featured detail fails after list loading, the card list is preserved and featured becomes null.
+	it('falls back to null when featured details fail to load', async () => {
 		const api = {
 			getTrendingAll: vi.fn().mockResolvedValue({
 				results: [{ id: 680, mediaType: 'movie', title: 'Pulp Fiction' }],
@@ -155,8 +172,8 @@ describe('homepage route load', () => {
 		);
 	});
 
-	// Anweisungsüberdeckung: Schlägt die eigentliche Listenladung fehl, liefert die Route den lokalisierten Fehlerzustand zurück.
-	it('liefert bei fehlgeschlagener Listenladung einen Fehlerzustand zurück', async () => {
+	// Statement coverage: if the actual list loading fails, the route returns the localized error state.
+	it('returns an error state when list loading fails', async () => {
 		const api = {
 			getTrendingAll: vi.fn().mockRejectedValue(new Error('list failed')),
 			getMovieDetails: vi.fn(),

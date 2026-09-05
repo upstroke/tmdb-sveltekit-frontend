@@ -2,30 +2,30 @@
 import { test, expect } from '@playwright/test';
 
 /**
- * Test Case: TC-NAV-001 — Desktop-Navigation funktioniert
- * Test Case: TC-NAV-002 — Mobile-Navigation funktioniert
+ * Test Case: TC-NAV-001 — Desktop navigation works
+ * Test Case: TC-NAV-002 — Mobile navigation works
  */
 
-test.describe('Hauptnavigation', () => {
+test.describe('Main navigation', () => {
 	// TC-NAV-001
-	test('Desktop: Alle Hauptseiten sind erreichbar', async ({ page }) => {
-		// Start auf Home
+	test('Desktop: All main pages are reachable', async ({ page }) => {
+		// Start on Home
 		await page.goto('/');
 		await expect(page).toHaveTitle(/Home.*TMDB/);
 
-		// Navigation zu Movies
+		// Navigate to Movies
 		await page.locator('#movies a').click();
 		await expect(page).toHaveURL('/movies');
 		await expect(page).toHaveTitle(/Movies.*TMDB/);
 		await expect(page.locator('#movies a')).toHaveAttribute('aria-current', 'page');
 
-		// Navigation zu TV Shows
+		// Navigate to TV Shows
 		await page.locator('#tvshows a').click();
 		await expect(page).toHaveURL('/tv-shows');
 		await expect(page).toHaveTitle(/TV.*TMDB/);
 		await expect(page.locator('#tvshows a')).toHaveAttribute('aria-current', 'page');
 
-		// Zurueck zu Home
+		// Back to Home
 		await page.locator('#home a').click();
 		await expect(page).toHaveURL('/');
 		await expect(page).toHaveTitle(/Home.*TMDB/);
@@ -33,25 +33,25 @@ test.describe('Hauptnavigation', () => {
 	});
 
 	// TC-NAV-002
-	test('Mobile: Burger-Menue oeffnet und Navigation funktioniert', async ({ page }) => {
-		// Mobile Viewport
+	test('Mobile: Burger menu opens and navigation works', async ({ page }) => {
+		// Mobile viewport
 		await page.setViewportSize({ width: 375, height: 667 });
 
-		// Start auf Home
+		// Start on Home
 		await page.goto('/');
 
-		// Burger klicken zum Oeffnen
+		// Click burger to open
 		await page.locator('label.burger-icon').click();
 
-		// Navigation zu Movies
+		// Navigate to Movies
 		await page.locator('#movies a').click();
 		await expect(page).toHaveURL('/movies');
 		await expect(page).toHaveTitle(/Movies.*TMDB/);
 
-		// Burger wieder oeffnen
+		// Open burger again
 		await page.locator('label.burger-icon').click();
 
-		// Navigation zu TV Shows
+		// Navigate to TV Shows
 		await page.locator('#tvshows a').click();
 		await expect(page).toHaveURL('/tv-shows');
 		await expect(page).toHaveTitle(/TV.*TMDB/);
