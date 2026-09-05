@@ -50,7 +50,7 @@
 
 <svelte:head>
 	<title>
-		{title !== fallbacks.notAvailable ? `${title} — ${formats.detailsSuffix}` : titles.movieDetails}
+		{title !== fallbacks.notAvailable ? `${title} — ${formats.detailsSuffix} TMDB` : `${titles.movieDetails} TMDB`}
 	</title>
 </svelte:head>
 
@@ -161,7 +161,7 @@
 				<ul class="ui list trailer-list">
 					{#each trailerUrls as trailer, index (`movie-trailer-${index}`)}
 						<li>
-							<a class="ui red button" href={trailer.url} target="_blank" rel="noopener noreferrer">
+							<a class="ui red button" href={trailer} target="_blank" rel="noopener noreferrer">
 								<i class="youtube icon" aria-hidden="true"></i>
 								{buttons.watchTrailer.replace('{index}', String(index + 1))}
 							</a>

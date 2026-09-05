@@ -1,10 +1,10 @@
 import { getLocaleText } from '$lib/i18n/resolver.js';
 import { DEFAULT_LOCALE } from '$lib/i18n/config';
 
-// Hole die echten i18n-Daten aus der ui.json
+// Get real i18n data from ui.json
 const localeData = getLocaleText(DEFAULT_LOCALE);
 
-// Zentrale Mock-Daten für i18n
+// Central mock data for i18n
 export const i18nMockDefault = {
 	i18n: {
 		subscribe(run) {
@@ -14,7 +14,7 @@ export const i18nMockDefault = {
 	}
 };
 
-// Helper für Test-Assertions
+// Helper for test assertions
 export function getI18nLabels() {
 	return {
 		...localeData.labels,

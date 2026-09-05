@@ -1,6 +1,5 @@
 /**
- * Initiale paginierte Mediendaten, wie sie beim ersten Laden einer Seite
- * bereits an die UI übergeben werden.
+ * Initial paginated media data as passed to the UI on first page load.
  */
 export const initialPagedMovieDataMock = {
 	featured: { id: 99, mediaType: 'movie', title: 'Featured Movie' },
@@ -10,8 +9,8 @@ export const initialPagedMovieDataMock = {
 };
 
 /**
- * Nachgeladene Antwort für Seite 2 mit einem Duplikat und einem neuen Eintrag.
- * Diese Daten simulieren eine typische API-Antwort aus fetchPageData(pageNumber).
+ * Loaded response for page 2 with one duplicate and one new entry.
+ * This data simulates a typical API response from fetchPageData(pageNumber).
  */
 export const pagedMovieResponsePage2Mock = {
 	page: 2,
@@ -23,8 +22,8 @@ export const pagedMovieResponsePage2Mock = {
 };
 
 /**
- * Nachgeladene Antwort für Seite 3 mit einem weiteren Duplikat und einem neuen TV-Eintrag.
- * Diese Daten dienen dazu, Deduplikation über mehrere nachgeladene Seiten zu prüfen.
+ * Loaded response for page 3 with another duplicate and a new TV entry.
+ * This data is used to verify deduplication across multiple loaded pages.
  */
 export const pagedMovieResponsePage3Mock = {
 	page: 3,
@@ -36,8 +35,8 @@ export const pagedMovieResponsePage3Mock = {
 };
 
 /**
- * Unvollständige initiale Seitendaten mit ungültigen Karten.
- * Diese Daten simulieren fehlerhafte oder unvollständig normalisierte Eingaben.
+ * Incomplete initial page data with invalid cards.
+ * This data simulates erroneous or incompletely normalized inputs.
  */
 export const incompletePagedMovieDataMock = {
 	featured: null,
@@ -47,8 +46,8 @@ export const incompletePagedMovieDataMock = {
 };
 
 /**
- * Nachgeladene Antwort ohne cards-Feld.
- * Diese Daten simulieren eine unvollständige API-Antwort, die als leere Kartenliste behandelt werden soll.
+ * Loaded response without the cards field.
+ * This data simulates an incomplete API response that should be treated as an empty card list.
  */
 export const pagedMovieResponseWithoutCardsMock = {
 	page: 2,
@@ -56,6 +55,6 @@ export const pagedMovieResponseWithoutCardsMock = {
 };
 
 /**
- * Fehlerobjekt für fehlgeschlagene Nachladevorgänge über fetchPageData(pageNumber).
+ * Error object for failed load operations via fetchPageData(pageNumber).
  */
 export const fetchPageDataErrorMock = new Error('fetch page data failed');
