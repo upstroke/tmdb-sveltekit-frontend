@@ -1,10 +1,10 @@
 /**
- * Rohe TMDB-Antworten für API-nahe Unit-Tests.
+ * Raw TMDB responses for API-level unit tests.
  *
- * Dieser Block enthält Response-Strukturen, wie sie direkt aus TMDB-Endpunkten
- * zurückkommen können, zum Beispiel für Listen-, Genre-, Zertifizierungs-
- * und Suchabfragen. Diese Fixtures gehören vor allem zu Tests für Methoden wie
- * `getList`, `searchMedia`, `getTrendingAll` oder ähnliche API-Wrapper.
+ * This block contains response structures as they might come directly from TMDB
+ * endpoints, for example for list, genre, certification, and search queries.
+ * These fixtures primarily belong to tests for methods such as `getList`,
+ * `searchMedia`, `getTrendingAll`, or similar API wrappers.
  */
 export const rawResponses = {
 	movieList: {
@@ -28,7 +28,7 @@ export const rawResponses = {
 		results: [
 			{
 				id: 421,
-				name: 'Die Fliege',
+				name: 'The Fly',
 				first_air_date: '1996-02-11',
 				vote_average: 9.0,
 				genre_ids: [53],
@@ -45,13 +45,13 @@ export const rawResponses = {
 	movieCertification: {
 		results: [
 			{
-				iso_3166_1: 'DE',
-				release_dates: [{ certification: 'FSK 16' }]
+				iso_3166_1: 'US',
+				release_dates: [{ certification: 'PG' }]
 			}
 		]
 	},
 	tvCertification: {
-		results: [{ iso_3166_1: 'DE', rating: '16' }]
+		results: [{ iso_3166_1: 'US', rating: '16' }]
 	},
 	movieWatchProviders: {
 		results: {
@@ -144,13 +144,13 @@ export const rawResponses = {
 };
 
 /**
- * Bereits normalisierte oder gezielt vorbereitete TMDB-Daten für Mapping-Tests.
+ * Already normalized or specifically prepared TMDB data for mapping tests.
  *
- * Dieser Block enthält Eingaben für reine Transformations- und Hilfsfunktionen,
- * also Daten, die direkt an Methoden wie `mapCardItem`, `mapFeaturedItem`,
- * `getTrailerUrls`, `mapCast`, `mapCrew` oder `mapDetails` übergeben werden.
- * Die Fixtures sind absichtlich kompakt und auf einzelne Mapping-Szenarien
- * zugeschnitten.
+ * This block contains inputs for pure transformation and helper functions,
+ * i.e. data that is passed directly to methods such as `mapCardItem`,
+ * `mapFeaturedItem`, `getTrailerUrls`, `mapCast`, `mapCrew`, or `mapDetails`.
+ * The fixtures are intentionally compact and tailored to individual mapping
+ * scenarios.
  */
 export const mappedFixtures = {
 	movieCardItem: {
@@ -166,7 +166,7 @@ export const mappedFixtures = {
 		backdrop_path: '/fight-club-backdrop.jpg'
 	},
 	invalidCardItem: {
-		title: 'Ung�ltiger Eintrag ohne ID',
+		title: 'Invalid entry without ID',
 		poster_path: '/invalid.jpg'
 	},
 	fallbackCardItem: {
@@ -180,7 +180,7 @@ export const mappedFixtures = {
 		id: 420,
 		name: 'Dark',
 		first_air_date: '2017-12-01',
-		overview: 'Ein vermisstes Kind bringt düstere Geheimnisse ans Licht.',
+		overview: 'A missing child brings dark secrets to light.',
 		homepage: 'https://example.com/dark',
 		genres: [{ id: 9648, name: 'Mystery' }],
 		backdrop_path: '/dark-backdrop.jpg',
@@ -190,7 +190,7 @@ export const mappedFixtures = {
 		id: 680,
 		title: 'Pulp Fiction',
 		release_date: '1994-09-10',
-		overview: 'Mehrere Geschichten verweben sich in Los Angeles.',
+		overview: 'Multiple stories intertwine in Los Angeles.',
 		homepage: 'https://example.com/pulp-fiction',
 		genres: [{ id: 53, name: 'Thriller' }],
 		vote_average: 8.5,
@@ -199,7 +199,7 @@ export const mappedFixtures = {
 		production_companies: [{ id: 14, name: 'Miramax' }],
 		backdrop_path: '/pulp-fiction-backdrop.jpg',
 		poster_path: '/pulp-fiction-poster.jpg',
-		certification: 'FSK 16',
+		certification: 'PG',
 		videos: {
 			results: [
 				{ site: 'YouTube', type: 'Trailer', official: false, key: 'firstTrailer' },
@@ -260,15 +260,15 @@ mappedFixtures.detailsWithCredits = {
 	}
 };
 
-// TV-spezifische Details-Fixture
+// TV-specific details fixture
 mappedFixtures.tvShowDetails = {
 	id: 420,
 	title: 'Dark',
 	mediaType: 'tv',
 	rating: 8.2,
-	certification: 'FSK 16',
+	certification: 'PG',
 	genres: [{ id: 9648, name: 'Mystery' }],
-	overview: 'Ein vermisstes Kind bringt d�stere Geheimnisse ans Licht.',
+	overview: 'A missing child brings dark secrets to light.',
 	homepage: 'https://example.com/dark',
 	trailerUrls: [
 		{ url: 'https://youtube.com/watch?v=trailer1' },
@@ -277,13 +277,13 @@ mappedFixtures.tvShowDetails = {
 	releaseDate: '2017-12-01',
 	runtime: 60,
 	productionCompanies: [{ id: 1, name: 'Wiedemann & Berg Television' }],
-	cast: mappedFixtures.cast.slice(0, 5), // z. B. nur erste 5
+	cast: mappedFixtures.cast.slice(0, 5), // e.g. only first 5
 	crew: mappedFixtures.crew.slice(0, 5),
 	imageUrl: '/dark-backdrop.jpg',
 	posterUrl: '/dark-poster.jpg'
 };
 
-// Provider-Fixture f�r TV
+// Provider fixture for TV
 mappedFixtures.tvProviders = {
 	providers: [
 		{

@@ -174,7 +174,7 @@ function parseStrictIsoDate(dateString) {
  *
  * Die Funktion wandelt einen Datumswert in ein `Date`-Objekt um und gibt ihn
  * mit `Intl.DateTimeFormat` formatiert zurück. Die Locale wird standardmäßig
- * aus der Umgebungsvariable `VITE_DATE_LOCALE` gelesen.
+ * aus der Umgebungsvariable `VITE_DEFAULT_LOCALE` gelesen.
  *
  * Für den Parameter `locale` werden gültige BCP-47-Sprachcodes erwartet,
  * zum Beispiel `de-DE` für Deutsch oder `en-US` für Englisch (USA).
@@ -187,10 +187,10 @@ function parseStrictIsoDate(dateString) {
  * als Fallback zurückgegeben.
  *
  * @param {string} dateString - Datumsstring im ISO- oder anderweitig parsebaren Format.
- * @param {string} [locale=import.meta.env.VITE_DATE_LOCALE ?? 'de-DE'] - BCP-47-Locale für die Ausgabe, z. B. `de-DE` oder `en-US`.
+ * @param {string} [locale=import.meta.env.VITE_DEFAULT_LOCALE ?? 'de-DE'] - BCP-47-Locale für die Ausgabe, z. B. `de-DE` oder `en-US`.
  * @returns {string} Formatierter Datumsstring, Originalwert bei ungültigem oder unvollständigem Datum oder leerer String.
  */
-export function formatDate(dateString, locale = import.meta.env.VITE_DATE_LOCALE ?? 'de-DE') {
+export function formatDate(dateString, locale = import.meta.env.VITE_DEFAULT_LOCALE ?? 'de-DE') {
 	if (!dateString) return '';
 
 	const isoDate = parseStrictIsoDate(dateString);

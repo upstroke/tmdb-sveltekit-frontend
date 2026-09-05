@@ -15,18 +15,27 @@
 
 <div class="main-footer hydrated">
 	<footer class="ui bottom fixed inverted menu">
-		<div class="ui inverted segment">
-			<div class="ui inverted secondary text menu">
-				<span class="item">Conditions of Use</span>
-				<span class="item">Privacy Policy</span>
-				<a class="item" href="https://www.imdb.com/" rel="noopener noreferrer" target="_blank">
-					Content: © by IMDb.com, Inc.
-				</a>
-				<a class="item" href="https://www.justwatch.com/" rel="noopener noreferrer" target="_blank">
-					Streaming-Provider: © by JustWatch.
-				</a>
-			</div>
-		</div>
+		<nav class="ui inverted segment">
+			<ul class="ui inverted secondary text menu">
+				<li>
+					<span class="item">Conditions of Use</span>
+				</li>
+				<li>
+					<span class="item">Privacy Policy</span>
+				</li>
+				<li>
+					<a class="item" href="https://www.imdb.com/" rel="noopener noreferrer" target="_blank">
+						Content: © by IMDb.com, Inc.
+					</a>
+				</li>
+				<li>
+					<a class="item" href="https://www.justwatch.com/" rel="noopener noreferrer" target="_blank">
+						Streaming-Provider
+					</a>
+					<span class="justwatch">© by JustWatch</span>
+				</li>
+			</ul>
+		</nav>
 	</footer>
 </div>
 
@@ -43,17 +52,29 @@
 				border-radius: 0;
 			}
 
-			.ui.text.menu {
+			ul.secondary.menu.inverted {
 				margin: 0;
-			}
-
-			.secondary.menu {
+				display: flex;
+				flex-wrap: wrap;
 				justify-content: center;
+				list-style: none;
 
-				> a:hover {
-					text-decoration: underline;
+				> li {
+					display: flex;
+					justify-content: center;
+					align-items: center;
+
+					.justwatch {
+						color: #fff;
+					}
 				}
 			}
+		}
+	}
+
+	@media only screen and (max-width: 767.98px) {
+		ul.secondary.menu {
+			font-size: 0.80rem;
 		}
 	}
 </style>
