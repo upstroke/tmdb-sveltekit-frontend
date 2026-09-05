@@ -1,9 +1,9 @@
 import { labels } from '$lib/i18n/ui.json';
 
 /**
- * Fixture: Navigation Items fuer Header-Tests
+ * Fixture: Navigation items for header tests
  *
- * Verwendet in:
+ * Used in:
  * - tests/components/Header.test.js
  */
 export const navItems = [
@@ -25,7 +25,7 @@ export const navItems = [
 ];
 
 /**
- * Hilfsfunktion: NavItem mit aktivem Status
+ * Helper function: NavItem with active status
  */
 export const getNavItemWithActiveStatus = (label) => {
 	return navItems.map((item) => ({

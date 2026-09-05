@@ -41,6 +41,7 @@
 
 <svelte:head>
 	<link href={favicon} rel="icon" />
+	<title>TMDB</title>
 </svelte:head>
 
 <HeaderMain {navItems}>

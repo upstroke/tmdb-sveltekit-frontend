@@ -1,9 +1,9 @@
 import { cleanup } from '@testing-library/svelte';
 
 /**
- * Cleanup-Funktion fuer afterEach
+ * Cleanup function for afterEach
  *
- * Fuehrt alle noetigen Cleanup-Operationen aus:
+ * Executes all necessary cleanup operations:
  * - @testing-library/svelte: cleanup()
  */
 export const cleanupAll = () => {
@@ -11,9 +11,9 @@ export const cleanupAll = () => {
 };
 
 /**
- * Reset-Funktion fuer beforeEach
+ * Reset function for beforeEach
  *
- * Fuehrt alle noetigen Reset-Operationen aus:
+ * Executes all necessary reset operations:
  * - vitest: clearAllMocks()
  */
 export const resetAll = () => {

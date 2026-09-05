@@ -51,8 +51,8 @@
 <svelte:head>
 	<title>
 		{title !== fallbacks.notAvailable
-			? `${title} — ${formats.detailsSuffix}`
-			: titles.tvShowDetails}
+			? `${title} — ${formats.detailsSuffix} TMDB`
+			: `${titles.tvShowDetails} TMDB`}
 	</title>
 </svelte:head>
 
@@ -170,7 +170,7 @@
 						<li>
 							<a
 								class="ui red button {buttons.watchTrailer ? '' : 'u-not-available'}"
-								href={trailer.url}
+								href={trailer}
 								target="_blank"
 								rel="noopener noreferrer"
 							>

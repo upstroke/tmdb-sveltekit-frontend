@@ -3,20 +3,20 @@ import { resolveLocale } from '$lib/i18n/helpers.js';
 import { DEFAULT_LOCALE } from '$lib/i18n/config';
 
 /**
- * Extrahiert die Region aus einer aufgelöı¨ısten Locale (z.B. "de-DE" -> "DE").
+ * Extracts the region from a resolved locale (e.g. "en-US" -> "US").
  *
- * @param {string} locale - Locale-String.
- * @returns {string} Region-Code.
+ * @param {string} locale - Locale string.
+ * @returns {string} Region code.
  */
 function getRegionFromLocale(locale) {
-	return locale.split('-')[1] ?? 'DE';
+	return locale.split('-')[1] ?? 'US';
 }
 
 /**
- * Liefert das Rating-System für eine gegebene Locale.
+ * Returns the rating system for a given locale.
  *
- * @param {string} [locale=DEFAULT_LOCALE] - Locale (z.B. "de-DE").
- * @returns {Object} Rating-System mit name und ratings.
+ * @param {string} [locale=DEFAULT_LOCALE] - Locale (e.g. "en-US").
+ * @returns {Object} Rating system with name and ratings.
  */
 export function getRatingsForLocale(locale = DEFAULT_LOCALE) {
 	const resolvedLocale = resolveLocale(locale);
@@ -25,12 +25,12 @@ export function getRatingsForLocale(locale = DEFAULT_LOCALE) {
 }
 
 /**
- * Mock für getCertificationMeta mit echten ratings.json-Daten.
+ * Mock for getCertificationMeta using real ratings.json data.
  *
- * Simuliert die Logik von $lib/utils/certificationMeta für Tests.
+ * Simulates the logic of $lib/utils/certificationMeta for tests.
  *
- * @param {string|null} certification - Zertifizierung (z.B. "FSK 12").
- * @param {string} [locale=DEFAULT_LOCALE] - Locale für die Region.
+ * @param {string|null} certification - Certification (e.g. "PG").
+ * @param {string} [locale=DEFAULT_LOCALE] - Locale for the region.
  * @returns {{label: string, color: string, textColor: string}|null}
  */
 export function createCertificationMetaMock(locale = DEFAULT_LOCALE) {
@@ -41,7 +41,7 @@ export function createCertificationMetaMock(locale = DEFAULT_LOCALE) {
 			return null;
 		}
 
-		// Suche im Rating-System nach der Certification
+		// Look up the certification in the rating system
 		const rating = ratings.ratings[certification];
 
 		if (rating) {
@@ -52,7 +52,7 @@ export function createCertificationMetaMock(locale = DEFAULT_LOCALE) {
 			};
 		}
 
-		// Fallback: Certification als Label verwenden
+		// Fallback: use the certification itself as the label
 		return {
 			label: certification,
 			color: '#757575',
@@ -62,14 +62,19 @@ export function createCertificationMetaMock(locale = DEFAULT_LOCALE) {
 }
 
 /**
- * Vorgefertigte Mock-Daten für häufige Zertifizierungen.
+ * Predefined mock data for common certifications.
  */
 export const commonCertifications = {
-	FSK_0: { label: 'FSK 0', color: '#ffffff', textColor: '#000000' },
-	FSK_6: { label: 'FSK 6', color: '#ffd500', textColor: '#000000' },
-	FSK_12: { label: 'FSK 12', color: '#4caf50', textColor: '#000000' },
-	FSK_16: { label: 'FSK 16', color: '#1976d2', textColor: '#ffffff' },
-	FSK_18: { label: 'FSK 18', color: '#d32f2f', textColor: '#ffffff' },
-	PG_13: { label: 'PG-13', color: '#ef6c00', textColor: '#ffffff' },
-	R: { label: 'R', color: '#c62828', textColor: '#ffffff' }
+	'G': { label: 'G', description: 'General Audiences', color: '#2e7d32', textColor: '#ffffff' },
+	'PG': { label: 'PG', description: 'Parental Guidance Suggested', color: '#f9a825', textColor: '#000000' },
+	'PG-13': { label: 'PG-13', description: 'Parents Strongly Cautioned', color: '#ef6c00', textColor: '#ffffff' },
+	'R': { label: 'R', description: 'Restricted', color: '#c62828', textColor: '#ffffff' },
+	'NC-17': { label: 'NC-17', description: 'Adults Only', color: '#6a1b9a', textColor: '#ffffff' },
+	'NR': { label: 'NR', description: 'Not Rated / Unrated', color: '#757575', textColor: '#ffffff' },
+	'TV-Y': { label: 'TV-Y', description: 'All Children', color: '#4caf50', textColor: '#ffffff' },
+	'TV-Y7': { label: 'TV-Y7', description: 'Directed to Older Children', color: '#8bc34a', textColor: '#ffffff' },
+	'TV-G': { label: 'TV-G', description: 'General Audience (TV)', color: '#2e7d32', textColor: '#ffffff' },
+	'TV-PG': { label: 'TV-PG', description: 'Parental Guidance Suggested (TV)', color: '#f9a825', textColor: '#000000' },
+	'TV-14': { label: 'TV-14', description: 'Parents Strongly Cautioned (TV)', color: '#ef6c00', textColor: '#ffffff' },
+	'TV-MA': { label: 'TV-MA', description: 'Mature Audience Only', color: '#c62828', textColor: '#ffffff' }
 };
