@@ -20,10 +20,21 @@ vi.mock('$lib/services/tmdb-api.js', () => ({
 	createTmdbApi: mockCreateTmdbApi
 }));
 
+/**
+ * Creates a test URL for the movies route.
+ *
+ * @param {string} [search] - Search query string.
+ * @returns {URL}
+ */
 function createUrl(search = '') {
 	return new URL(`https://example.com/movies${search}`);
 }
 
+/**
+ * Creates a mock messages object for i18n.
+ *
+ * @returns {{ apiKeyMissing: string, moreMoviesLoadError: string }}
+ */
 function createMessages() {
 	return {
 		apiKeyMissing: 'API key missing',
@@ -39,8 +50,8 @@ describe('movies server route GET', () => {
 		mockGetLocaleText.mockReturnValue({ messages: createMessages() });
 	});
 
-	// Anweisungsüberdeckung: Die Route lädt eine Filmseite, dedupliziert Karten per id-mediaType und gibt Paging-Daten zurück.
-	it('lädt Filme dedupliziert mit Paging-Daten', async () => {
+	// Statement coverage: the route loads a movie page, deduplicates cards by id-mediaType, and returns paging data.
+	it('loads movies deduplicated with paging data', async () => {
 		const api = {
 			getTrendingMovies: vi.fn().mockResolvedValue({
 				results: [
@@ -57,10 +68,10 @@ describe('movies server route GET', () => {
 
 		const response = await GET({
 			fetch: vi.fn(),
-			url: createUrl('?page=3&locale=de')
+			url: createUrl('?page=3&locale=en')
 		});
 
-		expect(mockResolveLocale).toHaveBeenCalledWith('de');
+		expect(mockResolveLocale).toHaveBeenCalledWith('en');
 		expect(api.getTrendingMovies).toHaveBeenCalledWith(3);
 		expect(response.status).toBe(200);
 		expect(await response.json()).toEqual({
@@ -74,8 +85,8 @@ describe('movies server route GET', () => {
 		});
 	});
 
-	// Anweisungsüberdeckung: Ungültige Seitenzahlen werden auf Seite eins normalisiert und fehlende API-Seitenangaben fallen auf den Request-Wert zurück.
-	it('normalisiert ungültige Seitenzahlen auf eins', async () => {
+	// Statement coverage: invalid page numbers are normalized to page one and missing API page values fall back to the request value.
+	it('normalizes invalid page numbers to one', async () => {
 		const api = {
 			getTrendingMovies: vi.fn().mockResolvedValue({
 				results: [{ id: 13, mediaType: 'movie', title: 'Forrest Gump' }],
@@ -99,8 +110,8 @@ describe('movies server route GET', () => {
 		});
 	});
 
-	// Anweisungsüberdeckung: Schlägt die Filmladung fehl, liefert die Route Status 500 und die lokalisierte Fehlermeldung zurück.
-	it('liefert bei Ladefehlern eine lokalisierte Fehlermeldung zurück', async () => {
+	// Statement coverage: if movie loading fails, the route returns status 500 and the localized error message.
+	it('returns a localized error message when loading fails', async () => {
 		const api = {
 			getTrendingMovies: vi.fn().mockRejectedValue(new Error('movie page failed'))
 		};

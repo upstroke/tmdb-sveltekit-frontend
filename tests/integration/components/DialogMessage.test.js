@@ -23,37 +23,37 @@ describe('DialogMessage', () => {
 		vi.restoreAllMocks();
 	});
 
-	it('rendert die Meldung mit dem Standardtitel und dem Bestätigungsbutton', () => {
-		// Äquivalenzklassenbildung: Ohne expliziten Titel nutzt die Komponente den Standardtitel aus dem i18n-Store.
+	it('renders the message with the default title and the confirm button', () => {
+		// Equivalence class testing: without an explicit title, the component uses the default title from the i18n store.
 		render(DialogMessage, {
 			props: {
-				message: labels.unknownError // ← Aus ui.json!
+				message: labels.unknownError // ← From ui.json!
 			}
 		});
 
 		expect(screen.getByRole('dialog', { name: labels.dialogErrorTitle })).toBeInTheDocument();
-		expect(screen.getByText(labels.unknownError)).toBeInTheDocument(); // ← Aus ui.json!
+		expect(screen.getByText(labels.unknownError)).toBeInTheDocument(); // ← From ui.json!
 		expect(screen.getByRole('button', { name: labels.dialogOk })).toBeInTheDocument();
 	});
 
-	it('verwendet einen explizit gesetzten Titel statt des Standardtitels', () => {
-		// Äquivalenzklassenbildung: Ein gesetzter Titel überschreibt den Default-Titel vollständig.
+	it('uses an explicitly set title instead of the default title', () => {
+		// Equivalence class testing: a provided title completely overrides the default title.
 		render(DialogMessage, {
 			props: {
-				message: labels.contentLoadError, // ← Aus ui.json!
-				title: 'Benutzerdefinierte Meldung'
+				message: labels.contentLoadError, // ← From ui.json!
+				title: 'Custom Message'
 			}
 		});
 
-		expect(screen.getByRole('dialog', { name: 'Benutzerdefinierte Meldung' })).toBeInTheDocument();
-		expect(screen.getByText(labels.contentLoadError)).toBeInTheDocument(); // ← Aus ui.json!
+		expect(screen.getByRole('dialog', { name: 'Custom Message' })).toBeInTheDocument();
+		expect(screen.getByText(labels.contentLoadError)).toBeInTheDocument(); // ← From ui.json!
 	});
 
-	it('öffnet den Dialog clientseitig, wenn eine Meldung vorhanden ist und der Dialog geschlossen ist', () => {
-		// Anweisungsüberdeckung: Bei vorhandener Meldung und geschlossenem Dialog wird showModal genau einmal aufgerufen.
+	it('opens the dialog client-side when a message is present and the dialog is closed', () => {
+		// Statement coverage: with an existing message and a closed dialog, showModal is called exactly once.
 		render(DialogMessage, {
 			props: {
-				message: labels.loadMoreError // ← Aus ui.json!
+				message: labels.loadMoreError // ← From ui.json!
 			}
 		});
 

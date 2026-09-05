@@ -11,7 +11,7 @@ vi.mock('$lib/utils/pageStateRestore', () => ({
 
 import { restorePagedList } from '$lib/utils/pageStateRestore';
 
-// Mock für $app/state damit page.url.origin definiert ist
+// Mock for $app/state so page.url.origin is defined
 vi.mock('$app/state', () => ({
 	page: {
 		url: new URL('https://example.com/')
@@ -62,7 +62,8 @@ describe('PageHome', () => {
 		vi.unstubAllGlobals();
 	});
 
-	it('rendert Featured-Inhalt und Trending-Karten aus Serverdaten', async () => {
+	// Statement coverage: Featured content and trending cards are rendered from server data
+	it('renders featured content and trending cards from server data', async () => {
 		render(PageHome, { props: { data: createData() } });
 
 		await waitFor(() => {
@@ -72,7 +73,8 @@ describe('PageHome', () => {
 		});
 	});
 
-	it('rendert die Überschriften aus ui.json', async () => {
+	// Statement coverage: headings from ui.json are rendered
+	it('renders headings from ui.json', async () => {
 		render(PageHome, { props: { data: createData() } });
 
 		await waitFor(() => {
@@ -81,7 +83,8 @@ describe('PageHome', () => {
 		});
 	});
 
-	it('zeigt LoadMore bei weiteren verfügbaren Karten', async () => {
+	// Branch coverage: LoadMore is shown when more cards are available (hasMore=true)
+	it('shows LoadMore when more cards are available', async () => {
 		render(PageHome, { props: { data: createData({ hasMore: true }) } });
 
 		await waitFor(() => {
@@ -89,7 +92,8 @@ describe('PageHome', () => {
 		});
 	});
 
-	it('zeigt LoadMore nicht ohne weitere verfügbare Karten', async () => {
+	// Branch coverage: LoadMore is not shown when no more cards are available (hasMore=false)
+	it('does not show LoadMore when no more cards are available', async () => {
 		render(PageHome, { props: { data: createData({ hasMore: false }) } });
 
 		await waitFor(() => {
@@ -97,7 +101,8 @@ describe('PageHome', () => {
 		});
 	});
 
-	it('zeigt Serverfehler im Dialog an', async () => {
+	// Branch coverage: server error is displayed in dialog (error state)
+	it('shows server error in dialog', async () => {
 		render(PageHome, {
 			props: { data: createData({ featured: null, cards: [], error: labels.contentLoadError }) }
 		});
@@ -107,5 +112,5 @@ describe('PageHome', () => {
 		});
 	});
 
-	// TODO: Die Interaktion mit LoadMore (Klick, Nachladen, Scrollen) wird später als Playwright-Test abgedeckt.
+	// TODO: Interaction with LoadMore (click, reload, scrolling) will be covered later as a Playwright test.
 });

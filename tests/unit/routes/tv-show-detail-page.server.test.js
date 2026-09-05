@@ -21,10 +21,21 @@ vi.mock('$lib/services/tmdb-api.js', () => ({
 	createTmdbApi: mockCreateTmdbApi
 }));
 
+/**
+ * Creates a test URL for the TV show detail route.
+ *
+ * @param {string} [search] - Search query string.
+ * @returns {URL}
+ */
 function createUrl(search = '') {
 	return new URL(`https://example.com/tv-shows/420${search}`);
 }
 
+/**
+ * Creates a mock messages object for i18n.
+ *
+ * @returns {{ apiKeyMissing: string, tvShowLoadError: string }}
+ */
 function createMessages() {
 	return {
 		apiKeyMissing: 'API key missing',
@@ -32,6 +43,12 @@ function createMessages() {
 	};
 }
 
+/**
+ * Creates a mock TV details object with optional overrides.
+ *
+ * @param {Object} [overrides] - Properties to override.
+ * @returns {Object}
+ */
 function createTvDetails(overrides = {}) {
 	return {
 		id: mappedFixtures.featuredItem.id,
@@ -52,20 +69,20 @@ describe('tv show detail route load', () => {
 	beforeEach(() => {
 		vi.resetModules();
 		vi.clearAllMocks();
-		mockResolveLocale.mockReturnValue('de-DE');
+		mockResolveLocale.mockReturnValue('en-US');
 		mockGetLocaleText.mockReturnValue({ messages: createMessages() });
 	});
 
-	// Anweisungsüberdeckung: Die TV-Detailroute lädt TV-Details und hängt die Provider-Rückgabe an die Response an.
-	it('lädt TV-Details und Provider erfolgreich', async () => {
+	// Statement coverage: the TV detail route loads TV details and attaches the provider response to the result.
+	it('successfully loads TV details and providers', async () => {
 		const providers = {
-			link: rawResponses.tvWatchProviders.results.DE.link,
+			link: rawResponses.tvWatchProviders.results.US.link,
 			providers: [
 				{
 					providerId: 119,
 					providerName: 'Amazon Video',
 					type: 'buy',
-					link: rawResponses.tvWatchProviders.results.DE.link,
+					link: rawResponses.tvWatchProviders.results.US.link,
 					logoPath: '/amazon.png',
 					displayPriority: 2
 				}
@@ -81,10 +98,10 @@ describe('tv show detail route load', () => {
 		const result = await load({
 			fetch: vi.fn(),
 			params: { id: '420' },
-			url: createUrl('?locale=de')
+			url: createUrl('?locale=en')
 		});
 
-		expect(mockResolveLocale).toHaveBeenCalledWith('de');
+		expect(mockResolveLocale).toHaveBeenCalledWith('en');
 		expect(api.getTVShowDetails).toHaveBeenCalledWith('420');
 		expect(api.getWatchProviders).toHaveBeenCalledWith('tv', '420');
 		expect(result).toMatchObject({
@@ -94,8 +111,8 @@ describe('tv show detail route load', () => {
 		expect(result.providers).toEqual(providers);
 	});
 
-	// Anweisungsüberdeckung: Auch eine leere Provider-Rückgabe wird an die Response weitergereicht.
-	it('reicht eine leere Provider-Rückgabe unverändert weiter', async () => {
+	// Statement coverage: even an empty provider response is passed through to the result.
+	it('passes through an empty provider response unchanged', async () => {
 		const api = {
 			getTVShowDetails: vi.fn().mockResolvedValue(createTvDetails({ trailerUrls: [] })),
 			getWatchProviders: vi.fn().mockResolvedValue(null)
@@ -112,8 +129,8 @@ describe('tv show detail route load', () => {
 		expect(result.providers).toBeNull();
 	});
 
-	// Anweisungsüberdeckung: Schlägt die TV-Detail-Ladung fehl, liefert die Route die lokalisierte Fehlermeldung zurück.
-	it('liefert bei fehlgeschlagener TV-Ladung die lokalisierte Fehlermeldung zurück', async () => {
+	// Statement coverage: if the TV detail loading fails, the route returns the localized error message.
+	it('returns the localized error message when TV loading fails', async () => {
 		const api = {
 			getTVShowDetails: vi.fn().mockRejectedValue(new Error('tv details failed')),
 			getWatchProviders: vi.fn().mockResolvedValue(null)

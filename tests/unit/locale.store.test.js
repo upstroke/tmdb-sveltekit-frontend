@@ -11,10 +11,10 @@ vi.mock('$app/environment', () => ({
 }));
 
 /**
- * Lädt den Locale-Store neu, damit Änderungen an Browser-Status und Storage
- * pro Testfall sauber ausgewertet werden.
+ * Reloads the locale store so that changes to browser state and storage
+ * are cleanly evaluated per test case.
  *
- * @returns {Promise<import('$lib/stores/locale').locale>} Aktueller Locale-Store.
+ * @returns {Promise<import('$lib/stores/locale').locale>} Current locale store.
  */
 async function loadLocaleStore() {
 	vi.resetModules();
@@ -24,9 +24,9 @@ async function loadLocaleStore() {
 }
 
 /**
- * Teststrategie: Anweisungs- und Zweigüberdeckung.
- * Die Tests decken SSR-Fallback, Session-Storage-Auslesen, Fallback bei
- * fehlendem Storage-Wert sowie das Speichern neuer Werte ab.
+ * Test strategy: statement and branch coverage.
+ * The tests cover SSR fallback, session storage reading, fallback for
+ * missing storage values, and saving new values.
  */
 describe('locale store', () => {
 	beforeEach(() => {
@@ -35,31 +35,31 @@ describe('locale store', () => {
 		vi.restoreAllMocks();
 	});
 
-	// Anweisungsüberdeckung: Beim SSR bleibt die Standard-Locale aktiv.
-	it('verwendet beim serverseitigen Rendern die Standard-Locale', async () => {
+	// Statement coverage: the default locale is used during server-side rendering.
+	it('uses the default locale during server-side rendering', async () => {
 		browserState.value = false;
 		const locale = await loadLocaleStore();
 
 		expect(get(locale)).toBe(DEFAULT_LOCALE);
 	});
 
-	// Anweisungs- und Zweigüberdeckung: Die initiale Locale wird aus dem Session Storage gelesen.
-	it('liest die initiale Locale aus dem Session Storage', async () => {
+	// Statement and branch coverage: the initial locale is read from session storage.
+	it('reads the initial locale from session storage', async () => {
 		sessionStorage.setItem('app-locale', 'en-US');
 		const locale = await loadLocaleStore();
 
 		expect(get(locale)).toBe('en-US');
 	});
 
-	// Zweigüberdeckung: Ohne gespeicherten Wert wird die Standard-Locale verwendet.
-	it('fällt ohne gespeicherten Wert auf die Standard-Locale zurück', async () => {
+	// Branch coverage: the default locale is used when no stored value exists.
+	it('falls back to the default locale when no stored value exists', async () => {
 		const locale = await loadLocaleStore();
 
 		expect(get(locale)).toBe(DEFAULT_LOCALE);
 	});
 
-	// Zweigüberdeckung: Fehler beim Lesen aus dem Session Storage führen zum Fallback auf die Standard-Locale.
-	it('fällt bei einem Session-Storage-Lesefehler auf die Standard-Locale zurück', async () => {
+	// Branch coverage: session storage read errors fall back to the default locale.
+	it('falls back to the default locale on a session storage read error', async () => {
 		const getItemSpy = vi
 			.spyOn(window.sessionStorage.__proto__, 'getItem')
 			.mockImplementation(() => {
@@ -72,8 +72,8 @@ describe('locale store', () => {
 		expect(getItemSpy).toHaveBeenCalledWith('app-locale');
 	});
 
-	// Zweigüberdeckung: Fehler beim Speichern werden protokolliert und blockieren die Aktualisierung des Stores nicht.
-	it('aktualisiert den Store auch dann, wenn das Speichern im Session Storage fehlschlägt', async () => {
+	// Branch coverage: storage errors are logged and do not block store updates.
+	it('updates the store even when saving to session storage fails', async () => {
 		const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 		const setItemSpy = vi
 			.spyOn(window.sessionStorage.__proto__, 'setItem')
@@ -87,6 +87,8 @@ describe('locale store', () => {
 		expect(get(locale)).toBe('fr-FR');
 		expect(setItemSpy).toHaveBeenCalledWith('app-locale', 'fr-FR');
 		expect(warnSpy).toHaveBeenCalledOnce();
-		expect(warnSpy.mock.calls[0][0]).toContain('The locale could not be saved: Error: quota exceeded');
+		expect(warnSpy.mock.calls[0][0]).toContain(
+			'The locale could not be saved: Error: quota exceeded'
+		);
 	});
 });

@@ -21,10 +21,21 @@ vi.mock('$lib/services/tmdb-api.js', () => ({
 	createTmdbApi: mockCreateTmdbApi
 }));
 
+/**
+ * Creates a test URL for the TV shows route.
+ *
+ * @param {string} [search] - Search query string.
+ * @returns {URL}
+ */
 function createUrl(search = '') {
 	return new URL(`https://example.com/tv-shows${search}`);
 }
 
+/**
+ * Creates a mock messages object for i18n.
+ *
+ * @returns {{ apiKeyMissing: string, tvShowsLoadError: string }}
+ */
 function createMessages() {
 	return {
 		apiKeyMissing: 'API key missing',
@@ -32,6 +43,12 @@ function createMessages() {
 	};
 }
 
+/**
+ * Creates a mock TV details object with optional overrides.
+ *
+ * @param {Object} [overrides] - Properties to override.
+ * @returns {Object}
+ */
 function createTvDetails(overrides = {}) {
 	return {
 		id: mappedFixtures.featuredItem.id,
@@ -51,12 +68,12 @@ describe('tv shows page route load', () => {
 	beforeEach(() => {
 		vi.resetModules();
 		vi.clearAllMocks();
-		mockResolveLocale.mockReturnValue('de-DE');
+		mockResolveLocale.mockReturnValue('en-US');
 		mockGetLocaleText.mockReturnValue({ messages: createMessages() });
 	});
 
-	// Anweisungsüberdeckung: Die TV-Route lädt mehrere Seiten, entfernt doppelte Karten nach id-mediaType und baut das Featured-Objekt aus dem bevorzugten Kandidaten.
-	it('lädt mehrere TV-Seiten, dedupliziert Karten und setzt Featured', async () => {
+	// Statement coverage: the TV route loads multiple pages, removes duplicate cards by id-mediaType, and builds the featured object from the preferred candidate.
+	it('loads multiple TV pages, deduplicates cards, and sets featured', async () => {
 		const api = {
 			getTrendingTVShows: vi
 				.fn()
@@ -79,7 +96,7 @@ describe('tv shows page route load', () => {
 		mockCreateTmdbApi.mockReturnValue(api);
 		const { load } = await import('../../../src/routes/tv-shows/+page.server.js');
 
-		const result = await load({ fetch: vi.fn(), url: createUrl('?page=2&locale=de') });
+		const result = await load({ fetch: vi.fn(), url: createUrl('?page=2&locale=en') });
 
 		expect(api.getTrendingTVShows).toHaveBeenNthCalledWith(1, 1);
 		expect(api.getTrendingTVShows).toHaveBeenNthCalledWith(2, 2);
@@ -97,8 +114,8 @@ describe('tv shows page route load', () => {
 		});
 	});
 
-	// Zweigüberdeckung: Fehlt der bevorzugte Featured-Kandidat, fällt die TV-Route auf den ersten verfügbaren Index zurück.
-	it('fällt bei der TV-Featured-Auswahl auf den ersten Index zurück', async () => {
+	// Branch coverage: if the preferred featured candidate is missing, the TV route falls back to the first available index.
+	it('falls back to the first index for TV featured selection', async () => {
 		const fallbackDetails = createTvDetails({ id: 99, title: 'First Placeholder' });
 		const api = {
 			getTrendingTVShows: vi.fn().mockResolvedValue({
@@ -116,8 +133,8 @@ describe('tv shows page route load', () => {
 		expect(result.featured).toEqual(fallbackDetails);
 	});
 
-	// Zweigüberdeckung: Schlägt nur das Featured-Detail fehl, bleibt die deduplizierte Kartenliste erhalten.
-	it('behält deduplizierte Karten bei, wenn TV-Featured-Details fehlschlagen', async () => {
+	// Branch coverage: if only the featured detail fails, the deduplicated card list is preserved.
+	it('preserves deduplicated cards when TV featured details fail', async () => {
 		const api = {
 			getTrendingTVShows: vi.fn().mockResolvedValue({
 				results: [
@@ -147,8 +164,8 @@ describe('tv shows page route load', () => {
 		);
 	});
 
-	// Zweigüberdeckung: Schlägt die TV-Listenladung fehl, gibt die Route den lokalisierten Fehlerzustand zurück.
-	it('liefert bei fehlgeschlagener TV-Listenladung einen Fehlerzustand zurück', async () => {
+	// Branch coverage: if the TV list loading fails, the route returns the localized error state.
+	it('returns an error state when TV list loading fails', async () => {
 		const api = {
 			getTrendingTVShows: vi.fn().mockRejectedValue(new Error('list failed')),
 			getTVShowDetails: vi.fn()

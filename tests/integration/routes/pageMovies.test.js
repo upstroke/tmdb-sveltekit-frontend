@@ -11,7 +11,7 @@ vi.mock('$lib/utils/pageStateRestore', () => ({
 
 import { restorePagedList } from '$lib/utils/pageStateRestore';
 
-// Mock für $app/state damit page.url.origin definiert ist
+// Mock for $app/state so page.url.origin is defined
 vi.mock('$app/state', () => ({
 	page: {
 		url: new URL('https://example.com/')
@@ -33,7 +33,7 @@ describe('MoviesPage', () => {
 		posterUrl: rawResponses.featuredTodayMovieList.results[0].poster_path
 	};
 
-	// FIX: rawResponses.movieList statt rawResponses.topRatedMovieList
+	// FIX: rawResponses.movieList instead of rawResponses.topRatedMovieList
 	const cards = rawResponses.movieList.results.map((movie) => ({
 		id: movie.id,
 		mediaType: 'movie',
@@ -63,7 +63,8 @@ describe('MoviesPage', () => {
 		vi.unstubAllGlobals();
 	});
 
-	it('rendert Featured-Film mit korrekten Daten', async () => {
+	// Statement coverage: featured movie is rendered with correct data
+	it('renders featured movie with correct data', async () => {
 		render(MoviesPage, { props: { data: createData() } });
 
 		await waitFor(() => {
@@ -72,7 +73,8 @@ describe('MoviesPage', () => {
 		});
 	});
 
-	it('rendert Film-Cards mit korrekten Daten', async () => {
+	// Statement coverage: movie cards are rendered with correct data
+	it('renders movie cards with correct data', async () => {
 		render(MoviesPage, { props: { data: createData() } });
 
 		await waitFor(() => {
@@ -82,7 +84,8 @@ describe('MoviesPage', () => {
 		});
 	});
 
-	it('rendert die Überschriften aus ui.json', async () => {
+	// Statement coverage: headings from ui.json are rendered
+	it('renders headings from ui.json', async () => {
 		render(MoviesPage, { props: { data: createData() } });
 
 		await waitFor(() => {
@@ -91,7 +94,8 @@ describe('MoviesPage', () => {
 		});
 	});
 
-	it('zeigt LoadMore bei weiteren verfügbaren Karten', async () => {
+	// Branch coverage: LoadMore is shown when more cards are available (hasMore=true)
+	it('shows LoadMore when more cards are available', async () => {
 		render(MoviesPage, { props: { data: createData({ hasMore: true }) } });
 
 		await waitFor(() => {
@@ -99,7 +103,8 @@ describe('MoviesPage', () => {
 		});
 	});
 
-	it('zeigt LoadMore nicht ohne weitere verfügbare Karten', async () => {
+	// Branch coverage: LoadMore is not shown when no more cards are available (hasMore=false)
+	it('does not show LoadMore when no more cards are available', async () => {
 		render(MoviesPage, { props: { data: createData({ hasMore: false }) } });
 
 		await waitFor(() => {
@@ -107,7 +112,8 @@ describe('MoviesPage', () => {
 		});
 	});
 
-	it('zeigt Serverfehler im Dialog an', async () => {
+	// Branch coverage: server error is displayed in dialog (error state)
+	it('shows server error in dialog', async () => {
 		render(MoviesPage, {
 			props: { data: createData({ featured: null, cards: [], error: labels.contentLoadError }) }
 		});
@@ -117,5 +123,5 @@ describe('MoviesPage', () => {
 		});
 	});
 
-	// TODO: Die Interaktion mit LoadMore (Klick, Nachladen, Scrollen) wird später als Playwright-Test abgedeckt.
+	// TODO: Interaction with LoadMore (click, reload, scrolling) will be covered later as a Playwright test.
 });

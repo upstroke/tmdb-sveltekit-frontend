@@ -1,13 +1,13 @@
 import ratings from '$lib/i18n/ratings.json';
 
-const DEFAULT_RATING_SYSTEM = 'DE';
+const DEFAULT_RATING_SYSTEM = 'US';
 
 /**
- * Normalisiert ein Rating-System und verwendet bei fehlenden oder ungültigen
- * Angaben das standardmäßig konfigurierte System.
+ * Normalizes a rating system and uses the default configured system
+ * for missing or invalid values.
  *
- * @param {string|number|null|undefined} value - Rohwert des Rating-Systems.
- * @returns {string} Normalisierter Rating-System-Code.
+ * @param {string|number|null|undefined} value - Raw value of the rating system.
+ * @returns {string} Normalized rating system code.
  */
 function normalizeRatingSystem(value) {
 	const normalized = String(value ?? '')
@@ -17,10 +17,10 @@ function normalizeRatingSystem(value) {
 }
 
 /**
- * Liefert Anzeigeinformationen für eine landesspezifische Altersfreigabe.
+ * Returns display information for a country-specific age rating.
  *
- * @param {string|number|null|undefined} value - Rohwert aus TMDB oder IMDb.
- * @param {string} [country=DEFAULT_RATING_SYSTEM] - Rating-System, z. B. DE oder US.
+ * @param {string|number|null|undefined} value - Raw value from TMDB or IMDb.
+ * @param {string} [country=DEFAULT_RATING_SYSTEM] - Rating system, e.g. DE or US.
  * @returns {{value: string, label: string, color: string, textColor: string, description?: string}|null}
  */
 export function getCertificationMeta(value, country = DEFAULT_RATING_SYSTEM) {

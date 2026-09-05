@@ -4,13 +4,13 @@ import { DEFAULT_LOCALE } from '$lib/i18n/config';
 import { getLocaleText } from '$lib/i18n/resolver';
 
 /**
- * Teststrategie: Anweisungs- und Zweigüberdeckung.
- * Die Tests decken die Standard-Locale, eine unterstützte Fremd-Locale und
- * den Fallback auf die Standardtexte bei unbekannten Locales ab.
+ * Test strategy: statement and branch coverage.
+ * The tests cover the default locale, a supported foreign locale, and
+ * the fallback to default texts for unknown locales.
  */
 describe('i18n resolver', () => {
-	// Anweisungs- und Zweigüberdeckung: Ohne Eingabe wird die Standard-Locale aufgelöst.
-	it('liefert ohne Eingabe die Texte der Standard-Locale', () => {
+	// Statement and branch coverage: without input, the default locale is resolved.
+	it('returns the texts of the default locale when no input is provided', () => {
 		expect(getLocaleText()).toEqual({
 			locale: DEFAULT_LOCALE,
 			labels: uiText.locales[DEFAULT_LOCALE].labels,
@@ -22,8 +22,8 @@ describe('i18n resolver', () => {
 		});
 	});
 
-	// Anweisungs- und Zweigüberdeckung: Unterstützte Locales liefern ihre eigenen Texte.
-	it('liefert die Texte für eine unterstützte Locale', () => {
+	// Statement and branch coverage: supported locales return their own texts.
+	it('returns the texts for a supported locale', () => {
 		expect(getLocaleText('en-US')).toEqual({
 			locale: 'en-US',
 			labels: uiText.locales['en-US'].labels,
@@ -35,8 +35,8 @@ describe('i18n resolver', () => {
 		});
 	});
 
-	// Zweigüberdeckung: Unbekannte Locales fallen auf Standardtexte zurück, die angefragte Locale bleibt erhalten.
-	it('fällt bei unbekannter Locale auf die Standardtexte zurück und behält die angefragte Locale bei', () => {
+	// Branch coverage: unknown locales fall back to default texts while keeping the requested locale.
+	it('falls back to default texts for an unknown locale and retains the requested locale', () => {
 		expect(getLocaleText('pt-BR')).toEqual({
 			locale: 'pt-BR',
 			labels: uiText.locales[DEFAULT_LOCALE].labels,

@@ -3,21 +3,26 @@ import notAvailableImage from '$lib/assets/not-available.png';
 import { createTmdbApi } from '$lib/services/tmdb-api';
 import { mappedFixtures } from '$tests/fixtures/tmdb/tmdb.fixtures.js';
 
+/**
+ * Creates a TMDB API instance with a mocked fetch function.
+ *
+ * @returns {ReturnType<typeof createTmdbApi>}
+ */
 function createApi() {
 	return createTmdbApi(vi.fn(), 'test-api-key');
 }
 
 describe('tmdb api mapping', () => {
 	describe('mapCardItem', () => {
-		// Zweigüberdeckung: Ungültige Karten ohne ID werden verworfen.
-		it('gibt null zurück, wenn der Eintrag keine gültige ID oder keinen unterstützten Medientyp hat', () => {
+		// Branch coverage: invalid cards without an ID are discarded.
+		it('returns null if the entry has no valid ID or unsupported media type', () => {
 			const api = createApi();
 
 			expect(api.mapCardItem(mappedFixtures.invalidCardItem)).toBeNull();
 		});
 
-		// Anweisungsüberdeckung: Ein vollständiger Filmeintrag wird in das Kartenformat gemappt.
-		it('mappt einen vollständigen Filmeintrag in das interne Kartenformat', () => {
+		// Statement coverage: a complete movie entry is mapped to the card format.
+		it('maps a complete movie entry to the internal card format', () => {
 			const api = createApi();
 
 			expect(api.mapCardItem(mappedFixtures.movieCardItem)).toEqual({
@@ -35,8 +40,8 @@ describe('tmdb api mapping', () => {
 			});
 		});
 
-		// Zweigüberdeckung: Fehlende Titel, Genres und Bilder werden auf Fallback-Werte normalisiert.
-		it('setzt Fallback-Werte, wenn Titel, Genres und Bildpfade fehlen', () => {
+		// Branch coverage: missing titles, genres, and image paths are normalized to fallback values.
+		it('sets fallback values when title, genres, and image paths are missing', () => {
 			const api = createApi();
 
 			expect(api.mapCardItem(mappedFixtures.fallbackCardItem, 'tv')).toEqual({
@@ -52,24 +57,19 @@ describe('tmdb api mapping', () => {
 		});
 	});
 
-
 	describe('resolveGenres', () => {
-		// Anweisungsüberdeckung: Genre-IDs werden mit den geladenen Genre-Maps in lesbare Objekte aufgelöst.
-		it('löst Genre-IDs anhand des Medientyps in Genre-Objekte auf', async () => {
+		// Statement coverage: genre IDs are resolved to readable objects using the loaded genre maps.
+		it('resolves genre IDs to genre objects based on the media type', async () => {
 			const fetchFn = vi
 				.fn()
-				.mockResolvedValueOnce(
-					{
-						ok: true,
-						json: vi.fn().mockResolvedValue({ genres: [{ id: 18, name: 'Drama' }] })
-					}
-				)
-				.mockResolvedValueOnce(
-					{
-						ok: true,
-						json: vi.fn().mockResolvedValue({ genres: [{ id: 9648, name: 'Mystery' }] })
-					}
-				);
+				.mockResolvedValueOnce({
+					ok: true,
+					json: vi.fn().mockResolvedValue({ genres: [{ id: 18, name: 'Drama' }] })
+				})
+				.mockResolvedValueOnce({
+					ok: true,
+					json: vi.fn().mockResolvedValue({ genres: [{ id: 9648, name: 'Mystery' }] })
+				});
 			const api = createTmdbApi(fetchFn, 'test-api-key', 'de-DE');
 
 			await api.loadGenreMaps();
@@ -78,8 +78,8 @@ describe('tmdb api mapping', () => {
 			expect(api.resolveGenres([9648], 'tv')).toEqual([{ id: 9648, name: 'Mystery' }]);
 		});
 
-		// Zweigüberdeckung: Wiederholtes Laden mit gefüllten Caches beendet die Funktion sofort ohne weitere Requests.
-		it('lädt Genre-Maps nach initialem Befüllen kein zweites Mal', async () => {
+		// Branch coverage: repeated loading with filled caches exits the function immediately without further requests.
+		it('does not load genre maps a second time after initial population', async () => {
 			const fetchFn = vi
 				.fn()
 				.mockResolvedValueOnce({
@@ -100,8 +100,8 @@ describe('tmdb api mapping', () => {
 	});
 
 	describe('mapFeaturedItem', () => {
-		// Anweisungsüberdeckung: Featured-Daten werden in das UI-Format überführt.
-		it('mappt Featured-Daten mit Backdrop- und Posterbild korrekt', () => {
+		// Statement coverage: featured data is transformed to the UI format.
+		it('maps featured data with backdrop and poster images correctly', () => {
 			const api = createApi();
 
 			expect(api.mapFeaturedItem(mappedFixtures.featuredItem)).toEqual({
@@ -109,7 +109,7 @@ describe('tmdb api mapping', () => {
 				mediaType: 'tv',
 				title: 'Dark',
 				releaseDate: '2017-12-01',
-				overview: 'Ein vermisstes Kind bringt düstere Geheimnisse ans Licht.',
+				overview: 'A missing child brings dark secrets to light.',
 				homepage: 'https://example.com/dark',
 				genres: [{ id: 9648, name: 'Mystery' }],
 				imageUrl: 'https://image.tmdb.org/t/p/w780/dark-backdrop.jpg',
@@ -119,8 +119,8 @@ describe('tmdb api mapping', () => {
 	});
 
 	describe('getTrailerUrls', () => {
-		// Anweisungsüberdeckung: Alle passenden YouTube-Trailer werden in ihrer Originalreihenfolge übernommen.
-		it('liefert alle passenden YouTube-Trailer in ihrer vorhandenen Reihenfolge zurück', () => {
+		// Statement coverage: all matching YouTube trailers are retained in their original order.
+		it('returns all matching YouTube trailers in their existing order', () => {
 			const api = createApi();
 
 			expect(api.getTrailerUrls(mappedFixtures.details)).toEqual([
@@ -129,8 +129,8 @@ describe('tmdb api mapping', () => {
 			]);
 		});
 
-		// Zweigüberdeckung: Ein einzelner passender YouTube-Trailer wird als Eintrag in der Liste zurückgegeben.
-		it('liefert genau einen Eintrag zurück, wenn nur ein passender YouTube-Trailer vorhanden ist', () => {
+		// Branch coverage: a single matching YouTube trailer is returned as a single-entry list.
+		it('returns exactly one entry when only one matching YouTube trailer exists', () => {
 			const api = createApi();
 
 			expect(api.getTrailerUrls(mappedFixtures.trailerDetailsWithSingleMatch)).toEqual([
@@ -138,8 +138,8 @@ describe('tmdb api mapping', () => {
 			]);
 		});
 
-		// Zweigüberdeckung: Ohne passenden Trailer wird eine leere Liste zurückgegeben.
-		it('gibt eine leere Liste zurück, wenn kein passender YouTube-Trailer vorhanden ist', () => {
+		// Branch coverage: an empty list is returned when no matching YouTube trailer exists.
+		it('returns an empty list when no matching YouTube trailer exists', () => {
 			const api = createApi();
 
 			expect(api.getTrailerUrls(mappedFixtures.trailerDetailsWithoutMatch)).toEqual([]);
@@ -147,8 +147,8 @@ describe('tmdb api mapping', () => {
 	});
 
 	describe('mapCast', () => {
-		// Zweigüberdeckung: Die Cast-Liste wird auf maximal zwanzig Personen begrenzt und mit Bild-Fallback versehen.
-		it('begrenzt die Cast-Liste auf zwanzig Einträge und setzt für fehlende Profilbilder den Fallback', () => {
+		// Branch coverage: the cast list is limited to a maximum of twenty people and provided with an image fallback.
+		it('limits the cast list to twenty entries and sets the fallback for missing profile images', () => {
 			const api = createApi();
 			const mappedCast = api.mapCast(mappedFixtures.cast);
 
@@ -175,8 +175,8 @@ describe('tmdb api mapping', () => {
 	});
 
 	describe('mapCrew', () => {
-		// Zweigüberdeckung: Die Crew-Liste wird auf maximal zwanzig Einträge begrenzt und normalisiert optionale Felder.
-		it('begrenzt die Crew-Liste auf zwanzig Einträge und normalisiert fehlende Felder', () => {
+		// Branch coverage: the crew list is limited to a maximum of twenty entries and normalizes optional fields.
+		it('limits the crew list to twenty entries and normalizes missing fields', () => {
 			const api = createApi();
 			const mappedCrew = api.mapCrew(mappedFixtures.crew);
 
@@ -203,8 +203,8 @@ describe('tmdb api mapping', () => {
 	});
 
 	describe('mapDetails', () => {
-		// Anweisungsüberdeckung: Detaildaten werden inklusive Trailerliste, Cast, Crew und Zertifizierung vollständig gemappt.
-		it('mappt vollständige Detaildaten in das interne Detailformat', () => {
+		// Statement coverage: detail data including trailer list, cast, crew, and certification is fully mapped.
+		it('maps complete detail data to the internal detail format', () => {
 			const api = createApi();
 
 			expect(api.mapDetails(mappedFixtures.detailsWithCredits, 'movie')).toEqual({
@@ -212,7 +212,7 @@ describe('tmdb api mapping', () => {
 				mediaType: 'movie',
 				title: 'Pulp Fiction',
 				releaseDate: '1994-09-10',
-				overview: 'Mehrere Geschichten verweben sich in Los Angeles.',
+				overview: 'Multiple stories intertwine in Los Angeles.',
 				homepage: 'https://example.com/pulp-fiction',
 				trailerUrls: [
 					'https://www.youtube.com/watch?v=firstTrailer',
@@ -227,7 +227,7 @@ describe('tmdb api mapping', () => {
 				posterUrl: 'https://image.tmdb.org/t/p/w342/pulp-fiction-poster.jpg',
 				cast: api.mapCast(mappedFixtures.cast),
 				crew: api.mapCrew(mappedFixtures.crew),
-				certification: 'FSK 16'
+				certification: 'PG'
 			});
 		});
 	});

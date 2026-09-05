@@ -4,7 +4,7 @@ import { render, screen, waitFor } from '@testing-library/svelte';
 import { getI18nLabels } from '$tests/mocks/i18n.mocks.js';
 import Layout from '$routes/+layout.svelte';
 
-// Mock für $app/state damit page.url.origin definiert ist
+// Mock for $app/state so page.url.origin is defined
 vi.mock('$app/state', () => ({
 	page: {
 		url: new URL('https://example.com/')
@@ -14,7 +14,7 @@ vi.mock('$app/state', () => ({
 describe('Layout (+layout.svelte)', () => {
 	const labels = getI18nLabels();
 
-	// Svelte 5: children ist eine Snippet-Funktion
+	// Svelte 5: children is a snippet function
 	const mockChildren = () => '<div data-testid="children">Mock Content</div>';
 
 	beforeEach(() => {
@@ -26,52 +26,57 @@ describe('Layout (+layout.svelte)', () => {
 		vi.unstubAllGlobals();
 	});
 
-	it('rendert HeaderMain mit Navigation', async () => {
+	// Statement coverage: HeaderMain with navigation is rendered
+	it('renders HeaderMain with navigation', async () => {
 		render(Layout, { props: { children: mockChildren } });
 
 		await waitFor(() => {
-			// HeaderMain sollte gerendert werden
+			// HeaderMain should be rendered
 			expect(screen.getByRole('banner')).toBeInTheDocument();
-			// Navigation sollte die Haupt-Items enthalten
+			// Navigation should contain the main items
 			expect(screen.getByText(labels.home)).toBeInTheDocument();
 			expect(screen.getByText(labels.movies)).toBeInTheDocument();
 			expect(screen.getByText(labels.tvShows)).toBeInTheDocument();
 		});
 	});
 
-	it('rendert TypeHeadSearch im Header', async () => {
+	// Statement coverage: TypeHeadSearch is rendered in the header
+	it('renders TypeHeadSearch in the header', async () => {
 		render(Layout, { props: { children: mockChildren } });
 
 		await waitFor(() => {
-			// TypeHeadSearch sollte ein Suchinput haben
+			// TypeHeadSearch should have a search input
 			const searchInput = screen.getByRole('searchbox');
 			expect(searchInput).toBeInTheDocument();
 			expect(searchInput).toHaveAttribute('placeholder', labels.searchInput);
 		});
 	});
 
-	it('rendert FooterMain', async () => {
+	// Statement coverage: FooterMain is rendered
+	it('renders FooterMain', async () => {
 		render(Layout, { props: { children: mockChildren } });
 
 		await waitFor(() => {
-			// FooterMain sollte gerendert werden
+			// FooterMain should be rendered
 			expect(screen.getByRole('contentinfo')).toBeInTheDocument();
 		});
 	});
 
-	it('bettet children Slot korrekt ein', async () => {
+	// Statement coverage: children slot is embedded correctly
+	it('embeds children slot correctly', async () => {
 		const customChildren = () => '<div data-testid="custom-children">Custom Content</div>';
 
 		render(Layout, { props: { children: customChildren } });
 
-		// children sollte an HeaderMain und FooterMain vorbei gerendert werden
+		// children should be rendered between HeaderMain and FooterMain
 		await waitFor(() => {
 			expect(screen.getByRole('banner')).toBeInTheDocument();
 			expect(screen.getByRole('contentinfo')).toBeInTheDocument();
 		});
 	});
 
-	it('Navigation hat korrekte Pfade', async () => {
+	// Statement coverage: navigation links have correct href paths
+	it('navigation has correct paths', async () => {
 		render(Layout, { props: { children: mockChildren } });
 
 		await waitFor(() => {
@@ -85,7 +90,8 @@ describe('Layout (+layout.svelte)', () => {
 		});
 	});
 
-	it('setzt Favicon im svelte:head', async () => {
+	// Statement coverage: favicon is set in svelte:head
+	it('sets favicon in svelte:head', async () => {
 		render(Layout, { props: { children: mockChildren } });
 
 		await waitFor(() => {

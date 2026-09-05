@@ -13,10 +13,10 @@ import {
 } from '../mocks/paged-media-data.mocks';
 
 /**
- * Teststrategie: Anweisungs- und Zweigüberdeckung.
- * Die Tests decken Standardwerte, gültige und ungültige Storage-Werte,
- * Fehler beim Storage, Nicht-Browser-Fall, Seitennachladen, unvollständige Daten,
- * leere Antworten und weitergereichte Fetch-Fehler ab.
+ * Test strategy: statement and branch coverage.
+ * The tests cover default values, valid and invalid storage values,
+ * storage errors, non-browser case, page loading, incomplete data,
+ * empty responses, and propagated fetch errors.
  */
 describe('pageStateRestore', () => {
 	beforeEach(() => {
@@ -25,20 +25,20 @@ describe('pageStateRestore', () => {
 	});
 
 	describe('getStoredPage', () => {
-		// Anweisungsüberdeckung: Ohne gespeicherten Wert wird Seite 1 verwendet.
-		it('liefert 1, wenn kein Wert im Session Storage vorhanden ist', () => {
+		// Statement coverage: page 1 is used when no value is stored.
+		it('returns 1 when no value exists in session storage', () => {
 			expect(getStoredPage('movies-page')).toBe(1);
 		});
 
-		// Anweisungs- und Zweigüberdeckung: Ein gespeicherter Seitenwert wird zurückgegeben.
-		it('liefert den gespeicherten Seitenwert zurück', () => {
+		// Statement and branch coverage: a stored page value is returned.
+		it('returns the stored page value', () => {
 			sessionStorage.setItem('movies-page', '3');
 
 			expect(getStoredPage('movies-page')).toBe(3);
 		});
 
-		// Zweigüberdeckung: Ungültige Werte werden auf mindestens 1 normalisiert.
-		it('fällt bei ungültigen Werten auf mindestens 1 zurück', () => {
+		// Branch coverage: invalid values are normalized to at least 1.
+		it('falls back to at least 1 for invalid values', () => {
 			sessionStorage.setItem('movies-page', '0');
 			expect(getStoredPage('movies-page')).toBe(1);
 
@@ -49,8 +49,8 @@ describe('pageStateRestore', () => {
 			expect(getStoredPage('movies-page')).toBe(1);
 		});
 
-		// Anweisungsüberdeckung: Fehler beim Lesen des Session Storage führen zu Seite 1.
-		it('fällt bei Session-Storage-Fehlern beim Lesen auf 1 zurück', () => {
+		// Statement coverage: session storage read errors fall back to page 1.
+		it('falls back to 1 on session storage read errors', () => {
 			vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
 				throw new Error('storage blocked');
 			});
@@ -58,8 +58,8 @@ describe('pageStateRestore', () => {
 			expect(getStoredPage('movies-page')).toBe(1);
 		});
 
-		// Zweigüberdeckung: Ein Local-Storage-Fehler beim Lesen führt ebenfalls zu Seite 1.
-		it('fällt bei einem Local-Storage-Fehler beim Lesen auf 1 zurück', () => {
+		// Branch coverage: a local storage read error also falls back to page 1.
+		it('falls back to 1 on a local storage read error', () => {
 			vi.spyOn(Storage.prototype, 'getItem').mockImplementation(function (key) {
 				if (key === 'movies-page') {
 					throw new Error('local storage blocked');
@@ -70,21 +70,20 @@ describe('pageStateRestore', () => {
 			expect(getStoredPage('movies-page')).toBe(1);
 		});
 
-		// Zweigüberdeckung: Außerhalb des Browsers wird direkt Seite 1 verwendet.
-		it('liefert außerhalb des Browsers direkt 1 zurück', async () => {
+		// Branch coverage: outside the browser, page 1 is returned directly.
+		it('returns 1 directly outside the browser', async () => {
 			vi.resetModules();
 			vi.doMock('$app/environment', () => ({ browser: false }));
-			const { getStoredPage: getStoredPageWithoutBrowser } = await import(
-				'$lib/utils/pageStateRestore'
-			);
+			const { getStoredPage: getStoredPageWithoutBrowser } =
+				await import('$lib/utils/pageStateRestore');
 
 			expect(getStoredPageWithoutBrowser('movies-page')).toBe(1);
 		});
 	});
 
 	describe('restorePagedList', () => {
-		// Anweisungsüberdeckung: Im Browser mit gespeicherter Seite kleiner oder gleich der aktuellen Seite werden keine weiteren Seiten geladen.
-		it('gibt die aktuellen Daten zurück, wenn die gespeicherte Seite nicht größer als die aktuelle ist', async () => {
+		// Statement coverage: in the browser with a stored page less than or equal to the current page, no further pages are loaded.
+		it('returns the current data when the stored page is not greater than the current page', async () => {
 			sessionStorage.setItem('movies-page', '1');
 			const fetchPageData = vi.fn();
 
@@ -103,13 +102,12 @@ describe('pageStateRestore', () => {
 			expect(fetchPageData).not.toHaveBeenCalled();
 		});
 
-		// Zweigüberdeckung: Außerhalb des Browsers werden die initialen Daten ohne Nachladen zurückgegeben.
-		it('gibt außerhalb des Browsers die initialen Daten ohne Nachladen zurück', async () => {
+		// Branch coverage: outside the browser, initial data is returned without loading.
+		it('returns initial data without loading outside the browser', async () => {
 			vi.resetModules();
 			vi.doMock('$app/environment', () => ({ browser: false }));
-			const { restorePagedList: restorePagedListWithoutBrowser } = await import(
-				'$lib/utils/pageStateRestore'
-			);
+			const { restorePagedList: restorePagedListWithoutBrowser } =
+				await import('$lib/utils/pageStateRestore');
 			const fetchPageData = vi.fn();
 
 			const result = await restorePagedListWithoutBrowser({
@@ -127,8 +125,8 @@ describe('pageStateRestore', () => {
 			expect(fetchPageData).not.toHaveBeenCalled();
 		});
 
-		// Anweisungsüberdeckung: Ohne spätere Seite werden die initialen Daten zurückgegeben.
-		it('gibt die initialen Daten zurück, wenn keine spätere Seite gespeichert ist', async () => {
+		// Statement coverage: initial data is returned when no later page is stored.
+		it('returns initial data when no later page is stored', async () => {
 			const fetchPageData = vi.fn();
 
 			const result = await restorePagedList({
@@ -146,8 +144,8 @@ describe('pageStateRestore', () => {
 			expect(fetchPageData).not.toHaveBeenCalled();
 		});
 
-		// Anweisungsüberdeckung: Fehlende Seiten werden nachgeladen und Duplikate entfernt.
-		it('lädt fehlende Seiten über fetchPageData nach und entfernt Duplikate', async () => {
+		// Statement coverage: missing pages are loaded via fetchPageData and duplicates are removed.
+		it('loads missing pages via fetchPageData and removes duplicates', async () => {
 			sessionStorage.setItem('movies-page', '3');
 			const fetchPageData = vi
 				.fn()
@@ -175,8 +173,8 @@ describe('pageStateRestore', () => {
 			});
 		});
 
-		// Zweigüberdeckung: Unvollständige Karten werden übersprungen.
-		it('ignoriert unvollständige Karten in den initialen Daten', async () => {
+		// Branch coverage: incomplete cards are skipped.
+		it('ignores incomplete cards in the initial data', async () => {
 			const fetchPageData = vi.fn();
 
 			const result = await restorePagedList({
@@ -194,8 +192,8 @@ describe('pageStateRestore', () => {
 			expect(fetchPageData).not.toHaveBeenCalled();
 		});
 
-		// Zweigüberdeckung: Antworten ohne Karten werden als leere Seite verarbeitet.
-		it('verarbeitet nachgeladene Antworten ohne cards als leere Seite', async () => {
+		// Branch coverage: responses without cards are processed as an empty page.
+		it('processes loaded responses without cards as an empty page', async () => {
 			sessionStorage.setItem('movies-page', '2');
 			const fetchPageData = vi.fn().mockResolvedValueOnce(pagedMovieResponseWithoutCardsMock);
 
@@ -215,8 +213,8 @@ describe('pageStateRestore', () => {
 			});
 		});
 
-		// Zweigüberdeckung: Weitergereichte Fetch-Fehler werden nicht geschluckt.
-		it('wirft den Fetch-Fehler weiter, wenn das Nachladen fehlschlägt', async () => {
+		// Branch coverage: propagated fetch errors are not swallowed.
+		it('rethrows the fetch error when loading fails', async () => {
 			sessionStorage.setItem('movies-page', '2');
 			const fetchPageData = vi.fn().mockRejectedValue(fetchPageDataErrorMock);
 

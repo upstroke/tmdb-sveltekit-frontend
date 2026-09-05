@@ -20,10 +20,21 @@ vi.mock('$lib/services/tmdb-api.js', () => ({
 	createTmdbApi: mockCreateTmdbApi
 }));
 
+/**
+ * Creates a test URL for the trending route.
+ *
+ * @param {string} [search] - Search query string.
+ * @returns {URL}
+ */
 function createUrl(search = '') {
 	return new URL(`https://example.com/trending${search}`);
 }
 
+/**
+ * Creates a mock messages object for i18n.
+ *
+ * @returns {{ apiKeyMissing: string, loadMoreError: string }}
+ */
 function createMessages() {
 	return {
 		apiKeyMissing: 'API key missing',
@@ -35,12 +46,12 @@ describe('trending server route GET', () => {
 	beforeEach(() => {
 		vi.resetModules();
 		vi.clearAllMocks();
-		mockResolveLocale.mockReturnValue('de-DE');
+		mockResolveLocale.mockReturnValue('en-US');
 		mockGetLocaleText.mockReturnValue({ messages: createMessages() });
 	});
 
-	// Anweisungsüberdeckung: Die Route lädt gemischte Trending-Inhalte und gibt sie ohne Deduplizierung mit Paging-Daten zurück.
-	it('lädt Trending-Inhalte mit Paging-Daten', async () => {
+	// Statement coverage: the route loads mixed trending content and returns it without deduplication with paging data.
+	it('loads trending content with paging data', async () => {
 		const api = {
 			getTrendingAll: vi.fn().mockResolvedValue({
 				results: [
@@ -57,10 +68,10 @@ describe('trending server route GET', () => {
 
 		const response = await GET({
 			fetch: vi.fn(),
-			url: createUrl('?page=2&locale=de')
+			url: createUrl('?page=2&locale=en')
 		});
 
-		expect(mockResolveLocale).toHaveBeenCalledWith('de');
+		expect(mockResolveLocale).toHaveBeenCalledWith('en');
 		expect(api.getTrendingAll).toHaveBeenCalledWith(2);
 		expect(response.status).toBe(200);
 		expect(await response.json()).toEqual({
@@ -75,8 +86,8 @@ describe('trending server route GET', () => {
 		});
 	});
 
-	// Anweisungsüberdeckung: Ungültige Seitenzahlen werden auf Seite eins normalisiert und fehlende API-Seitenangaben fallen auf den Request-Wert zurück.
-	it('normalisiert ungültige Seitenzahlen auf eins', async () => {
+	// Statement coverage: invalid page numbers are normalized to page one and missing API page values fall back to the request value.
+	it('normalizes invalid page numbers to one', async () => {
 		const api = {
 			getTrendingAll: vi.fn().mockResolvedValue({
 				results: [{ id: 13, mediaType: 'movie', title: 'Forrest Gump' }],
@@ -100,8 +111,8 @@ describe('trending server route GET', () => {
 		});
 	});
 
-	// Anweisungsüberdeckung: Schlägt die Trending-Ladung fehl, liefert die Route Status 500 und die lokalisierte Fehlermeldung zurück.
-	it('liefert bei Ladefehlern eine lokalisierte Fehlermeldung zurück', async () => {
+	// Statement coverage: if trending loading fails, the route returns status 500 and the localized error message.
+	it('returns a localized error message when loading fails', async () => {
 		const api = {
 			getTrendingAll: vi.fn().mockRejectedValue(new Error('trending failed'))
 		};
@@ -121,6 +132,9 @@ describe('trending server route GET', () => {
 			hasMore: false,
 			error: 'More content could not be loaded.'
 		});
-		expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to load trending content:', expect.any(Error));
+		expect(consoleErrorSpy).toHaveBeenCalledWith(
+			'Failed to load trending content:',
+			expect.any(Error)
+		);
 	});
 });

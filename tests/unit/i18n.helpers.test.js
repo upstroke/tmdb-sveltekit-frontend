@@ -4,34 +4,34 @@ import { DEFAULT_LOCALE } from '$lib/i18n/config';
 import { getSupportedLocales, resolveLocale } from '$lib/i18n/helpers';
 
 /**
- * Teststrategie: Anweisungs- und Zweigüberdeckung.
- * Die Tests decken gültige, leere und ungültige Locale-Werte sowie die
- * Ermittlung aller unterstützten Sprachcodes ab.
+ * Test strategy: statement and branch coverage.
+ * The tests cover valid, empty, and invalid locale values as well as
+ * the retrieval of all supported language codes.
  */
 describe('i18n helpers', () => {
 	describe('resolveLocale', () => {
-		// Anweisungs- und Zweigüberdeckung: Unterstützte Locales bleiben unverändert.
-		it('gibt eine unterstützte Locale unverändert zurück', () => {
+		// Statement and branch coverage: supported locales remain unchanged.
+		it('returns a supported locale unchanged', () => {
 			expect(resolveLocale('en-US')).toBe('en-US');
 			expect(resolveLocale('fr-FR')).toBe('fr-FR');
 		});
 
-		// Anweisungs- und Zweigüberdeckung: Leere Werte fallen auf die Standard-Locale zurück.
-		it('fällt bei leerem Wert auf die Standard-Locale zurück', () => {
+		// Statement and branch coverage: empty values fall back to the default locale.
+		it('falls back to the default locale for an empty value', () => {
 			expect(resolveLocale()).toBe(DEFAULT_LOCALE);
 			expect(resolveLocale(null)).toBe(DEFAULT_LOCALE);
 			expect(resolveLocale('')).toBe(DEFAULT_LOCALE);
 		});
 
-		// Zweigüberdeckung: Unbekannte Locales fallen ebenfalls auf die Standard-Locale zurück.
-		it('fällt bei unbekannten Locales auf die Standard-Locale zurück', () => {
+		// Branch coverage: unknown locales also fall back to the default locale.
+		it('falls back to the default locale for unknown locales', () => {
 			expect(resolveLocale('pt-BR')).toBe(DEFAULT_LOCALE);
 		});
 	});
 
 	describe('getSupportedLocales', () => {
-		// Anweisungsüberdeckung: Die unterstützten Sprachcodes werden aus dem UI-Katalog abgeleitet.
-		it('liefert die unterstützten Sprachcodes aus dem UI-Katalog', () => {
+		// Statement coverage: supported language codes are derived from the UI catalog.
+		it('returns the supported language codes from the UI catalog', () => {
 			const expectedLocales = Object.values(uiText.locales)
 				.map(({ languageCode }) => languageCode)
 				.filter(Boolean);
