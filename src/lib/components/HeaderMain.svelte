@@ -5,11 +5,10 @@
 	import { i18n } from '$lib/stores/i18n';
 
 	/**
-	 * Rendert die globale Kopfzeile mit Navigation, mobilem Menü,
-	 * optionalem Inhalts-Slot und Sprachauswahl.
+	 * Renders the global header with navigation, mobile menu,
+	 * optional content slot, and language selector.
 	 *
-	 * Die Navigationslinks übernehmen den aktiven Pfad sowie die zuletzt
-	 * verwendete Seitennummer pro Route.
+	 * The navigation links preserve the active path and the last used page number per route.
 	 *
 	 * @component
 	 * @prop {Array<{
@@ -19,8 +18,8 @@
 	 *   path: string,
 	 *   storageKey: string,
 	 *   active: (pathname: string) => boolean
-	 * }>} [navItems=[]] - Navigationspunkte für den globalen Header.
-	 * @prop {Snippet|undefined} [children] - Optionaler Svelte-5-Snippet-Inhalt zwischen Navigation und Sprachauswahl.
+	 * }>} [navItems=[]] - Navigation items for the global header.
+	 * @prop {Snippet|undefined} [children] - Optional Svelte 5 snippet content between navigation and language selector.
 	 *
 	 * @example
 	 * <HeaderMain navItems={navigationItems}>

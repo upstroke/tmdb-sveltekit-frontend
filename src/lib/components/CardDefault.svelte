@@ -80,10 +80,9 @@
 	let imageKey = $derived(cardImageUrl);
 
 	/**
-	 * Setzt den Bildstatus zurück, sobald sich die aktuelle Bildquelle ändert.
+	 * Resets the image state whenever the current image source changes.
 	 *
-	 * Dadurch können Lade- und Fehlerzustand für ein neues Poster sauber neu
-	 * aufgebaut werden.
+	 * This allows loading and error states to be cleanly rebuilt for a new poster.
 	 *
 	 * @returns {void}
 	 */

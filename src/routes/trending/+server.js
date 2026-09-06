@@ -5,13 +5,13 @@ import { TMDB_API_KEY } from '$env/static/private';
 import { createTmdbApi } from '$lib/services/tmdb-api.js';
 
 /**
- * Lädt eine Seite mit trending Inhalten.
+ * Loads a page of trending content.
  *
- * Die Route erwartet den Query-Parameter `page` und liefert die nächste
- * Portion gemischter Inhalte für die Startseite zurück.
+ * The route expects the query parameter `page` and returns the next
+ * batch of mixed content for the homepage.
  *
- * @param {{ fetch: Function, url: URL }} event - SvelteKit-Request-Kontext.
- * @returns {Promise<Response>} JSON-Antwort mit Karten und Paging-Status.
+ * @param {{ fetch: Function, url: URL }} event - SvelteKit request context.
+ * @returns {Promise<Response>} JSON response with cards and paging status.
  */
 export async function GET({ fetch, url }) {
 	const locale = resolveLocale(url.searchParams.get('locale'));

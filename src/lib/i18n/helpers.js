@@ -8,12 +8,12 @@ const SUPPORTED_LOCALES = new Set(
 );
 
 /**
- * Normalisiert eine Locale auf eine im Projekt unterstützte Sprache.
+ * Normalizes a locale to a language supported in the project.
  *
- * Leere oder unbekannte Werte fallen auf die Standard-Locale zurück.
+ * Empty or unknown values fall back to the default locale.
  *
- * @param {string|null|undefined} value - Angefragte Locale, z. B. aus URL, Store oder Browser-Kontext.
- * @returns {string} Unterstützte Locale oder die Standard-Locale als Fallback.
+ * @param {string|null|undefined} value - Requested locale, e.g. from URL, store, or browser context.
+ * @returns {string} Supported locale or the default locale as fallback.
  */
 export function resolveLocale(value) {
 	if (!value) {

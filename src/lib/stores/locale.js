@@ -5,13 +5,13 @@ import { DEFAULT_LOCALE } from '$lib/i18n/config';
 const STORAGE_KEY = 'app-locale';
 
 /**
- * Ermittelt die initiale Locale aus dem Session-Storage oder der Standard-Locale.
+ * Determines the initial locale from session storage or the default locale.
  *
- * Während des serverseitigen Renderings wird direkt die Standard-Locale verwendet.
- * Nicht verfügbare oder fehlerhafte Storage-Zugriffe fallen ebenfalls auf den
- * Standardwert zurück.
+ * During server-side rendering, the default locale is used directly.
+ * Unavailable or erroneous storage accesses also fall back to the
+ * default value.
  *
- * @returns {string} Initiale Locale der Anwendung.
+ * @returns {string} Initial locale of the application.
  */
 function getInitialLocale() {
 	if (!browser) {
@@ -26,12 +26,12 @@ function getInitialLocale() {
 }
 
 /**
- * Erstellt einen Svelte-Store für die aktive Locale.
+ * Creates a Svelte store for the active locale.
  *
- * Beim Setzen einer neuen Locale wird der Wert im Browser zusätzlich im
- * Session-Storage gespeichert.
+ * When setting a new locale, the value is additionally stored in
+ * session storage in the browser.
  *
- * @returns {{ subscribe: import('svelte/store').Readable<string>['subscribe'], set: (locale: string) => void }} Locale-Store mit Subscribe- und Set-Funktion.
+ * @returns {{ subscribe: import('svelte/store').Readable<string>['subscribe'], set: (locale: string) => void }} Locale store with subscribe and set functions.
  */
 function createLocaleStore() {
 	const { subscribe, set } = writable(getInitialLocale());
@@ -53,7 +53,7 @@ function createLocaleStore() {
 }
 
 /**
- * Globaler Store für die aktuell ausgewählte Locale.
+ * Global store for the currently selected locale.
  *
  * @type {{ subscribe: Function, set: (locale: string) => void }}
  */

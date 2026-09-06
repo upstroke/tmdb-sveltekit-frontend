@@ -1,19 +1,18 @@
 /**
  * @typedef {object} MediaItem
- * @property {string|number} id - Eindeutige ID des Media-Elements.
- * @property {string} mediaType - Medientyp, zum Beispiel `movie` oder `tv`.
+ * @property {string|number} id - Unique ID of the media item.
+ * @property {string} mediaType - Media type, for example `movie` or `tv`.
  */
 
 /**
- * Erstellt einen stabilen Schlüssel, um ein Media-Element eindeutig zu erkennen.
+ * Creates a stable key to uniquely identify a media item.
  *
- * Dafür müssen `mediaType` und `id` vorhanden sein. Fehlt einer der beiden
- * Werte, gibt die Funktion `null` zurück, damit das Element bei der
- * Deduplizierung ignoriert wird.
+ * Both `mediaType` and `id` must be present. If either value is missing,
+ * the function returns `null` so the item is ignored during deduplication.
  *
- * @param {MediaItem} item - Zu prüfendes Media-Element.
- * @returns {string|null} Kombinierter Schlüssel im Format `mediaType-id` oder
- * `null`, wenn kein sicherer Schlüssel gebildet werden kann.
+ * @param {MediaItem} item - Media item to check.
+ * @returns {string|null} Combined key in the format `mediaType-id` or
+ * `null` if no safe key can be formed.
  */
 export function getMediaKey(item) {
 	if (!item || item.id == null || !item.mediaType) {
@@ -24,16 +23,15 @@ export function getMediaKey(item) {
 }
 
 /**
- * Entfernt doppelte Media-Elemente aus einem Array.
+ * Removes duplicate media items from an array.
  *
- * Die Deduplizierung basiert auf der Kombination aus `mediaType` und `id`.
- * Der erste Eintrag mit einem eindeutigen Schlüssel bleibt erhalten, spätere
- * Duplikate werden entfernt. Elemente ohne gültigen Schlüssel werden
- * übersprungen.
+ * Deduplication is based on the combination of `mediaType` and `id`.
+ * The first entry with a unique key is preserved, later duplicates are removed.
+ * Elements without a valid key are skipped.
  *
- * @param {Array<MediaItem>} items - Liste der Media-Elemente, die bereinigt werden sollen.
- * @returns {Array<MediaItem>} Neues Array mit nur dem ersten Vorkommen jedes eindeutigen
- * Media-Elements.
+ * @param {Array<MediaItem>} items - List of media items to clean up.
+ * @returns {Array<MediaItem>} New array with only the first occurrence of each unique
+ * media item.
  */
 export function deduplicateMedia(items = []) {
 	const seen = new Set();

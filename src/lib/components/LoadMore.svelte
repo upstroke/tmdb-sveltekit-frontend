@@ -2,20 +2,20 @@
 	import { i18n } from '$lib/stores/i18n';
 
 	/**
-	 * Rendert eine Schaltfläche zum Nachladen weiterer Einträge.
+	 * Renders a button for loading more entries.
 	 *
-	 * Die Komponente zeigt den Button nur an, wenn weitere Ergebnisse verfügbar
-	 * sind. Während des Ladens wird der Button deaktiviert und der passende
-	 * Ladehinweis angezeigt.
+	 * The component only shows the button if more results are available.
+	 * While loading, the button is disabled and the appropriate loading message is displayed.
 	 *
 	 * @component
-	 * @prop {boolean} [hasMore=false] - Gibt an, ob weitere Einträge verfügbar sind.
-	 * @prop {boolean} [loading=false] - Gibt an, ob aktuell weitere Einträge geladen werden.
-	 * @prop {(() => void | Promise<void>) | null} [onload=null] - Callback zum Laden weiterer Einträge.
+	 * @prop {boolean} [hasMore=false] - Indicates whether more entries are available.
+	 * @prop {boolean} [loading=false] - Indicates whether more entries are currently being loaded.
+	 * @prop {(() => void | Promise<void>) | null} [onload=null] - Callback for loading more entries.
 	 *
 	 * @example
 	 * <LoadMore hasMore={true} loading={false} onload={loadNextPage} />
 	 */
+
 	let { hasMore = false, loading = false, onload = null } = $props();
 
 	const { messages: texts } = $derived($i18n);

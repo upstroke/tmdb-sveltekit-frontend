@@ -1,9 +1,9 @@
 /**
- * Prüft, ob ein Wert ausschließlich aus Ziffern besteht und optional eine feste Länge hat.
+ * Checks whether a value consists exclusively of digits and optionally has a fixed length.
  *
- * @param {string} value - Zu prüfender String.
- * @param {number} [expectedLength] - Erwartete Länge.
- * @returns {boolean} `true`, wenn der Wert nur aus Ziffern besteht und die Länge passt.
+ * @param {string} value - String to check.
+ * @param {number} [expectedLength] - Expected length.
+ * @returns {boolean} `true` if the value consists only of digits and the length matches.
  */
 function isDigits(value, expectedLength) {
 	if (typeof value !== 'string' || value.length === 0) {
@@ -18,12 +18,12 @@ function isDigits(value, expectedLength) {
 }
 
 /**
- * Zerlegt einen ISO-Datumsstring in Datums- und optionalen Zeitanteil.
+ * Splits an ISO date string into date and optional time components.
  *
- * Akzeptiert nur vollständige ISO-Daten im Format `YYYY-MM-DD` mit optionalem
- * Zeitanteil. Unvollständige Werte wie `YYYY` oder `YYYY-MM` werden verworfen.
+ * Only accepts complete ISO dates in the format `YYYY-MM-DD` with optional
+ * time component. Incomplete values like `YYYY` or `YYYY-MM` are discarded.
  *
- * @param {string} dateString - Zu prüfender String.
+ * @param {string} dateString - String to check.
  * @returns {{year: number, month: number, day: number, timePart: string | undefined} | null}
  */
 function parseIsoDateParts(dateString) {
@@ -61,13 +61,13 @@ function parseIsoDateParts(dateString) {
 }
 
 /**
- * Prüft, ob ein optionaler ISO-Zeitanteil gültig aufgebaut ist.
+ * Checks whether an optional ISO time component has a valid structure.
  *
- * Unterstützt Formate wie `HH:mm`, `HH:mm:ss`, `HH:mm:ss.SSS`, jeweils optional
- * mit `Z` oder Offset wie `+02:00`.
+ * Supports formats like `HH:mm`, `HH:mm:ss`, `HH:mm:ss.SSS`, each optionally
+ * with `Z` or offset like `+02:00`.
  *
- * @param {string | undefined} timePart - Zeitanteil des ISO-Strings.
- * @returns {boolean} `true`, wenn der Zeitanteil gültig ist.
+ * @param {string | undefined} timePart - Time component of the ISO string.
+ * @returns {boolean} `true` if the time component is valid.
  */
 function isValidTimePart(timePart) {
 	if (!timePart) {
@@ -118,14 +118,14 @@ function isValidTimePart(timePart) {
 }
 
 /**
- * Prüft, ob ein geparstes Date-Objekt exakt zum ursprünglichen Kalenderdatum passt.
+ * Checks whether a parsed Date object exactly matches the original calendar date.
  *
- * Verhindert das automatische Überrollen ungültiger Datumswerte, z. B.
- * `2024-02-30` zu `2024-03-01`.
+ * Prevents automatic rolling of invalid date values, e.g.
+ * `2024-02-30` to `2024-03-01`.
  *
- * @param {Date} date - Geparstes Date-Objekt.
- * @param {{year: number, month: number, day: number}} parts - Ursprüngliche ISO-Bestandteile.
- * @returns {boolean} `true`, wenn Datum und ISO-Bestandteile übereinstimmen.
+ * @param {Date} date - Parsed Date object.
+ * @param {{year: number, month: number, day: number}} parts - Original ISO components.
+ * @returns {boolean} `true` if date and ISO components match.
  */
 function isSameCalendarDate(date, parts) {
 	return (
@@ -136,16 +136,16 @@ function isSameCalendarDate(date, parts) {
 }
 
 /**
- * Prüft, ob ein String ein striktes ISO-8601-Datum mit optionaler Zeitzone ist,
- * und liefert dafür ein gültiges Date-Objekt zurück.
+ * Checks whether a string is a strict ISO 8601 date with optional timezone,
+ * and returns a valid Date object for it.
  *
- * Akzeptierte Formate sind vollständige ISO-Daten wie `YYYY-MM-DD` sowie
- * ISO-Datumszeiten wie `YYYY-MM-DDTHH:mm:ss`, `YYYY-MM-DDTHH:mm:ssZ` oder
- * `YYYY-MM-DDTHH:mm:ss+02:00`. Unvollständige ISO-Werte wie `YYYY` oder
- * `YYYY-MM` sowie ungültige Kalender- oder Zeitwerte werden abgelehnt.
+ * Accepted formats are complete ISO dates like `YYYY-MM-DD` as well as
+ * ISO date-times like `YYYY-MM-DDTHH:mm:ss`, `YYYY-MM-DDTHH:mm:ssZ`, or
+ * `YYYY-MM-DDTHH:mm:ss+02:00`. Incomplete ISO values like `YYYY` or
+ * `YYYY-MM` as well as invalid calendar or time values are rejected.
  *
- * @param {string} dateString - Zu prüfender String.
- * @returns {Date | null} Gültiges Date-Objekt oder `null`.
+ * @param {string} dateString - String to check.
+ * @returns {Date | null} Valid Date object or `null`.
  */
 function parseStrictIsoDate(dateString) {
 	const parts = parseIsoDateParts(dateString);
@@ -170,25 +170,25 @@ function parseStrictIsoDate(dateString) {
 }
 
 /**
- * Formatiert einen Datumsstring abhängig von der angegebenen Locale.
+ * Formats a date string depending on the specified locale.
  *
- * Die Funktion wandelt einen Datumswert in ein `Date`-Objekt um und gibt ihn
- * mit `Intl.DateTimeFormat` formatiert zurück. Die Locale wird standardmäßig
- * aus der Umgebungsvariable `VITE_DEFAULT_LOCALE` gelesen.
+ * The function converts a date value to a `Date` object and returns it
+ * formatted using `Intl.DateTimeFormat`. The locale is by default read
+ * from the environment variable `VITE_DEFAULT_LOCALE`.
  *
- * Für den Parameter `locale` werden gültige BCP-47-Sprachcodes erwartet,
- * zum Beispiel `de-DE` für Deutsch oder `en-US` für Englisch (USA).
- * Bei `dateString = '2024-01-15'` ergibt `de-DE` die Ausgabe `15.1.2024`,
- * während `en-US` die Ausgabe `1/15/2024` liefert.
+ * Valid BCP 47 language codes are expected for the `locale` parameter,
+ * for example `de-DE` for German or `en-US` for English (USA).
+ * For `dateString = '2024-01-15'`, `de-DE` yields the output `15.1.2024`,
+ * while `en-US` yields the output `1/15/2024`.
  *
- * Vollständige ISO-Daten wie `2024-01-15` oder `2024-01-15T10:00:00Z`
- * werden formatiert. Ungültige oder unvollständige Werte wie `2024`,
- * `2024-01`, `2024-02-30` oder `2024-01-15T25:00:00` werden unverändert
- * als Fallback zurückgegeben.
+ * Complete ISO dates like `2024-01-15` or `2024-01-15T10:00:00Z`
+ * are formatted. Invalid or incomplete values like `2024`,
+ * `2024-01`, `2024-02-30`, or `2024-01-15T25:00:00` are returned
+ * unchanged as fallback.
  *
- * @param {string} dateString - Datumsstring im ISO- oder anderweitig parsebaren Format.
- * @param {string} [locale=import.meta.env.VITE_DEFAULT_LOCALE ?? 'de-DE'] - BCP-47-Locale für die Ausgabe, z. B. `de-DE` oder `en-US`.
- * @returns {string} Formatierter Datumsstring, Originalwert bei ungültigem oder unvollständigem Datum oder leerer String.
+ * @param {string} dateString - Date string in ISO or otherwise parseable format.
+ * @param {string} [locale=import.meta.env.VITE_DEFAULT_LOCALE ?? 'de-DE'] - BCP 47 locale for output, e.g. `de-DE` or `en-US`.
+ * @returns {string} Formatted date string, original value for invalid or incomplete date, or empty string.
  */
 export function formatDate(dateString, locale = import.meta.env.VITE_DEFAULT_LOCALE ?? 'de-DE') {
 	if (!dateString) return '';

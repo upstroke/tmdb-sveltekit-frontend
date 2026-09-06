@@ -4,13 +4,13 @@ import { getLocaleText } from '$lib/i18n/resolver';
 import { createTmdbApi } from '$lib/services/tmdb-api.js';
 
 /**
- * Lädt die Serverdaten für die TV-Show-Liste.
+ * Loads the server data for the TV show list.
  *
- * Die Funktion ermittelt die gewünschte Seite aus der URL, lädt die
- * entsprechenden Trending-TV-Shows über die TMDB-API und bereitet ein
- * Featured-Objekt sowie die Kartenliste für die Seite auf.
+ * The function determines the desired page from the URL, loads the
+ * corresponding trending TV shows via the TMDB API, and prepares a
+ * featured object as well as the card list for the page.
  *
- * @param {{ fetch: Function, url: URL }} event - SvelteKit-Load-Kontext.
+ * @param {{ fetch: Function, url: URL }} event - SvelteKit load context.
  * @returns {Promise<{
  *   featured: {
  *     id: number|string,
@@ -26,8 +26,9 @@ import { createTmdbApi } from '$lib/services/tmdb-api.js';
  *   page: number,
  *   hasMore: boolean,
  *   error: string | null
- * }>} Geladene Seiten- und Karten-Daten.
+ * }>} Loaded page and card data.
  */
+
 export async function load({ fetch, url }) {
 	const locale = resolveLocale(url.searchParams.get('locale'));
 	const { messages } = getLocaleText(locale);

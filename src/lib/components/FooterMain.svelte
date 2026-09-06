@@ -1,12 +1,11 @@
 <script>
 	/**
-	 * Rendert den statischen Footer der Anwendung.
+	 * Renders the static footer of the application.
 	 *
-	 * Der Footer enthält feste rechtliche Hinweise sowie einen externen
-	 * Quellenlink zu IMDb.
+	 * The footer contains fixed legal notices and an external source link to IMDb.
 	 *
 	 * @component
-	 * @remarks Diese Komponente erwartet keine Props.
+	 * @remarks This component expects no props.
 	 *
 	 * @example
 	 * <FooterMain />

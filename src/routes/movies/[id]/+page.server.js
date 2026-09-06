@@ -4,16 +4,17 @@ import { getLocaleText } from '$lib/i18n/resolver';
 import { createTmdbApi } from '$lib/services/tmdb-api.js';
 
 /**
- * Lädt die Serverdaten für eine Film-Detailseite.
+ * Loads the server data for a movie detail page.
  *
- * Die Funktion liest die Film-ID aus den Routenparametern, lädt die
- * Detaildaten über die TMDB-API und gibt ein gemapptes Filmobjekt zurück.
- * Falls kein API-Schlüssel vorhanden ist, wird ein leerer Datensatz
- * mit einer Fehlermeldung zurückgegeben.
+ * The function reads the movie ID from the route parameters, loads the
+ * detail data via the TMDB API, and returns a mapped movie object.
+ * If no API key is available, an empty record with an error message
+ * is returned.
  *
- * @param {{ fetch: Function, params: { id: string } }} event - SvelteKit-Load-Kontext.
- * @returns {Promise<{ movie: Record<string, unknown> | null, error: string | null }>} Filmobjekt für die Detailseite.
+ * @param {{ fetch: Function, params: { id: string } }} event - SvelteKit load context.
+ * @returns {Promise<{ movie: Record<string, unknown> | null, error: string | null }>} Movie object for the detail page.
  */
+
 export async function load({ fetch, params, url }) {
 	const locale = resolveLocale(url.searchParams.get('locale'));
 	const { messages } = getLocaleText(locale);

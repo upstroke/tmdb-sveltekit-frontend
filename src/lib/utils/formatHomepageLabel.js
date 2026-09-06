@@ -1,8 +1,8 @@
 /**
- * Entfernt das HTTP- oder HTTPS-Protokoll aus einer Homepage-URL für die kompakte Anzeige.
+ * Removes the HTTP or HTTPS protocol from a homepage URL for compact display.
  *
- * @param {string} [url=''] - Vollständige oder bereits gekürzte URL.
- * @returns {string} URL ohne führendes Protokoll.
+ * @param {string} [url=''] - Complete or already shortened URL.
+ * @returns {string} URL without leading protocol.
  */
 export function formatHomepageLabel(url = '') {
 	return url.replace(/^https?:\/\//, '');

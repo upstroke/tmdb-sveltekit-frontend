@@ -4,14 +4,14 @@
 	const { labels } = $derived($i18n);
 
 	/**
-	 * Rendert ein kompaktes Label für den Medientyp.
+	 * Renders a compact label for the media type.
 	 *
-	 * Filme werden als blaues Label und TV-Serien als türkises Label dargestellt.
-	 * Für unbekannte oder fehlende Medientypen wird kein Label gerendert.
+	 * Movies are displayed as a blue label and TV shows as a teal label.
+	 * For unknown or missing media types, no label is rendered.
 	 *
 	 * @component
-	 * @prop {'movie'|'tv'|string|null|undefined} mediaType - Medientyp, aus dem Text und Farbvariante abgeleitet werden.
-	 * @prop {string} [class=''] - Zusätzliche CSS-Klassen für das Label.
+	 * @prop {'movie'|'tv'|string|null|undefined} mediaType - Media type from which text and color variant are derived.
+	 * @prop {string} [class=''] - Additional CSS classes for the label.
 	 *
 	 * @example
 	 * <MediaTypeLabel mediaType="movie" class="featured-card-type" />

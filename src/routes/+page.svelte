@@ -17,7 +17,7 @@
 	const storageKey = 'home-page';
 
 	/**
-	 * Erwartete Daten aus dem Server-Load der Startseite.
+	 * Expected data from the server load of the homepage.
 	 *
 	 * @param {{
 	 *   featured?: {
@@ -42,7 +42,7 @@
 	 *   page?: number,
 	 *   hasMore?: boolean,
 	 *   error?: string | null
-	 * }} data - Geladene Startseiten-Daten.
+	 * }} data - Loaded homepage data.
 	 */
 	let { data } = $props();
 	let previousData;
@@ -62,12 +62,12 @@
 	let observer = null;
 
 	/**
-	 * Stellt den Startseitenzustand beim ersten Render wieder her.
+	 * Restores the homepage state on first render.
 	 *
-	 * Der Effekt läuft nur einmal, lädt gespeicherte Seitenwerte über
-	 * `restorePagedList` und setzt `featured`, `cards`, `page` und `hasMore`.
-	 * Bei Fehlern wird eine Meldung in `error` geschrieben, während `loading`
-	 * den Ladezustand steuert.
+	 * The effect runs only once, loads saved page values via
+	 * `restorePagedList` and sets `featured`, `cards`, `page` and `hasMore`.
+	 * On errors, a message is written to `error`, while `loading`
+	 * controls the loading state.
 	 */
 	$effect(() => {
 		if (data === previousData) {
@@ -135,11 +135,11 @@
 	});
 
 	/**
-	 * Scrollt nach dem Nachladen zur ersten neu eingefügten Karte.
+	 * Scrolls to the first newly inserted card after loading more.
 	 *
-	 * Sobald `scrollTargetId` gesetzt ist, beobachtet der Effekt das Ziel-Element
-	 * im Browser und führt ein sanftes Scrollen aus, sobald es im Viewport auftaucht.
-	 * Danach wird der Observer wieder entfernt.
+	 * Once `scrollTargetId` is set, the effect observes the target element
+	 * in the browser and performs smooth scrolling as soon as it appears in the viewport.
+	 * After that, the observer is removed again.
 	 */
 	$effect(() => {
 		if (!browser || !scrollTargetId) {
@@ -178,9 +178,9 @@
 	});
 
 	/**
-	 * Speichert die zuletzt geladene Seite im Session Storage.
+	 * Saves the last loaded page to session storage.
 	 *
-	 * @param {number} value - Seitennummer, die gespeichert werden soll.
+	 * @param {number} value - Page number to save.
 	 */
 	function savePage(value) {
 		if (!browser) {
@@ -195,22 +195,22 @@
 	}
 
 	/**
-	 * Merkt sich das Ziel für das Scrollen zur ersten neu geladenen Karte.
+	 * Marks the target for scrolling to the first newly loaded card.
 	 *
-	 * @param {number} previousCardsCount - Anzahl der Karten vor dem Nachladen.
+	 * @param {number} previousCardsCount - Number of cards before loading more.
 	 */
 	function markScrollTarget(previousCardsCount) {
 		scrollTargetId = `home-card-${previousCardsCount + 1}`;
 	}
 
 	/**
-	 * Lädt die nächste Seite mit Trending-Inhalten nach.
+	 * Loads the next page with trending content.
 	 *
-	 * Die Funktion verhindert Doppelaufrufe, holt weitere Karten über die
-	 * Trending-Route, dedupliziert die Ergebnisse und setzt das Scrollziel
-	 * auf die erste neu eingefügte Karte.
+	 * The function prevents duplicate calls, fetches more cards via the
+	 * trending route, deduplicates the results, and sets the scroll target
+	 * to the first newly inserted card.
 	 *
-	 * @returns {Promise<void>} Wird abgeschlossen, wenn das Nachladen beendet ist.
+	 * @returns {Promise<void>} Resolves when loading more is complete.
 	 */
 	async function loadMore() {
 		if (loading || !hasMore) {

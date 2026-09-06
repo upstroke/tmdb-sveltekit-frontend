@@ -17,7 +17,7 @@
 	const storageKey = 'movies-page';
 
 	/**
-	 * Erwartete Props für die Seite.
+	 * Expected props for the page.
 	 *
 	 * @typedef {Object} PageData
 	 * @property {{
@@ -45,7 +45,7 @@
 	 */
 
 	/**
-	 * Geladene Seitendaten aus dem Server-Load.
+	 * Loaded page data from the server load.
 	 *
 	 * @type {{ data: PageData }}
 	 */

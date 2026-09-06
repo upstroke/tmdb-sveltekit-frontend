@@ -1,205 +1,205 @@
-# AI-Prompts für die Entwicklung
+# AI Prompts for Development
 
-Diese Datei dokumentiert bewaehrte Prompt-Muster fuer KI-gestuetzte Entwicklung im Projekt.
+This file documents proven prompt patterns for AI-assisted development in the project.
 
-## Grundprinzipien
+## Core Principles
 
-- **Klare Struktur:** Verwende Abschnitte mit Ueberschriften wie `## Rolle`, `## Aufgabe`, `## Kontext`, `## Beispiele` und `## Ausgabeformat`.
-- **Ziel zuerst:** Definiere die eine klare Aufgabe und die Erfolgskriterien.
-- **Kontext zuerst:** Nenne Tech Stack, relevante Dateien, bestehende Muster und fachliche Randbedingungen frueh.
-- **Beispiele nutzen:** 2–3 Beispiele der gewuenschten Ausgabe sind oft hilfreicher als lange Erklaerungen.
-- **Iterativ und minimal arbeiten:** Starte mit einer knappen, klaren Anfrage und ergaenze nur das, was fuer ein besseres Ergebnis wirklich fehlt.
+- **Clear structure:** Use sections with headings such as `## Role`, `## Task`, `## Context`, `## Examples`, and `## Output Format`.
+- **Start with the goal:** Define one clear task and its success criteria.
+- **Provide context early:** Mention the tech stack, relevant files, existing patterns, and functional constraints at the beginning.
+- **Use examples:** Two or three examples of the desired output are often more helpful than lengthy explanations.
+- **Work iteratively and minimally:** Start with a concise, clear request and add only what is genuinely missing for a better result.
 
-`docs/ai-prompt-examples.md` fuer konkrete Prompt-Beispiele nach Rolle
+See `docs/ai-prompt-examples.md` for concrete prompt examples by role.
 
-## Projektkontext
+## Project Context
 
-Dieses Projekt nutzt:
+This project uses:
 
-- SvelteKit 2.63 mit Svelte 5
-- Vite als Build-Tool
-- Sass/SCSS fuer Styles
-- PostCSS mit Autoprefixer
-- Fomantic UI / Semantic UI Klassen
-- Playwright fuer Acceptance-Tests
-- Vitest fuer Komponenten-, Integrations- und Unit-Tests
+- SvelteKit 2.63 with Svelte 5
+- Vite as the build tool
+- Sass/SCSS for styles
+- PostCSS with Autoprefixer
+- Fomantic UI / Semantic UI classes
+- Playwright for acceptance tests
+- Vitest for component, integration, and unit tests
 
-Wichtige Projektpfade:
+Important project paths:
 
-- `src/routes` fuer Routen
-- `src/lib/components` fuer UI-Komponenten
-- `src/lib` fuer gemeinsam genutzte Logik
-- `src/css` fuer globale Styles
+- `src/routes` for routes
+- `src/lib/components` for UI components
+- `src/lib` for shared logic
+- `src/css` for global styles
 
-## Wichtige Browser-Ziele
+## Browser Targets
 
-- letzte 2 Browserversionen
-- Marktanteil ueber 0,5 %
-- keine veralteten Browser
+- the last two browser versions
+- market share above 0.5%
+- no obsolete browsers
 
-## Lokal verfuegbare CLI-Werkzeuge
+## Locally Available CLI Tools
 
-- `rg` (ripgrep) fuer schnelle Textsuche
-- `fd` fuer schnelle Datei- und Ordnersuche
-- `fzf` fuer interaktive Auswahl und Filterung
-- `bat` fuer lesbares Anzeigen von Dateien
-- `delta` fuer gut lesbare Git-Diffs
-- `sd` fuer einfache, gezielte Textaenderungen
+- `rg` (ripgrep) for fast text searches
+- `fd` for fast file and directory searches
+- `fzf` for interactive selection and filtering
+- `bat` for readable file output
+- `delta` for readable Git diffs
+- `sd` for simple, targeted text changes
 
-## Session-Start-Prompt
+## Session Start Prompt
 
-Dieser Prompt dient als empfohlene Startvorlage fuer neue KI-Sessions in diesem Projekt.
+This prompt is a recommended starting template for new AI sessions in this project.
 
 ```text
-Bitte lies zuerst README.md, package.json, justfile und bei Testthemen zusaetzlich playwright.config.js.
+First, read README.md, package.json, justfile, and, for testing tasks, also playwright.config.js.
 
-Wichtige Arbeitsregeln:
-- Vor Aenderungen erst Ziel, betroffene Dateien und Loesungsweg kurz abstimmen.
-- Aenderungen nur in kleinen, nachvollziehbaren Schritten umsetzen.
-- Wenn es Bedenken, Alternativen oder unklare Annahmen gibt, zuerst kurz erklaeren und nicht direkt umbauen.
-- Vereinheitlichungen nur vorschlagen, nicht ohne Ruecksprache umsetzen.
-- Die Ordnerstruktur hat ihren Sinn und wird nicht ohne Ruecksprache umorganisiert.
+Important working rules:
+- Before making changes, briefly align on the goal, affected files, and proposed approach.
+- Implement changes only in small, understandable steps.
+- If there are concerns, alternatives, or unclear assumptions, explain them briefly first instead of changing the code immediately.
+- Suggest standardizations, but do not implement them without prior approval.
+- The directory structure exists for a reason and must not be reorganized without prior approval.
 
-Hinweise zur Ausfuehrung:
-- Wenn die angegebenen CLI-Werkzeuge nicht lokal installiert sind - pruefe ob diese installiert werden, Ruecksprache am Anfang der Session nehmen.
-- Sind die Werkzeuge lokal installiert, koennen sie verwendet werden.
-- Wenn weitere lokal installierbare Werkzeuge die Arbeit spuerbar beschleunigen wuerden, soll das aktiv angesprochen und kurz begruendet werden.
-- Wenn eine Aufgabe voraussichtlich mehr Bearbeitungsschritte braucht, als in einem Durchlauf sinnvoll sind, soll das frueh gesagt und in kleine Pakete aufgeteilt werden.
+Execution notes:
+- If the specified CLI tools are not installed locally, check whether they should be installed and ask for approval at the beginning of the session.
+- If the tools are installed locally, they may be used.
+- If other locally installable tools would significantly speed up the work, proactively mention them and briefly explain why.
+- If a task is likely to require more steps than can reasonably be completed in one pass, say so early and split it into smaller packages.
 
-Fehler- und Retry-Umgang:
-- Wenn ein Tool-Aufruf abbricht oder fehlschlaegt, soll das sofort klar benannt werden, inklusive vermuteter Ursache, Auswirkung und naechstem sinnvollen Schritt.
-- Nach einem abgebrochenen Tool-Aufruf keine stillen Annahmen treffen, sondern entweder sauber neu ansetzen oder kurz Ruecksprache halten.
-- Flaky Befehle duerfen gezielt erneut ausgefuehrt werden, aber nicht endlos: zuerst kurzer Retry, dann kurz einordnen, und bei wiederholtem Fehlschlag Ursache eingrenzen statt blind weiter zu machen.
-- Vor gezielten Datei-Edits den aktuellen Dateistand exakt lesen und Suchtexte 1:1 aus der Datei uebernehmen.
-- Wenn ein Edit an einem exakten Match scheitert, erst neu einlesen und dann den kleinsten sicheren Aenderungsweg waehlen.
-- Wenn etwas schiefgeht oder nicht vollstaendig beendet wurde, sofort offen sagen, damit an genau dieser Stelle erneut angesetzt werden kann.
+Error and retry handling:
+- If a tool call is interrupted or fails, state this clearly at once, including the suspected cause, impact, and next sensible step.
+- After an interrupted tool call, do not make silent assumptions. Either restart cleanly or ask for clarification.
+- Flaky commands may be retried deliberately, but not indefinitely: first perform a short retry, then assess the situation, and if it fails again, narrow down the cause instead of continuing blindly.
+- Before targeted file edits, read the current file state exactly and copy search text character-for-character from the file.
+- If an edit fails because of an exact match, reread the file and choose the smallest safe change.
+- If something goes wrong or is not completed, say so openly so work can resume at exactly that point.
 
-Strategie bei Code-Erzeugung und Code-Aenderungen:
-- Vorhandene Muster, Konventionen und Architektur bevorzugen.
-- Best Practices fuer SvelteKit- und Svelte-Projekte anwenden; dazu gehoeren saubere Fehlerbehandlung und passende Nutzung bestehender Hooks-Strukturen.
-- JavaScript soll gut lesbar, transparent und fuer Menschen leicht nachvollziehbar bleiben.
-- Kein TypeScript verwenden, sofern nicht ausdruecklich anders abgestimmt.
-- Mit dem arbeiten, was im Projekt und lokal bereits vorhanden ist; zuerst vorhandene Browser-APIs nutzen, zusaetzliche Libraries oder Tools nicht ungefragt einfuehren oder installieren.
-- Vorschlaege fuer sinnvolle zusaetzliche Libraries oder Tools koennen gemacht werden, aber Nutzung oder Installation nur nach Ruecksprache.
-- Wenn `switch`/`case` die Logik klarer und transparenter macht, soll diese Struktur bevorzugt werden.
-- Neu erstellte oder wesentlich geaenderte Funktionen mit JSDoc dokumentieren.
-- Die zu einer Methode oder Funktion zugehoerige JSDoc-Dokumentation wird als Einheit betrachtet.
-- Bei Dokumentationsaufgaben nur Doku ergaenzen und keine Logik nebenbei umbauen.
-- JSDoc mit Augenmass einsetzen: wichtige oder nicht sofort selbsterklaerende Funktionen dokumentieren, triviale Dateien nicht kuenstlich aufblaehen.
-- Semantisches HTML bevorzugen, unnoetige `div`-Elemente vermeiden und auf Screenreader, Tastaturnavigation sowie sinnvolle ARIA-Attribute achten.
-- Sass/CSS lesbar halten und Verschachtelung auf hoechstens drei Ebenen begrenzen.
-- Imports anderer CSS- oder Sass-Libraries zunaechst unangetastet lassen, da sie meist zentral ueber Imports geregelt werden.
-- Nach jedem sinnvollen Schritt kurz Ergebnis und naechste Option nennen.
-- Aenderungen anschliessend gezielt pruefen und passende Tests ausfuehren.
+Code creation and modification strategy:
+- Prefer existing patterns, conventions, and architecture.
+- Apply SvelteKit and Svelte best practices, including proper error handling and appropriate use of existing hook structures.
+- JavaScript should remain readable, transparent, and easy for people to understand.
+- Do not use TypeScript unless explicitly agreed otherwise.
+- Work with what is already available in the project and locally; use existing browser APIs first and do not introduce or install additional libraries or tools without approval.
+- Suggestions for useful additional libraries or tools are welcome, but their use or installation requires prior approval.
+- If `switch`/`case` makes the logic clearer and more transparent, prefer that structure.
+- Document newly created or substantially changed functions with JSDoc.
+- Treat the JSDoc belonging to a method or function as one unit.
+- For documentation tasks, only add documentation and do not refactor logic at the same time.
+- Use JSDoc with judgment: document important or non-obvious functions, but do not artificially inflate trivial files.
+- Prefer semantic HTML, avoid unnecessary `div` elements, and consider screen readers, keyboard navigation, and meaningful ARIA attributes.
+- Keep Sass/CSS readable and limit nesting to a maximum of three levels.
+- Leave imports of other CSS or Sass libraries untouched initially, as they are usually managed centrally through imports.
+- After each meaningful step, briefly state the result and the next option.
+- Then review changes deliberately and run appropriate tests.
 
-Allgemein:
-- Bitte arbeite knapp, strukturiert und projektbezogen.
-- Antworten standardmaessig kurz halten.
-- Wenn moeglich Aufgaben kurz mit Ziel, betroffenen Dateien und gewuenschem Modus formulieren, zum Beispiel: analysieren, Vorschlag machen, umsetzen oder pruefen.
+General:
+- Work concisely, in a structured and project-specific way.
+- Keep responses brief by default.
+- Whenever possible, describe tasks briefly using the goal, affected files, and desired mode, such as analyze, suggest, implement, or verify.
 ```
 
-## Standard-Prompts
+## Standard Prompts
 
-### Neue Komponente erstellen
+### Create a New Component
 
 ```text
-Erstelle eine neue Svelte 5-Komponente im Stil von `src/lib/components/CardDefault.svelte`.
+Create a new Svelte 5 component following the style of `src/lib/components/CardDefault.svelte`.
 
-Ziel: [kurze Beschreibung der Komponente]
+Goal: [brief description of the component]
 
-Anforderungen:
-- Verwende unsere Design-Variablen aus `src/css/_variables.scss`
-- Achte auf ARIA-Labels und semantisches HTML
-- Keine externen Libraries, nur bestehende Patterns
+Requirements:
+- Use our design variables from `src/css/_variables.scss`.
+- Pay attention to ARIA labels and semantic HTML.
+- Do not use external libraries; use existing patterns only.
 
-Output: Eine `.svelte`-Datei im Ordner `src/lib/components`.
+Output: A `.svelte` file in the `src/lib/components` directory.
 ```
 
-### Test schreiben
+### Write a Test
 
 ```text
-Erstelle einen Vitest-Test fuer [Funktion/Komponente].
+Create a Vitest test for [function/component].
 
-Kontext:
-- Die Funktion befindet sich in `src/lib/...`
-- Bestehende Tests sind in `tests/unit/` bzw. `tests/components/`
+Context:
+- The function is located in `src/lib/...`.
+- Existing tests are in `tests/unit/` or `tests/components/`.
 
-Anforderungen:
-- Beschreibe das Verhalten direkt in der Testdatei
-- Verwende sprechende `describe`- und `it`-Bloecke
-- Kommentare sind erlaubt, wenn sie das fachliche Ziel knapp erklaeren
+Requirements:
+- Describe the behavior directly in the test file.
+- Use meaningful `describe` and `it` blocks.
+- Comments are allowed when they briefly explain the functional goal.
 
-Output: Eine `.test.js`-Datei im passenden Testordner.
+Output: A `.test.js` file in the appropriate test directory.
 ```
 
-### CSS-Aenderung
+### CSS Change
 
 ```text
-Aendere das CSS in `src/css/app.scss` fuer [Ziel].
+Change the CSS in `src/css/app.scss` to achieve [goal].
 
-Anforderungen:
-- Verwende unsere Sass-Variablen und Mixins
-- Achte auf Browser-Kompatibilitaet gemaess Projektkonfiguration
-- Halte die Verschachtelung auf maximal drei Ebenen
+Requirements:
+- Use our Sass variables and mixins.
+- Observe browser compatibility according to the project configuration.
+- Limit nesting to a maximum of three levels.
 
-Output: Die geaenderte SCSS-Datei.
+Output: The modified SCSS file.
 ```
 
 ### Refactoring
 
 ```text
-Refaktorisiere [Funktion/Komponente] fuer bessere Lesbarkeit.
+Refactor [function/component] for improved readability.
 
-Ziel:
-- [konkretes Ziel, z. B. „weniger Verschachtelung" oder „bessere Fehlerbehandlung"]
+Goal:
+- [specific goal, e.g. “less nesting” or “better error handling”]
 
-Anforderungen:
-- Behalte bestehende Patterns und Konventionen bei
-- Keine neuen Libraries einfuehren
-- JSDoc bei wichtigen oder nicht sofort selbsterklaerenden Funktionen
+Requirements:
+- Preserve existing patterns and conventions.
+- Do not introduce new libraries.
+- Add JSDoc for important or non-obvious functions.
 
-Output: Die refaktorisierte Datei.
+Output: The refactored file.
 ```
 
-### Internationalisierung (i18n)
+### Internationalization (i18n)
 
 ```text
-Fuege neue UI-Texte in `src/lib/i18n/ui.json` hinzu.
+Add new UI text to `src/lib/i18n/ui.json`.
 
-Anforderungen:
-- Immer alle unterstuetzten Locales aktualisieren (de-DE, en-US, es-ES, fr-FR, vi-VN)
-- Kurze, praegnante Formulierungen verwenden
-- Keine Hardcoded Strings im Code - immer i18n-Keys verwenden
-- Bei Unsicherheit zur Uebersetzung: kurze Ruecksprache halten
+Requirements:
+- Always update all supported locales (de-DE, en-US, es-ES, fr-FR, vi-VN).
+- Use concise, precise wording.
+- Do not use hardcoded strings in the code; always use i18n keys.
+- If the translation is uncertain, ask a brief clarification question.
 
-Output: Geaenderte ui.json mit Eintraegen in allen Locales.
+Output: The modified `ui.json` with entries for all locales.
 ```
 
 ## Dos and Don'ts
 
 ### Dos
 
-- Klare, spezifische Aufgaben formulieren.
-- Tech Stack und Kontext frueh nennen.
-- Beispiele fuer gewuenschte Ausgabe geben.
-- Iterativ vorgehen und Zwischenergebnisse pruefen.
-- KI-generierten Code wie externen Code reviewen.
+- Formulate clear, specific tasks.
+- Mention the tech stack and context early.
+- Provide examples of the desired output.
+- Work iteratively and verify intermediate results.
+- Review AI-generated code like external code.
 
 ### Don'ts
 
-- Keine Secrets oder API-Keys in Prompts verwenden.
-- Keine vagen Aufgaben wie „mach das besser" formulieren.
-- Keine langen, unstrukturierten Prompts ohne Ziel und Kontext schreiben.
-- Keine Annahmen ueber nicht genannte Dateien oder Projektteile treffen.
+- Do not include secrets or API keys in prompts.
+- Do not formulate vague tasks such as “make it better.”
+- Do not write long, unstructured prompts without a goal and context.
+- Do not make assumptions about files or project parts that were not mentioned.
 
-## Security-Hinweise
+## Security Notes
 
-- **Keine Secrets:** API-Keys, Passwoerter oder andere sensible Daten niemals in Prompts verwenden.
-- **Review-Pflicht:** Jeder KI-generierte Code muss vor dem Merge geprueft werden.
-- **CI-Scans:** Automatische SAST- und Secret-Scans fuer KI-beeinflusste Aenderungen sind sinnvoll.
+- **No secrets:** Never use API keys, passwords, or other sensitive data in prompts.
+- **Review required:** Every piece of AI-generated code must be reviewed before merging.
+- **CI scans:** Automatic SAST and secret scans are useful for AI-influenced changes.
 
-## Weiteres
+## Further Information
 
-- `docs/testing.md` fuer das Testvorgehen im Projekt
-- `README.md` fuer Projektkontext und Tech Stack
-- `docs/ai-prompt-examples.md` fuer konkrete Prompt-Beispiele nach Rolle
+- `docs/testing.md` for the project's testing approach
+- `../README.md` for project context and tech stack
+- `docs/ai-prompt-examples.md` for concrete prompt examples by role

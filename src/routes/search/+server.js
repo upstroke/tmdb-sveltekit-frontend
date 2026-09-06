@@ -5,13 +5,13 @@ import { TMDB_API_KEY } from '$env/static/private';
 import { createTmdbApi } from '$lib/services/tmdb-api.js';
 
 /**
- * Sucht nach Filmen und TV-Shows anhand eines Suchbegriffs.
+ * Searches for movies and TV shows based on a search term.
  *
- * Die Route erwartet den Query-Parameter `q`, prüft dessen Mindestlänge
- * und liefert getrennte Listen für Filme und TV-Shows zurück.
+ * The route expects the query parameter `q`, validates its minimum length,
+ * and returns separate lists for movies and TV shows.
  *
- * @param {{ fetch: Function, url: URL }} event - SvelteKit-Request-Kontext.
- * @returns {Promise<Response>} JSON-Antwort mit Suchergebnissen.
+ * @param {{ fetch: Function, url: URL }} event - SvelteKit request context.
+ * @returns {Promise<Response>} JSON response with search results.
  */
 export async function GET({ fetch, url }) {
 	const locale = resolveLocale(url.searchParams.get('locale'));

@@ -1,116 +1,116 @@
 # TMDB SvelteKit Frontend
 
-Ein SvelteKit-Frontend zum Durchsuchen von Filmen und Serien aus der TMDB-API.
+A SvelteKit frontend for browsing movies and TV shows from the TMDB API.
 
-Die Anwendung bietet eine Katalogansicht für Medieninhalte mit Trending-Bereichen, paginierten Listen, Detailseiten, lokalisierter Typeahead-Suche und Fallback-Mechanismen für fehlende Daten.
+The application provides a media catalog with trending sections, paginated lists, detail pages, localized typeahead search, and fallback mechanisms for missing data.
 
-## Ziel des Projekts
+## Project Goal
 
-Das Projekt dient als Frontend für eine TMDB-basierte Medienübersicht.
+This project serves as a frontend for a TMDB-based media catalog.
 
-Im Fokus stehen:
+Its focus is on:
 
-- übersichtliche Darstellung von Filmen und Serien
-- wiederverwendbare Svelte-Komponenten
-- robuste Behandlung unvollständiger API-Daten
-- saubere Trennung von UI, Hilfslogik und Service-Schicht
-- testbare Architektur mit Acceptance-, Komponenten-, Integrations- und Unit-Tests
+- clear presentation of movies and TV shows
+- reusable Svelte components
+- robust handling of incomplete API data
+- clean separation of UI, utility logic, and service layers
+- a testable architecture with acceptance, component, integration, and unit tests
 
 ## Features
 
-- Startseite mit Trending-Filmen und Trending-Serien
-- getrennte Übersichtsseiten für Filme und Serien
-- Detailseiten mit Bild, Metadaten, Cast und Produktionsinformationen
-- Typeahead-Suche für Filme und Serien
-- lokalisierte Oberfläche
-- Sprachwechsel über den globalen Header
-- erneute Typeahead-Suche in der neu gewählten Sprache bei aktivem Suchbegriff
-- Suchtreffer verwenden beim Klick die aktuell aktive Locale, auch wenn die Treffer vor dem Sprachwechsel geladen wurden
-- Weitergabe der Locale über interne Navigation und serverseitige Datenabfragen
-- Wiederherstellung der zuletzt besuchten Seite in paginierten Listen
-- Duplikatbereinigung beim Nachladen von Daten
-- gemeinsame Fallback-Logik für fehlende Bilder und Texte
-- gemeinsamer Fehlerdialog für API- und Ladefehler
-- wiederverwendbare Komponenten für Karten, Suche, Pagination und Fehlerzustände
+- Homepage with trending movies and TV shows
+- Separate overview pages for movies and TV shows
+- Detail pages with images, metadata, cast, and production information
+- Typeahead search for movies and TV shows
+- Localized interface
+- Language switching through the global header
+- Typeahead search automatically repeated in the newly selected language when a search term is active
+- Search results use the currently active locale when clicked, even if the results were loaded before the language changed
+- Locale propagation through internal navigation and server-side data requests
+- Restoration of the last visited page in paginated lists
+- Duplicate removal when loading additional data
+- Shared fallback logic for missing images and text
+- Shared error dialog for API and loading errors
+- Reusable components for cards, search, pagination, and error states
 
-## Internationalisierung
+## Internationalization
 
-Die Übersetzungskataloge liegen getrennt nach UI-Texten und Bewertungsformaten in:
+Translation catalogs for UI text and rating formats are stored separately in:
 
 - `src/lib/i18n/ui.json`
 - `src/lib/i18n/ratings.json`
 
-Die Locale-Logik befindet sich in:
+Locale logic is located in:
 
-- `src/lib/i18n/helpers.js` für unterstützte Locales und Fallbacks
-- `src/lib/stores/locale.js` für den aktiven Sprachzustand
-- `src/lib/stores/i18n.js` für den Zugriff auf die geladenen Übersetzungen
+- `src/lib/i18n/helpers.js` for supported locales and fallbacks
+- `src/lib/stores/locale.js` for the active language state
+- `src/lib/stores/i18n.js` for access to loaded translations
 
-Beim Sprachwechsel bleibt die aktuelle Route erhalten. Ist in der Typeahead-Suche ein Suchbegriff mit mindestens vier Zeichen vorhanden, werden die Ergebnisse automatisch mit der neuen Locale erneut geladen.
+The current route is preserved when the language changes. If the typeahead search contains a search term of at least four characters, the results are automatically reloaded using the new locale.
 
-## Streaming-Daten
+## Streaming Data
 
-Die angezeigten Streaming-Anbieter und Watch-Links werden über die TMDB-API bereitgestellt. Die Streaming-Daten stammen von JustWatch und werden auf den Detailseiten für Filme und TV-Shows mit "Provided by JustWatch" gekennzeichnet.
+The displayed streaming providers and watch links are supplied through the TMDB API. The streaming data comes from JustWatch and is labeled “Provided by JustWatch” on movie and TV show detail pages.
 
-## Testing-Hinweis
+## Testing Note
 
-Für Svelte-5-Komponententests unter Vitest wird im Testmodus die Browser-Resolver-Condition aktiviert. Dadurch lädt Vitest die Browser-Variante der Svelte-Module und vermeidet den Fehler `mount(...) is not available on the server` bei jsdom-basierten UI-Tests.
+For Svelte 5 component tests with Vitest, the browser resolver condition is enabled in test mode. This causes Vitest to load the browser version of the Svelte modules and avoids the `mount(...) is not available on the server` error in jsdom-based UI tests.
 
-## Testing-Hinweis
+## Testing Note
 
-Für Svelte-5-Komponententests unter Vitest wird das offizielle Vite-Plugin `svelteTesting()` aus `@testing-library/svelte/vite` verwendet. Es ergänzt die Testumgebung für DOM-basierte Svelte-Tests automatisch um Cleanup und die Browser-Resolver-Condition, damit UI-Tests unter `jsdom` korrekt die Browser-Variante der Svelte-Module laden.
+For Svelte 5 component tests with Vitest, the official `svelteTesting()` Vite plugin from `@testing-library/svelte/vite` is used. It automatically adds cleanup and the browser resolver condition to the DOM-based test environment, allowing UI tests under `jsdom` to load the browser version of the Svelte modules correctly.
 
 ## Tech Stack
 
 - SvelteKit 2.63
 - Svelte 5
 - Vite
-- Fomantic UI / Semantic UI Klassen
-- Playwright für Acceptance-Tests
-- Vitest für Komponenten-, Integrations- und Unit-Tests
-- Prettier und ESLint für Formatierung und Codequalität
-- Sass für Styles
+- Fomantic UI / Semantic UI classes
+- Playwright for acceptance tests
+- Vitest for component, integration, and unit tests
+- Prettier and ESLint for formatting and code quality
+- Sass for styles
 
-## Voraussetzungen
+## Requirements
 
 - Node.js `v26.6.0`
 - npm `11.18.0`
 
-## Umgebungsvariablen
+## Environment Variables
 
-Die benötigten Umgebungsvariablen sind in `.env.example` beschrieben.
+The required environment variables are documented in `.env.example`.
 
-Wichtig sind insbesondere:
+The most important ones are:
 
 - `TMDB_API_KEY`  
-  API-Schlüssel für den Zugriff auf die TMDB-API
+  API key for accessing the TMDB API
 
 - `VITE_DEFAULT_LOCALE`  
-  Locale für die Datumsformatierung
+  Locale used for date formatting
 
-*Nachdem der API Key ergänzt wurde - die Datei in .env umbenennen.*
+*After adding the API key, rename the file to `.env`.*
 
 ## TMDB API Key
 
-Einen eigenen API-Schlüssel kannst du in deinem TMDB-Konto anlegen:
+You can create your own API key in your TMDB account:
 
 - [TMDB API Settings](https://www.themoviedb.org/settings/api)
 - [TMDB Getting Started](https://developer.themoviedb.org/docs/getting-started)
 
-## Installation und Start
+## Installation and Startup
 
 ```bash
 npm install
 npm run dev
 ```
 
-Alternativ können die wichtigsten Projektbefehle über `just` ausgeführt werden. Dafür muss `just` global installiert sein, zum Beispiel mit Homebrew:
+Alternatively, the most important project commands can be run through `just`. `just` must be installed globally, for example with Homebrew:
 
 ```bash
 brew install just
 ```
 
-Das Projekt enthält dafür ein `justfile` im Projektstamm. Beispiele:
+The project includes a `justfile` in the project root. Examples:
 
 ```bash
 just dev
@@ -121,7 +121,7 @@ just test-vitest
 just test-e2e
 ```
 
-Die wichtigsten npm-Skripte für Formatierung und Codequalität sind:
+The most important npm scripts for formatting and code quality are:
 
 ```bash
 npm run format
@@ -131,22 +131,22 @@ npm run lint
 npm run lint:fix
 ```
 
-- `npm run format` formatiert die Dateien unter `src` mit Prettier.
-- `npm run format:check` prüft die Formatierung, ohne Dateien zu ändern.
-- `npm run lint:eslint` führt ausschließlich ESLint für `src` aus.
-- `npm run lint` kombiniert den Prettier-Check mit ESLint.
-- `npm run lint:fix` formatiert den Quellcode und korrigiert mögliche ESLint-Probleme automatisch.
+- `npm run format` formats files under `src` with Prettier.
+- `npm run format:check` checks formatting without changing files.
+- `npm run lint:eslint` runs ESLint exclusively for `src`.
+- `npm run lint` combines the Prettier check with ESLint.
+- `npm run lint:fix` formats the source code and automatically fixes possible ESLint issues.
 
-Die `just`-Befehle sind Abkürzungen für die npm-Skripte aus `package.json`. Die eigentliche Befehlsdefinition bleibt daher in `package.json`; bei neuen oder geänderten npm-Skripten muss das `justfile` geprüft und gegebenenfalls ergänzt oder angepasst werden.
+The `just` commands are shortcuts for the npm scripts in `package.json`. The actual command definitions therefore remain in `package.json`; when adding or changing npm scripts, check the `justfile` and update it if necessary.
 
-## Produktionsbuild
+## Production Build
 
 ```bash
 npm run build
 npm run preview
 ```
 
-## Projektstruktur
+## Project Structure
 
 ```text
 src/
@@ -169,88 +169,89 @@ tests/
   mocks/
   setup/
 
-coverage/ (entsteht bei Bedarf)
-playwright-report/ (entsteht bei Bedarf)
-test-results/ (entsteht bei Bedarf)
+coverage/ (created when needed)
+playwright-report/ (created when needed)
+test-results/ (created when needed)
 ```
 
-## Testdokumentation
-Diese Datei beschreibt das pragmatische Vorgehen für Tests <br>
-[Testdokumentation und Testvorgehen](docs/testing.md)
+## Test Documentation
 
-## Bedeutung der wichtigsten Ordner
+This file describes the pragmatic testing approach for the project.  
+[Test documentation and testing approach](docs/testing.md)
 
-- `src/routes/` enthält Seiten und serverseitige Routen
-- `src/lib/components/` enthält wiederverwendbare UI-Komponenten
-- `src/lib/i18n/` enthält Übersetzungskataloge und Locale-Hilfslogik
-- `src/lib/services/` enthält Service-Logik für externe Datenquellen wie TMDB
-- `src/lib/stores/` enthält globale Zustände wie Locale und Übersetzungen
-- `src/lib/utils/` enthält Hilfsfunktionen für Formatierung, Paging und Duplikatbehandlung
-- `static/` enthält statische Assets
-- `tests/` enthält alle automatisierten Tests nach Testebene strukturiert
-- `coverage/` entsteht bei Bedarf durch Coverage-Läufe mit Vitest
-- `playwright-report/` enthält die HTML-Ausgabe der Playwright-Tests
-- `test-results/` enthält Laufzeit-Artefakte und Fehlerausgaben aus Playwright
+## Important Directory Roles
 
-## Seiten und Routen
+- `src/routes/` contains pages and server-side routes
+- `src/lib/components/` contains reusable UI components
+- `src/lib/i18n/` contains translation catalogs and locale helper logic
+- `src/lib/services/` contains service logic for external data sources such as TMDB
+- `src/lib/stores/` contains global state such as locale and translations
+- `src/lib/utils/` contains utility functions for formatting, pagination, and duplicate handling
+- `static/` contains static assets
+- `tests/` contains all automated tests organized by test level
+- `coverage/` is created as needed by Vitest coverage runs
+- `playwright-report/` contains the HTML output of Playwright tests
+- `test-results/` contains runtime artifacts and error output from Playwright
 
-- Die Startseite zeigt Trending-Inhalte und unterstützt das Nachladen weiterer Inhalte.
-- Die Filmseite listet Film-Inhalte mit Pagination und Restore-Logik.
-- Die Serienseite listet Serien-Inhalte mit derselben Pagination-Logik.
-- Die Detailseiten zeigen Informationen zu Filmen und Serien inklusive Cast, Genres, Laufzeit und Produktionsfirmen.
-- Die Suchroute versorgt die lokalisierte Typeahead-Suche in der Hauptnavigation.
-- Der `locale`-Query-Parameter wird an Seiten, API-Routen und Detailnavigation weitergegeben.
+## Pages and Routes
 
-## Zentrale Komponenten
+- The homepage displays trending content and supports loading more content.
+- The movie page lists movie content with pagination and restore logic.
+- The TV show page lists TV content with the same pagination logic.
+- Detail pages display information about movies and TV shows, including cast, genres, runtime, and production companies.
+- The search route provides the localized typeahead search in the main navigation.
+- The `locale` query parameter is passed to pages, API routes, and detail navigation.
 
-- `HeaderMain` rendert die globale Navigation, den mobilen Menüschalter und den Sprachumschalter.
-- `LanguageSwitcher` ändert die aktive Locale und lädt die aktuelle Route mit der neuen Sprache neu.
-- `FooterMain` stellt den globalen Footer als eigene Layout-Komponente bereit.
-- `DetailsHero` kapselt den gemeinsamen Hero-/Poster-Bereich der Film- und Serien-Detailseiten.
-- `CardDefault` rendert eine Standard-Medienkarte.
-- `CardFeatured` rendert eine hervorgehobene Medienkarte.
-- `DialogMessage` zeigt Fehler in konsistenter Form an.
-- `LoadMore` lädt weitere Einträge in paginierten Listen.
-- `TypeHeadSearch` stellt die Live-Suche bereit, lokalisiert Suchergebnisse und startet die Suche nach einem Sprachwechsel erneut.
+## Core Components
 
-Globale Styles werden über `src/css/app.scss` geladen. Diese Datei bindet Fomantic UI, globale Sass-Variablen und anwendungsweite Styles ein; komponentenspezifische Styles bleiben in den jeweiligen `.svelte`-Komponenten.
+- `HeaderMain` renders global navigation, the mobile menu toggle, and the language switcher.
+- `LanguageSwitcher` changes the active locale and reloads the current route in the new language.
+- `FooterMain` provides the global footer as a dedicated layout component.
+- `DetailsHero` encapsulates the shared hero/poster area of movie and TV show detail pages.
+- `CardDefault` renders a standard media card.
+- `CardFeatured` renders a featured media card.
+- `DialogMessage` displays errors consistently.
+- `LoadMore` loads additional entries in paginated lists.
+- `TypeHeadSearch` provides live search, localizes search results, and starts the search again after a language change.
 
-Fallback-Bilder und Platzhaltertexte werden innerhalb der Komponenten zentral behandelt, damit dieselbe Logik nicht auf mehreren Seiten dupliziert werden muss.
+Global styles are loaded through `src/css/app.scss`. This file imports Fomantic UI, global Sass variables, and application-wide styles; component-specific styles remain in their respective `.svelte` components.
 
-## Wichtige Hilfsfunktionen
+Fallback images and placeholder text are handled centrally within the components so the same logic does not have to be duplicated across multiple pages.
 
-- `restorePagedList` stellt den Stand paginierter Listen aus dem Session Storage wieder her
-- `getStoredPage` liest die zuletzt gespeicherte Seitenzahl einer Liste
-- `deduplicateMedia` entfernt doppelte Medieneinträge anhand von `mediaType` und `id`
-- `getMediaKey` erzeugt stabile Schlüssel für Medieneinträge
-- `deduplicateById` entfernt doppelte Objekte anhand ihrer ID
-- `formatDate` formatiert Datumswerte anhand der konfigurierten Locale
-- `resolveLocale` validiert Locales und fällt bei unbekannten Werten auf die Standardsprache zurück
+## Important Utility Functions
 
-## Fehlerbehandlung
+- `restorePagedList` restores the state of paginated lists from Session Storage.
+- `getStoredPage` reads the last stored page number for a list.
+- `deduplicateMedia` removes duplicate media entries based on `mediaType` and `id`.
+- `getMediaKey` creates stable keys for media entries.
+- `deduplicateById` removes duplicate objects based on their ID.
+- `formatDate` formats date values according to the configured locale.
+- `resolveLocale` validates locales and falls back to the default language for unknown values.
 
-- Fehlende API-Daten werden über die gemeinsame `DialogMessage`-Komponente sichtbar gemacht.
-- Fehlende Bilder fallen auf ein gemeinsames Platzhalter-Asset zurück.
-- Fehlende Textwerte werden in Komponenten und Detailseiten normalisiert.
-- Listen- und Detailseiten bleiben nach Möglichkeit auch bei unvollständigen API-Antworten benutzbar.
+## Error Handling
 
-## Pagination und Restore-Verhalten
+- Missing API data is made visible through the shared `DialogMessage` component.
+- Missing images fall back to a shared placeholder asset.
+- Missing text values are normalized in components and detail pages.
+- List and detail pages remain usable whenever possible, even with incomplete API responses.
 
-- Der Pagination-Status wird im Session Storage gespeichert.
-- Beim Zurückkehren auf eine Liste wird die zuletzt besuchte Seite wiederhergestellt.
-- Die Restore-Logik lädt bei Bedarf weitere Seiten nach, bis der gespeicherte Zustand erreicht ist.
-- Doppelte Medieneinträge werden vor dem Rendern gefiltert.
-- Nach dem Nachladen wird zur ersten neu eingefügten Position gescrollt.
+## Pagination and Restore Behavior
 
-## Mobiles Menü
+- Pagination state is stored in Session Storage.
+- When returning to a list, the last visited page is restored.
+- The restore logic loads additional pages as needed until the stored state is reached.
+- Duplicate media entries are filtered before rendering.
+- After loading more content, the view scrolls to the first newly inserted position.
 
-`HeaderMain` verwendet auf mobilen Ansichten eine Checkbox als Menüschalter. Ein `pointerdown`-Handler auf dem Window prüft, ob der Klick außerhalb des Headers stattfindet, und schließt ein geöffnetes Menü dann automatisch.
+## Mobile Menu
 
-Klicks auf Burger und Navigation bleiben innerhalb des Headers und werden deshalb nicht als Außenklick behandelt.
+On mobile views, `HeaderMain` uses a checkbox as the menu toggle. A `pointerdown` handler on the window checks whether the click occurred outside the header and automatically closes an open menu.
 
-## Qualitätssicherung
+Clicks on the burger button and navigation remain inside the header and are therefore not treated as outside clicks.
 
-Vor einem Commit sollten mindestens folgende Befehle erfolgreich durchlaufen:
+## Quality Assurance
+
+Before committing, at least the following commands should complete successfully:
 
 ```bash
 npm run lint
@@ -258,46 +259,46 @@ npm run build
 npm test
 ```
 
-`npm run lint` prüft Prettier und ESLint für den gesamten `src`-Ordner. Die Regel `svelte/no-navigation-without-resolve` ist deaktiviert, weil das Projekt interne und externe URLs abhängig vom jeweiligen Ziel unterschiedlich behandelt.
+`npm run lint` checks Prettier and ESLint for the entire `src` directory. The `svelte/no-navigation-without-resolve` rule is disabled because the project handles internal and external URLs differently depending on the destination.
 
-Bei Änderungen an Übersetzungen sollten alle unterstützten Locale-Kataloge auf identische Schlüssel geprüft werden.
+When changing translations, check all supported locale catalogs for identical keys.
 
-## Teststrategie
+## Test Strategy
 
-Die Teststruktur orientiert sich an Testarten und fachlicher Ebene, nicht an technischen Hilfsmitteln wie Mocks oder Fixtures.
+The test structure is organized by test type and functional level, not by technical aids such as mocks or fixtures.
 
-### Testebenen
+### Test Levels
 
 - `tests/acceptance/`  
-  Acceptance-Tests mit Playwright für fachliche Nutzerflüsse
+  Acceptance tests with Playwright for functional user flows
 
 - `tests/integration/components/`  
-  Komponententests mit Vitest für isolierte Svelte-Komponenten
+  Component tests with Vitest for isolated Svelte components
 
 - `tests/integration/`  
-  Integrationstests mit Vitest für Services, Feature-Logik und das Zusammenspiel mehrerer Teile
+  Integration tests with Vitest for services, feature logic, and interactions between multiple parts
 
 - `tests/unit/`  
-  Kleine Unit-Tests für reine Hilfsfunktionen und klar isolierte Logik
+  Small unit tests for pure utility functions and clearly isolated logic
 
-### Hilfsordner
+### Helper Directories
 
 - `tests/fixtures/`  
-  feste Testdaten, die in mehreren Tests wiederverwendet werden können
+  fixed test data that can be reused across multiple tests
 
 - `tests/mocks/`  
-  Mock-Funktionen oder Ersatzverhalten für externe Abhängigkeiten
+  mock functions or replacement behavior for external dependencies
 
 - `tests/setup/`  
-  gemeinsame Test-Helfer und projektweite Testvorbereitung
+  shared test helpers and project-wide test preparation
 
-Diese Ordner sind keine eigenen Testarten, sondern nur Hilfsstrukturen.
+These directories are not separate test types; they are helper structures only.
 
-### Leitgedanke
+### Guiding Principle
 
-Die Testabdeckung folgt möglichst nah der Praxis im agilen Entwicklungsalltag:
+Test coverage should follow practical agile development as closely as possible:
 
-1. Eine User Story oder ein Use Case beschreibt das gewünschte Verhalten.
-2. Acceptance-Tests prüfen den vollständigen Nutzerfluss.
-3. Komponenten- und Integrationstests prüfen das Zusammenspiel der beteiligten Teile.
-4. Unit-Tests sichern reine Hilfsfunktionen und Randfälle ab.
+1. A user story or use case describes the desired behavior.
+2. Acceptance tests verify the complete user flow.
+3. Component and integration tests verify the interaction between the involved parts.
+4. Unit tests protect pure utility functions and edge cases.

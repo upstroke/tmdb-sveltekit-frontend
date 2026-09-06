@@ -5,15 +5,15 @@ import { DEFAULT_LOCALE } from '$lib/i18n/config';
 const BASE_URL = 'https://api.themoviedb.org/3';
 
 /**
- * Erstellt eine TMDB-API-Instanz als Plain Object.
+ * Creates a TMDB API instance as a plain object.
  *
- * Die Factory kapselt request-spezifische Abhängigkeiten und hält den internen
- * Zustand über Closures statt über eine Klasse.
+ * The factory encapsulates request-specific dependencies and maintains internal
+ * state via closures instead of a class.
  *
- * @param {Function} fetchFn - Fetch-Funktion für HTTP-Anfragen.
- * @param {string} apiKey - TMDB-API-Schlüssel.
- * @param {string} [language='de-DE'] - Sprachcode für die API-Antworten.
- * @returns {Object} TMDB-API mit Methoden für Requests, Mapping und Caches.
+ * @param {Function} fetchFn - Fetch function for HTTP requests.
+ * @param {string} apiKey - TMDB API key.
+ * @param {string} [language=DEFAULT_LOCALE] - Language code for API responses.
+ * @returns {Object} TMDB API with methods for requests, mapping, and caches.
  */
 export function createTmdbApi(fetchFn, apiKey, language = DEFAULT_LOCALE) {
 	const region = language.split('-')[1] ?? language.split('_')[1] ?? 'DE';
@@ -23,12 +23,12 @@ export function createTmdbApi(fetchFn, apiKey, language = DEFAULT_LOCALE) {
 	const watchProvidersCache = new Map();
 
 	/**
-	 * Führt eine standardisierte Anfrage an die TMDB-API aus.
+	 * Executes a standardized request to the TMDB API.
 	 *
-	 * @param {string} path - API-Pfad relativ zur Basis-URL.
-	 * @param {Object} [params={}] - Zusätzliche Query-Parameter.
-	 * @returns {Promise<Object>} JSON-Antwort der API.
-	 * @throws {Error} Wenn die Anfrage fehlschlägt.
+	 * @param {string} path - API path relative to the base URL.
+	 * @param {Object} [params={}] - Additional query parameters.
+	 * @returns {Promise<Object>} JSON response from the API.
+	 * @throws {Error} If the request fails.
 	 */
 	async function request(path, params = {}) {
 		const url = new URL(`${BASE_URL}${path}`);
@@ -52,9 +52,9 @@ export function createTmdbApi(fetchFn, apiKey, language = DEFAULT_LOCALE) {
 	}
 
 	/**
-	 * Lädt die Genre-Maps für Filme und Serien.
+	 * Loads the genre maps for movies and TV shows.
 	 *
-	 * Die Daten werden im Speicher gehalten und nur einmal pro Instanz geladen.
+	 * The data is kept in memory and loaded only once per instance.
 	 *
 	 * @returns {Promise<void>}
 	 */
@@ -75,11 +75,11 @@ export function createTmdbApi(fetchFn, apiKey, language = DEFAULT_LOCALE) {
 	}
 
 	/**
-	 * Wandelt Genre-IDs in lesbare Genre-Objekte um.
+	 * Converts genre IDs into readable genre objects.
 	 *
-	 * @param {number[]} [genreIds=[]] - Liste der Genre-IDs.
-	 * @param {string} mediaType - Medientyp.
-	 * @returns {{id: number, name: string}[]} Aufgelöste Genres.
+	 * @param {number[]} [genreIds=[]] - List of genre IDs.
+	 * @param {string} mediaType - Media type.
+	 * @returns {{id: number, name: string}[]} Resolved genres.
 	 */
 	function resolveGenres(genreIds = [], mediaType) {
 		const map = mediaType === 'tv' ? tvGenreMap : movieGenreMap;
@@ -88,11 +88,11 @@ export function createTmdbApi(fetchFn, apiKey, language = DEFAULT_LOCALE) {
 	}
 
 	/**
-	 * Wandelt einen TMDB-Eintrag in ein Kartenobjekt um.
+	 * Converts a TMDB entry into a card object.
 	 *
-	 * @param {Object} item - Rohdaten eines Films oder einer Serie.
-	 * @param {string|null} [fallbackMediaType=null] - Alternativer Medientyp.
-	 * @returns {Object|null} Normalisiertes Kartenobjekt oder null.
+	 * @param {Object} item - Raw data of a movie or TV show.
+	 * @param {string|null} [fallbackMediaType=null] - Alternative media type.
+	 * @returns {Object|null} Normalized card object or null.
 	 */
 	function mapCardItem(item, fallbackMediaType = null) {
 		const mediaType = getMediaType(item, fallbackMediaType);
@@ -119,12 +119,12 @@ export function createTmdbApi(fetchFn, apiKey, language = DEFAULT_LOCALE) {
 	}
 
 	/**
-	 * Wandelt einen Watch-Provider in ein UI-freundliches Objekt um.
+	 * Converts a watch provider into a UI-friendly object.
 	 *
-	 * @param {Object} provider - TMDB-Providerdaten.
-	 * @param {string} type - Provider-Typ, z. B. `flatrate`, `rent` oder `buy`.
-	 * @param {string|null} baseLink - Link zur Provider-Liste.
-	 * @returns {Object|null} Normalisierter Provider oder null.
+	 * @param {Object} provider - TMDB provider data.
+	 * @param {string} type - Provider type, e.g. `flatrate`, `rent`, or `buy`.
+	 * @param {string|null} baseLink - Link to the provider list.
+	 * @returns {Object|null} Normalized provider or null.
 	 */
 	function mapWatchProvider(provider, type, baseLink) {
 		if (!provider?.provider_id || !provider?.provider_name) {
@@ -142,27 +142,27 @@ export function createTmdbApi(fetchFn, apiKey, language = DEFAULT_LOCALE) {
 	}
 
 	/**
-	 * Wandelt eine Liste von Watch-Providern in UI-freundliche Objekte um.
+	 * Converts a list of watch providers into UI-friendly objects.
 	 *
-	 * @param {Object[]} [providers=[]] - Providerliste aus TMDB.
-	 * @param {string} type - Provider-Typ.
-	 * @param {string|null} baseLink - Link zur Provider-Liste.
-	 * @returns {Object[]} Normalisierte Providerliste.
+	 * @param {Object[]} [providers=[]] - Provider list from TMDB.
+	 * @param {string} type - Provider type.
+	 * @param {string|null} baseLink - Link to the provider list.
+	 * @returns {Object[]} Normalized provider list.
 	 */
 	function mapWatchProviderList(providers = [], type, baseLink) {
 		return providers.map((provider) => mapWatchProvider(provider, type, baseLink)).filter(Boolean);
 	}
 
 	/**
-	 * Ermittelt die lokalen Streaming-Provider für ein Medium.
+	 * Retrieves local streaming providers for a media item.
 	 *
-	 * Filme und TV-Serien liefern Watch-Provider-Daten über den Endpunkt
-	 * `/{mediaType}/{id}/watch/providers`. Die gewünschte Region wird aus
-	 * dem API-Sprachcode abgeleitet, z. B. `de-DE` → `DE`.
+	 * Movies and TV shows provide watch provider data via the endpoint
+	 * `/{mediaType}/{id}/watch/providers`. The desired region is derived
+	 * from the API language code, e.g. `de-DE` → `DE`.
 	 *
-	 * @param {string} mediaType - `movie` oder `tv`.
-	 * @param {number|string} id - TMDB-ID.
-	 * @returns {Promise<{link:string,providers:Object[]}|null>} Watch-Provider-Daten oder null.
+	 * @param {string} mediaType - `movie` or `tv`.
+	 * @param {number|string} id - TMDB ID.
+	 * @returns {Promise<{link:string,providers:Object[]}|null>} Watch provider data or null.
 	 */
 	async function getWatchProviders(mediaType, id) {
 		const cacheKey = `${mediaType}-${id}`;
@@ -200,15 +200,15 @@ export function createTmdbApi(fetchFn, apiKey, language = DEFAULT_LOCALE) {
 	}
 
 	/**
-	 * Ermittelt die lokale Altersfreigabe für ein Medium.
+	 * Retrieves the local age rating for a media item.
 	 *
-	 * Filme liefern Zertifizierungen über `release_dates`, TV-Serien über
-	 * `content_ratings`. Die gewünschte Region wird aus dem API-Sprachcode
-	 * abgeleitet, z. B. `de-DE` → `DE`.
+	 * Movies provide certifications via `release_dates`, TV shows via
+	 * `content_ratings`. The desired region is derived from the API
+	 * language code, e.g. `de-DE` → `DE`.
 	 *
-	 * @param {string} mediaType - `movie` oder `tv`.
-	 * @param {number|string} id - TMDB-ID.
-	 * @returns {Promise<string>} Altersfreigabe oder leerer String.
+	 * @param {string} mediaType - `movie` or `tv`.
+	 * @param {number|string} id - TMDB ID.
+	 * @returns {Promise<string>} Age rating or empty string.
 	 */
 	async function getCertification(mediaType, id) {
 		const cacheKey = `${mediaType}-${id}`;
@@ -237,10 +237,10 @@ export function createTmdbApi(fetchFn, apiKey, language = DEFAULT_LOCALE) {
 	}
 
 	/**
-	 * Reichert Karten einer Seite mit lokalen Altersfreigaben an.
+	 * Enriches page cards with local age ratings.
 	 *
-	 * @param {Object[]} cards - Normalisierte Karten.
-	 * @returns {Promise<Object[]>} Karten mit `certification`.
+	 * @param {Object[]} cards - Normalized cards.
+	 * @returns {Promise<Object[]>} Cards with `certification`.
 	 */
 	async function enrichCardCertifications(cards = []) {
 		return Promise.all(
@@ -252,11 +252,11 @@ export function createTmdbApi(fetchFn, apiKey, language = DEFAULT_LOCALE) {
 	}
 
 	/**
-	 * Wandelt ein Featured-Detailobjekt in das UI-Format um.
+	 * Converts a featured detail object into the UI format.
 	 *
-	 * @param {Object} details - TMDB-Detaildaten.
-	 * @param {string|null} [fallbackMediaType=null] - Alternativer Medientyp.
-	 * @returns {Object} Normalisiertes Featured-Objekt.
+	 * @param {Object} details - TMDB detail data.
+	 * @param {string|null} [fallbackMediaType=null] - Alternative media type.
+	 * @returns {Object} Normalized featured object.
 	 */
 	function mapFeaturedItem(details, fallbackMediaType = null) {
 		const mediaType = getMediaType(details, fallbackMediaType);
@@ -275,13 +275,12 @@ export function createTmdbApi(fetchFn, apiKey, language = DEFAULT_LOCALE) {
 	}
 
 	/**
-	 * Ermittelt alle verfügbaren Trailer-URLs aus den Videodaten.
+	 * Retrieves all available trailer URLs from video data.
 	 *
-	 * Es werden alle passenden YouTube-Trailer in ihrer gelieferten Reihenfolge
-	 * übernommen.
+	 * All matching YouTube trailers are included in their delivered order.
 	 *
-	 * @param {Object} details - TMDB-Detaildaten.
-	 * @returns {string[]} Liste von YouTube-URLs.
+	 * @param {Object} details - TMDB detail data.
+	 * @returns {string[]} List of YouTube URLs.
 	 */
 	function getTrailerUrls(details) {
 		const videos = details.videos?.results ?? [];
@@ -292,11 +291,11 @@ export function createTmdbApi(fetchFn, apiKey, language = DEFAULT_LOCALE) {
 	}
 
 	/**
-	 * Wandelt vollständige Detaildaten in ein UI-freundliches Objekt um.
+	 * Converts complete detail data into a UI-friendly object.
 	 *
-	 * @param {Object} details - TMDB-Detaildaten.
-	 * @param {string} fallbackMediaType - Optionaler Medientyp.
-	 * @returns {Object} Normalisiertes Detailobjekt.
+	 * @param {Object} details - TMDB detail data.
+	 * @param {string} fallbackMediaType - Optional media type.
+	 * @returns {Object} Normalized detail object.
 	 */
 	function mapDetails(details, fallbackMediaType) {
 		const mediaType = getMediaType(details, fallbackMediaType);
@@ -323,12 +322,12 @@ export function createTmdbApi(fetchFn, apiKey, language = DEFAULT_LOCALE) {
 	}
 
 	/**
-	 * Formatiert die Darstellerliste.
+	 * Formats the cast list.
 	 *
-	 * Es werden maximal 20 Personen übernommen.
+	 * A maximum of 20 people are included.
 	 *
-	 * @param {Object[]} [cast=[]] - Cast-Liste aus TMDB.
-	 * @returns {Object[]} Normalisierte Cast-Liste.
+	 * @param {Object[]} [cast=[]] - Cast list from TMDB.
+	 * @returns {Object[]} Normalized cast list.
 	 */
 	function mapCast(cast = []) {
 		return cast.slice(0, 20).map((person) => ({
@@ -343,12 +342,12 @@ export function createTmdbApi(fetchFn, apiKey, language = DEFAULT_LOCALE) {
 	}
 
 	/**
-	 * Formatiert die Crew-Liste.
+	 * Formats the crew list.
 	 *
-	 * Es werden maximal 20 Crew-Einträge übernommen.
+	 * A maximum of 20 crew entries are included.
 	 *
-	 * @param {Object[]} [crew=[]] - Crew-Liste aus TMDB.
-	 * @returns {Object[]} Normalisierte Crew-Liste.
+	 * @param {Object[]} [crew=[]] - Crew list from TMDB.
+	 * @returns {Object[]} Normalized crew list.
 	 */
 	function mapCrew(crew = []) {
 		return crew.slice(0, 20).map((person) => ({
@@ -363,12 +362,12 @@ export function createTmdbApi(fetchFn, apiKey, language = DEFAULT_LOCALE) {
 	}
 
 	/**
-	 * Beschafft eine Liste von Filmen oder Serien.
+	 * Fetches a list of movies or TV shows.
 	 *
-	 * @param {string} endpoint - TMDB-Endpoint.
-	 * @param {number} page - Seitenzahl.
-	 * @param {string} [fallbackMediaType=null] - Optionaler Medientyp.
-	 * @returns {Promise<{page:number,results:Object[],hasMore:boolean}>} Normalisierte Liste.
+	 * @param {string} endpoint - TMDB endpoint.
+	 * @param {number} page - Page number.
+	 * @param {string} [fallbackMediaType=null] - Optional media type.
+	 * @returns {Promise<{page:number,results:Object[],hasMore:boolean}>} Normalized list response.
 	 */
 	async function getList(endpoint, page, fallbackMediaType = null) {
 		const data = await request(endpoint, { page });
@@ -385,79 +384,79 @@ export function createTmdbApi(fetchFn, apiKey, language = DEFAULT_LOCALE) {
 	}
 
 	/**
-	 * Liefert die aktuell verfügbaren Trend-, Popular- und Top-Rated-Listen.
+	 * Returns the currently available trending, popular, and top-rated lists.
 	 *
-	 * @param {number} [page=1] - Seitenzahl.
-	 * @returns {Promise<Object>} Normalisierte Listenantwort.
+	 * @param {number} [page=1] - Page number.
+	 * @returns {Promise<Object>} Normalized list response.
 	 */
 	async function getTrendingAll(page = 1) {
 		return getList('/trending/all/day', page);
 	}
 
 	/**
-	 * Liefert die aktuellen Film-Trends.
+	 * Returns the current movie trends.
 	 *
-	 * @param {number} [page=1] - Seitenzahl.
-	 * @returns {Promise<Object>} Normalisierte Listenantwort.
+	 * @param {number} [page=1] - Page number.
+	 * @returns {Promise<Object>} Normalized list response.
 	 */
 	async function getTrendingMovies(page = 1) {
 		return getList('/trending/movie/day', page, 'movie');
 	}
 
 	/**
-	 * Liefert die aktuellen Serien-Trends.
+	 * Returns the current TV show trends.
 	 *
-	 * @param {number} [page=1] - Seitenzahl.
-	 * @returns {Promise<Object>} Normalisierte Listenantwort.
+	 * @param {number} [page=1] - Page number.
+	 * @returns {Promise<Object>} Normalized list response.
 	 */
 	async function getTrendingTVShows(page = 1) {
 		return getList('/trending/tv/day', page, 'tv');
 	}
 
 	/**
-	 * Liefert die populärsten Filme.
+	 * Returns the most popular movies.
 	 *
-	 * @param {number} [page=1] - Seitenzahl.
-	 * @returns {Promise<Object>} Normalisierte Listenantwort.
+	 * @param {number} [page=1] - Page number.
+	 * @returns {Promise<Object>} Normalized list response.
 	 */
 	async function getPopularMovies(page = 1) {
 		return getList('/movie/popular', page, 'movie');
 	}
 
 	/**
-	 * Liefert die populärsten Serien.
+	 * Returns the most popular TV shows.
 	 *
-	 * @param {number} [page=1] - Seitenzahl.
-	 * @returns {Promise<Object>} Normalisierte Listenantwort.
+	 * @param {number} [page=1] - Page number.
+	 * @returns {Promise<Object>} Normalized list response.
 	 */
 	async function getPopularTVShows(page = 1) {
 		return getList('/tv/popular', page, 'tv');
 	}
 
 	/**
-	 * Liefert die bestbewerteten Filme.
+	 * Returns the top-rated movies.
 	 *
-	 * @param {number} [page=1] - Seitenzahl.
-	 * @returns {Promise<Object>} Normalisierte Listenantwort.
+	 * @param {number} [page=1] - Page number.
+	 * @returns {Promise<Object>} Normalized list response.
 	 */
 	async function getTopRatedMovies(page = 1) {
 		return getList('/movie/top_rated', page, 'movie');
 	}
 
 	/**
-	 * Liefert die bestbewerteten Serien.
+	 * Returns the top-rated TV shows.
 	 *
-	 * @param {number} [page=1] - Seitenzahl.
-	 * @returns {Promise<Object>} Normalisierte Listenantwort.
+	 * @param {number} [page=1] - Page number.
+	 * @returns {Promise<Object>} Normalized list response.
 	 */
 	async function getTopRatedTVShows(page = 1) {
 		return getList('/tv/top_rated', page, 'tv');
 	}
 
 	/**
-	 * Liefert das hervorgehobene Element des Tages.
+	 * Returns the featured item of the day.
 	 *
-	 * @returns {Promise<Object|null>} Normalisiertes Featured-Objekt oder null.
+	 * @returns {Promise<Object|null>} Normalized featured object or null.
 	 */
 	async function getFeaturedToday() {
 		const data = await request('/trending/all/day');
@@ -492,10 +491,10 @@ export function createTmdbApi(fetchFn, apiKey, language = DEFAULT_LOCALE) {
 	}
 
 	/**
-	 * Liefert die Detaildaten eines Films.
+	 * Returns the detail data of a movie.
 	 *
-	 * @param {number|string} id - TMDB-ID des Films.
-	 * @returns {Promise<Object>} Normalisiertes Film-Detailobjekt.
+	 * @param {number|string} id - TMDB ID of the movie.
+	 * @returns {Promise<Object>} Normalized movie detail object.
 	 */
 	async function getMovieDetails(id) {
 		const details = await request(`/movie/${id}`, { append_to_response: 'videos,credits' });
@@ -511,10 +510,10 @@ export function createTmdbApi(fetchFn, apiKey, language = DEFAULT_LOCALE) {
 	}
 
 	/**
-	 * Liefert die Detaildaten einer TV-Serie.
+	 * Returns the detail data of a TV show.
 	 *
-	 * @param {number|string} id - TMDB-ID der Serie.
-	 * @returns {Promise<Object>} Normalisiertes Serien-Detailobjekt.
+	 * @param {number|string} id - TMDB ID of the TV show.
+	 * @returns {Promise<Object>} Normalized TV show detail object.
 	 */
 	async function getTVShowDetails(id) {
 		const details = await request(`/tv/${id}`, { append_to_response: 'videos,credits' });

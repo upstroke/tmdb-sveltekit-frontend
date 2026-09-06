@@ -1,14 +1,13 @@
 /**
- * Entfernt Einträge ohne gültige ID und doppelte IDs aus einer Liste.
+ * Removes entries without a valid ID and duplicate IDs from a list.
  *
- * Der erste Eintrag mit einer bestimmten ID bleibt erhalten.
- * Weitere Einträge mit derselben ID werden entfernt.
- * Die ursprüngliche Reihenfolge bleibt bestehen.
+ * The first entry with a specific ID is preserved.
+ * Further entries with the same ID are removed.
+ * The original order is maintained.
  *
- * @param {Array<{id: string|number}>} items Liste von Objekten mit IDs.
- * @returns {Array<{id: string|number}>} Bereinigte Liste ohne doppelte IDs.
+ * @param {Array<{id: string|number}>} items List of objects with IDs.
+ * @returns {Array<{id: string|number}>} Cleaned list without duplicate IDs.
  */
-
 export function deduplicateById(items = []) {
 	const seen = new Set();
 

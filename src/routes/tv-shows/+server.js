@@ -5,14 +5,15 @@ import { TMDB_API_KEY } from '$env/static/private';
 import { createTmdbApi } from '$lib/services/tmdb-api.js';
 
 /**
- * Lädt eine weitere Seite mit TV-Shows.
+ * Loads another page of TV shows.
  *
- * Die Route erwartet den Query-Parameter `page`, lädt die entsprechende
- * TV-Show-Seite über die TMDB-API und gibt deduplizierte Karten sowie Paging-Infos zurück.
+ * The route expects the query parameter `page`, loads the corresponding
+ * TV show page via the TMDB API, and returns deduplicated cards along with paging info.
  *
- * @param {{ fetch: Function, url: URL }} event - SvelteKit-Request-Kontext.
- * @returns {Promise<Response>} JSON-Antwort mit Karten, Seitennummer und Fehlerstatus.
+ * @param {{ fetch: Function, url: URL }} event - SvelteKit request context.
+ * @returns {Promise<Response>} JSON response with cards, page number, and error status.
  */
+
 export async function GET({ fetch, url }) {
 	const locale = resolveLocale(url.searchParams.get('locale'));
 	const { messages } = getLocaleText(locale);

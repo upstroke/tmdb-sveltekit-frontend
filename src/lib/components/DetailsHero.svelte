@@ -5,18 +5,17 @@
 	const { fallbacks } = $derived($i18n);
 
 	/**
-	 * Rendert den gemeinsamen Hero-Bereich für Detailseiten.
+	 * Renders the shared hero section for detail pages.
 	 *
-	 * Das Backdrop wird als großflächiger Hintergrund verwendet, während Poster,
-	 * Titel und Produktionsfirmen in einem zentrierten Overlay am unteren Rand
-	 * dargestellt werden.
+	 * The backdrop is used as a large background, while poster, title, and
+	 * production companies are displayed in a centered overlay at the bottom.
 	 *
 	 * @component
-	 * @prop {string} title - Titel des Mediums.
-	 * @prop {string} backdrop - URL des Hintergrundbilds.
-	 * @prop {string} posterUrl - URL des Posterbilds; dient auch als Fallback.
-	 * @prop {Array<{id?: number|string, name?: string, logoPath?: string}>} [productionCompanies=[]] - Produktionsfirmen des Mediums.
-	 * @prop {string} [emptyLabel=''] - Text für den Leerzustand der Produktionsfirmen.
+	 * @prop {string} title - Title of the media.
+	 * @prop {string} backdrop - URL of the background image.
+	 * @prop {string} posterUrl - URL of the poster image; also serves as fallback.
+	 * @prop {Array<{id?: number|string, name?: string, logoPath?: string}>} [productionCompanies=[]] - Production companies of the media.
+	 * @prop {string} [emptyLabel=''] - Text for the empty state of production companies.
 	 *
 	 * @example
 	 * <DetailsHero

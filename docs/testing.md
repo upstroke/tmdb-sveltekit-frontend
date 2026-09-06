@@ -1,17 +1,17 @@
-# Testdokumentation
+# Test Documentation
 
-Diese Datei beschreibt das pragmatische Vorgehen fuer Tests in diesem Projekt.
+This file describes the pragmatic testing approach for this project.
 
-## Testarten
+## Test Types
 
-Das Projekt nutzt vier Testarten:
+The project uses four test types:
 
-- Acceptance-Tests in `tests/acceptance/` mit Playwright
-- Komponenten-Tests in `../tests/integration/components/` mit Vitest
-- Integrations-Tests in `tests/integration/` mit Vitest
-- Unit-Tests in `tests/unit/` mit Vitest
+- Acceptance tests in `tests/acceptance/` with Playwright
+- Component tests in `../tests/integration/components/` with Vitest
+- Integration tests in `tests/integration/` with Vitest
+- Unit tests in `tests/unit/` with Vitest
 
-## Testbefehle
+## Test Commands
 
 ```bash
 npm run test
@@ -22,9 +22,9 @@ npm run test:acceptance
 npm run test:vitest:coverage
 ```
 
-## Pfad-Aliase
+## Path Aliases
 
-In `jsconfig.json` sind Aliase definiert:
+Aliases are defined in `jsconfig.json`:
 
 ```json
 {
@@ -37,7 +37,7 @@ In `jsconfig.json` sind Aliase definiert:
 }
 ```
 
-Damit kannst du in Tests schreiben:
+This allows imports such as:
 
 ```js
 import { i18nMockDefault } from '$tests/mocks/i18n.mocks.js';
@@ -47,18 +47,17 @@ import { cleanupAll } from '$tests/setup/test-utils.js';
 
 ## Fixtures
 
-Fixtures enthalten wiederverwendbare, realistische Testdaten. Sie vermeiden
-Duplikate in Testdateien und machen Tests leichter lesbar.
+Fixtures contain reusable, realistic test data. They prevent duplication in test files and make tests easier to read.
 
-**Verzeichnis:** `tests/fixtures/`
+**Directory:** `tests/fixtures/`
 
-### Vorhandene Fixtures
+### Existing Fixtures
 
-- `tests/fixtures/tmdb/tmdb.fixtures.js` - TMDB API Response-Daten
-- `tests/fixtures/i18n.fixture.js` - i18n-Daten aus ui.json (Labels, Locales)
-- `tests/fixtures/navItems.fixture.js` - Navigation Items fuer Header-Tests
+- `tests/fixtures/tmdb/tmdb.fixtures.js` — TMDB API response data
+- `tests/fixtures/i18n.fixture.js` — i18n data from ui.json (labels and locales)
+- `tests/fixtures/navItems.fixture.js` — navigation items for header tests
 
-### Verwendung
+### Usage
 
 ```js
 import {
@@ -66,18 +65,18 @@ import {
   tvShowDetails
 } from '$tests/fixtures/tmdb/tmdb.fixtures.js';
 
-it('verarbeitet Filmdetails', () => {
+it('processes movie details', () => {
   const result = mapMovieDetails(movieDetails);
 
   expect(result.title).toBe(movieDetails.title);
 });
 ```
 
-### Regeln
+### Rules
 
-- Wiederverwendbare Beispieldaten gehoeren nach `tests/fixtures/`.
-- Fixtures sollen realistische, aber statische Testdaten enthalten.
-- Tests duerfen Fixture-Objekte nicht direkt veraendern; bei Anpassungen eine Kopie erzeugen:
+- Reusable sample data belongs in `tests/fixtures/`.
+- Fixtures should contain realistic but static test data.
+- Tests must not modify fixture objects directly. Create a copy when making adjustments:
 
 ```js
 const movieWithoutPoster = {
@@ -86,21 +85,21 @@ const movieWithoutPoster = {
 };
 ```
 
-- Fixtures nicht fuer Mock-Verhalten verwenden; dafuer gehoeren Mocks nach `tests/mocks/`.
-- **Fixtures enthalten stabile Testdaten:** Verwende Fixtures fuer fachliche Beispieldaten, die in mehreren Tests wiederkehren und keine Logik enthalten.
+- Do not use fixtures for mock behavior; mocks belong in `tests/mocks/`.
+- **Fixtures contain stable test data:** Use fixtures for domain examples that recur across multiple tests and contain no logic.
 
 ## Mocks
 
-Mocks kapseln technische Abhaengigkeiten wie Stores, APIs oder Browser-Funktionen.
+Mocks encapsulate technical dependencies such as stores, APIs, or browser functions.
 
-**Verzeichnis:** `tests/mocks/`
+**Directory:** `tests/mocks/`
 
-### Vorhandene Mocks
+### Existing Mocks
 
-- `tests/mocks/i18n.mocks.js` - i18n Store Mock
-- `tests/mocks/pages-media-data.mocks.js` - Paginierte Mediendaten Mocks
+- `tests/mocks/i18n.mocks.js` — i18n store mock
+- `tests/mocks/pages-media-data.mocks.js` — paginated media data mocks
 
-### Verwendung
+### Usage
 
 ```js
 import { i18nMockDefault, getI18nLabels } from '$tests/mocks/i18n.mocks.js';
@@ -110,24 +109,24 @@ const labels = getI18nLabels();
 vi.mock('$lib/stores/i18n', async () => ({
   i18n: {
     subscribe(run) {
-      run({ labels: labels });
+      run({ labels });
       return () => {};
     }
   }
 }));
 ```
 
-### Vorteile
+### Benefits
 
-- Labels kommen aus `ui.json` → Tests brechen bei Aenderungen
-- Mock nur einmal zentral definiert
-- Konsistente Labels ueber alle Tests
+- Labels come from `ui.json`, so tests fail when labels change.
+- The mock is defined centrally once.
+- Labels remain consistent across all tests.
 
-### Wichtiger Hinweis zu vi.mock
+### Important Note About `vi.mock`
 
-`vi.mock` muss **ganz oben** in der Test-Datei stehen und kann **keine Imports** verwenden!
+`vi.mock` must be placed **at the very top** of the test file and cannot use imports.
 
-**Richtig:**
+**Correct:**
 
 ```js
 import { i18nData } from '$tests/fixtures/i18n.fixture.js';
@@ -142,7 +141,7 @@ vi.mock('$lib/stores/i18n', async () => ({
 }));
 ```
 
-**Falsch:**
+**Incorrect:**
 
 ```js
 import { createI18nMock } from '$tests/mocks/i18n.mocks.js';
@@ -150,24 +149,24 @@ import { createI18nMock } from '$tests/mocks/i18n.mocks.js';
 vi.mock('$lib/stores/i18n', () => createI18nMock()); // ❌ Error!
 ```
 
-### Regeln
+### Rules
 
-- **Mocks und Stubs kapseln Technik:** Verwende Mocks oder Stubs fuer technische Abhaengigkeiten wie `fetch`, API-Clients, Browser-APIs oder andere externen Schnittstellen.
-- Mock-Logik bleibt in der Test-Datei (wegen `vi.mock` Einschraenkung).
-- Fixture-Daten koennen importiert werden.
+- **Mocks and stubs encapsulate technology:** Use mocks or stubs for technical dependencies such as `fetch`, API clients, browser APIs, or other external interfaces.
+- Keep mock logic in the test file because of the `vi.mock` limitation.
+- Fixture data may be imported.
 
-## Setup-Utilities
+## Setup Utilities
 
-Setup-Utilities enthalten Helper-Funktionen fuer `beforeEach` und `afterEach` Bloecke.
+Setup utilities contain helper functions for `beforeEach` and `afterEach` blocks.
 
-**Verzeichnis:** `tests/setup/`
+**Directory:** `tests/setup/`
 
-### Vorhandene Utilities
+### Existing Utilities
 
-- `tests/setup/test-utils.js` - cleanupAll(), resetAll()
-- `tests/setup/missing-api-key.helper.js` - Helper fuer API-Key-Tests
+- `tests/setup/test-utils.js` — `cleanupAll()`, `resetAll()`
+- `tests/setup/missing-api-key.helper.js` — helper for API key tests
 
-### Verwendung
+### Usage
 
 ```js
 import { cleanupAll, resetAll } from '$tests/setup/test-utils.js';
@@ -187,71 +186,71 @@ describe('Component', () => {
 });
 ```
 
-## Vorgehen bei Unit-Tests
+## Unit Testing Approach
 
-Unit-Tests werden direkt als normale Vitest-Tests in `tests/unit/*.test.js` geschrieben.
+Unit tests are written as regular Vitest tests in `tests/unit/*.test.js`.
 
-Dabei gilt:
+The following rules apply:
 
-- Ein Test beschreibt sein Verhalten direkt in der Testdatei.
-- Fachliche Varianten werden ueber sprechende `describe`- und `it`-Bloecke abgebildet.
-- Zusaetzliche Metadateien oder ein Testgenerator werden nicht verwendet.
-- Kommentare im Test sind erlaubt, wenn sie das fachliche Ziel eines Falls knapp erklaeren.
-- Die Testdokumentation in der Testdatei soll die Testtechnik nennen und zusaetzlich kurz zwischen Happy Path und negativen bzw. Fallback-Faellen unterscheiden.
+- A test describes its behavior directly in the test file.
+- Domain variants are represented through meaningful `describe` and `it` blocks.
+- Additional metadata files or a test generator are not used.
+- Comments are allowed when they briefly explain the functional goal of a case.
+- Test documentation in the test file should name the test technique and briefly distinguish between the happy path and negative or fallback cases.
 
-## Testdesign-Techniken
+## Test Design Techniques
 
-Je nach Funktion kommen unter anderem diese Techniken zum Einsatz:
+Depending on the function, the following techniques may be used:
 
-- Aequivalenzklassen
-- Grenzwertanalyse
-- Anweisungsueberdeckung
-- Zweigueberdeckung
-- Zustandsbasierte Tests
+- Equivalence partitioning
+- Boundary value analysis
+- Statement coverage
+- Branch coverage
+- State-based testing
 
-Nicht jede Funktion benoetigt alle Techniken. Die gewaehlte Technik wird bei Bedarf direkt im Test oder in der fachlichen Doku knapp begruendet.
+Not every function requires all techniques. When needed, briefly justify the selected technique directly in the test or functional documentation.
 
-### ISTQB-Begriffe fuer Überdeckung verwenden
+### Use ISTQB Terms for Coverage
 
-In Prompts und Testkommentaren die Bezeichnungen `Anweisungsueberdeckung` und `Zweigueberdeckung` nach ISTQB verwenden; gemischte Eigenformulierungen sind nicht erlaubt.
+Use the ISTQB terms `statement coverage` and `branch coverage` in prompts and test comments. Mixed or improvised terminology is not allowed.
 
-### 100 % Anweisungsüberdeckung als Mindestziel
+### 100% Statement Coverage as the Minimum Goal
 
-Bei neuer Testerstellung sollen alle ausfuehrbaren Anweisungen des betroffenen Codes mindestens einmal ausgefuehrt werden. Fehlende Ausfuehrungspfade sind zuerst durch zusaetzliche Testfaelle zu schliessen, bevor weitere Verfeinerungen erfolgen.
+When creating new tests, every executable statement in the affected code should be executed at least once. Close missing execution paths with additional test cases before making further refinements.
 
-### Zweigüberdeckung gezielt ergaenzen
+### Add Branch Coverage Deliberately
 
-Zusaetzliche Testfaelle fuer Zweigüberdeckung werden dort ergaenzt, wo Alternativ-, Fehler-, Fallback-, Grenz- oder Verwerfungszweige fachlich oder technisch relevant sind. Kein pauschales Verdoppeln von Tests ohne erkennbaren neuen Entscheidungszweig.
+Add additional branch-coverage cases where alternative, error, fallback, boundary, or rejection branches are functionally or technically relevant. Do not blindly duplicate tests without a clearly new decision branch.
 
-### Kommentare pro Testfall eindeutig halten
+### Keep Comments per Test Case Unambiguous
 
-Jeder `it`-Block bekommt genau eine kurze Kommentarzeile direkt darueber. Fuer die Klassifikation gilt: Alle Tests einer Quelldatei werden in fester Reihenfolge analysiert, waehrend die bisher abgedeckten Statement-IDs gesammelt werden. Ein Test wird als `Anweisungsüberdeckung` bezeichnet, sobald er mindestens eine neue Statement-ID zur 100-%-Anweisungsueberdeckung der Quelldatei beiträgt. Nur wenn er keine neue Statement-ID beiträgt, aber einen zusaetzlichen fachlich oder technisch relevanten Pfad testet, wird er als `Zweigüberdeckung` bezeichnet. Eine zusaetzliche Zweipruefung aendert die Bezeichnung nicht, wenn der Test zugleich neue Statements abdeckt. Gemischte Bezeichnungen werden nicht verwendet.
+Each `it` block receives exactly one short comment line directly above it. For classification, analyze all tests for a source file in a fixed order while collecting the statement IDs already covered. A test is classified as `statement coverage` as soon as it contributes at least one new statement ID toward 100% statement coverage of the source file. Only when it contributes no new statement ID but tests an additional functionally or technically relevant path is it classified as `branch coverage`. An additional branch check does not change the classification when the test also covers new statements. Do not use mixed labels.
 
 ## Coverage
 
-Coverage wird mit Vitest und V8 erzeugt. Der Coverage-Report wird im Ordner `coverage/` abgelegt.
+Coverage is generated with Vitest and V8. The coverage report is stored in the `coverage/` directory.
 
-Coverage-Zahlen dienen als Orientierung und ergaenzen die fachliche Testfallauswahl. Sie ersetzen diese nicht.
+Coverage numbers provide orientation and complement the functional test selection. They do not replace it.
 
-## Rolle des Testers
+## Tester’s Role
 
-Die fachliche Herleitung der Testfaelle bleibt Aufgabe des Testers.
+Deriving test cases from the domain remains the tester’s responsibility.
 
-Der Tester:
+The tester:
 
-- waehlt ein geeignetes Testobjekt aus dem bestehenden Code aus,
-- entscheidet, welche Testdesign-Technik fachlich sinnvoll ist,
-- identifiziert relevante Testbedingungen, Risiken und Eingabeklassen,
-- definiert konkrete Testfaelle und erwartete Ergebnisse,
-- prueft die Resultate und verbessert die Tests bei Bedarf.
+- selects a suitable test subject from the existing code,
+- decides which test design technique is functionally appropriate,
+- identifies relevant test conditions, risks, and input classes,
+- defines concrete test cases and expected results,
+- reviews the results and improves the tests as needed.
 
 ## Best Practices
 
-- **Fixtures und Mocks gezielt wiederverwenden:** Vor neuen Hilfsdaten oder Testdoubles immer zuerst im vorhandenen `tests/fixtures`- und `tests/mocks`-Bereich nachsehen. Existiert dort schon ein passendes Beispiel, wird es bevorzugt genutzt oder erweitert, statt ein neues Duplikat anzulegen.
-- **Einmaligkeit vor Ordnung:** Eine neue Fixture oder ein neuer Mock wird nur angelegt, wenn wirklich kein vorhandenes Beispiel passt und die Wiederverwendung unpraktisch waere.
+- **Reuse fixtures and mocks deliberately:** Before creating new helper data or test doubles, first search the existing `tests/fixtures` and `tests/mocks` directories. If a suitable example already exists, prefer using or extending it instead of creating a duplicate.
+- **Uniqueness before organization:** Create a new fixture or mock only when no existing example fits and reuse would be impractical.
 
-## Weiteres
+## Further Information
 
-- `docs/ai-prompts.md` fuer allgemeine Prompt-Richtlinien
-- `README.md` fuer Projektkontext und Tech Stack
-- `docs/ai-prompt-examples.md` fuer konkrete Prompt-Beispiele nach Rolle
+- `docs/ai-prompts.md` for general prompt guidelines
+- `../README.md` for project context and tech stack
+- `docs/ai-prompt-examples.md` for concrete prompt examples by role

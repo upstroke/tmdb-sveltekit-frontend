@@ -3,10 +3,10 @@ import { getLocaleText } from '$lib/i18n/resolver';
 import { locale } from '$lib/stores/locale';
 
 /**
- * Liefert die übersetzten UI-Texte für die aktuell ausgewählte Locale.
+ * Returns the translated UI texts for the currently selected locale.
  *
- * Der Store wird automatisch aktualisiert, sobald sich der zugrunde liegende
- * `locale`-Store ändert.
+ * The store is automatically updated as soon as the underlying
+ * `locale` store changes.
  *
  * @type {import('svelte/store').Readable<Object>}
  */

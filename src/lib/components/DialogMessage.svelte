@@ -5,17 +5,17 @@
 	const { messages } = $derived($i18n);
 
 	/**
-	 * Rendert einen wiederverwendbaren nativen Dialog für Fehlermeldungen.
+	 * Renders a reusable native dialog for error messages.
 	 *
-	 * Der Dialog öffnet sich clientseitig automatisch, sobald eine Meldung
-	 * vorliegt, und zeigt optional eine angepasste Überschrift an.
+	 * The dialog opens automatically on the client side as soon as a message
+	 * is present, and optionally displays a customized heading.
 	 *
 	 * @component
-	 * @prop {string} message - Der anzuzeigende Meldungstext.
-	 * @prop {string} [title=messages.dialogErrorTitle] - Optionale Überschrift des Dialogs.
+	 * @prop {string} message - The message text to display.
+	 * @prop {string} [title=messages.dialogErrorTitle] - Optional heading of the dialog.
 	 *
 	 * @example
-	 * <DialogMessage message="Beim Laden ist ein Fehler aufgetreten." />
+	 * <DialogMessage message="An error occurred while loading." />
 	 */
 	let { message, title = messages.dialogErrorTitle } = $props();
 

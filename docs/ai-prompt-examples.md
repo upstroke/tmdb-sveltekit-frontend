@@ -1,106 +1,106 @@
-# AI-Prompt-Beispiele
+# AI Prompt Examples
 
-Diese Datei enthält konkrete Prompt-Beispiele für häufige Aufgaben im Projekt.
+This file contains concrete prompt examples for common tasks in the project.
 
-## Grundstruktur
+## Basic Structure
 
-Jeder Prompt sollte folgende Abschnitte enthalten:
+Every prompt should contain the following sections:
 
 ```md
-## Rolle
-[Rolle und Expertise]
+## Role
+[Role and expertise]
 
-## Aufgabe
-[Was zu tun ist]
+## Task
+[What needs to be done]
 
-## Kontext
-[Projekt, Dateien, Rahmenbedingungen]
+## Context
+[Project, files, and constraints]
 
-## Beispiele
-[Was gut oder schlecht wäre]
+## Examples
+[What would be good or bad]
 
-## Ausgabeformat
-[Wie die Antwort aussehen soll]
+## Output Format
+[How the response should look]
 ```
 
 ---
 
-## Beispiele nach Rolle
+## Examples by Role
 
-### Senior Frontend-Entwickler
+### Senior Frontend Developer
 
 ```md
-## Rolle
-Du bist Senior Frontend-Entwickler mit Fokus auf SvelteKit und Accessibility.
-Du achtest auf saubere, wartbare Komponenten und semantisches HTML.
+## Role
+You are a senior frontend developer focusing on SvelteKit and accessibility.
+You value clean, maintainable components and semantic HTML.
 
-## Aufgabe
-Erstelle eine neue Svelte-5-Komponente für einen Filmbanner.
+## Task
+Create a new Svelte 5 component for a movie banner.
 
-## Kontext
-Projekt: tmdb-sveltekit-frontend
-Dateien zur Orientierung:
+## Context
+Project: tmdb-sveltekit-frontend
+Reference files:
 - src/lib/components/CardDefault.svelte
 - src/css/_variables.scss
 
-Rahmenbedingungen:
-- semantisches HTML
-- kein TypeScript
-- Sass-Verschachtelung maximal 3 Ebenen
+Requirements:
+- semantic HTML
+- no TypeScript
+- Sass nesting limited to a maximum of three levels
 
-## Beispiele
-Gutes Ergebnis:
-- klare Props
-- gut lesbares Markup
-- sinnvolle ARIA-Attribute
+## Examples
+Good result:
+- clear props
+- readable markup
+- appropriate ARIA attributes
 
-Nicht gewünscht:
-- Inline-Styles
-- unnötige div-Container
-- neue Dependency
+Not desired:
+- inline styles
+- unnecessary `div` containers
+- new dependencies
 
-## Ausgabeformat
-Liefere:
-1. den vollständigen Code für die neue `.svelte`-Datei
-2. eine kurze Liste der betroffenen Dateien
-3. 2–3 Sätze zur Begründung der Struktur
+## Output Format
+Provide:
+1. the complete code for the new `.svelte` file
+2. a short list of affected files
+3. 2–3 sentences explaining the structure
 ```
 
 ---
 
-### Code-Reviewer
+### Code Reviewer
 
 ```md
-## Rolle
-Du bist Code-Reviewer mit Fokus auf Sicherheit und Performance.
-Prüfe den Code auf Schwachstellen, ineffiziente Muster und unklare Logik.
+## Role
+You are a code reviewer focusing on security and performance.
+Check the code for vulnerabilities, inefficient patterns, and unclear logic.
 
-## Aufgabe
-Analysiere die Datei `src/lib/components/MovieCard.svelte` auf:
-- Sicherheitsprobleme (XSS, unsichere Datenverarbeitung)
-- Performance-Probleme (unnötige Reaktivität, ineffiziente Loops)
-- Code-Qualität (Lesbarkeit, Wartbarkeit)
+## Task
+Analyze the file `src/lib/components/MovieCard.svelte` for:
+- security issues (XSS and unsafe data processing)
+- performance issues (unnecessary reactivity and inefficient loops)
+- code quality (readability and maintainability)
 
-## Kontext
-Datei: src/lib/components/MovieCard.svelte
-Projekt: tmdb-sveltekit-frontend
-Tech Stack: SvelteKit 2.63, Svelte 5, Sass
+## Context
+File: src/lib/components/MovieCard.svelte
+Project: tmdb-sveltekit-frontend
+Tech stack: SvelteKit 2.63, Svelte 5, Sass
 
-## Beispiele
-Gutes Ergebnis:
-- konkrete Fundstellen mit Zeilennummern
-- klare Bewertung (kritisch, mittel, gering)
-- praktische Vorschläge zur Verbesserung
+## Examples
+Good result:
+- specific findings with line numbers
+- clear severity rating (critical, medium, low)
+- practical improvement suggestions
 
-Nicht gewünscht:
-- vage Aussagen ohne Bezug zum Code
-- pauschale Empfehlungen ohne Kontext
+Not desired:
+- vague statements unrelated to the code
+- generic recommendations without context
 
-## Ausgabeformat
-Liefere:
-1. eine Tabelle mit Fundstellen, Bewertung und Empfehlung
-2. priorisierte Liste der wichtigsten Punkte
-3. bei kritischen Problemen: konkrete Code-Beispiele für das Fixen des Problems.
+## Output Format
+Provide:
+1. a table with findings, severity, and recommendation
+2. a prioritized list of the most important points
+3. concrete code examples for fixing critical issues
 ```
 
 ---
@@ -108,174 +108,174 @@ Liefere:
 ### Technical Writer
 
 ```md
-## Rolle
-Du bist Technical Writer für Entwickler-Dokumentation.
-Schreibe klare, knappe und technisch korrekte Doku.
+## Role
+You are a technical writer for developer documentation.
+Write clear, concise, and technically accurate documentation.
 
-## Aufgabe
-Erstelle eine README-Dokumentation für die neue `MovieService`-Klasse.
+## Task
+Create README documentation for the new `MovieService` class.
 
-## Kontext
-Datei: src/lib/services/MovieService.js
-Projekt: tmdb-sveltekit-frontend
-Zielgruppe: Entwickler im Team
+## Context
+File: src/lib/services/MovieService.js
+Project: tmdb-sveltekit-frontend
+Target audience: team developers
 
-Die Klasse bietet:
-- Film-Suche nach Titel
-- Film-Details nach ID
-- Genre-Filterung
-- Paginierung
+The class provides:
+- movie search by title
+- movie details by ID
+- genre filtering
+- pagination
 
-## Beispiele
-Gutes Ergebnis:
-- klare Überschriften
-- Code-Beispiele für typische Anwendungsfälle
-- kurze Erklärung der Parameter und Rückgabewerte
+## Examples
+Good result:
+- clear headings
+- code examples for typical use cases
+- brief explanations of parameters and return values
 
-Nicht gewünscht:
-- ausführliche Einleitungen ohne Mehrwert
-- technische Details ohne Praxisbezug
-- unvollständige API-Beschreibung
+Not desired:
+- lengthy introductions without added value
+- technical details without practical relevance
+- incomplete API documentation
 
-## Ausgabeformat
-Liefere:
-1. eine README-Datei mit Installation, Usage und API-Referenz
-2. mindestens 2 Code-Beispiele für typische Anwendungsfälle
-3. kurze Hinweise zu Fehlerbehandlung und Randfällen
+## Output Format
+Provide:
+1. a README file with installation, usage, and API reference
+2. at least two code examples for typical use cases
+3. brief notes on error handling and edge cases
 ```
 
 ---
 
-### Test-Automatisierer
+### Test Automation Engineer
 
 ```md
-## Rolle
-Du bist Test-Automatisierer mit Fokus auf Playwright.
-Erstelle robuste, wartbare Tests mit sinnvollen Selectoren.
+## Role
+You are a test automation engineer focusing on Playwright.
+Create robust, maintainable tests with meaningful selectors.
 
-## Aufgabe
-Erstelle einen Playwright-Acceptance-Test für die Film-Suche.
+## Task
+Create a Playwright acceptance test for the movie search.
 
-## Kontext
-Seite: /search
-Projekt: tmdb-sveltekit-frontend
-Test-Framework: Playwright
+## Context
+Page: /search
+Project: tmdb-sveltekit-frontend
+Test framework: Playwright
 
-Test-Szenario:
-1. Nutzer gibt Suchbegriff ein
-2. Ergebnisse werden angezeigt
-3. Nutzer klickt auf einen Film
-4. Film-Details werden angezeigt
+Test scenario:
+1. The user enters a search term.
+2. Results are displayed.
+3. The user clicks on a movie.
+4. The movie details are displayed.
 
-## Beispiele
-Gutes Ergebnis:
-- stabile Selectoren (data-testid, Rollen, Labels)
-- sinnvolle Wartezeiten (waitFor, toBeVisible)
-- klare Test-Beschreibung im Code
+## Examples
+Good result:
+- stable selectors (`data-testid`, roles, and labels)
+- sensible waiting strategies (`waitFor`, `toBeVisible`)
+- clear test descriptions in the code
 
-Nicht gewünscht:
-- fragile CSS-Selektoren
-- harte Wartezeiten (setTimeout)
-- unklare Test-Namen
+Not desired:
+- fragile CSS selectors
+- fixed delays (`setTimeout`)
+- unclear test names
 
-## Ausgabeformat
-Liefere:
-1. eine `.test.js`-Datei im Ordner `tests/acceptance/`
-2. den kompletten Test-Code mit sinnvollen Comments
-3. kurze Erklärung der gewählten Selectoren und Wartezeiten
+## Output Format
+Provide:
+1. a `.test.js` file in the `tests/acceptance/` directory
+2. the complete test code with useful comments
+3. a brief explanation of the selected selectors and waiting strategies
 ```
 
 ---
 
-### Refactoring-Spezialist
+### Refactoring Specialist
 
 ```md
-## Rolle
-Du bist Refactoring-Spezialist mit Fokus auf Code-Qualität und Wartbarkeit.
-Du vereinfachst komplexe Logik ohne Änderung des Verhaltens.
+## Role
+You are a refactoring specialist focusing on code quality and maintainability.
+Simplify complex logic without changing its behavior.
 
-## Aufgabe
-Refaktorisiere die Funktion `calculateMovieScore` in `src/lib/utils/scoreCalculator.js`.
+## Task
+Refactor the `calculateMovieScore` function in `src/lib/utils/scoreCalculator.js`.
 
-## Kontext
-Datei: src/lib/utils/scoreCalculator.js
-Projekt: tmdb-sveltekit-frontend
+## Context
+File: src/lib/utils/scoreCalculator.js
+Project: tmdb-sveltekit-frontend
 
-Probleme:
-- zu viele verschachtelte if-else-Blöcke
-- unklare Variablennamen
-- fehlende Fehlerbehandlung
-- keine JSDoc-Dokumentation
+Problems:
+- too many nested if-else blocks
+- unclear variable names
+- missing error handling
+- no JSDoc documentation
 
-## Beispiele
-Gutes Ergebnis:
-- klare, benannte Funktionen
-- frühe Returns statt tiefer Verschachtelung
-- sinnvolle Fehlerbehandlung
-- JSDoc für wichtige Funktionen
+## Examples
+Good result:
+- clear, well-named functions
+- early returns instead of deep nesting
+- sensible error handling
+- JSDoc for important functions
 
-Nicht gewünscht:
-- Änderung des Verhaltens
-- neue Dependencies
-- Über-Engineering (z. B. unnötige Abstraktionen)
+Not desired:
+- behavior changes
+- new dependencies
+- over-engineering, such as unnecessary abstractions
 
-## Ausgabeformat
-Liefere:
-1. die refaktorisierte Datei
-2. eine kurze Liste der wichtigsten Änderungen
-3. Hinweise auf verbleibende Probleme oder offene Fragen
+## Output Format
+Provide:
+1. the refactored file
+2. a short list of the most important changes
+3. notes on remaining problems or open questions
 ```
 
 ---
 
-### Performance-Optimierer
+### Performance Optimizer
 
 ```md
-## Rolle
-Du bist Performance-Optimierer mit Fokus auf Ladezeiten und Runtime-Performance.
-Du identifizierst Engpässe und schlägst konkrete Optimierungen vor.
+## Role
+You are a performance optimization specialist focusing on load times and runtime performance.
+Identify bottlenecks and suggest concrete optimizations.
 
-## Aufgabe
-Analysiere die Startseite `/` auf Performance-Probleme.
+## Task
+Analyze the homepage `/` for performance issues.
 
-## Kontext
-Seite: / (Startseite)
-Projekt: tmdb-sveltekit-frontend
+## Context
+Page: / (homepage)
+Project: tmdb-sveltekit-frontend
 
-Beobachtete Probleme:
-- langsame erste Darstellung (LCP > 2.5s)
-- viele Netzwerkanfragen
-- unoptimierte Bilder
+Observed problems:
+- slow initial rendering (LCP > 2.5s)
+- many network requests
+- unoptimized images
 
-## Beispiele
-Gutes Ergebnis:
-- konkrete Messwerte (LCP, FCP, TTI)
-- priorisierte Liste der wichtigsten Optimierungen
-- praktische Umsetzungsvorschläge
+## Examples
+Good result:
+- concrete metrics (LCP, FCP, and TTI)
+- a prioritized list of the most important optimizations
+- practical implementation suggestions
 
-Nicht gewünscht:
-- pauschale Empfehlungen ohne Bezug zum Projekt
-- Optimierungen mit geringem Impact
-- Vorschläge, die die Wartbarkeit verschlechtern
+Not desired:
+- generic recommendations unrelated to the project
+- low-impact optimizations
+- suggestions that reduce maintainability
 
-## Ausgabeformat
-Liefere:
-1. eine priorisierte Liste der wichtigsten Optimierungen
-2. konkrete Code-Beispiele für die Top-3-Maßnahmen
-3. Hinweise auf erwartete Verbesserung (Messgrößen)
+## Output Format
+Provide:
+1. a prioritized list of the most important optimizations
+2. concrete code examples for the top three measures
+3. notes on the expected improvement and relevant metrics
 ```
 
 ---
 
-## Tipps zur Rollenzuweisung
+## Tips for Assigning Roles
 
-- **Rolle vor Aufgabe:** Die Rolle sollte immer am Anfang stehen, damit das Modell den Kontext versteht.
-- **Spezifisch sein:** Statt "Du bist ein Entwickler" besser "Du bist Senior Frontend-Entwickler mit Fokus auf SvelteKit".
-- **Prioritäten nennen:** Welche Aspekte sind besonders wichtig (z. B. Accessibility, Performance, Sicherheit)?
-- **Rolle zur Aufgabe passend:** Wähle die Rolle basierend auf der Aufgabe (z. B. Technical Writer für Doku, Tester für Tests).
+- **Role before task:** The role should always come first so the model understands the context.
+- **Be specific:** Instead of "You are a developer," use "You are a senior frontend developer focusing on SvelteKit."
+- **State priorities:** Mention which aspects are especially important, such as accessibility, performance, or security.
+- **Match the role to the task:** Choose the role based on the task, such as a technical writer for documentation or a tester for test creation.
 
-## Weitere Ressourcen
+## Further Resources
 
-- `docs/ai-prompts.md` für allgemeine Prompt-Richtlinien
-- `docs/testing.md` für Testvorgehen im Projekt
-- `README.md` für Projektkontext und Tech Stack
+- `docs/ai-prompts.md` for general prompt guidelines
+- `docs/testing.md` for the project's testing approach
+- `../README.md` for project context and tech stack

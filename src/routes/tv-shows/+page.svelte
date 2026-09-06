@@ -16,7 +16,7 @@
 	const storageKey = 'tv-shows-page';
 
 	/**
-	 * Erwartete Props für die Seite.
+	 * Expected props for the page.
 	 *
 	 * @typedef {Object} PageData
 	 * @property {{
@@ -44,7 +44,7 @@
 	 */
 
 	/**
-	 * Geladene Seitendaten aus dem Server-Load.
+	 * Loaded page data from the server load.
 	 *
 	 * @type {{ data: PageData }}
 	 */
@@ -63,12 +63,11 @@
 	let observer = null;
 
 	/**
-	 * Initialisiert den Seitenzustand einmalig.
+	 * Initializes the page state once.
 	 *
-	 * Beim ersten Render werden gespeicherte Seitenwerte über `restorePagedList`
-	 * wiederhergestellt. Die Funktion lädt bei Bedarf weitere Seiten nach,
-	 * setzt `featured`, `cards`, `page` und `hasMore` und behandelt Fehler mit
-	 * einer sichtbaren Meldung.
+	 * On the first render, stored page values are restored via `restorePagedList`.
+	 * The function loads additional pages if needed, sets `featured`, `cards`,
+	 * `page`, and `hasMore`, and handles errors with a visible message.
 	 */
 	$effect(() => {
 		if (data === previousData) {
@@ -129,11 +128,11 @@
 	});
 
 	/**
-	 * Scrollt nach dem Nachladen zur ersten neu eingefügten Karte.
+	 * Scrolls to the first newly inserted card after loading more content.
 	 *
-	 * Sobald `scrollTargetId` gesetzt ist, beobachtet der Effekt das Ziel-Element
-	 * im Browser und führt ein sanftes Scrollen aus, sobald es im Viewport
-	 * auftaucht. Danach wird der Observer wieder entfernt.
+	 * Once `scrollTargetId` is set, the effect observes the target element
+	 * in the browser and performs a smooth scroll as soon as it appears
+	 * in the viewport. The observer is then removed again.
 	 */
 	$effect(() => {
 		if (!browser || !scrollTargetId) {
@@ -172,9 +171,9 @@
 	});
 
 	/**
-	 * Speichert die zuletzt geladene Seite im Session Storage.
+	 * Stores the most recently loaded page in session storage.
 	 *
-	 * @param {number} value - Seitennummer, die gespeichert werden soll.
+	 * @param {number} value - The page number to store.
 	 */
 	function savePage(value) {
 		if (!browser) {
@@ -189,22 +188,22 @@
 	}
 
 	/**
-	 * Merkt sich das Ziel für das Scrollen zur ersten neu geladenen Karte.
+	 * Sets the target for scrolling to the first newly loaded card.
 	 *
-	 * @param {number} previousCardsCount - Anzahl der Karten vor dem Nachladen.
+	 * @param {number} previousCardsCount - The number of cards before loading more.
 	 */
 	function markScrollTarget(previousCardsCount) {
 		scrollTargetId = `tv-card-${previousCardsCount + 1}`;
 	}
 
 	/**
-	 * Lädt weitere TV-Shows nach.
+	 * Loads more TV shows.
 	 *
-	 * Die Funktion verhindert Doppelaufrufe, holt weitere Karten über die
-	 * TV-Shows-Route, dedupliziert die Ergebnisse und setzt das Scrollziel
-	 * auf die erste neu eingefügte Karte.
+	 * The function prevents duplicate calls, fetches additional cards via the
+	 * TV shows route, deduplicates the results, and sets the scroll target
+	 * to the first newly inserted card.
 	 *
-	 * @returns {Promise<void>} Wird abgeschlossen, wenn das Nachladen beendet ist.
+	 * @returns {Promise<void>} Resolves when loading more content is complete.
 	 */
 	async function loadMore() {
 		if (loading || !hasMore) {

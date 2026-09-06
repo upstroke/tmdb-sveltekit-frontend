@@ -10,16 +10,16 @@
 	const activeLocale = $derived(resolveLocale(page.url.searchParams.get('locale')));
 
 	/**
-	 * Stellt die Typeahead-Suche im Header für Filme und TV-Serien bereit.
+	 * Provides the typeahead search in the header for movies and TV shows.
 	 *
-	 * Die Komponente verwaltet Suchbegriff, Ladezustand, Fehlerzustand und
-	 * Sichtbarkeit der Ergebnisliste vollständig intern. Ab mindestens vier
-	 * Zeichen wird die lokale `/search`-Route mit Debounce abgefragt, laufende
-	 * Requests werden per `AbortController` abgebrochen und die Antworten nach
-	 * Medientyp getrennt dargestellt.
+	 * The component manages search term, loading state, error state, and
+	 * visibility of the results list entirely internally. From at least four
+	 * characters, the local `/search` route is queried with debounce, running
+	 * requests are aborted via `AbortController`, and responses are displayed
+	 * separately by media type.
 	 *
 	 * @component
-	 * @remarks Diese Komponente erwartet keine Props.
+	 * @remarks This component expects no props.
 	 *
 	 * @example
 	 * <TypeHeadSearch />
