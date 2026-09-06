@@ -6,6 +6,8 @@
 	import DetailsHero from '$lib/components/DetailsHero.svelte';
 	import MediaTypeLabel from '$lib/components/MediaTypeLabel.svelte';
 	import notAvailable from '$lib/assets/not-available.png';
+	import { DEFAULT_LOCALE } from '$lib/i18n/config';
+
 	import { i18n } from '$lib/stores/i18n';
 	import { formatDate } from '$lib/utils/formatDate';
 	import { getCertificationMeta } from '$lib/utils/certificationMeta';
@@ -17,7 +19,7 @@
 	let movie = $derived(data.movie ?? null);
 	let error = $derived(data.error ?? null);
 	let activeRegion = $derived(
-		(page.url.searchParams.get('locale') ?? 'de-DE').split('-')[1] ?? 'DE'
+		(page.url.searchParams.get('locale') ?? DEFAULT_LOCALE).split('-')[1] ?? 'US'
 	);
 	let certificationMeta = $derived(getCertificationMeta(movie?.certification, activeRegion));
 	let certificationStyle = $derived.by(() =>
@@ -38,7 +40,7 @@
 	let releaseDate = $derived(movie?.releaseDate ?? '');
 	let formattedReleaseDate = $derived(
 		releaseDate?.trim()
-			? formatDate(releaseDate, page.url.searchParams.get('locale') ?? 'de-DE')
+			? formatDate(releaseDate, page.url.searchParams.get('locale') ?? DEFAULT_LOCALE)
 			: ''
 	);
 	let streamingProviders = $derived(data.providers ?? null);

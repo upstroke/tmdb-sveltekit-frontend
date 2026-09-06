@@ -2,28 +2,28 @@
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
 	import notAvailable from '$lib/assets/not-available.png';
+	import { DEFAULT_LOCALE } from '$lib/i18n/config';
 	import { i18n } from '$lib/stores/i18n';
 	import { formatDate } from '$lib/utils/formatDate';
 
 	const { labels, fallbacks } = $derived($i18n);
 
 	/**
-	 * Rendert eine hervorgehobene Karte für einen Film oder eine TV-Serie.
+	 * Renders a featured card for a movie or TV show.
 	 *
-	 * Das Vorschaubild wird als Hintergrund verwendet. Poster, Metadaten,
-	 * Kurzbeschreibung und optionale Website-Verknüpfung werden als Overlay
-	 * dargestellt.
+	 * The preview image is used as a background. Poster, metadata,
+	 * short description, and optional website link are displayed as an overlay.
 	 *
 	 * @component
-	 * @prop {number|string} id - Eindeutige ID des Mediums für den Detail-Link.
-	 * @prop {'movie'|'tv'} mediaType - Medientyp und Zielroute der Karte.
-	 * @prop {string} title - Titel des Mediums.
-	 * @prop {string} [releaseDate=''] - Veröffentlichungs- oder Startdatum.
-	 * @prop {string} [overview=''] - Kurzbeschreibung des Mediums.
-	 * @prop {string} [homepage=''] - URL der offiziellen Website.
-	 * @prop {Array<{id?: number|string, name: string}>} [genres=[]] - Genres des Mediums.
-	 * @prop {string} [imageUrl=''] - URL des Hintergrund- beziehungsweise Vorschaubilds.
-	 * @prop {string} [posterUrl=''] - URL des Posters; fällt auf `imageUrl` zurück.
+	 * @prop {number|string} id - Unique ID of the media for the detail link.
+	 * @prop {'movie'|'tv'} mediaType - Media type and target route of the card.
+	 * @prop {string} title - Title of the media.
+	 * @prop {string} [releaseDate=''] - Release or premiere date.
+	 * @prop {string} [overview=''] - Short description of the media.
+	 * @prop {string} [homepage=''] - URL of the official website.
+	 * @prop {Array<{id?: number|string, name: string}>} [genres=[]] - Genres of the media.
+	 * @prop {string} [imageUrl=''] - URL of the background or preview image.
+	 * @prop {string} [posterUrl=''] - URL of the poster; falls back to `imageUrl`.
 	 *
 	 * @example
 	 * <CardFeatured
@@ -66,7 +66,7 @@
 		}
 
 		const url = new URL(href, page.url.origin);
-		url.searchParams.set('locale', page.url.searchParams.get('locale') ?? 'de-DE');
+		url.searchParams.set('locale', page.url.searchParams.get('locale') ?? DEFAULT_LOCALE);
 		return `${url.pathname}${url.search}${url.hash}`;
 	});
 
@@ -84,7 +84,7 @@
 	let featuredTitle = $derived(title?.trim() || notAvailableText);
 	let featuredReleaseDate = $derived(
 		releaseDate?.trim()
-			? formatDate(releaseDate, page.url.searchParams.get('locale') ?? 'de-DE')
+			? formatDate(releaseDate, page.url.searchParams.get('locale') ?? DEFAULT_LOCALE)
 			: ''
 	);
 	let hasReleaseDate = $derived(Boolean(featuredReleaseDate));

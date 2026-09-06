@@ -1,5 +1,6 @@
 import { getDate, getImageUrl, getMediaType, getTitle } from '$lib/services/tmdb/helpers';
 import notAvailableImage from '$lib/assets/not-available.png';
+import { DEFAULT_LOCALE } from '$lib/i18n/config';
 
 const BASE_URL = 'https://api.themoviedb.org/3';
 
@@ -14,7 +15,7 @@ const BASE_URL = 'https://api.themoviedb.org/3';
  * @param {string} [language='de-DE'] - Sprachcode für die API-Antworten.
  * @returns {Object} TMDB-API mit Methoden für Requests, Mapping und Caches.
  */
-export function createTmdbApi(fetchFn, apiKey, language = 'de-DE') {
+export function createTmdbApi(fetchFn, apiKey, language = DEFAULT_LOCALE) {
 	const region = language.split('-')[1] ?? language.split('_')[1] ?? 'DE';
 	let movieGenreMap = null;
 	let tvGenreMap = null;

@@ -3,6 +3,7 @@
 	import { page } from '$app/state';
 	import MediaTypeLabel from '$lib/components/MediaTypeLabel.svelte';
 	import notAvailable from '$lib/assets/not-available.png';
+	import { DEFAULT_LOCALE } from '$lib/i18n/config';
 	import { i18n } from '$lib/stores/i18n';
 	import { getCertificationMeta } from '$lib/utils/certificationMeta';
 	import { formatDate } from '$lib/utils/formatDate';
@@ -29,7 +30,7 @@
 
 	const { labels, formats, fallbacks } = $derived($i18n);
 	let activeRegion = $derived(
-		(page.url.searchParams.get('locale') ?? 'de-DE').split('-')[1] ?? 'DE'
+		(page.url.searchParams.get('locale') ?? DEFAULT_LOCALE).split('-')[1] ?? 'US'
 	);
 
 	let {
@@ -60,7 +61,7 @@
 		}
 
 		const url = new URL(href, page.url.origin);
-		url.searchParams.set('locale', page.url.searchParams.get('locale') ?? 'de-DE');
+		url.searchParams.set('locale', page.url.searchParams.get('locale') ?? DEFAULT_LOCALE);
 		return `${url.pathname}${url.search}${url.hash}`;
 	});
 
@@ -69,7 +70,7 @@
 	let cardImageUrl = $derived(imageUrl || notAvailable);
 	let cardTitle = $derived(title?.trim() || notAvailableText);
 	let cardDate = $derived(
-		date?.trim() ? formatDate(date, page.url.searchParams.get('locale') ?? 'de-DE') : ''
+		date?.trim() ? formatDate(date, page.url.searchParams.get('locale') ?? DEFAULT_LOCALE) : ''
 	);
 	let cardRating = $derived(typeof rating === 'number' && rating > 0 ? rating.toFixed(1) : null);
 	let certificationMeta = $derived(getCertificationMeta(certification, activeRegion));
