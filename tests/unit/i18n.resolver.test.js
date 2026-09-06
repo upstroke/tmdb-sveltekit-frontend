@@ -4,12 +4,11 @@ import { DEFAULT_LOCALE } from '$lib/i18n/config';
 import { getLocaleText } from '$lib/i18n/resolver';
 
 /**
- * Test strategy: statement and branch coverage.
  * The tests cover the default locale, a supported foreign locale, and
  * the fallback to default texts for unknown locales.
  */
 describe('i18n resolver', () => {
-	// Statement and branch coverage: without input, the default locale is resolved.
+	// Statement coverage: without input, the default locale is resolved.
 	it('returns the texts of the default locale when no input is provided', () => {
 		expect(getLocaleText()).toEqual({
 			locale: DEFAULT_LOCALE,
@@ -22,7 +21,7 @@ describe('i18n resolver', () => {
 		});
 	});
 
-	// Statement and branch coverage: supported locales return their own texts.
+	// Statement coverage: supported locales return their own texts.
 	it('returns the texts for a supported locale', () => {
 		expect(getLocaleText('en-US')).toEqual({
 			locale: 'en-US',

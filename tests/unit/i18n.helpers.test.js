@@ -10,13 +10,13 @@ import { getSupportedLocales, resolveLocale } from '$lib/i18n/helpers';
  */
 describe('i18n helpers', () => {
 	describe('resolveLocale', () => {
-		// Statement and branch coverage: supported locales remain unchanged.
+		// Statement coverage: supported locales remain unchanged.
 		it('returns a supported locale unchanged', () => {
 			expect(resolveLocale('en-US')).toBe('en-US');
 			expect(resolveLocale('fr-FR')).toBe('fr-FR');
 		});
 
-		// Statement and branch coverage: empty values fall back to the default locale.
+		// Statement coverage: empty values fall back to the default locale.
 		it('falls back to the default locale for an empty value', () => {
 			expect(resolveLocale()).toBe(DEFAULT_LOCALE);
 			expect(resolveLocale(null)).toBe(DEFAULT_LOCALE);

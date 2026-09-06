@@ -13,7 +13,6 @@ import {
 } from '../mocks/paged-media-data.mocks';
 
 /**
- * Test strategy: statement and branch coverage.
  * The tests cover default values, valid and invalid storage values,
  * storage errors, non-browser case, page loading, incomplete data,
  * empty responses, and propagated fetch errors.
@@ -30,7 +29,7 @@ describe('pageStateRestore', () => {
 			expect(getStoredPage('movies-page')).toBe(1);
 		});
 
-		// Statement and branch coverage: a stored page value is returned.
+		// Statement coverage: a stored page value is returned.
 		it('returns the stored page value', () => {
 			sessionStorage.setItem('movies-page', '3');
 

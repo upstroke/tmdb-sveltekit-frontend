@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest';
 import uiText from '$lib/i18n/ui.json';
 
 /**
- * Test strategy: consistency check of translation catalogs.
  * The test ensures that all locales provide the same UI sections and
  * key sets as the default locale.
  */

@@ -24,7 +24,6 @@ async function loadLocaleStore() {
 }
 
 /**
- * Test strategy: statement and branch coverage.
  * The tests cover SSR fallback, session storage reading, fallback for
  * missing storage values, and saving new values.
  */
@@ -43,7 +42,7 @@ describe('locale store', () => {
 		expect(get(locale)).toBe(DEFAULT_LOCALE);
 	});
 
-	// Statement and branch coverage: the initial locale is read from session storage.
+	// Statement coverage: the initial locale is read from session storage.
 	it('reads the initial locale from session storage', async () => {
 		sessionStorage.setItem('app-locale', 'en-US');
 		const locale = await loadLocaleStore();
