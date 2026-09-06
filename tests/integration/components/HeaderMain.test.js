@@ -2,39 +2,16 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { cleanup, render, screen } from '@testing-library/svelte';
 import * as environment from '$app/environment';
 import HeaderMain from '$lib/components/HeaderMain.svelte';
+import { getLocaleText } from '$lib/i18n/resolver.js';
+import { DEFAULT_LOCALE } from '$lib/i18n/config.js';
 
-// Mock variables with vi.hoisted (executed before vi.mock!)
-const mocks = vi.hoisted(() => ({
-	mockResolveLocale: vi.fn(),
-	mockGetLocaleText: vi.fn()
+const { labels } = getLocaleText(DEFAULT_LOCALE);
+
+vi.mock('$app/state', () => ({
+	page: {
+		url: new URL('https://example.com/')
+	}
 }));
-
-// Mocks must be at the top (they get hoisted!)
-vi.mock('$lib/i18n/helpers', async (importOriginal) => {
-	const actual = await importOriginal();
-	return {
-		...actual,
-		resolveLocale: mocks.mockResolveLocale
-	};
-});
-
-vi.mock('$lib/i18n/resolver', async (importOriginal) => {
-	const actual = await importOriginal();
-	return {
-		...actual,
-		getLocaleText: mocks.mockGetLocaleText
-	};
-});
-
-vi.mock('$app/state', async (importOriginal) => {
-	const actual = await importOriginal();
-	return {
-		...actual,
-		page: {
-			url: new URL('https://example.com/')
-		}
-	};
-});
 
 import { page } from '$app/state';
 
@@ -68,19 +45,13 @@ const createNavItems = () => [
 
 describe('HeaderMain', () => {
 	beforeEach(() => {
-		vi.resetModules();
+		if (typeof sessionStorage !== 'undefined') {
+			sessionStorage.clear();
+		}
+
 		vi.clearAllMocks();
 		cleanup();
 
-		// i18n Mock Setup
-		mocks.mockResolveLocale.mockReturnValue('en-US');
-		mocks.mockGetLocaleText.mockReturnValue({
-			labels: {
-				mainNavigation: 'Main navigation'
-			}
-		});
-
-		// page.url Reset
 		page.url = new URL('https://example.com/');
 	});
 
@@ -92,6 +63,7 @@ describe('HeaderMain', () => {
 	// Statement coverage: Header renders navigation items with correct labels and icons.
 	it('renders navigation items with labels and icons', () => {
 		const navItems = createNavItems();
+
 		render(HeaderMain, { props: { navItems } });
 
 		expect(screen.getByText('Home')).toBeInTheDocument();
@@ -107,6 +79,7 @@ describe('HeaderMain', () => {
 		page.url = new URL('https://example.com/movies');
 
 		const navItems = createNavItems();
+
 		render(HeaderMain, { props: { navItems } });
 
 		const moviesLink = screen.getByRole('link', { name: /movies/i });
@@ -121,7 +94,9 @@ describe('HeaderMain', () => {
 	// Statement coverage: getNavHref adds stored page number as a query parameter.
 	it('uses stored page number in the URL', () => {
 		sessionStorage.setItem('movies-page', '3');
+
 		const navItems = createNavItems();
+
 		render(HeaderMain, { props: { navItems } });
 
 		const moviesLink = screen.getByRole('link', { name: /movies/i });
@@ -134,6 +109,7 @@ describe('HeaderMain', () => {
 		sessionStorage.setItem('movies-page', '5');
 
 		const navItems = createNavItems();
+
 		render(HeaderMain, { props: { navItems } });
 
 		const moviesLink = screen.getByRole('link', { name: /movies/i });
@@ -143,18 +119,20 @@ describe('HeaderMain', () => {
 	// Statement coverage: getNavHref returns path without query parameters when no page is stored.
 	it('renders URL without query parameters when no page is stored', () => {
 		const navItems = createNavItems();
+
 		render(HeaderMain, { props: { navItems } });
 
 		const homeLink = screen.getByRole('link', { name: /home/i });
 		expect(homeLink).toHaveAttribute('href', '/');
 	});
 
-	// Statement coverage: getStoredPage returns 1 when no browser context is available.
+	// Branch coverage: The header uses page 1 when browser is false.
 	it('uses page 1 when browser is false', async () => {
 		vi.spyOn(environment, 'browser', 'get').mockReturnValue(false);
 		sessionStorage.setItem('movies-page', '10');
 
 		const navItems = createNavItems();
+
 		render(HeaderMain, { props: { navItems } });
 
 		const moviesLink = screen.getByRole('link', { name: /movies/i });
@@ -223,7 +201,6 @@ describe('HeaderMain', () => {
 		const menuToggle = container.querySelector('#menu-toggle');
 		menuToggle.checked = true;
 
-		// Simulate pointer event inside the header
 		const header = container.querySelector('#menuHeader');
 		const event = new PointerEvent('pointerdown', { bubbles: true });
 		Object.defineProperty(event, 'target', {
@@ -239,9 +216,10 @@ describe('HeaderMain', () => {
 	// Statement coverage: aria-label of navigation is loaded from i18n.
 	it('uses i18n label for navigation aria-label', () => {
 		const navItems = createNavItems();
+
 		render(HeaderMain, { props: { navItems } });
 
 		const nav = screen.getByRole('navigation');
-		expect(nav).toHaveAttribute('aria-label', 'Main navigation');
+		expect(nav).toHaveAttribute('aria-label', labels.mainNavigation);
 	});
 });

@@ -1,15 +1,16 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/svelte';
 import LoadMore from '$lib/components/LoadMore.svelte';
-import { getI18nLabels } from '$tests/mocks/i18n.mocks.js';
+import { getLocaleText } from '$lib/i18n/resolver.js';
 import { cleanupAll, resetAll } from '$tests/setup/test-utils.js';
 
-const labels = getI18nLabels();
+// Get messages once before vi.mock - this is allowed!
+const { messages } = getLocaleText();
 
 vi.mock('$lib/stores/i18n', async () => ({
 	i18n: {
 		subscribe(run) {
-			run({ messages: labels });
+			run({ messages });
 			return () => {};
 		}
 	}
@@ -42,13 +43,13 @@ describe('LoadMore', () => {
 	// Statement coverage: button shows LoadMore text when loading=false
 	it('shows LoadMore text when loading=false', () => {
 		render(LoadMore, { props: { hasMore: true, loading: false, onload: null } });
-		expect(screen.getByRole('button')).toHaveTextContent(labels.loadMore);
+		expect(screen.getByRole('button')).toHaveTextContent(messages.loadMore);
 	});
 
 	// Statement coverage: button shows loading text when loading=true
 	it('shows loading text when loading=true', () => {
 		render(LoadMore, { props: { hasMore: true, loading: true, onload: null } });
-		expect(screen.getByRole('button')).toHaveTextContent(labels.loadMoreLoading);
+		expect(screen.getByRole('button')).toHaveTextContent(messages.loadMoreLoading);
 	});
 
 	// Branch coverage: button is disabled when loading=true

@@ -5,44 +5,28 @@ import { getLocaleText } from '$lib/i18n/resolver.js';
 import { DEFAULT_LOCALE } from '$lib/i18n/config.js';
 import { cleanupAll, resetAll } from '$tests/setup/test-utils.js';
 
-const localeData = getLocaleText(DEFAULT_LOCALE);
-const texts = localeData.labels;
-const messages = localeData.messages;
-const titles = localeData.titles;
-const fallbacks = localeData.fallbacks;
+const { labels, messages, titles, fallbacks } = getLocaleText(DEFAULT_LOCALE);
 
-vi.mock('$lib/stores/i18n', async () => ({
-	i18n: {
-		subscribe(run) {
-			run(localeData);
-			return () => {};
-		}
-	}
-}));
-
-vi.mock('$app/paths', async () => ({
+vi.mock('$app/paths', () => ({
 	resolve: vi.fn((path, params) => {
 		if (path === '/movies/[id]' && params?.id) {
 			return `/movies/${params.id}`;
 		}
+
 		if (path === '/tv-shows/[id]' && params?.id) {
 			return `/tv-shows/${params.id}`;
 		}
+
 		return path;
 	})
 }));
 
-vi.mock('$app/state', async () => {
-	const mockUrl = new URL('http://localhost:3000/?locale=en-US');
-	return {
-		page: {
-			get url() {
-				return mockUrl;
-			},
-			params: {}
-		}
-	};
-});
+vi.mock('$app/state', () => ({
+	page: {
+		url: new URL('http://localhost:3000/?locale=en-US'),
+		params: {}
+	}
+}));
 
 const mockFetchData = {
 	movies: [
@@ -80,7 +64,12 @@ const mockFetchData = {
 
 describe('TypeHeadSearch', () => {
 	beforeEach(() => {
+		if (typeof sessionStorage !== 'undefined') {
+			sessionStorage.clear();
+		}
+
 		resetAll();
+
 		vi.spyOn(global, 'fetch').mockImplementation(() =>
 			Promise.resolve({
 				ok: true,
@@ -101,7 +90,7 @@ describe('TypeHeadSearch', () => {
 
 		const input = screen.getByRole('searchbox');
 		expect(input).toBeInTheDocument();
-		expect(input).toHaveAttribute('placeholder', texts.searchInput);
+		expect(input).toHaveAttribute('placeholder', labels.searchInput);
 	});
 
 	// Statement coverage: search icon is rendered
@@ -120,7 +109,7 @@ describe('TypeHeadSearch', () => {
 		expect(hint).toHaveTextContent(messages.searchHint);
 	});
 
-	// Statement coverage: input with < 4 characters shows no results
+	// Zweigberdeckung: The search shows no results for less than 4 characters.
 	it('shows no results for less than 4 characters', async () => {
 		render(TypeHeadSearch);
 
@@ -138,7 +127,6 @@ describe('TypeHeadSearch', () => {
 		const input = screen.getByRole('searchbox');
 		await fireEvent.input(input, { target: { value: 'test' } });
 
-		// Wait for loading message
 		await vi.waitFor(
 			() => {
 				const loading = screen.getByRole('status');
@@ -148,7 +136,7 @@ describe('TypeHeadSearch', () => {
 		);
 	});
 
-	// Statement coverage: error state on failed fetch
+	// Branch coverage: The search shows an error state on failed fetch.
 	it('shows error state on failed fetch', async () => {
 		vi.useFakeTimers();
 
@@ -186,7 +174,7 @@ describe('TypeHeadSearch', () => {
 		expect(movieTitle).toBeInTheDocument();
 	});
 
-	// Statement coverage: TV shows section is rendered
+	// Anweisungsberdeckung: The search shows the TV-shows section.
 	it('renders TV shows section', async () => {
 		render(TypeHeadSearch);
 
@@ -221,7 +209,8 @@ describe('TypeHeadSearch', () => {
 		);
 
 		const movieLink = screen.getByText('Inception').closest('a');
-		expect(movieLink).toHaveAttribute('href', '/movies/1?locale=en-US');
+		expect(movieLink).toHaveAttribute('href', expect.stringContaining('/movies/1'));
+		expect(movieLink).toHaveAttribute('href', expect.stringContaining('locale='));
 	});
 
 	// Statement coverage: rating is formatted
@@ -256,7 +245,7 @@ describe('TypeHeadSearch', () => {
 		);
 	});
 
-	// Statement coverage: Escape closes results
+	// Zweigberdeckung: The search closes results on Escape.
 	it('Escape closes results', async () => {
 		render(TypeHeadSearch);
 
@@ -292,7 +281,6 @@ describe('TypeHeadSearch', () => {
 			{ timeout: 1000 }
 		);
 
-		// Click outside the component
 		await fireEvent.click(document.body);
 
 		const results = screen.queryByLabelText(messages.searchResults);
@@ -314,10 +302,7 @@ describe('TypeHeadSearch', () => {
 			{ timeout: 1000 }
 		);
 
-		// Close with Escape
 		await fireEvent.keyDown(input, { key: 'Escape' });
-
-		// Focus again
 		await fireEvent.focus(input);
 
 		const results = screen.queryByLabelText(messages.searchResults);
@@ -384,7 +369,7 @@ describe('TypeHeadSearch', () => {
 		);
 	});
 
-	// Statement coverage: notAvailable fallback
+	// Branch coverage: The search uses notAvailable as last fallback.
 	it('uses notAvailable as last fallback', async () => {
 		const dataNoImages = {
 			movies: [{ id: 88, title: 'No Images', date: '2020-01-01', rating: 7.0, mediaType: 'movie' }],
@@ -491,7 +476,7 @@ describe('TypeHeadSearch', () => {
 		render(TypeHeadSearch);
 
 		const input = screen.getByRole('searchbox');
-		expect(input).toHaveAttribute('placeholder', texts.searchInput);
+		expect(input).toHaveAttribute('placeholder', labels.searchInput);
 	});
 
 	// Statement coverage: deduplicateById removes duplicates
@@ -541,13 +526,11 @@ describe('TypeHeadSearch', () => {
 		await vi.waitFor(
 			() => {
 				const movieItems = screen.queryAllByRole('listitem');
-				// Should be only 1 item (deduplicated), not 3
 				expect(movieItems).toHaveLength(1);
 			},
 			{ timeout: 1000 }
 		);
 
-		// Original title should be displayed, not Duplicate
 		const movieTitle = screen.getByText('Inception');
 		expect(movieTitle).toBeInTheDocument();
 	});

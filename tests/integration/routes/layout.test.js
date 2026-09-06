@@ -33,7 +33,7 @@ describe('Layout (+layout.svelte)', () => {
 		await waitFor(() => {
 			// HeaderMain should be rendered
 			expect(screen.getByRole('banner')).toBeInTheDocument();
-			// Navigation should contain the main items
+			// Navigation should contain the main items – use i18n labels
 			expect(screen.getByText(labels.home)).toBeInTheDocument();
 			expect(screen.getByText(labels.movies)).toBeInTheDocument();
 			expect(screen.getByText(labels.tvShows)).toBeInTheDocument();
@@ -48,6 +48,7 @@ describe('Layout (+layout.svelte)', () => {
 			// TypeHeadSearch should have a search input
 			const searchInput = screen.getByRole('searchbox');
 			expect(searchInput).toBeInTheDocument();
+			// Use i18n label for placeholder
 			expect(searchInput).toHaveAttribute('placeholder', labels.searchInput);
 		});
 	});

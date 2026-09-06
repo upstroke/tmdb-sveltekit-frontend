@@ -6,20 +6,14 @@ import { DEFAULT_LOCALE } from '$lib/i18n/config.js';
 import { cleanupAll, resetAll } from '$tests/setup/test-utils.js';
 import notAvailable from '$lib/assets/not-available.png';
 
-const localeData = getLocaleText(DEFAULT_LOCALE);
-const labels = localeData.fallbacks;
-
-vi.mock('$lib/stores/i18n', async () => ({
-	i18n: {
-		subscribe(run) {
-			run(localeData);
-			return () => {};
-		}
-	}
-}));
+const { fallbacks } = getLocaleText(DEFAULT_LOCALE);
 
 describe('DetailsHero', () => {
 	beforeEach(() => {
+		if (typeof sessionStorage !== 'undefined') {
+			sessionStorage.clear();
+		}
+
 		resetAll();
 	});
 
@@ -27,7 +21,7 @@ describe('DetailsHero', () => {
 		cleanupAll();
 	});
 
-	// Statement coverage: title is rendered correctly
+	// Statement coverage: The hero renders its title.
 	it('renders title correctly', () => {
 		const title = 'Inception';
 		const backdrop = '/backdrop.jpg';
@@ -38,29 +32,29 @@ describe('DetailsHero', () => {
 		expect(screen.getByText(title, { selector: 'h1#details-hero-title' })).toBeInTheDocument();
 	});
 
-	// Statement coverage: title shows notAvailable when empty
+	// Branch coverage: The hero renders the fallback title for an empty value.
 	it('shows notAvailable text when title is empty', () => {
 		render(DetailsHero, {
 			props: { title: '', backdrop: '/backdrop.jpg', posterUrl: '/poster.jpg' }
 		});
 
 		expect(
-			screen.getByText(labels.notAvailable, { selector: 'h1#details-hero-title' })
+			screen.getByText(fallbacks.notAvailable, { selector: 'h1#details-hero-title' })
 		).toBeInTheDocument();
 	});
 
-	// Statement coverage: title shows notAvailable when only whitespace
+	// Branch coverage: The hero renders the fallback title for whitespace only.
 	it('shows notAvailable text when title is only whitespace', () => {
 		render(DetailsHero, {
 			props: { title: '   ', backdrop: '/backdrop.jpg', posterUrl: '/poster.jpg' }
 		});
 
 		expect(
-			screen.getByText(labels.notAvailable, { selector: 'h1#details-hero-title' })
+			screen.getByText(fallbacks.notAvailable, { selector: 'h1#details-hero-title' })
 		).toBeInTheDocument();
 	});
 
-	// Statement coverage: production companies are rendered
+	// Statement coverage: The hero renders the production companies.
 	it('renders production companies', () => {
 		const productionCompanies = [
 			{ id: 1, name: 'Warner Bros.' },
@@ -80,7 +74,7 @@ describe('DetailsHero', () => {
 		expect(screen.getByText('Legendary Pictures')).toBeInTheDocument();
 	});
 
-	// Statement coverage: emptyLabel is rendered when no production companies
+	// Branch coverage: The hero renders the fallback for an empty production companies list.
 	it('shows emptyLabel when no production companies', () => {
 		const emptyLabel = 'Keine Informationen';
 
@@ -99,7 +93,7 @@ describe('DetailsHero', () => {
 		).toBeInTheDocument();
 	});
 
-	// Statement coverage: notAvailable text is rendered when emptyLabel is empty and no production companies
+	// Branch coverage: The hero renders the fallback when emptyLabel is empty and no production companies exist.
 	it('shows notAvailable text when emptyLabel is empty and no production companies', () => {
 		render(DetailsHero, {
 			props: {
@@ -112,42 +106,45 @@ describe('DetailsHero', () => {
 		});
 
 		expect(
-			screen.getByText(labels.notAvailable, { selector: 'li.details-hero-company' })
+			screen.getByText(fallbacks.notAvailable, { selector: 'li.details-hero-company' })
 		).toBeInTheDocument();
 	});
 
-	// Statement coverage: backdrop is used as background
+	// Statement coverage: The hero sets the backdrop as background.
 	it('sets backdrop as background', () => {
 		const backdrop = '/backdrop.jpg';
 
 		const { container } = render(DetailsHero, {
 			props: { title: 'Inception', backdrop, posterUrl: '/poster.jpg' }
 		});
+
 		const section = container.querySelector('.details-hero');
 		expect(section).toHaveStyle(`--details-hero-backdrop: url('${backdrop}')`);
 	});
 
-	// Statement coverage: posterUrl is used as fallback when no backdrop
+	// Branch coverage: The hero uses the poster URL as fallback when no backdrop exists.
 	it('uses posterUrl as fallback when no backdrop', () => {
 		const posterUrl = '/poster.jpg';
 
 		const { container } = render(DetailsHero, {
 			props: { title: 'Inception', backdrop: '', posterUrl }
 		});
+
 		const section = container.querySelector('.details-hero');
 		expect(section).toHaveStyle(`--details-hero-backdrop: url('${posterUrl}')`);
 	});
 
-	// Statement coverage: notAvailable.png is used as fallback when no backdrop and no posterUrl
+	// Branch coverage: The hero uses the placeholder image when no backdrop and no poster URL exist.
 	it('uses notAvailable.png as fallback when no backdrop and no posterUrl', () => {
 		const { container } = render(DetailsHero, {
 			props: { title: 'Inception', backdrop: '', posterUrl: '' }
 		});
+
 		const section = container.querySelector('.details-hero');
 		expect(section).toHaveStyle(`--details-hero-backdrop: url('${notAvailable}')`);
 	});
 
-	// Statement coverage: poster image is rendered correctly
+	// Statement coverage: The hero renders the poster image.
 	it('renders poster image correctly', () => {
 		const posterUrl = '/poster.jpg';
 
@@ -157,7 +154,7 @@ describe('DetailsHero', () => {
 		expect(posterImg).toHaveAttribute('src', posterUrl);
 	});
 
-	// Statement coverage: notAvailable.png is used as poster fallback
+	// Branch coverage: The hero uses the placeholder poster when no poster URL exists.
 	it('uses notAvailable.png as poster fallback', () => {
 		render(DetailsHero, {
 			props: { title: 'Inception', backdrop: '/backdrop.jpg', posterUrl: '' }
@@ -167,23 +164,26 @@ describe('DetailsHero', () => {
 		expect(posterImg).toHaveAttribute('src', notAvailable);
 	});
 
-	// Statement coverage: section has correct aria-labelledby
+	// Statement coverage: The hero sets the correct aria-labelledby.
 	it('has correct aria-labelledby', () => {
 		const { container } = render(DetailsHero, {
 			props: { title: 'Inception', backdrop: '/backdrop.jpg', posterUrl: '/poster.jpg' }
 		});
+
 		const section = container.querySelector('[aria-labelledby="details-hero-title"]');
 		expect(section).toHaveAttribute('aria-labelledby', 'details-hero-title');
 	});
 
-	// Statement coverage: companies section has correct aria-labelledby
+	// Statement coverage: The companies section sets the correct aria-labelledby.
 	it('has correct aria-labelledby for companies section', () => {
 		const { container } = render(DetailsHero, {
 			props: { title: 'Inception', backdrop: '/backdrop.jpg', posterUrl: '/poster.jpg' }
 		});
+
 		const companiesSection = container.querySelector(
 			'[aria-labelledby="details-hero-companies-heading"]'
 		);
+
 		expect(companiesSection).toBeInTheDocument();
 	});
 });
