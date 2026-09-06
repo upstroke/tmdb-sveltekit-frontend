@@ -91,7 +91,7 @@ describe('HeaderMain', () => {
 		expect(homeLink).not.toHaveAttribute('aria-current');
 	});
 
-	// Statement coverage: getNavHref adds stored page number as a query parameter.
+	// Anweisungsberdeckung: The header uses the stored page number in the URL.
 	it('uses stored page number in the URL', () => {
 		sessionStorage.setItem('movies-page', '3');
 
