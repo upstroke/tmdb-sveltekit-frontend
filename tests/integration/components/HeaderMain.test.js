@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { cleanup, render, screen } from '@testing-library/svelte';
+import { cleanup, fireEvent, render, screen } from '@testing-library/svelte';
 import * as environment from '$app/environment';
 import HeaderMain from '$lib/components/HeaderMain.svelte';
 import { getLocaleText } from '$lib/i18n/resolver.js';
@@ -44,6 +44,11 @@ const createNavItems = () => [
 ];
 
 describe('HeaderMain', () => {
+	// Store original viewport and matchMedia for restoration
+	const originalInnerWidth = window.innerWidth;
+	const originalInnerHeight = window.innerHeight;
+	const originalMatchMedia = window.matchMedia;
+
 	beforeEach(() => {
 		if (typeof sessionStorage !== 'undefined') {
 			sessionStorage.clear();
@@ -53,11 +58,52 @@ describe('HeaderMain', () => {
 		cleanup();
 
 		page.url = new URL('https://example.com/');
+
+		// Set mobile viewport (370x667)
+		Object.defineProperty(window, 'innerWidth', {
+			writable: true,
+			configurable: true,
+			value: 370
+		});
+
+		Object.defineProperty(window, 'innerHeight', {
+			writable: true,
+			configurable: true,
+			value: 667
+		});
+
+		// Mock matchMedia for mobile breakpoint
+		window.matchMedia = vi.fn().mockImplementation((query) => ({
+			matches: query.includes('max-width: 768px'),
+			media: query,
+			onchange: null,
+			addEventListener: vi.fn(),
+			removeEventListener: vi.fn(),
+			dispatchEvent: vi.fn()
+		}));
+
+		// Trigger resize so component detects viewport change
+		window.dispatchEvent(new Event('resize'));
 	});
 
 	afterEach(() => {
 		cleanup();
 		sessionStorage.clear();
+
+		// Restore original viewport
+		Object.defineProperty(window, 'innerWidth', {
+			writable: true,
+			configurable: true,
+			value: originalInnerWidth
+		});
+
+		Object.defineProperty(window, 'innerHeight', {
+			writable: true,
+			configurable: true,
+			value: originalInnerHeight
+		});
+
+		window.matchMedia = originalMatchMedia;
 	});
 
 	// Statement coverage: Header renders navigation items with correct labels and icons.
@@ -165,52 +211,51 @@ describe('HeaderMain', () => {
 	});
 
 	// Statement coverage: handleWindowPointerdown closes menu on click outside.
-	it('closes menu on pointer event outside the header', () => {
+	it('closes menu on pointer event outside the header', async () => {
 		const navItems = createNavItems();
 		const { container } = render(HeaderMain, { props: { navItems } });
 
-		const menuToggle = container.querySelector('#menu-toggle');
-		expect(menuToggle).toBeInTheDocument();
+		// Find the burger button (mobile menu toggle)
+		const burgerButton = container.querySelector('.burger-icon');
+		expect(burgerButton).toBeInTheDocument();
 
-		// Open menu
-		menuToggle.checked = true;
-		expect(menuToggle.checked).toBe(true);
+		// Open menu by triggering pointerdown on the burger button
+		await fireEvent(burgerButton, new PointerEvent('pointerdown', { bubbles: true }));
 
-		// Simulate pointer event outside
+		// Verify menu is open (aria-expanded should be true)
+		expect(burgerButton).toHaveAttribute('aria-expanded', 'true');
+
+		// Simulate pointer event outside the header
 		const outsideElement = document.createElement('div');
 		document.body.appendChild(outsideElement);
 
-		const event = new PointerEvent('pointerdown', { bubbles: true });
-		Object.defineProperty(event, 'target', {
-			value: outsideElement,
-			writable: false
-		});
+		// Dispatch pointerdown directly on the outside element
+		await fireEvent(outsideElement, new PointerEvent('pointerdown', { bubbles: true }));
 
-		window.dispatchEvent(event);
-
-		expect(menuToggle.checked).toBe(false);
+		// Menu should be closed after clicking outside
+		expect(burgerButton).toHaveAttribute('aria-expanded', 'false');
 
 		document.body.removeChild(outsideElement);
 	});
 
 	// Statement coverage: handleWindowPointerdown does not close menu on click inside.
-	it('does not close menu on pointer event inside the header', () => {
+	it('does not close menu on pointer event inside the header', async () => {
 		const navItems = createNavItems();
 		const { container } = render(HeaderMain, { props: { navItems } });
 
-		const menuToggle = container.querySelector('#menu-toggle');
-		menuToggle.checked = true;
+		const burgerButton = container.querySelector('.burger-icon');
+		expect(burgerButton).toBeInTheDocument();
 
+		// Open menu
+		await fireEvent(burgerButton, new PointerEvent('pointerdown', { bubbles: true }));
+		expect(burgerButton).toHaveAttribute('aria-expanded', 'true');
+
+		// Simulate pointer event inside the header
 		const header = container.querySelector('#menuHeader');
-		const event = new PointerEvent('pointerdown', { bubbles: true });
-		Object.defineProperty(event, 'target', {
-			value: header,
-			writable: false
-		});
+		await fireEvent(header, new PointerEvent('pointerdown', { bubbles: true }));
 
-		window.dispatchEvent(event);
-
-		expect(menuToggle.checked).toBe(true);
+		// Menu should stay open
+		expect(burgerButton).toHaveAttribute('aria-expanded', 'true');
 	});
 
 	// Statement coverage: aria-label of navigation is loaded from i18n.

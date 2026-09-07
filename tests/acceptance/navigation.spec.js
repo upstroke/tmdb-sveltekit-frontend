@@ -9,7 +9,7 @@ import { test, expect } from '@playwright/test';
 test.describe('Main navigation', () => {
 	// TC-NAV-001
 	test('Desktop: All main pages are reachable', async ({ page }) => {
-		// Start on Home
+		// Start on Home (localized en-US)
 		await page.goto('http://localhost:5173/?locale=en-US');
 		await expect(page).toHaveTitle(/Home.*TMDB/);
 
@@ -34,8 +34,9 @@ test.describe('Main navigation', () => {
 		// Mobile viewport
 		await page.setViewportSize({ width: 370, height: 667 });
 
-		// Start on Home
+		// Start on Home (localized en-US)
 		await page.goto('http://localhost:5173/?locale=en-US');
+		await expect(page).toHaveTitle(/Home.*TMDB/);
 
 		// Click burger menu button
 		await page.getByRole('button', { name: 'Open or close navigation' }).click();
@@ -54,22 +55,36 @@ test.describe('Main navigation', () => {
 
 	// TC-NAV-003
 	test('Mobile: Menu closes when clicking outside', async ({ page }) => {
-		// Mobile viewport
+		// Set the mobile viewport before loading the application
 		await page.setViewportSize({ width: 370, height: 667 });
 
-		// Start on Home
+		// Start on Home with a deterministic locale
 		await page.goto('http://localhost:5173/?locale=en-US');
+		await expect(page).toHaveTitle(/Home.*TMDB/);
 
-		// Click burger menu button
-		await page.getByRole('button', { name: 'Open or close navigation' }).click();
+		const burgerButton = page.getByRole('button', {
+			name: 'Open or close navigation'
+		});
 
-		// if mobile link Home is visible, burger menü navigation is visible
-		await expect(page.getByRole('link', { name: 'Home' })).toBeVisible();
+		const homeLink = page.getByRole('link', {
+			name: 'Home'
+		});
 
-		// click outside closes burger menu
-		await page.locator('#root').click();
+		// Verify the initial closed state
+		await expect(burgerButton).toBeVisible();
+		await expect(burgerButton).toHaveAttribute('aria-expanded', 'false');
+		await expect(homeLink).toBeHidden();
 
-		// if link Home is not visible - burger menu is closed
-		await expect(page.getByRole('link', { name: 'Home' })).toBeHidden();
+		// Open the burger menu
+		await burgerButton.click();
+		await expect(burgerButton).toHaveAttribute('aria-expanded', 'true');
+		await expect(homeLink).toBeVisible();
+
+		// Click a guaranteed point outside the fixed header and navigation panel
+		await page.mouse.click(340, 500);
+
+		// Verify that the menu was closed by the window pointerdown handler
+		await expect(burgerButton).toHaveAttribute('aria-expanded', 'false');
+		await expect(homeLink).toBeHidden();
 	});
 });
