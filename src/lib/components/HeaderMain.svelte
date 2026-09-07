@@ -28,28 +28,36 @@
 	 */
 	let { navItems = [], children } = $props();
 	const { labels } = $derived($i18n);
-	let menuToggle;
+
+	// Use $state for reactivity
+	let menuOpen = $state(false);
 
 	/**
-	 * Schließt das mobile Menü bei Pointer-Interaktionen außerhalb des Headers.
+	 * Closes the mobile menu on pointer interactions outside the header.
 	 *
-	 * @param {PointerEvent} event - Pointer-Ereignis auf Fensterebene.
+	 * @param {PointerEvent} event - Pointer event at window level.
 	 * @returns {void}
 	 */
 	function handleWindowPointerdown(event) {
-		if (menuToggle?.checked && !event.target.closest('#menuHeader')) {
-			menuToggle.checked = false;
+		if (menuOpen && !event.target.closest('#menuHeader')) {
+			menuOpen = false;
 		}
 	}
 
 	/**
-	 * Liest die zuletzt gemerkte Seitennummer für eine Route aus dem Session-Storage.
+	 * Toggle menu open/close
+	 */
+	function toggleMenu() {
+		menuOpen = !menuOpen;
+	}
+
+	/**
+	 * Retrieves the last stored page number for a route from session storage.
 	 *
-	 * Bei fehlendem Browser-Kontext oder ungültigen Werten wird auf Seite 1
-	 * zurückgefallen.
+	 * Falls back to page 1 if browser context is missing or value is invalid.
 	 *
-	 * @param {string} key - Storage-Schlüssel der jeweiligen Route.
-	 * @returns {number} Gespeicherte Seitennummer, mindestens 1.
+	 * @param {string} key - Storage key for the respective route.
+	 * @returns {number} Stored page number, minimum 1.
 	 */
 	function getStoredPage(key) {
 		if (!browser) {
@@ -59,21 +67,21 @@
 		try {
 			return Math.max(1, Number(sessionStorage.getItem(key) ?? '1') || 1);
 		} catch (error) {
-			console.warn(`saved page fo ${key} could not be written:`, error);
+			console.warn(`saved page for ${key} could not be read:`, error);
 
 			return 1;
 		}
 	}
 
 	/**
-	 * Erzeugt einen Navigationslink inklusive gemerkter Seitennummer und aktiver Locale.
+	 * Generates a navigation link including stored page number and active locale.
 	 *
-	 * Vorhandene Query-Parameter bleiben erhalten, nur ein bestehender `page`-
-	 * Parameter wird durch den gespeicherten Wert ersetzt.
+	 * Existing query parameters are preserved, only an existing `page` parameter
+	 * is replaced with the stored value.
 	 *
-	 * @param {string} path - Zielpfad der Navigation.
-	 * @param {string} storageKey - Storage-Schlüssel für die zuletzt geöffnete Seite.
-	 * @returns {string} Ziel-URL für den Navigationslink.
+	 * @param {string} path - Target path for navigation.
+	 * @param {string} storageKey - Storage key for the last opened page.
+	 * @returns {string} Target URL for the navigation link.
 	 */
 	function getNavHref(path, storageKey) {
 		const storedPage = getStoredPage(storageKey);
@@ -94,16 +102,24 @@
 <svelte:window onpointerdown={handleWindowPointerdown} />
 
 <header class="header" id="menuHeader">
-	<input bind:this={menuToggle} type="checkbox" id="menu-toggle" class="menu-toggle" />
-
-	<label for="menu-toggle" class="burger-icon" aria-label="Navigation öffnen oder schließen">
+	<button
+		class="burger-icon"
+		type="button"
+		aria-label={labels.navigationToggle}
+		aria-expanded={menuOpen ? 'true' : 'false'}
+		aria-controls="navmenu"
+		onpointerdown={toggleMenu}
+	>
 		<span></span>
 		<span></span>
 		<span></span>
-	</label>
+	</button>
 
 	<div class="nav-wrapper">
-		<nav class="nav-menu" aria-label={labels.mainNavigation}>
+		<nav
+			id="navmenu"
+			aria-label={labels.mainNavigation}
+		>
 			<ul class="nav-list">
 				{#each navItems as item (item.id)}
 					<li class="nav-item" id={item.id}>
@@ -136,6 +152,7 @@
 		z-index: 1000;
 		display: flex;
 		align-items: center;
+		justify-content: space-between;
 		width: 100%;
 		padding: 0 3%;
 		background: #1b1c1d;
@@ -143,30 +160,29 @@
 		box-shadow: 0 2px 7px rgba(0, 0, 0, 0.9);
 	}
 
-	.menu-toggle {
-		display: none;
-	}
-
-	/* Desktop first: Navigation ist standardmäßig horizontal sichtbar. */
+	/* Desktop first: hide the burger button and show horizontal navigation */
 	.burger-icon {
 		display: none;
 	}
 
 	.nav-wrapper {
 		display: flex;
-		flex-direction: row;
 		flex: 1;
+		flex-direction: row;
+		align-items: center;
+		justify-content: flex-end;
+		gap: 1rem;
 	}
 
-	.nav-menu {
+	#navmenu {
 		display: block;
-		flex: 0 0 auto;
 	}
 
 	.nav-list {
 		display: flex;
 		flex-direction: row;
 		align-items: center;
+		gap: 0;
 		margin: 0;
 		padding: 0;
 		list-style: none;
@@ -190,23 +206,25 @@
 		background: rgba(255, 255, 255, 0.15);
 	}
 
-	/* Mobile override: Burger sichtbar, Liste vertikal und zunächst verborgen. */
+	/* Mobile navigation */
 	@media only screen and (max-width: 767.98px) {
 		.burger-icon {
 			position: relative;
-			display: flex;
-			flex-direction: column;
-			justify-content: space-between;
+			display: block;
 			flex: 0 0 44px;
 			width: 44px;
 			height: 44px;
-			padding: 11px;
+			padding: 0;
 			cursor: pointer;
+			background: none;
+			border: none;
 		}
 
+		/* Center all lines so the two outer lines can form an exact X */
 		.burger-icon span {
 			position: absolute;
-			left: 11px;
+			top: 50%;
+			left: 50%;
 			display: block;
 			width: 22px;
 			height: 2px;
@@ -218,35 +236,43 @@
 				opacity 220ms cubic-bezier(0.16, 1, 0.3, 1);
 		}
 
+		/* Closed state: three horizontal hamburger lines */
 		.burger-icon span:nth-child(1) {
-			top: 13px;
+			transform: translate(-50%, calc(-50% - 8px));
 		}
 
 		.burger-icon span:nth-child(2) {
-			top: 21px;
+			transform: translate(-50%, -50%);
+			opacity: 1;
 		}
 
 		.burger-icon span:nth-child(3) {
-			top: 29px;
+			transform: translate(-50%, calc(-50% + 8px));
 		}
 
-		.menu-toggle:checked + .burger-icon span:nth-child(1) {
-			transform: translateY(8px) rotate(45deg);
+		/* Open state: outer lines overlap and form a centered X */
+		.burger-icon[aria-expanded='true'] span:nth-child(1) {
+			transform: translate(-50%, -50%) rotate(45deg);
 		}
 
-		.menu-toggle:checked + .burger-icon span:nth-child(2) {
+		.burger-icon[aria-expanded='true'] span:nth-child(2) {
+			transform: translate(-50%, -50%) scaleX(0);
 			opacity: 0;
-			transform: scaleX(0);
 		}
 
-		.menu-toggle:checked + .burger-icon span:nth-child(3) {
-			transform: translateY(-8px) rotate(-45deg);
+		.burger-icon[aria-expanded='true'] span:nth-child(3) {
+			transform: translate(-50%, -50%) rotate(-45deg);
 		}
 
-		.nav-menu {
+		.nav-wrapper {
+			position: relative;
+			justify-content: flex-start;
+		}
+
+		#navmenu {
 			position: absolute;
 			top: 100%;
-			left: 3%;
+			left: calc(-3% - 15px);
 			width: min(18rem, 100vw);
 			background: #202020;
 			border-radius: 0 0 6px 6px;
@@ -260,9 +286,10 @@
 				transform 450ms cubic-bezier(0.16, 1, 0.3, 1);
 		}
 
-		.menu-toggle:checked ~ .nav-wrapper .nav-menu {
-			opacity: 1;
+		/* Display the menu while the burger button is expanded */
+		.burger-icon[aria-expanded='true'] ~ .nav-wrapper #navmenu {
 			transform: translateY(0);
+			opacity: 1;
 			visibility: visible;
 			pointer-events: auto;
 		}
@@ -281,9 +308,6 @@
 			min-height: 44px;
 			padding: 0.85rem 1rem;
 			border-bottom: 1px solid #343434;
-			transition:
-				background-color 350ms cubic-bezier(0.16, 1, 0.3, 1),
-				color 180ms cubic-bezier(0.16, 1, 0.3, 1);
 		}
 
 		.nav-item:last-child a {
@@ -295,3 +319,4 @@
 		}
 	}
 </style>
+

@@ -3,100 +3,111 @@
 ## Test Plan
 
 ### 1. Test Plan Identifier
-- **Projekt:** TMDB SvelteKit Frontend
-- **Modul:** Hauptnavigation
-- **Version:** 1.0
-- **Datum:** 2026-09-04
+- **Project:** TMDB SvelteKit Frontend
+- **Module:** Main Navigation
+- **Version:** 1.1
+- **Date:** 2026-09-07
 
 ### 2. Introduction
-Zweck dieses Testplans ist die Validierung der Hauptnavigation aus User-Sicht. Die Tests stellen sicher, dass die Navigation zwischen den Hauptseiten (Home, Movies, TV Shows) auf Desktop und mobilen Geraeten korrekt funktioniert.
+The purpose of this test plan is to validate the main navigation from a user's perspective. The tests ensure that navigation between the main pages (Home, Movies, TV Shows) works correctly on both desktop and mobile devices.
 
 ### 3. Test Items
-- `HeaderMain.svelte` — Globale Kopfzeile mit Navigation
-- Navigation Routes: `/`, `/movies`, `/tv-shows`
-- Mobile Menue (Burger-Icon)
-- Aktiver Link-Status (`aria-current="page"`)
+- `HeaderMain.svelte` — Global header with navigation
+- Navigation routes: `/`, `/movies`, `/tv-shows`
+- Mobile menu (burger icon)
+- Active link status (`aria-current="page"`)
+- Menu close behavior (click outside)
 
 ### 4. Features to be tested
-- Navigation zwischen Hauptseiten (Desktop)
-- Mobile Menue oeffnen/schliessen (Burger)
-- Navigation im Mobile-Modus
-- Korrekte Seitentitel pro Route
-- Aktiver Link visuell hervorgehoben
+- Navigation between main pages (desktop)
+- Mobile menu open/close (burger)
+- Navigation in mobile mode
+- Menu closes when clicking outside
+- Correct page titles per route
+- Active link visually highlighted
 
 ### 5. Features not to be tested
-- LanguageSwitcher (separater Test geplant)
-- TypeHeadSearch (separater Test geplant)
-- Detailseiten fuer Filme/Serien (spaeter)
-- Pagination / Load More (spaeter)
+- LanguageSwitcher (separate test planned)
+- TypeHeadSearch (separate test planned)
+- Detail pages for movies/shows (later)
+- Pagination / Load More (later)
 
 ### 6. Approach
 - **Tool:** Playwright
-- **Syntax:** Gherkin fuer User Stories
+- **Syntax:** Gherkin for user stories
 - **Browser:** Chromium (default)
 - **Viewports:** Desktop (default) + Mobile (375x667)
-- **Selektoren:** CSS-ID-basiert (`#home`, `#movies`, `#tvshows`, `#menu-toggle`)
+- **Selectors:** CSS ID-based (`#home`, `#movies`, `#tvshows`, `#menu-toggle`)
 
 ### 7. Item Pass/Fail Criteria
-- **Pass:** Alle Test Steps erfolgreich, keine Errors im Console Log, URL + Title + aria-current korrekt
-- **Fail:** Mindestens ein Step fehlerhaft oder Assertion failed
+- **Pass:** All test steps successful, no errors in console log, URL + title + aria-current correct
+- **Fail:** At least one step failed or assertion failed
 
 ---
 
 ## Gherkin User Stories
 
-### Feature: Hauptnavigation (F-NAV)
+### Feature: Main Navigation (F-NAV)
 
-**Als** Besucher der TMDB-Website  
-**Moechte** ich zwischen den Hauptseiten (Home, Movies, TV Shows) navigieren koennen  
-**Damit** ich Filme und Serien entdecken kann
+**As** a visitor of the TMDB website  
+**I want** to be able to navigate between the main pages (Home, Movies, TV Shows)  
+**So that** I can discover movies and series
 
 ```
 Background:
-  Given die App ist im Browser verfuegbar
+  Given the app is available in the browser
 
 @TC-NAV-001
-Scenario: Desktop-Navigation funktioniert
-  Given ich bin auf der Startseite "/"
-  When ich auf den "Movies" Navigationslink klicke
-  Then sollte die URL "/movies" sein
-  And der Seitentitel sollte "Movies TMDB" enthalten
-  And der "Movies" Link sollte als aktiv markiert sein (aria-current="page")
+Scenario: Desktop navigation works
+  Given I am on the home page "/"
+  When I click the "Movies" navigation link
+  Then the URL should be "/movies"
+  And the page title should contain "Movies TMDB"
+  And the "Movies" link should be marked as active (aria-current="page")
 
-  When ich auf den "TV Shows" Navigationslink klicke
-  Then sollte die URL "/tv-shows" sein
-  And der Seitentitel sollte "TV TMDB" enthalten
-  And der "TV Shows" Link sollte als aktiv markiert sein
+  When I click the "TV Shows" navigation link
+  Then the URL should be "/tv-shows"
+  And the page title should contain "TV TMDB"
+  And the "TV Shows" link should be marked as active
 
-  When ich auf den "Home" Navigationslink klicke
-  Then sollte die URL "/" sein
-  And der Seitentitel sollte "Home TMDB" enthalten
-  And der "Home" Link sollte als aktiv markiert sein
+  When I click the "Home" navigation link
+  Then the URL should be "/"
+  And the page title should contain "Home TMDB"
+  And the "Home" link should be marked as active
 
 @TC-NAV-002
-Scenario: Mobile-Navigation funktioniert
-  Given ich bin auf der Startseite "/"
-  And ich habe eine mobile Bildschirmgroesse (375x667)
-  When ich das Burger-Menue oeffne (klicke auf #menu-toggle)
-  And ich auf den "Movies" Navigationslink klicke
-  Then sollte die URL "/movies" sein
-  And der Seitentitel sollte "Movies TMDB" enthalten
+Scenario: Mobile navigation works
+  Given I am on the home page "/"
+  And I have a mobile screen size (375x667)
+  When I open the burger menu (click on #menu-toggle)
+  And I click the "Movies" navigation link
+  Then the URL should be "/movies"
+  And the page title should contain "Movies TMDB"
 
-  When ich das Burger-Menue erneut oeffne
-  And ich auf den "TV Shows" Navigationslink klicke
-  Then sollte die URL "/tv-shows" sein
-  And der Seitentitel sollte "TV TMDB" enthalten
+  When I open the burger menu again
+  And I click the "TV Shows" navigation link
+  Then the URL should be "/tv-shows"
+  And the page title should contain "TV TMDB"
+
+@TC-NAV-003
+Scenario: Mobile menu closes when clicking outside
+  Given I am on the home page "/"
+  And I have a mobile screen size (375x667)
+  When I open the burger menu (click on #menu-toggle)
+  And the navigation links should be visible
+  When I click outside the menu (on main content)
+  Then the navigation links should be hidden
 ```
 
 ---
 
 ## Test Case Specifications
 
-### TC-NAV-001: Desktop-Navigation funktioniert
+### TC-NAV-001: Desktop navigation works
 
 **Pre-Conditions:**
-- App laeuft auf `localhost:4173`
-- Browser: Chromium, Desktop-Viewport
+- App running on `localhost:4173`
+- Browser: Chromium, desktop viewport
 
 **Test Steps:**
 
@@ -114,16 +125,16 @@ Scenario: Mobile-Navigation funktioniert
 | 10 | Verify aria-current | `#home a` has `aria-current="page"` |
 
 **Pass/Fail Criteria:**
-- Alle Steps erfolgreich
-- Keine Errors im Browser Console Log
+- All steps successful
+- No errors in browser console log
 
 ---
 
-### TC-NAV-002: Mobile-Navigation funktioniert
+### TC-NAV-002: Mobile navigation works
 
 **Pre-Conditions:**
-- App laeuft auf `localhost:4173`
-- Browser: Chromium, Viewport: 375x667 (Mobile)
+- App running on `localhost:4173`
+- Browser: Chromium, viewport: 375x667 (mobile)
 
 **Test Steps:**
 
@@ -139,18 +150,42 @@ Scenario: Mobile-Navigation funktioniert
 | 8 | Verify title | Title contains "TV TMDB" |
 
 **Pass/Fail Criteria:**
-- Alle Steps erfolgreich
-- Mobile Menue oeffnet/schliesst korrekt
-- Keine Errors im Browser Console Log
+- All steps successful
+- Mobile menu opens/closes correctly
+- No errors in browser console log
 
 ---
 
-## Tests ausfuehren
+### TC-NAV-003: Mobile menu closes when clicking outside
+
+**Pre-Conditions:**
+- App running on `localhost:4173`
+- Browser: Chromium, viewport: 375x667 (mobile)
+
+**Test Steps:**
+
+| Step | Action | Expected Result |
+|------|--------|----------------|
+| 1 | Navigate to "/" | URL is "/" |
+| 2 | Set viewport to 375x667 | Mobile layout active |
+| 3 | Click `#menu-toggle` | Mobile menu opens |
+| 4 | Verify navigation links visible | `#movies a` is visible |
+| 5 | Click on `main` content area | Menu should close |
+| 6 | Verify navigation links hidden | `#movies a` is not visible |
+
+**Pass/Fail Criteria:**
+- All steps successful
+- Menu closes when clicking outside
+- No errors in browser console log
+
+---
+
+## Run Tests
 
 ```bash
-# Alle Acceptance Tests
+# All acceptance tests
 just test-acceptance
 
-# Nur Navigation-Tests
+# Only navigation tests
 npx playwright test tests/acceptance/navigation.spec.js
 ```

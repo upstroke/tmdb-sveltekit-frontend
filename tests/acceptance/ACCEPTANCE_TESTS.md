@@ -5,8 +5,8 @@
 ### 1. Test Plan Identifier
 - **Project:** TMDB SvelteKit Frontend
 - **Module:** Main Navigation
-- **Version:** 1.0
-- **Date:** 2026-09-04
+- **Version:** 1.1
+- **Date:** 2026-09-07
 
 ### 2. Introduction
 The purpose of this test plan is to validate the main navigation from a user's perspective. The tests ensure that navigation between the main pages (Home, Movies, TV Shows) works correctly on both desktop and mobile devices.
@@ -16,11 +16,13 @@ The purpose of this test plan is to validate the main navigation from a user's p
 - Navigation routes: `/`, `/movies`, `/tv-shows`
 - Mobile menu (burger icon)
 - Active link status (`aria-current="page"`)
+- Menu close behavior (click outside)
 
 ### 4. Features to be tested
 - Navigation between main pages (desktop)
 - Mobile menu open/close (burger)
 - Navigation in mobile mode
+- Menu closes when clicking outside
 - Correct page titles per route
 - Active link visually highlighted
 
@@ -86,6 +88,15 @@ Scenario: Mobile navigation works
   And I click the "TV Shows" navigation link
   Then the URL should be "/tv-shows"
   And the page title should contain "TV TMDB"
+
+@TC-NAV-003
+Scenario: Mobile menu closes when clicking outside
+  Given I am on the home page "/"
+  And I have a mobile screen size (375x667)
+  When I open the burger menu (click on #menu-toggle)
+  And the navigation links should be visible
+  When I click outside the menu (on main content)
+  Then the navigation links should be hidden
 ```
 
 ---
@@ -141,6 +152,30 @@ Scenario: Mobile navigation works
 **Pass/Fail Criteria:**
 - All steps successful
 - Mobile menu opens/closes correctly
+- No errors in browser console log
+
+---
+
+### TC-NAV-003: Mobile menu closes when clicking outside
+
+**Pre-Conditions:**
+- App running on `localhost:4173`
+- Browser: Chromium, viewport: 375x667 (mobile)
+
+**Test Steps:**
+
+| Step | Action | Expected Result |
+|------|--------|----------------|
+| 1 | Navigate to "/" | URL is "/" |
+| 2 | Set viewport to 375x667 | Mobile layout active |
+| 3 | Click `#menu-toggle` | Mobile menu opens |
+| 4 | Verify navigation links visible | `#movies a` is visible |
+| 5 | Click on `main` content area | Menu should close |
+| 6 | Verify navigation links hidden | `#movies a` is not visible |
+
+**Pass/Fail Criteria:**
+- All steps successful
+- Menu closes when clicking outside
 - No errors in browser console log
 
 ---
