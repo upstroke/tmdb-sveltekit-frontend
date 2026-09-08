@@ -70,6 +70,25 @@ A task-specific test document applies only within its documented scope. For Play
 
 If instructions at the same priority level conflict, stop and explain the conflict before making changes. Never silently override a higher-priority instruction with a lower-priority preference.
 
+### Current Framework Documentation and Research
+
+Use the versions installed in this repository as the source of truth for framework and package behavior. Read `package.json` before proposing changes.
+
+For Svelte or SvelteKit tasks:
+
+- Prefer the Svelte 5 patterns already established in this repository.
+- Do not introduce Svelte 4 compatibility patterns or deprecated APIs unless the existing project code explicitly requires them.
+- When framework behavior, APIs, migration guidance, accessibility advice, security guidance, browser support, or package compatibility may have changed since the available model knowledge, verify the question against current official documentation before implementation.
+- Prefer primary sources, especially the official Svelte and SvelteKit documentation, release notes, and maintained package documentation.
+- State briefly which documentation was checked and which version or framework behavior informed the proposal.
+- If current documentation cannot be accessed, state the uncertainty and provide a conservative proposal instead of presenting assumptions as facts.
+
+For cloud-based research or documentation lookup:
+
+- Share only the minimum necessary code context.
+- Never include secrets, API keys, passwords, tokens, values from environment files, private URLs, or personal data.
+- Treat external documentation as guidance; reconcile it with the installed dependency versions and existing repository conventions.
+
 First, read README.md, package.json, justfile, and, for testing tasks, also playwright.config.js.
 
 Important working rules:

@@ -18,6 +18,9 @@ Use integration tests when behavior emerges from the interaction of multiple par
 - Avoid assertions about internal component variables, private implementation details, or incidental DOM structure.
 - Use the existing interaction pattern for realistic user interactions where applicable.
 - Ensure cleanup follows the existing project setup and utilities.
+- For Svelte-specific implementation or testing behavior that is not already established in the repository, consult the current official Svelte, SvelteKit, and Svelte Testing Library documentation before implementation.
+- Prefer Svelte 5 patterns that match the versions installed in this project.
+- Do not copy generic examples blindly; adapt them to the existing project setup, including the configured `svelteTesting()` plugin and test utilities.
 
 ## Route Integration Tests
 
