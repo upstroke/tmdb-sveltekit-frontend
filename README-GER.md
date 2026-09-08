@@ -54,10 +54,6 @@ Die angezeigten Streaming-Anbieter und Watch-Links werden über die TMDB-API ber
 
 ## Testing-Hinweis
 
-Für Svelte-5-Komponententests unter Vitest wird im Testmodus die Browser-Resolver-Condition aktiviert. Dadurch lädt Vitest die Browser-Variante der Svelte-Module und vermeidet den Fehler `mount(...) is not available on the server` bei jsdom-basierten UI-Tests.
-
-## Testing-Hinweis
-
 Für Svelte-5-Komponententests unter Vitest wird das offizielle Vite-Plugin `svelteTesting()` aus `@testing-library/svelte/vite` verwendet. Es ergänzt die Testumgebung für DOM-basierte Svelte-Tests automatisch um Cleanup und die Browser-Resolver-Condition, damit UI-Tests unter `jsdom` korrekt die Browser-Variante der Svelte-Module laden.
 
 ## Tech Stack
@@ -244,7 +240,7 @@ Fallback-Bilder und Platzhaltertexte werden innerhalb der Komponenten zentral be
 
 ## Mobiles Menü
 
-`HeaderMain` verwendet auf mobilen Ansichten eine Checkbox als Menüschalter. Ein `pointerdown`-Handler auf dem Window prüft, ob der Klick außerhalb des Headers stattfindet, und schließt ein geöffnetes Menü dann automatisch.
+`HeaderMain` verwendet auf mobilen Ansichten einen Button als Menüschalter. Ein `pointerdown`-Handler auf dem Window prüft, ob der Klick außerhalb des Headers stattfindet, und schließt ein geöffnetes Menü dann automatisch.
 
 Klicks auf Burger und Navigation bleiben innerhalb des Headers und werden deshalb nicht als Außenklick behandelt.
 
@@ -269,7 +265,7 @@ Die Teststruktur orientiert sich an Testarten und fachlicher Ebene, nicht an tec
 ### Testebenen
 
 - `tests/acceptance/`  
-  Acceptance-Tests mit Playwright für fachliche Nutzerflüsse
+  Acceptance-Tests (end2end) mit Playwright für fachliche Nutzerflüsse
 
 - `tests/integration/components/`  
   Komponententests mit Vitest für isolierte Svelte-Komponenten

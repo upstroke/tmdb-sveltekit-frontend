@@ -54,10 +54,6 @@ The displayed streaming providers and watch links are supplied through the TMDB 
 
 ## Testing Note
 
-For Svelte 5 component tests with Vitest, the browser resolver condition is enabled in test mode. This causes Vitest to load the browser version of the Svelte modules and avoids the `mount(...) is not available on the server` error in jsdom-based UI tests.
-
-## Testing Note
-
 For Svelte 5 component tests with Vitest, the official `svelteTesting()` Vite plugin from `@testing-library/svelte/vite` is used. It automatically adds cleanup and the browser resolver condition to the DOM-based test environment, allowing UI tests under `jsdom` to load the browser version of the Svelte modules correctly.
 
 ## Tech Stack
@@ -245,7 +241,7 @@ Fallback images and placeholder text are handled centrally within the components
 
 ## Mobile Menu
 
-On mobile views, `HeaderMain` uses a checkbox as the menu toggle. A `pointerdown` handler on the window checks whether the click occurred outside the header and automatically closes an open menu.
+On mobile views, `HeaderMain` uses a button as the menu toggle. A `pointerdown` handler on the window checks whether the click occurred outside the header and automatically closes an open menu.
 
 Clicks on the burger button and navigation remain inside the header and are therefore not treated as outside clicks.
 
@@ -270,7 +266,7 @@ The test structure is organized by test type and functional level, not by techni
 ### Test Levels
 
 - `tests/acceptance/`  
-  Acceptance tests with Playwright for functional user flows
+  Acceptance (end2end) tests with Playwright for functional user flows
 
 - `tests/integration/components/`  
   Component tests with Vitest for isolated Svelte components

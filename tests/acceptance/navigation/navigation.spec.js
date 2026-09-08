@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 /**
+ * Feature: F-NAV — Main Navigation
  * Test Case: TC-NAV-001 — Desktop navigation works
  * Test Case: TC-NAV-002 — Mobile navigation works
  * Test Case: TC-NAV-003 — Mobile menu closes on outside click
@@ -8,7 +9,9 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Main navigation', () => {
 	// TC-NAV-001
-	test('Desktop: All main pages are reachable', async ({ page }) => {
+	test('Desktop: All main pages are reachable', {
+		tag: ['@navigation', '@desktop', '@black-box', '@regression']
+	}, async ({ page }) => {
 		// Start on Home (localized en-US)
 		await page.goto('http://localhost:5173/?locale=en-US');
 		await expect(page).toHaveTitle(/Home.*TMDB/);
@@ -30,7 +33,9 @@ test.describe('Main navigation', () => {
 	});
 
 	// TC-NAV-002
-	test('Mobile: Burger menu opens and navigation works', async ({ page }) => {
+	test('Mobile: Burger menu opens and navigation works', {
+		tag: ['@navigation', '@mobile', '@black-box', '@regression']
+	}, async ({ page }) => {
 		// Mobile viewport
 		await page.setViewportSize({ width: 370, height: 667 });
 
@@ -54,7 +59,9 @@ test.describe('Main navigation', () => {
 	});
 
 	// TC-NAV-003
-	test('Mobile: Menu closes when clicking outside', async ({ page }) => {
+	test('Mobile: Menu closes when clicking outside', {
+		tag: ['@navigation', '@mobile', '@black-box', '@regression']
+	}, async ({ page }) => {
 		// Set the mobile viewport before loading the application
 		await page.setViewportSize({ width: 370, height: 667 });
 
