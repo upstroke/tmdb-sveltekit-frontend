@@ -50,7 +50,26 @@ Important project paths:
 
 This prompt is a recommended starting template for new AI sessions in this project.
 
-```text
+### Rule Priority and Document Scope
+
+Apply instructions in the following order:
+
+1. Explicit instructions in the current task.
+2. Project-specific rules in this document and the applicable test-level documentation.
+3. Existing code patterns, architecture, and repository conventions.
+4. General framework and software-engineering best practices.
+
+For test tasks, apply the relevant documentation in this order:
+
+1. `docs/testing.md`
+2. `docs/testing/common-rules.md`
+3. The relevant guide in `docs/testing/`
+4. For Playwright end-to-end acceptance tests: `playwright.config.js`, the affected feature directory's `*-testplan.md`, and its existing `*.spec.js` files
+
+A task-specific test document applies only within its documented scope. For Playwright end-to-end acceptance tests, the feature-local `*-testplan.md` is the source of truth for test scope, feature IDs, test case IDs, priorities, tags, traceability, and expected user-visible behavior.
+
+If instructions at the same priority level conflict, stop and explain the conflict before making changes. Never silently override a higher-priority instruction with a lower-priority preference.
+
 First, read README.md, package.json, justfile, and, for testing tasks, also playwright.config.js.
 
 Important working rules:
@@ -59,6 +78,9 @@ Important working rules:
 - If there are concerns, alternatives, or unclear assumptions, explain them briefly first instead of changing the code immediately.
 - Suggest standardizations, but do not implement them without prior approval.
 - The directory structure exists for a reason and must not be reorganized without prior approval.
+- Do not modify files outside the explicitly approved scope. If additional files appear necessary, stop and ask for approval.
+- Do not commit, push, create branches, or open pull requests unless explicitly requested.
+- Never include, expose, or commit secrets, API keys, passwords, tokens, or values from environment files.
 
 Execution notes:
 - If the specified CLI tools are not installed locally, check whether they should be installed and ask for approval at the beginning of the session.
@@ -96,7 +118,6 @@ General:
 - Work concisely, in a structured and project-specific way.
 - Keep responses brief by default.
 - Whenever possible, describe tasks briefly using the goal, affected files, and desired mode, such as analyze, suggest, implement, or verify.
-```
 
 ## Standard Prompts
 
@@ -118,18 +139,20 @@ Output: A `.svelte` file in the `src/lib/components` directory.
 ### Write a Test
 
 ```text
-Create a Vitest test for [function/component].
+Create a test for [function/component/feature].
 
 Context:
-- The function is located in `src/lib/...`.
-- Existing tests are in `tests/unit/` or `tests/components/`.
+- The test subject is located in `src/lib/...` or `src/routes/...`.
+- Read `docs/testing.md`, `docs/testing/common-rules.md`, and the applicable test-level guide before proposing changes.
+- Existing tests are in `tests/unit/`, `tests/integration/`, or `tests/acceptance/`.
 
 Requirements:
-- Describe the behavior directly in the test file.
-- Use meaningful `describe` and `it` blocks.
-- Comments are allowed when they briefly explain the functional goal.
+- Select the appropriate test level before implementation.
+- Preserve existing patterns and conventions.
+- Reuse fixtures, mocks, and setup utilities where applicable.
+- For Playwright end-to-end acceptance tests, also read `playwright.config.js` and the affected feature directory's test plan and existing specifications.
 
-Output: A `.test.js` file in the appropriate test directory.
+Output: A test file in the appropriate existing test directory.
 ```
 
 ### CSS Change
@@ -200,6 +223,10 @@ Output: The modified `ui.json` with entries for all locales.
 
 ## Further Information
 
-- `docs/testing.md` for the project's testing approach
+- `docs/testing.md` for the project's testing overview
+- `docs/testing/common-rules.md` for rules shared by all automated tests
+- `docs/testing/unit-tests.md` for Vitest unit-test rules
+- `docs/testing/integration-tests.md` for Vitest integration-test rules
+- `docs/testing/playwright-acceptance-tests.md` for Playwright end-to-end acceptance-test rules
 - `../README.md` for project context and tech stack
 - `docs/ai-prompt-examples.md` for concrete prompt examples by role

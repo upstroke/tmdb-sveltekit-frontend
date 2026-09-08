@@ -158,9 +158,14 @@ static/
 
 tests/
   acceptance/
-  components/
+    loadmore/
+    navigation/
   integration/
+    components/
+    routes/
   unit/
+    routes/
+    tmdb-api/
   fixtures/
   mocks/
   setup/
@@ -172,8 +177,9 @@ test-results/ (created when needed)
 
 ## Test Documentation
 
-This file describes the pragmatic testing approach for the project.  
-[Test documentation and testing approach](docs/testing.md)
+The project test overview and test-level rules are documented in [Test documentation and testing approach](docs/testing.md).
+
+Detailed Playwright end-to-end acceptance-test plans remain next to their executable specifications in `tests/acceptance/<feature>/`. For example, the navigation feature uses `tests/acceptance/navigation/navigation.spec.js` together with `tests/acceptance/navigation/navigation-testplan.md`.
 
 ## Important Directory Roles
 
@@ -255,9 +261,7 @@ npm run build
 npm test
 ```
 
-`npm run lint` checks Prettier and ESLint for the entire `src` directory. The `svelte/no-navigation-without-resolve` rule is disabled because the project handles internal and external URLs differently depending on the destination.
-
-When changing translations, check all supported locale catalogs for identical keys.
+`npm run lint` checks Prettier and ESLint for the entire `src` directory. The `svelte/no-navigation-without-resolve` rule is disabled because the project handles internal and external URLs differently depending on the destination. When changing translations, check all supported locale catalogs for identical keys.
 
 ## Test Strategy
 
@@ -266,13 +270,13 @@ The test structure is organized by test type and functional level, not by techni
 ### Test Levels
 
 - `tests/acceptance/`  
-  Acceptance (end2end) tests with Playwright for functional user flows
+  End-to-end acceptance tests with Playwright for functional user flows
 
 - `tests/integration/components/`  
-  Component tests with Vitest for isolated Svelte components
+  Component integration tests with Vitest for isolated Svelte components
 
-- `tests/integration/`  
-  Integration tests with Vitest for services, feature logic, and interactions between multiple parts
+- `tests/integration/routes/`  
+  Integration tests with Vitest for route behavior and interactions between multiple parts
 
 - `tests/unit/`  
   Small unit tests for pure utility functions and clearly isolated logic
