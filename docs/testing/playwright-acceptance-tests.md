@@ -61,7 +61,7 @@ Verify user-observable outcomes such as:
 
 - Use stable feature IDs such as `F-NAV`.
 - Use stable test case IDs such as `TC-NAV-001`.
-- Apply tags consistently, for example `@navigation`, `@desktop`, `@mobile`, `@black-box`, and `@regression`.
+- Apply tags consistently, for example `@navigation`, `@desktop`, `@mobile`, `@black-box`, `@regression` and `@accessibility`.
 - Keep the test plan, decision table, Gherkin scenarios, traceability matrix, and all executable specifications synchronized.
 - When a task changes an acceptance-test specification, review whether the feature-local test plan must also be updated. When a task changes the test plan, review whether one or more specifications must also be updated.
 - If an implementation detail conflicts with the feature-local test plan, report the discrepancy before changing code or documentation.
