@@ -304,9 +304,7 @@
 			{/each}
 		</ul>
 
-		{#if hasMore}
-			<LoadMore {hasMore} {loading} onload={() => loadMore()} />
-		{/if}
+		<LoadMore {hasMore} {loading} onload={() => loadMore()} />
 	{:else if !error}
 		<p class={messages.noMoviesFound ? '' : 'u-not-available'}>{messages.noMoviesFound}</p>
 	{/if}

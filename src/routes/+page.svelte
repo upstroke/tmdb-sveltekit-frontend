@@ -1,18 +1,18 @@
 <script>
-	import { browser } from '$app/environment';
-	import { page } from '$app/state';
-	import { i18n } from '$lib/stores/i18n';
-	import { resolveLocale } from '$lib/i18n/helpers';
+	import {browser} from '$app/environment';
+	import {page} from '$app/state';
+	import {i18n} from '$lib/stores/i18n';
+	import {resolveLocale} from '$lib/i18n/helpers';
 
 	import CardFeatured from '$lib/components/CardFeatured.svelte';
 	import CardDefault from '$lib/components/CardDefault.svelte';
 	import LoadMore from '$lib/components/LoadMore.svelte';
 	import DialogMessage from '$lib/components/DialogMessage.svelte';
 
-	import { deduplicateMedia, getMediaKey } from '$lib/utils/deduplicateMedia';
-	import { restorePagedList } from '$lib/utils/pageStateRestore';
+	import {deduplicateMedia, getMediaKey} from '$lib/utils/deduplicateMedia';
+	import {restorePagedList} from '$lib/utils/pageStateRestore';
 
-	const { titles, messages } = $derived($i18n);
+	const {titles, messages} = $derived($i18n);
 	const activeLocale = $derived(resolveLocale(page.url.searchParams.get('locale')));
 	const storageKey = 'home-page';
 
@@ -44,7 +44,7 @@
 	 *   error?: string | null
 	 * }} data - Loaded homepage data.
 	 */
-	let { data } = $props();
+	let {data} = $props();
 	let previousData;
 
 	let featured = $state(null);
@@ -160,7 +160,7 @@
 		observer = new IntersectionObserver(
 			(entries, currentObserver) => {
 				if (entries.some((entry) => entry.isIntersecting)) {
-					target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+					target.scrollIntoView({behavior: 'smooth', block: 'start'});
 					currentObserver.disconnect();
 					scrollTargetId = null;
 				}
@@ -285,7 +285,7 @@
 
 <main class="ui container fluid home-page">
 	{#if error}
-		<DialogMessage message={error} />
+		<DialogMessage message={error}/>
 	{/if}
 
 	{#if featured}
@@ -293,7 +293,7 @@
 			{titles.featuredToday}
 		</h2>
 
-		<CardFeatured {...featured} />
+		<CardFeatured {...featured}/>
 	{/if}
 
 	<h2 class="ui dividing header {titles.trendingToday ? '' : 'u-not-available'}">
@@ -306,22 +306,23 @@
 				<li style={`--stagger-delay: ${index * 90}ms`}>
 					<!-- Staggers the loading shimmer per card so the grid doesn't animate in lockstep. -->
 					<!-- The child card reads this CSS variable as `--stagger-delay`. -->
-					<CardDefault {...item} isLoading={showLoadingCards} scrollId={`home-card-${index + 1}`} />
+					<CardDefault {...item} isLoading={showLoadingCards} scrollId={`home-card-${index + 1}`}/>
 				</li>
 			{/each}
 		</ul>
 
-		{#if hasMore}
-			<LoadMore {hasMore} {loading} onload={() => loadMore()} />
-		{/if}
+		<LoadMore {hasMore} {loading} onload={() => loadMore()}/>
 	{:else if restoringCards && previousCards.length > 0 && !error}
 		<ul class="ui four doubling cards media-card-list" aria-busy="true" aria-live="polite">
 			{#each previousCards as item, index (`restoring-home-${item.mediaType}-${item.id}`)}
 				<li>
-					<CardDefault {...item} isLoading={showLoadingCards} scrollId={`home-card-${index + 1}`} />
+					<CardDefault {...item} isLoading={showLoadingCards} scrollId={`home-card-${index + 1}`}/>
 				</li>
 			{/each}
 		</ul>
+
+		<!-- LoadMore wird IMMER gerendert, nicht nur wenn hasMore -->
+		<LoadMore {hasMore} {loading} onload={() => loadMore()}/>
 	{:else if !error}
 		<p class={messages.noContent ? '' : 'u-not-available'}>{messages.noContent}</p>
 	{/if}

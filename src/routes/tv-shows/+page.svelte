@@ -302,9 +302,8 @@
 			{/each}
 		</ul>
 
-		{#if hasMore}
-			<LoadMore {hasMore} {loading} onload={() => loadMore()} />
-		{/if}
+		<!-- LoadMore wird IMMER gerendert, nicht nur wenn hasMore -->
+		<LoadMore {hasMore} {loading} onload={() => loadMore()} />
 	{:else if !error}
 		<p class={messages.noTvShows ? '' : 'u-not-available'}>{messages.noTvShows}</p>
 	{/if}

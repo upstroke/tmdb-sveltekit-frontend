@@ -4,8 +4,8 @@
 	/**
 	 * Renders a button for loading more entries.
 	 *
-	 * The component only shows the button if more results are available.
-	 * While loading, the button is disabled and the appropriate loading message is displayed.
+	 * The button is disabled when loading or when no more results are available.
+	 * While loading, the appropriate loading message is displayed.
 	 *
 	 * @component
 	 * @prop {boolean} [hasMore=false] - Indicates whether more entries are available.
@@ -21,20 +21,29 @@
 	const { messages: texts } = $derived($i18n);
 </script>
 
-{#if hasMore}
-	<div class="load-more" aria-live="polite">
+<div class="load-more" aria-live="polite">
+	{#if loading}
 		<button
-			class="ui primary button"
-			class:loading
+			class="ui primary button loading"
 			type="button"
 			onclick={() => onload?.()}
-			disabled={loading}
-			aria-busy={loading}
+			disabled={true}
+			aria-busy={true}
 		>
-			{loading ? texts.loadMoreLoading : texts.loadMore}
+			{texts.loadMoreLoading}
 		</button>
-	</div>
-{/if}
+	{:else}
+		<button
+			class="ui primary button"
+			type="button"
+			onclick={() => onload?.()}
+			disabled={!hasMore}
+			aria-busy={false}
+		>
+			{texts.loadMore}
+		</button>
+	{/if}
+</div>
 
 <style lang="scss">
 	.load-more {

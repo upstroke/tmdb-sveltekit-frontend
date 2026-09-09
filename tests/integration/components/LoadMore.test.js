@@ -25,10 +25,14 @@ describe('LoadMore', () => {
 		cleanupAll();
 	});
 
-	// Statement coverage: button is not rendered when hasMore=false
-	it('does not render button when hasMore=false', () => {
+	// Statement coverage: button is rendered as disabled when hasMore=false
+	it('renders button disabled when hasMore=false', () => {
 		render(LoadMore, { props: { hasMore: false, loading: false, onload: null } });
-		expect(screen.queryByRole('button')).not.toBeInTheDocument();
+
+		const button = screen.getByRole('button');
+		expect(button).toBeInTheDocument();
+		expect(button).toBeDisabled();
+		expect(button).toHaveTextContent(messages.loadMore);
 	});
 
 	// Statement coverage: button is rendered when hasMore=true
