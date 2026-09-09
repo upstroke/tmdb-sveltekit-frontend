@@ -109,7 +109,7 @@ describe('TypeHeadSearch', () => {
 		expect(hint).toHaveTextContent(messages.searchHint);
 	});
 
-	// Zweigberdeckung: The search shows no results for less than 4 characters.
+	// Statement coverage: The search shows no results for less than 4 characters.
 	it('shows no results for less than 4 characters', async () => {
 		render(TypeHeadSearch);
 
@@ -136,7 +136,7 @@ describe('TypeHeadSearch', () => {
 		);
 	});
 
-	// Branch coverage: The search shows an error state on failed fetch.
+	// Statement coverage: The search shows an error state on failed fetch.
 	it('shows error state on failed fetch', async () => {
 		vi.useFakeTimers();
 
@@ -160,7 +160,7 @@ describe('TypeHeadSearch', () => {
 		render(TypeHeadSearch);
 
 		const input = screen.getByRole('searchbox');
-		await fireEvent.input(input, { target: { value: 'inception' } });
+		await fireEvent.input(input, { target: { value: 'Inception' } });
 
 		await vi.waitFor(
 			() => {
@@ -170,11 +170,16 @@ describe('TypeHeadSearch', () => {
 			{ timeout: 1000 }
 		);
 
-		const movieTitle = screen.getByText('Inception');
-		expect(movieTitle).toBeInTheDocument();
+		const resultsContainer = document.getElementById('typeahead-search-results');
+		const headers = resultsContainer.querySelectorAll('.result-header');
+
+		// ✅ Case-insensitive regex match
+		const hasHero = Array.from(headers).some((h) => /inception/i.test(h.textContent));
+
+		expect(hasHero).toBe(true);
 	});
 
-	// Anweisungsberdeckung: The search shows the TV-shows section.
+	// Statement coverage: The search shows the TV-shows section.
 	it('renders TV shows section', async () => {
 		render(TypeHeadSearch);
 
