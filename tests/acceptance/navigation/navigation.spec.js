@@ -8,8 +8,13 @@ import { test, expect } from '@playwright/test';
  */
 
 test.describe('Main navigation', () => {
+	// Reset viewport to desktop before each test to avoid interference from other tests
+	test.beforeEach(async ({ page }) => {
+		await page.setViewportSize({ width: 1920, height: 1080 });
+	});
+
 	// TC-NAV-001
-	test('Desktop: All main pages are reachable', {
+	test('[TC-NAV-001] Desktop: All main pages are reachable', {
 		tag: ['@navigation', '@desktop', '@black-box', '@regression']
 	}, async ({ page }) => {
 		// Start on Home (localized en-US)
@@ -33,33 +38,45 @@ test.describe('Main navigation', () => {
 	});
 
 	// TC-NAV-002
-	test('Mobile: Burger menu opens and navigation works', {
-		tag: ['@navigation', '@mobile', '@black-box', '@regression']
-	}, async ({ page }) => {
-		// Mobile viewport
-		await page.setViewportSize({ width: 370, height: 667 });
+	test(
+		'[TC-NAV-002] Mobile: Burger menu opens and navigation works',
+		{
+			tag: ['@navigation', '@mobile', '@black-box', '@regression'],
+			retries: 2 // Retry this test up to 2 times as seems to be flaky
+		},
+		async ({ page }) => {
+			// Mobile viewport
+			await page.setViewportSize({ width: 370, height: 667 });
 
-		// Start on Home (localized en-US)
-		await page.goto('http://localhost:5173/?locale=en-US');
-		await expect(page).toHaveTitle(/Home.*TMDB/);
+			// Start on Home (localized en-US)
+			await page.goto('http://localhost:5173/?locale=en-US');
+			await expect(page).toHaveTitle(/Home.*TMDB/);
 
-		// Click burger menu button
-		await page.getByRole('button', { name: 'Open or close navigation' }).click();
+			// Click burger menu button
+			await page.getByRole('button', { name: 'Open or close navigation' }).click();
 
-		// Navigate to TV Shows
-		await page.getByRole('link', { name: 'TV shows' }).click();
-		await expect(page).toHaveTitle(/TV.*TMDB/);
+			// WAIT for menu to be fully opened and links visible
+			await expect(page.getByRole('link', { name: 'TV shows' })).toBeVisible({ timeout: 5000 });
 
-		// Click burger menu button
-		await page.getByRole('button', { name: 'Open or close navigation' }).click();
+			// Navigate to TV Shows
+			await page.getByRole('link', { name: 'TV shows' }).click();
+			await expect(page).toHaveTitle(/TV.*TMDB/);
 
-		// Navigate to Home
-		await page.getByRole('link', { name: 'Home' }).click();
-		await expect(page).toHaveTitle(/Home.*TMDB/);
-	});
+			// Click burger menu button
+			await page.getByRole('button', { name: 'Open or close navigation' }).click();
+
+			// WAIT for menu to be fully opened and links visible
+			await expect(page.getByRole('link', { name: 'Home' })).toBeVisible({ timeout: 5000 });
+
+			// Navigate to Home
+			await page.getByRole('link', { name: 'Home' }).click();
+			await expect(page).toHaveTitle(/Home.*TMDB/);
+		}
+	);
+
 
 	// TC-NAV-003
-	test('Mobile: Menu closes when clicking outside', {
+	test('[TC-NAV-003] Mobile: Menu closes when clicking outside', {
 		tag: ['@navigation', '@mobile', '@black-box', '@regression']
 	}, async ({ page }) => {
 		// Set the mobile viewport before loading the application

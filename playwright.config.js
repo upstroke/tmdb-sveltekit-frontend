@@ -24,6 +24,7 @@ export default defineConfig({
 		baseURL: 'http://127.0.0.1:4173',
 		trace: 'on-first-retry',
 		screenshot: 'only-on-failure',
+		video: 'retain-on-failure', // NEW: Video on failure for debugging
 		headless: true,
 
 		// NEW: Browser flags against hanging
