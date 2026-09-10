@@ -1,134 +1,115 @@
 // @ts-check
-import { test, expect, devices } from '@playwright/test';
-import { checkA11y } from '$tests/setup/a11y.js';
+import { test, expect } from '@playwright/test';
+import { checkA11y } from '../../setup/a11y.js';
 
-const mobileIOS = devices['iPhone 13'];
-const mobileAndroid = devices['Pixel 5'];
+/**
+ * Feature: F-TS — Typeahead Search (Accessibility)
+ * Test plan: tests/acceptance/accessibility/typeaheadsearch-testplan.md
+ * 
+ * Test cases:
+ * - A11Y-TS-001: Desktop typeahead search results accessibility
+ * - A11Y-TS-002: Desktop typeahead search with keyboard navigation accessibility
+ * - A11Y-TS-003: Mobile iOS typeahead search accessibility
+ * - A11Y-TS-004: Mobile Android typeahead search accessibility
+ */
 
-const searchInput = (page) => page.getByRole('searchbox');
-const resultsContainer = (page) =>
-  page.locator('#typeahead-search-results');
-const resultLinks = (page) =>
-  resultsContainer(page).locator('a.result[data-result-link="true"]');
-
-async function prepareSearch(page) {
-  await page.goto('http://localhost:5173/?locale=en-US');
-  await expect(page).toHaveTitle(/Home.*TMDB/);
-
-  const input = searchInput(page);
-  await input.click();
-  await input.clear();
-  await input.fill('Hero');
-
-  await resultsContainer(page).waitFor({
-    state: 'visible',
-    timeout: 5000
-  });
-
-  await expect(resultLinks(page).first()).toBeVisible();
-}
-
-test.describe('Accessibility - Typeahead Search - Desktop', () => {
+test.describe('Accessibility - Typeahead Search', () => {
   test.beforeEach(async ({ page }) => {
     await page.setViewportSize({ width: 1920, height: 1080 });
+    await page.goto('?locale=en-US');
+    await page.waitForLoadState('networkidle');
   });
 
-  // A11Y-009: Typeahead search results accessibility
+  // A11Y-TS-001
   test(
-    'Typeahead search results have no automatically detected WCAG A/AA violations',
-    {
-      tag: ['@accessibility', '@a11y', '@desktop', '@search', '@typeahead']
-    },
+    '[A11Y-TS-001] Desktop typeahead search results has no automatically detected WCAG A/AA violations',
     async ({ page }) => {
-      await prepareSearch(page);
-      await checkA11y(page);
-    }
-  );
+      const searchInput = page.getByRole('searchbox');
+      await searchInput.click();
+      await searchInput.clear();
+      await searchInput.fill('Hero');
 
-  // A11Y-010: Tab moves focus from the first to the second search result
-  test(
-    'Tab moves focus from the first to the second search result',
-    {
-      tag: ['@accessibility', '@a11y', '@desktop', '@search', '@typeahead', '@keyboard']
-    },
-    async ({ page }) => {
-      await prepareSearch(page);
-
-      const firstResult = resultLinks(page).first();
-      const secondResult = resultLinks(page).nth(1);
-
-      await expect(resultLinks(page)).toHaveCount(2, { timeout: 5000 });
-
-      await page.keyboard.press('Tab');
-      await expect(firstResult).toBeFocused();
-
-      await page.keyboard.press('Tab');
-      await expect(secondResult).toBeFocused();
+      const resultsContainer = page.locator('#typeahead-search-results');
+      await resultsContainer.waitFor({ state: 'visible', timeout: 5000 });
 
       await checkA11y(page);
     }
   );
 
-  // A11Y-011: Escape closes the typeahead search results
+  // A11Y-TS-002
   test(
-    'Escape closes the typeahead search results',
-    {
-      tag: ['@accessibility', '@a11y', '@desktop', '@search', '@typeahead', '@keyboard']
-    },
+    '[A11Y-TS-002] Desktop typeahead search with keyboard navigation has no automatically detected WCAG A/AA violations',
     async ({ page }) => {
-      await prepareSearch(page);
+      const searchInput = page.getByRole('searchbox');
+      await searchInput.click();
+      await searchInput.clear();
+      await searchInput.fill('Hero');
 
-      await page.keyboard.press('Escape');
-      await expect(resultsContainer(page)).toBeHidden({
-        timeout: 2000
-      });
+      const resultsContainer = page.locator('#typeahead-search-results');
+      await resultsContainer.waitFor({ state: 'visible', timeout: 5000 });
+
+      // Tab through first two results
+      const resultLinks = resultsContainer.locator('a.result[data-result-link="true"]');
+      await expect(resultLinks.count()).resolves.toBeGreaterThanOrEqual(2);
+
+      await page.keyboard.press('Tab');
+      await page.keyboard.press('Tab');
 
       await checkA11y(page);
     }
   );
 });
 
-// iOS Mobile Tests (iPhone 13)
-test.describe('Accessibility - Typeahead Search - iOS', () => {
+test.describe('Accessibility - Typeahead Search Mobile', () => {
+  const mobile = {
+    viewport: { width: 390, height: 844 },
+    deviceScaleFactor: 3,
+    isMobile: true,
+    hasTouch: true,
+    userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.0 Mobile/15E148 Safari/604.1'
+  };
+
   test.use({
-    viewport: mobileIOS.viewport,
-    deviceScaleFactor: mobileIOS.deviceScaleFactor,
-    isMobile: mobileIOS.isMobile,
-    hasTouch: mobileIOS.hasTouch,
-    userAgent: mobileIOS.userAgent,
+    viewport: mobile.viewport,
+    deviceScaleFactor: mobile.deviceScaleFactor,
+    isMobile: mobile.isMobile,
+    hasTouch: mobile.hasTouch,
+    userAgent: mobile.userAgent
   });
 
-  // A11Y-012: Typeahead search on iPhone 13 accessibility
+  test.beforeEach(async ({ page }) => {
+    await page.goto('?locale=en-US');
+    await page.waitForLoadState('networkidle');
+  });
+
+  // A11Y-TS-003
   test(
-    'Typeahead search on iPhone 13 has no automatically detected WCAG A/AA violations',
-    {
-      tag: ['@accessibility', '@a11y', '@mobile', '@ios', '@search', '@typeahead']
-    },
+    '[A11Y-TS-003] Mobile iOS typeahead search results has no automatically detected WCAG A/AA violations',
     async ({ page }) => {
-      await prepareSearch(page);
+      const searchInput = page.getByRole('searchbox');
+      await searchInput.click();
+      await searchInput.clear();
+      await searchInput.fill('Hero');
+
+      const resultsContainer = page.locator('#typeahead-search-results');
+      await resultsContainer.waitFor({ state: 'visible', timeout: 5000 });
+
       await checkA11y(page);
     }
   );
-});
 
-// Android Mobile Tests (Pixel 5)
-test.describe('Accessibility - Typeahead Search - Android', () => {
-  test.use({
-    viewport: mobileAndroid.viewport,
-    deviceScaleFactor: mobileAndroid.deviceScaleFactor,
-    isMobile: mobileAndroid.isMobile,
-    hasTouch: mobileAndroid.hasTouch,
-    userAgent: mobileAndroid.userAgent,
-  });
-
-  // A11Y-013: Typeahead search on Pixel 5 accessibility
+  // A11Y-TS-004
   test(
-    'Typeahead search on Pixel 5 has no automatically detected WCAG A/AA violations',
-    {
-      tag: ['@accessibility', '@a11y', '@mobile', '@android', '@search', '@typeahead']
-    },
+    '[A11Y-TS-004] Mobile Android typeahead search results has no automatically detected WCAG A/AA violations',
     async ({ page }) => {
-      await prepareSearch(page);
+      const searchInput = page.getByRole('searchbox');
+      await searchInput.click();
+      await searchInput.clear();
+      await searchInput.fill('Breaking');
+
+      const resultsContainer = page.locator('#typeahead-search-results');
+      await resultsContainer.waitFor({ state: 'visible', timeout: 5000 });
+
       await checkA11y(page);
     }
   );

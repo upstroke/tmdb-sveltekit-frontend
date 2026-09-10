@@ -9,22 +9,6 @@
 	const { labels: texts, messages, titles, formats, fallbacks } = $derived($i18n);
 	const activeLocale = $derived(resolveLocale(page.url.searchParams.get('locale')));
 
-	/**
-	 * Provides the typeahead search in the header for movies and TV shows.
-	 *
-	 * The component manages search term, loading state, error state, and
-	 * visibility of the results list entirely internally. From at least four
-	 * characters, the local `/search` route is queried with debounce, running
-	 * requests are aborted via `AbortController`, and responses are displayed
-	 * separately by media type.
-	 *
-	 * @component
-	 * @remarks This component expects no props.
-	 *
-	 * @example
-	 * <TypeHeadSearch />
-	 */
-
 	let query = $state('');
 	let movies = $state([]);
 	let tvShows = $state([]);
@@ -32,26 +16,23 @@
 	let showLoading = $state(false);
 	let resultsClosed = $state(false);
 	let error = $state(null);
+	let announceNoResults = $state(false);
+	let announceResultCount = $state(0);
 
 	let hasResults = $derived(movies.length > 0 || tvShows.length > 0);
 	let hasSearchTerm = $derived(query.trim().length >= 4);
 	let hasStatusMessage = $derived(
 		!resultsClosed && (showLoading || !!error || (hasSearchTerm && !hasResults))
 	);
+	let totalResults = $derived(movies.length + tvShows.length);
 
 	let debounceTimer;
 	let loadingTimer;
 	let controller;
 	let previousLocale = $state(null);
 
-	/**
-	 * Reagiert auf Locale-Wechsel und startet bei aktivem Suchbegriff eine neue Suche.
-	 *
-	 * Die aktuell angezeigten Treffer werden dadurch an die neue Locale angepasst,
-	 * ohne dass der Suchbegriff erneut eingegeben werden muss.
-	 *
-	 * @returns {void}
-	 */
+	const searchHintId = 'typeahead-search-hint';
+
 	$effect(() => {
 		if (previousLocale == null) {
 			previousLocale = activeLocale;
@@ -70,22 +51,10 @@
 		}
 	});
 
-	/**
-	 * Formatiert einen Bewertungswert mit einer Nachkommastelle.
-	 *
-	 * @param {number | string | null | undefined} value - Ursprünglicher Bewertungswert.
-	 * @returns {string} Bewertung als String mit genau einer Nachkommastelle.
-	 */
 	function formatRating(value) {
 		return Number(value ?? 0).toFixed(1);
 	}
 
-	/**
-	 * Leitet aus einem Datumsstring das Jahr für die Trefferanzeige ab.
-	 *
-	 * @param {string | null | undefined} value - ISO-Datum eines Films oder einer Serie.
-	 * @returns {string} Vierstelliges Jahr oder ein Platzhalter ohne Datum.
-	 */
 	function formatYear(value) {
 		if (!value) return fallbacks.dateFallback;
 
@@ -97,59 +66,26 @@
 		return String(date.getFullYear());
 	}
 
-	/**
-	 * Erstellt das Screenreader-Label für die dargestellte Bewertung.
-	 *
-	 * @param {number | string | null | undefined} value - Bewertungswert des Treffers.
-	 * @returns {string} Lokalisierter ARIA-Text für die Bewertungsausgabe.
-	 */
 	function ratingAriaLabel(value) {
 		return `${texts.rating}: ${formatRating(value)} ${formats.outOfTen}`;
 	}
 
-	const searchHintId = 'typeahead-search-hint';
-
-	/**
-	 * Ergänzt eine interne Route um die aktuell aktive Locale.
-	 *
-	 * @param {string} href - Interne Zielroute ohne oder mit bestehenden Query-Parametern.
-	 * @returns {string} Zielroute inklusive aktiver Locale.
-	 */
 	function withLocale(href) {
-		if (!href) {
-			return href;
-		}
+		if (!href) return href;
 
 		const url = new URL(href, page.url.origin);
 		url.searchParams.set('locale', activeLocale);
 		return `${url.pathname}${url.search}${url.hash}`;
 	}
 
-	/**
-	 * Ermittelt die interne Detailroute für einen Suchtreffer anhand seines Medientyps.
-	 *
-	 * @param {{ id: number | string, mediaType: 'movie' | 'tv' }} item - Suchtreffer aus der Ergebnisliste.
-	 * @returns {string} Interne Detailroute für Film- oder TV-Detailseite.
-	 */
 	function resultHref(item) {
 		if (item.mediaType === 'movie') {
-			return resolve('/movies/[id]', {
-				id: String(item.id)
-			});
+			return resolve('/movies/[id]', { id: String(item.id) });
 		}
 
-		return resolve('/tv-shows/[id]', {
-			id: String(item.id)
-		});
+		return resolve('/tv-shows/[id]', { id: String(item.id) });
 	}
 
-	/**
-	 * Setzt Ergebnislisten, Statusmeldungen und Ladezustände auf den Ausgangszustand zurück.
-	 *
-	 * Bereits laufende Ladehinweise werden dabei ebenfalls beendet.
-	 *
-	 * @returns {void}
-	 */
 	function resetResults() {
 		clearTimeout(loadingTimer);
 		showLoading = false;
@@ -158,39 +94,25 @@
 		movies = [];
 		tvShows = [];
 		error = null;
+		announceNoResults = false;
+		announceResultCount = 0;
 	}
 
-	/**
-	 * Verarbeitet Eingaben im Suchfeld und stößt die Suche mit Debounce erneut an.
-	 *
-	 * Bei weniger als vier Zeichen werden vorhandene Treffer und Statusmeldungen
-	 * sofort zurückgesetzt.
-	 *
-	 * @returns {void}
-	 */
 	function handleInput() {
 		clearTimeout(debounceTimer);
 
 		const term = query.trim();
-
 		if (term.length < 4) {
 			resetResults();
 			return;
 		}
 
 		resultsClosed = false;
+		announceNoResults = false;
+		announceResultCount = 0;
 		debounceTimer = setTimeout(() => search(term), 300);
 	}
 
-	/**
-	 * Lädt Suchergebnisse für den übergebenen Begriff von der lokalen Search-Route.
-	 *
-	 * Laufende Requests werden vor einem neuen Aufruf abgebrochen, um veraltete
-	 * Antworten nicht mehr in den State zu übernehmen.
-	 *
-	 * @param {string} term - Bereinigter Suchbegriff ab vier Zeichen.
-	 * @returns {Promise<void>} Wird aufgelöst, sobald State und Ergebnislisten aktualisiert wurden.
-	 */
 	async function search(term) {
 		controller?.abort();
 		clearTimeout(loadingTimer);
@@ -199,18 +121,16 @@
 
 		loading = true;
 		error = null;
+		announceNoResults = false;
+		announceResultCount = 0;
 		loadingTimer = setTimeout(() => {
-			if (loading) {
-				showLoading = true;
-			}
+			if (loading) showLoading = true;
 		}, 300);
 
 		try {
 			const response = await fetch(
 				`/search?q=${encodeURIComponent(term)}&locale=${encodeURIComponent(activeLocale)}`,
-				{
-					signal: controller.signal
-				}
+				{ signal: controller.signal }
 			);
 
 			if (!response.ok) {
@@ -219,14 +139,17 @@
 			}
 
 			const data = await response.json();
-
 			movies = deduplicateById(data.movies ?? []);
 			tvShows = deduplicateById(data.tvShows ?? []);
-		} catch (exception) {
-			if (exception.name === 'AbortError') {
-				return;
-			}
 
+			// Trigger announcements AFTER data is loaded
+			if (movies.length + tvShows.length > 0) {
+				announceResultCount = movies.length + tvShows.length;
+			} else if (hasSearchTerm && !hasResults) {
+				announceNoResults = true;
+			}
+		} catch (exception) {
+			if (exception.name === 'AbortError') return;
 			error = exception instanceof Error ? exception.message : messages.searchError;
 		} finally {
 			clearTimeout(loadingTimer);
@@ -235,47 +158,24 @@
 		}
 	}
 
-	/**
-	 * Reagiert auf Tastatureingaben im Suchfeld und schließt die Trefferliste per Escape.
-	 *
-	 * @param {KeyboardEvent} event - Tastaturereignis des Suchfelds.
-	 * @returns {void}
-	 */
 	function handleKeydown(event) {
 		if (event.key === 'Escape') {
 			closeResults();
 		}
 	}
 
-	/**
-	 * Blendet die Ergebnisliste aus, ohne den Suchbegriff zurückzusetzen.
-	 *
-	 * @returns {void}
-	 */
 	function closeResults() {
+		announceNoResults = false;
+		announceResultCount = 0;
 		resultsClosed = true;
 	}
 
-	/**
-	 * Schließt die Ergebnisliste bei Klicks außerhalb der Komponente.
-	 *
-	 * Click wird statt Pointerdown verwendet, damit Links innerhalb der
-	 * Trefferliste ihre Navigation normal abschließen können.
-	 *
-	 * @param {MouseEvent} event - Klickereignis auf Fensterebene.
-	 * @returns {void}
-	 */
 	function handleWindowClick(event) {
 		if (!event.target.closest('#typeahead-search')) {
 			closeResults();
 		}
 	}
 
-	/**
-	 * Blendet vorhandene Ergebnisse oder Statusmeldungen beim erneuten Fokussieren ein.
-	 *
-	 * @returns {void}
-	 */
 	function showResults() {
 		if (query.trim().length >= 4 && (movies.length > 0 || tvShows.length > 0 || loading || error)) {
 			resultsClosed = false;
@@ -286,7 +186,7 @@
 <svelte:window onclick={handleWindowClick} />
 
 <search id="typeahead-search">
-	<form id="typeahead-search-form" onsubmit={(e) => e.preventDefault()} role="search">
+	<form id="typeahead-search-form" onsubmit={(event) => event.preventDefault()} role="search">
 		<label class="u-sr-only" for="typeahead-search-input">{texts.searchInput}</label>
 		<div class="input-wrapper">
 			<input
@@ -303,37 +203,31 @@
 
 			<i aria-hidden="true" class="search icon"></i>
 
-			<p class="u-sr-only" id="typeahead-search-hint">{messages.searchHint}</p>
+			<!-- Static hint only -->
+			<p class="u-sr-only" id={searchHintId}>{messages.searchHint}</p>
 
 			{#if hasStatusMessage}
+				<!-- Visible UI only (no aria-live here) -->
 				<div id="status-messages-layer">
-					{#if error}
-						<section id="status-messages" role="alert" aria-atomic="true">
+					<section id="status-messages" aria-hidden="true">
+						{#if error}
 							<div class="search-error-panel">
-								<p class="result result-error">
-									{error === messages.searchError ? messages.searchError : error}
-								</p>
+								<p class="result result-error">{error === messages.searchError ? messages.searchError : error}</p>
 							</div>
-						</section>
-					{:else if loading}
-						<section id="status-messages" role="status" aria-live="polite" aria-atomic="true">
+						{:else if loading}
 							<p class="result">{messages.searchLoading}</p>
-						</section>
-					{:else if hasSearchTerm && !hasResults}
-						<section id="status-messages" role="status" aria-live="polite" aria-atomic="true">
+						{:else if hasSearchTerm && !hasResults}
 							<div class="search-empty-state">
-								<p class="result {messages.searchNoResults ? '' : 'u-not-available'}">
-									{messages.searchNoResults}
-								</p>
+								<p class="result {messages.searchNoResults ? '' : 'u-not-available'}">{messages.searchNoResults}</p>
 							</div>
-						</section>
-					{/if}
+						{/if}
+					</section>
 				</div>
 			{/if}
 		</div>
 
 		{#if !resultsClosed && hasResults}
-			<div id="typeahead-search-results" aria-label={messages.searchResults} aria-live="polite">
+			<div id="typeahead-search-results" aria-label={messages.searchResults}>
 				<section class="category" aria-labelledby="typeahead-movies-heading">
 					<h2
 						id="typeahead-movies-heading"
@@ -346,29 +240,36 @@
 							<li>
 								<a
 									class="result"
+									data-result-link="true"
 									href={withLocale(resultHref(item))}
 									onclick={closeResults}
-									data-result-link="true"
+									aria-labelledby={'typeahead-result-type-movie-' + item.id + ' typeahead-result-title-movie-' + item.id + ' typeahead-result-desc-movie-' + item.id}
 								>
 									<figure class="image" aria-hidden="true">
 										<img src={item.posterUrl || item.imageUrl || notAvailable} alt="" />
 									</figure>
 									<div class="content">
 										<header class="result-header">
-											<h3 class="title {item.title ? '' : 'u-not-available'}">{item.title}</h3>
-										</header>
-										<p class="description">
-											<time class={item.date ? '' : 'u-not-available'} datetime={item.date}
-												>{formatYear(item.date)}</time
+											<h3
+												class="title {item.title ? '' : 'u-not-available'}"
+												id={'typeahead-result-title-movie-' + item.id}
 											>
+												{item.title}
+											</h3>
+										</header>
+										<p class="description" id={'typeahead-result-desc-movie-' + item.id}>
+											<time class={item.date ? '' : 'u-not-available'} datetime={item.date}>
+												{formatYear(item.date)}
+											</time>
 											<span aria-hidden="true"> · </span>
 											<span class="rating" aria-label={ratingAriaLabel(item.rating)}>
 												<i class="yellow star icon" aria-hidden="true"></i>
-												<span class={item.rating ? '' : 'u-not-available'}
-													>{formatRating(item.rating)}</span
-												>
+												<span class={item.rating ? '' : 'u-not-available'}>{formatRating(item.rating)}</span>
 											</span>
 										</p>
+										<span class="u-sr-only" id={'typeahead-result-type-movie-' + item.id}>
+											{titles.movies}
+										</span>
 									</div>
 								</a>
 							</li>
@@ -389,29 +290,36 @@
 								<li>
 									<a
 										class="result"
+										data-result-link="true"
 										href={withLocale(resultHref(item))}
 										onclick={closeResults}
-										data-result-link="true"
+										aria-labelledby={'typeahead-result-type-tv-' + item.id + ' typeahead-result-title-tv-' + item.id + ' typeahead-result-desc-tv-' + item.id}
 									>
 										<figure class="image" aria-hidden="true">
 											<img src={item.posterUrl || item.imageUrl || notAvailable} alt="" />
 										</figure>
 										<div class="content">
 											<header class="result-header">
-												<h3 class="title {item.title ? '' : 'u-not-available'}">{item.title}</h3>
-											</header>
-											<p class="description">
-												<time class={item.date ? '' : 'u-not-available'} datetime={item.date}
-													>{formatYear(item.date)}</time
+												<h3
+													class="title {item.title ? '' : 'u-not-available'}"
+													id={'typeahead-result-title-tv-' + item.id}
 												>
+													{item.title}
+												</h3>
+											</header>
+											<p class="description" id={'typeahead-result-desc-tv-' + item.id}>
+												<time class={item.date ? '' : 'u-not-available'} datetime={item.date}>
+													{formatYear(item.date)}
+												</time>
 												<span aria-hidden="true"> · </span>
 												<span class="rating" aria-label={ratingAriaLabel(item.rating)}>
 													<i class="yellow star icon" aria-hidden="true"></i>
-													<span class={item.rating ? '' : 'u-not-available'}
-														>{formatRating(item.rating)}</span
-													>
+													<span class={item.rating ? '' : 'u-not-available'}>{formatRating(item.rating)}</span>
 												</span>
 											</p>
+											<span class="u-sr-only" id={'typeahead-result-type-tv-' + item.id}>
+												{titles.tvShows}
+											</span>
 										</div>
 									</a>
 								</li>
@@ -423,6 +331,16 @@
 		{/if}
 	</form>
 </search>
+
+<!-- Global live region OUTSIDE the search component -->
+<div class="u-sr-only" aria-live="polite" aria-atomic="true">
+	{#if announceNoResults}
+		<p>{messages.searchNoResults}</p>
+	{/if}
+	{#if announceResultCount > 0}
+		<p>{messages.searchResultsCount.replace('{count}', String(announceResultCount))}</p>
+	{/if}
+</div>
 
 <style lang="scss">
 	@use '../../css/variables';
@@ -503,6 +421,18 @@
 				font-weight: 500;
 				width: 100%;
 				border-radius: 0;
+
+				&.ui.label.blue {
+					background-color: var(--mediatype-label-blue);
+					border-color: var(--mediatype-label-blue);
+					color: white;
+				}
+
+				&.ui.label.teal {
+					background-color: var(--mediatype-label-teal);
+					border-color: var(--mediatype-label-teal);
+					color: white;
+				}
 			}
 
 			ul.results {
@@ -581,7 +511,7 @@
 
 			.description {
 				line-height: 1.2;
-				color: #999;
+				color: var(--color-text-muted);
 				font-size: 1em;
 			}
 		}
