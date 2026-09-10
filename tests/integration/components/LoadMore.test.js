@@ -79,4 +79,4 @@ describe('LoadMore', () => {
 	});
 });
 
-// TODO: Click-event testing with JSDOM is limited - test user interactions (click on "Load More" button) in Playwright acceptance tests
+// NOTE: Click-event testing with JSDOM is limited - test user interactions (click on "Load More" button) in Playwright tests/acceptance/loadmore

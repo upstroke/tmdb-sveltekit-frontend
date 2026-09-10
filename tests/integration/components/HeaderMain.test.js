@@ -188,7 +188,6 @@ describe('HeaderMain', () => {
 	// Note: children slot is not tested in detail (Svelte 5 snippet complexity).
 	// Integration tests or E2E tests verify the correct rendering of TypeHeadSearch
 	// and other child components in the HeaderMain context.
-	// See: tests/integration/header-with-children.test.js (TODO)
 	it('accepts children slot without errors', () => {
 		const navItems = createNavItems();
 		const children = () => 'Test Content';
