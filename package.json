@@ -27,6 +27,7 @@
 		"test:all": "npm run test:unit && npm run test:components && npm run test:integration && npm run test:acceptance"
 	},
 	"devDependencies": {
+		"@axe-core/playwright": "^4.13.0",
 		"@eslint/js": "^10.0.1",
 		"@playwright/test": "^1.62.1",
 		"@sveltejs/adapter-auto": "^7.0.1",
