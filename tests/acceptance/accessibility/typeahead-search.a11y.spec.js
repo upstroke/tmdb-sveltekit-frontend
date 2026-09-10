@@ -58,7 +58,7 @@ test.describe('Accessibility - Typeahead Search', () => {
 
       await page.keyboard.press('Escape');
 
-      await expect(resultsContainer).toBeHidden();
+			await resultsContainer.waitFor({ state: 'hidden', timeout: 2000 });
       await expect(searchInput).toBeFocused();
 
       await checkA11y(page);
