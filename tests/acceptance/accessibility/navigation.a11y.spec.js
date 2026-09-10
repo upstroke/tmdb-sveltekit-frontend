@@ -20,14 +20,14 @@ const mobile = devices['iPhone 13'];
 test.describe('Accessibility - Desktop Homepage', () => {
   // A11Y-001: Desktop homepage initial load accessibility
   test('Desktop homepage initial load has no automatically detected WCAG A/AA violations', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/?locale=en-US');
     await page.waitForLoadState('networkidle');
     await checkA11y(page);
   });
 
   // A11Y-002: Desktop homepage after load more accessibility
   test('Desktop homepage after load more has no automatically detected WCAG A/AA violations', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/?locale=en-US');
     await page.waitForLoadState('networkidle');
     
     // Click Load More button if available
@@ -52,45 +52,45 @@ test.describe('Accessibility - Mobile Navigation', () => {
 
   // A11Y-003: Mobile homepage with closed burger menu accessibility
   test('Mobile homepage with closed burger menu has no automatically detected WCAG A/AA violations', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/?locale=en-US');
     await page.waitForLoadState('networkidle');
     
-    // Ensure burger menu is closed
-    const burgerButton = page.locator('button[aria-label="Toggle menu"], button[aria-label="Menu"], .burger-menu, .mobile-menu-toggle').first();
+    // Verify burger menu is closed
+    const burgerButton = page.getByRole('button', { name: 'Open or close navigation' });
     await expect(burgerButton).toBeVisible();
+    await expect(burgerButton).toHaveAttribute('aria-expanded', 'false');
     
     await checkA11y(page);
   });
 
   // A11Y-004: Mobile homepage with open burger menu accessibility
   test('Mobile homepage with open burger menu has no automatically detected WCAG A/AA violations', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/?locale=en-US');
     await page.waitForLoadState('networkidle');
     
     // Open mobile burger menu
-    const burgerButton = page.locator('button[aria-label="Toggle menu"], button[aria-label="Menu"], .burger-menu, .mobile-menu-toggle').first();
+    const burgerButton = page.getByRole('button', { name: 'Open or close navigation' });
     await burgerButton.click();
     await page.waitForTimeout(500); // Wait for menu animation
     
     // Verify menu is open
-    const mobileMenu = page.locator('.mobile-menu, nav[aria-label="Mobile navigation"], .nav-mobile').first();
-    await expect(mobileMenu).toBeVisible();
+    await expect(burgerButton).toHaveAttribute('aria-expanded', 'true');
     
     await checkA11y(page);
   });
 
   // A11Y-005: Mobile navigation to movies page accessibility
   test('Mobile navigation to movies page has no automatically detected WCAG A/AA violations', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/?locale=en-US');
     await page.waitForLoadState('networkidle');
     
     // Open mobile burger menu
-    const burgerButton = page.locator('button[aria-label="Toggle menu"], button[aria-label="Menu"], .burger-menu, .mobile-menu-toggle').first();
+    const burgerButton = page.getByRole('button', { name: 'Open or close navigation' });
     await burgerButton.click();
     await page.waitForTimeout(500);
     
     // Navigate to Movies page via mobile menu
-    const moviesLink = page.locator('a[href="/movies"], a:has-text("Movies"), a:has-text("Filme")').first();
+    const moviesLink = page.getByRole('link', { name: 'Movies' });
     await moviesLink.click();
     await page.waitForLoadState('networkidle');
     await page.waitForSelector('.media-card, [class*="card"]');
