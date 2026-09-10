@@ -46,119 +46,60 @@
 	});
 
 	function formatRating(value) { return Number(value ?? 0).toFixed(1); }
-
 	function formatYear(value) {
 		if (!value) return fallbacks.dateFallback;
 		const date = new Date(value);
 		if (Number.isNaN(date.getTime())) return fallbacks.dateFallback;
 		return String(date.getFullYear());
 	}
-
 	function ratingAriaLabel(value) { return `${texts.rating}: ${formatRating(value)} ${formats.outOfTen}`; }
-
 	function withLocale(href) {
 		if (!href) return href;
 		const url = new URL(href, page.url.origin);
 		url.searchParams.set('locale', activeLocale);
 		return `${url.pathname}${url.search}${url.hash}`;
 	}
-
 	function resultHref(item) {
 		if (item.mediaType === 'movie') return resolve('/movies/[id]', { id: String(item.id) });
 		return resolve('/tv-shows/[id]', { id: String(item.id) });
 	}
-
-	function clearAnnouncement() {
-		clearTimeout(announcementTimer);
-		announcement = '';
-	}
-
+	function clearAnnouncement() { clearTimeout(announcementTimer); announcement = ''; }
 	function scheduleAnnouncement(message) {
 		clearTimeout(announcementTimer);
 		announcement = '';
 		if (!message) return;
-		announcementTimer = setTimeout(() => {
-			requestAnimationFrame(() => { announcement = message; });
-		}, 500);
+		announcementTimer = setTimeout(() => { requestAnimationFrame(() => { announcement = message; }); }, 500);
 	}
-
 	function resetResults() {
-		clearTimeout(loadingTimer);
-		clearAnnouncement();
-		showLoading = false;
-		loading = false;
-		resultsClosed = false;
-		selectedResultKey = null;
-		movies = [];
-		tvShows = [];
-		error = null;
+		clearTimeout(loadingTimer); clearAnnouncement(); showLoading = false; loading = false; resultsClosed = false; selectedResultKey = null; movies = []; tvShows = []; error = null;
 	}
-
 	function handleInput() {
-		clearTimeout(debounceTimer);
-		clearAnnouncement();
-		selectedResultKey = null;
+		clearTimeout(debounceTimer); clearAnnouncement(); selectedResultKey = null;
 		const term = query.trim();
-		if (term.length < 4) {
-			resetResults();
-			return;
-		}
+		if (term.length < 4) { resetResults(); return; }
 		resultsClosed = false;
 		debounceTimer = setTimeout(() => search(term), 300);
 	}
-
 	async function search(term) {
-		controller?.abort();
-		clearTimeout(loadingTimer);
-		clearAnnouncement();
-		selectedResultKey = null;
-		showLoading = false;
-		controller = new AbortController();
-		loading = true;
-		error = null;
+		controller?.abort(); clearTimeout(loadingTimer); clearAnnouncement(); selectedResultKey = null; showLoading = false; controller = new AbortController(); loading = true; error = null;
 		loadingTimer = setTimeout(() => { if (loading) showLoading = true; }, 300);
 		try {
 			const response = await fetch(`/search?q=${encodeURIComponent(term)}&locale=${encodeURIComponent(activeLocale)}`, { signal: controller.signal });
 			if (!response.ok) { error = messages.searchError; scheduleAnnouncement(messages.searchError); return; }
-			const data = await response.json();
-			movies = deduplicateById(data.movies ?? []);
-			tvShows = deduplicateById(data.tvShows ?? []);
+			const data = await response.json(); movies = deduplicateById(data.movies ?? []); tvShows = deduplicateById(data.tvShows ?? []);
 			const resultCount = movies.length + tvShows.length;
 			if (resultCount > 0) scheduleAnnouncement(messages.searchResultsCount.replace('{count}', String(resultCount)));
 			else if (term.length >= 4) scheduleAnnouncement(messages.searchNoResults);
 		} catch (exception) {
 			if (exception.name === 'AbortError') return;
-			error = exception instanceof Error ? exception.message : messages.searchError;
-			scheduleAnnouncement(messages.searchError);
-		} finally {
-			clearTimeout(loadingTimer);
-			showLoading = false;
-			loading = false;
-		}
+			error = exception instanceof Error ? exception.message : messages.searchError; scheduleAnnouncement(messages.searchError);
+		} finally { clearTimeout(loadingTimer); showLoading = false; loading = false; }
 	}
-
-	function handleKeydown(event) {
-		if (event.key === 'Escape') {
-			event.preventDefault();
-			closeResults({ restoreFocus: true });
-		}
-	}
-
+	function handleKeydown(event) { if (event.key === 'Escape') { event.preventDefault(); closeResults({ restoreFocus: true }); } }
 	function selectResult(resultKey) { selectedResultKey = resultKey; closeResults(); }
-
-	function closeResults({ restoreFocus = false } = {}) {
-		clearAnnouncement();
-		resultsClosed = true;
-		if (restoreFocus) inputElement?.focus();
-	}
-
-	function handleWindowClick(event) {
-		if (!event.target.closest('#typeahead-search')) closeResults();
-	}
-
-	function showResults() {
-		if (query.trim().length >= 4 && (hasResults || loading || error)) resultsClosed = false;
-	}
+	function closeResults({ restoreFocus = false } = {}) { clearAnnouncement(); resultsClosed = true; if (restoreFocus) inputElement?.focus(); }
+	function handleWindowClick(event) { if (!event.target.closest('#typeahead-search')) closeResults(); }
+	function showResults() { if (query.trim().length >= 4 && (hasResults || loading || error)) resultsClosed = false; }
 </script>
 
 <svelte:window onclick={handleWindowClick} onkeydown={handleKeydown} />
@@ -179,7 +120,7 @@
 			{/if}
 		</div>
 		{#if hasResults}
-			<div id={resultsId} role="listbox" aria-label={messages.searchResults} class:results-closed={resultsClosed} style:display={resultsClosed ? 'none' : undefined}>
+			<div id={resultsId} role="listbox" aria-label={messages.searchResults} class:results-closed={resultsClosed} style:display={resultsClosed ? 'none' : ''}>
 				{#if movies.length > 0}
 					<div role="group" aria-label={titles.movies}>
 						{#each movies as item (item.id)}
