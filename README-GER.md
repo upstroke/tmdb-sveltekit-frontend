@@ -12,7 +12,7 @@ Im Fokus stehen:
 
 - übersichtliche Darstellung von Filmen und Serien
 - wiederverwendbare Svelte-Komponenten
-- robuste Behandlung unvollst ändiger API-Daten
+- robuste Behandlung unvollständiger API-Daten
 - saubere Trennung von UI, Hilfslogik und Service-Schicht
 - testbare Architektur mit Acceptance-, Komponenten-, Integrations- und Unit-Tests
 - Barrierefreiheit nach WCAG 2.2 AA durch automatisierte Tests
@@ -25,25 +25,25 @@ Im Fokus stehen:
 - Typeahead-Suche für Filme und Serien
 - lokalisierte Oberfläche
 - Sprachwechsel über den globalen Header
-- erneute Typeahead-Suche in der neu gew ählten Sprache bei aktivem Suchbegriff
+- erneute Typeahead-Suche in der neu gewählten Sprache bei aktivem Suchbegriff
 - Suchtreffer verwenden beim Klick die aktuell aktive Locale, auch wenn die Treffer vor dem Sprachwechsel geladen wurden
 - Weitergabe der Locale über interne Navigation und serverseitige Datenabfragen
 - Wiederherstellung der zuletzt besuchten Seite in paginierten Listen
 - Duplikatbereinigung beim Nachladen von Daten
 - gemeinsame Fallback-Logik für fehlende Bilder und Texte
 - gemeinsamer Fehlerdialog für API- und Ladefehler
-- wiederverwendbare Komponenten für Karten, Suche, Pagination und Fehlerzust ände
+- wiederverwendbare Komponenten für Karten, Suche, Pagination und Fehlerzustände
 
 ## Barrierefreiheit (Accessibility)
 
-Das Projekt umfasst automatisierte Accessibility-Tests zur Sicherstellung der WCAG 2.2 AA-Konformit ät:
+Das Projekt umfasst automatisierte Accessibility-Tests zur Sicherstellung der WCAG 2.2 AA-Konformität:
 
 - **Accessibility-Checks** mit Playwright + axe-core (`@axe-core/playwright`) zur automatisierten Erkennung von WCAG A/AA-Verletzungen
 - **Test-Dateien:** `tests/acceptance/accessibility/*.a11y.spec.js`
-- **Testpl äne:** `tests/acceptance/accessibility/*-testplan.md`
+- **Testpläne:** `tests/acceptance/accessibility/*-testplan.md`
 - **Tags:** `@accessibility`, `@a11y`
 
-### Accessibility-Tests ausf ühren
+### Accessibility-Tests ausführen
 
 ```bash
 # Alle Accessibility-Tests
@@ -68,7 +68,7 @@ Die Übersetzungskataloge liegen getrennt nach UI-Texten und Bewertungsformaten 
 
 Die Locale-Logik befindet sich in:
 
-- `src/lib/i18n/helpers.js` für unterst ützte Locales und Fallbacks
+- `src/lib/i18n/helpers.js` für unterstützte Locales und Fallbacks
 - `src/lib/stores/locale.js` für den aktiven Sprachzustand
 - `src/lib/stores/i18n.js` für den Zugriff auf die geladenen Übersetzungen
 
@@ -80,18 +80,18 @@ Die angezeigten Streaming-Anbieter und Watch-Links werden über die TMDB-API ber
 
 ## Testing-Hinweis
 
-F ür Svelte-5-Komponententests unter Vitest wird das offizielle Vite-Plugin `svelteTesting()` aus `@testing-library/svelte/vite` verwendet. Es ergänzt die Testumgebung für DOM-basierte Svelte-Tests automatisch um Cleanup und die Browser-Resolver-Condition, damit UI-Tests unter `jsdom` korrekt die Browser-Variante der Svelte-Module laden.
+Für Svelte-5-Komponententests unter Vitest wird das offizielle Vite-Plugin `svelteTesting()` aus `@testing-library/svelte/vite` verwendet. Es ergänzt die Testumgebung für DOM-basierte Svelte-Tests automatisch um Cleanup und die Browser-Resolver-Condition, damit UI-Tests unter `jsdom` korrekt die Browser-Variante der Svelte-Module laden.
 
-## Tech Stack
+## Tech-Stack
 
 - SvelteKit 2.63
 - Svelte 5
 - Vite
 - Fomantic UI / Semantic UI Klassen
-- Playwright f ür Acceptance-Tests (inklusive Accessibility)
-- Vitest f ür Komponenten-, Integrations- und Unit-Tests
-- Prettier und ESLint für Formatierung und Codequalit ät
-- Sass f ür Styles
+- Playwright für Acceptance-Tests (inklusive Accessibility)
+- Vitest für Komponenten-, Integrations- und Unit-Tests
+- Prettier und ESLint für Formatierung und Codequalität
+- Sass für Styles
 
 ## Voraussetzungen
 
@@ -105,16 +105,16 @@ Die benötigten Umgebungsvariablen sind in `.env.example` beschrieben.
 Wichtig sind insbesondere:
 
 - `TMDB_API_KEY`  
-  API-Schl üssel für den Zugriff auf die TMDB-API
+  API-Schlüssel für den Zugriff auf die TMDB-API
 
 - `VITE_DEFAULT_LOCALE`  
-  Locale f ür die Datumsformatierung
+  Locale für die Datumsformatierung
 
-*Nachdem der API Key erg änzt wurde - die Datei in .env umbenennen.*
+*Nachdem der API Key ergänzt wurde - die Datei in .env umbenennen.*
 
 ## TMDB API Key
 
-Einen eigenen API-Schl üssel kannst du in deinem TMDB-Konto anlegen:
+Einen eigenen API-Schlüssel kannst du in deinem TMDB-Konto anlegen:
 
 - [TMDB API Settings](https://www.themoviedb.org/settings/api)
 - [TMDB Getting Started](https://developer.themoviedb.org/docs/getting-started)
@@ -126,13 +126,13 @@ npm install
 npm run dev
 ```
 
-Alternativ können die wichtigsten Projektbefehle über `just` ausgef ührt werden. Dafür muss `just` global installiert sein, zum Beispiel mit Homebrew:
+Alternativ können die wichtigsten Projektbefehle über `just` ausgeführt werden. Dafür muss `just` global installiert sein, zum Beispiel mit Homebrew:
 
 ```bash
 brew install just
 ```
 
-Das Projekt enth ält dafür ein `justfile` im Projektstamm. Beispiele:
+Das Projekt enthält dafür ein `justfile` im Projektstamm. Beispiele:
 
 ```bash
 just dev
@@ -143,7 +143,7 @@ just test-vitest
 just test-e2e
 ```
 
-Die wichtigsten npm-Skripte für Formatierung und Codequalit ät sind:
+Die wichtigsten npm-Skripte für Formatierung und Codequalität sind:
 
 ```bash
 npm run format
@@ -159,7 +159,7 @@ npm run lint:fix
 - `npm run lint` kombiniert den Prettier-Check mit ESLint.
 - `npm run lint:fix` formatiert den Quellcode und korrigiert mögliche ESLint-Probleme automatisch.
 
-Die `just`-Befehle sind Abk ürzungen für die npm-Skripte aus `package.json`. Die eigentliche Befehlsdefinition bleibt daher in `package.json`; bei neuen oder ge änderten npm-Skripten muss das `justfile` geprüft und gegebenenfalls ergänzt oder angepasst werden.
+Die `just`-Befehle sind Abkürzungen für die npm-Skripte aus `package.json`. Die eigentliche Befehlsdefinition bleibt daher in `package.json`; bei neuen oder geänderten npm-Skripten muss das `justfile` geprüft und gegebenenfalls ergänzt oder angepasst werden.
 
 ## Produktionsbuild
 
@@ -209,22 +209,22 @@ Diese Datei beschreibt das pragmatische Vorgehen für Tests
 
 ## Bedeutung der wichtigsten Ordner
 
-- `src/routes/` enth ält Seiten und serverseitige Routen
-- `src/lib/components/` enth ält wiederverwendbare UI-Komponenten
-- `src/lib/i18n/` enth ält Übersetzungskataloge und Locale-Hilfslogik
-- `src/lib/services/` enth ält Service-Logik für externe Datenquellen wie TMDB
-- `src/lib/stores/` enth ält globale Zust ände wie Locale und Übersetzungen
-- `src/lib/utils/` enth ält Hilfsfunktionen für Formatierung, Paging und Duplikatbehandlung
-- `static/` enth ält statische Assets
-- `tests/` enth ält alle automatisierten Tests nach Testebene strukturiert
-- `tests/acceptance/accessibility/` enth ält Accessibility-Tests mit axe-core
-- `coverage/` entsteht bei Bedarf durch Coverage-L äufe mit Vitest
-- `playwright-report/` enth ält die HTML-Ausgabe der Playwright-Tests
-- `test-results/` enth ält Laufzeit-Artefakte und Fehlerausgaben aus Playwright
+- `src/routes/` enthält Seiten und serverseitige Routen
+- `src/lib/components/` enthält wiederverwendbare UI-Komponenten
+- `src/lib/i18n/` enthält Übersetzungskataloge und Locale-Hilfslogik
+- `src/lib/services/` enthält Service-Logik für externe Datenquellen wie TMDB
+- `src/lib/stores/` enthält globale Zustände wie Locale und Übersetzungen
+- `src/lib/utils/` enthält Hilfsfunktionen für Formatierung, Paging und Duplikatbehandlung
+- `static/` enthält statische Assets
+- `tests/` enthält alle automatisierten Tests nach Testebene strukturiert
+- `tests/acceptance/accessibility/` enthält Accessibility-Tests mit axe-core
+- `coverage/` entsteht bei Bedarf durch Coverage-Läufe mit Vitest
+- `playwright-report/` enthält die HTML-Ausgabe der Playwright-Tests
+- `test-results/` enthält Laufzeit-Artefakte und Fehlerausgaben aus Playwright
 
 ## Seiten und Routen
 
-- Die Startseite zeigt Trending-Inhalte und unterst ützt das Nachladen weiterer Inhalte.
+- Die Startseite zeigt Trending-Inhalte und unterstützt das Nachladen weiterer Inhalte.
 - Die Filmseite listet Film-Inhalte mit Pagination und Restore-Logik.
 - Die Serienseite listet Serien-Inhalte mit derselben Pagination-Logik.
 - Die Detailseiten zeigen Informationen zu Filmen und Serien inklusive Cast, Genres, Laufzeit und Produktionsfirmen.
@@ -234,13 +234,13 @@ Diese Datei beschreibt das pragmatische Vorgehen für Tests
 ## Zentrale Komponenten
 
 - `HeaderMain` rendert die globale Navigation, den mobilen Menüschalter und den Sprachumschalter.
-- `LanguageSwitcher` ändert die aktive Locale und l ädt die aktuelle Route mit der neuen Sprache neu.
+- `LanguageSwitcher` ändert die aktive Locale und lädt die aktuelle Route mit der neuen Sprache neu.
 - `FooterMain` stellt den globalen Footer als eigene Layout-Komponente bereit.
 - `DetailsHero` kapselt den gemeinsamen Hero-/Poster-Bereich der Film- und Serien-Detailseiten.
 - `CardDefault` rendert eine Standard-Medienkarte.
 - `CardFeatured` rendert eine hervorgehobene Medienkarte.
 - `DialogMessage` zeigt Fehler in konsistenter Form an.
-- `LoadMore` l ädt weitere Eintr äge in paginierten Listen.
+- `LoadMore` l ädt weitere Einträge in paginierten Listen.
 - `TypeHeadSearch` stellt die Live-Suche bereit, lokalisiert Suchergebnisse und startet die Suche nach einem Sprachwechsel erneut.
 
 Globale Styles werden über `src/css/app.scss` geladen. Diese Datei bindet Fomantic UI, globale Sass-Variablen und anwendungsweite Styles ein; komponentenspezifische Styles bleiben in den jeweiligen `.svelte`-Komponenten.
@@ -249,32 +249,32 @@ Fallback-Bilder und Platzhaltertexte werden innerhalb der Komponenten zentral be
 
 ## Wichtige Hilfsfunktionen
 
-- `restorePagedList` stellt den Stand paginierter Listen aus dem Session Storage wieder her
+- `restorePagedList` stellt den Stand paginierter Listen aus dem Session-Storage wieder her
 - `getStoredPage` liest die zuletzt gespeicherte Seitenzahl einer Liste
-- `deduplicateMedia` entfernt doppelte Medieneintr äge anhand von `mediaType` und `id`
-- `getMediaKey` erzeugt stabile Schl üssel für Medieneintr äge
+- `deduplicateMedia` entfernt doppelte Medieneinträge anhand von `mediaType` und `id`
+- `getMediaKey` erzeugt stabile Schlüssel für Medieneinträge
 - `deduplicateById` entfernt doppelte Objekte anhand ihrer ID
 - `formatDate` formatiert Datumswerte anhand der konfigurierten Locale
-- `resolveLocale` validiert Locales und f ällt bei unbekannten Werten auf die Standardsprache zur ück
+- `resolveLocale` validiert Locales und fällt bei unbekannten Werten auf die Standardsprache zur ück
 
 ## Fehlerbehandlung
 
 - Fehlende API-Daten werden über die gemeinsame `DialogMessage`-Komponente sichtbar gemacht.
 - Fehlende Bilder fallen auf ein gemeinsames Platzhalter-Asset zur ück.
 - Fehlende Textwerte werden in Komponenten und Detailseiten normalisiert.
-- Listen- und Detailseiten bleiben nach Möglichkeit auch bei unvollst ändigen API-Antworten benutzbar.
+- Listen- und Detailseiten bleiben nach Möglichkeit auch bei unvollständigen API-Antworten benutzbar.
 
 ## Pagination und Restore-Verhalten
 
 - Der Pagination-Status wird im Session Storage gespeichert.
 - Beim Zurückkehren auf eine Liste wird die zuletzt besuchte Seite wiederhergestellt.
-- Die Restore-Logik l ädt bei Bedarf weitere Seiten nach, bis der gespeicherte Zustand erreicht ist.
-- Doppelte Medieneintr äge werden vor dem Rendern gefiltert.
-- Nach dem Nachladen wird zur ersten neu eingef ügten Position gescrollt.
+- Die Restore-Logik lädt bei Bedarf weitere Seiten nach, bis der gespeicherte Zustand erreicht ist.
+- Doppelte Medieneinträge werden vor dem Rendern gefiltert.
+- Nach dem Nachladen wird zur ersten neu eingefügten Position gescrollt.
 
 ## Mobiles Menü
 
-`HeaderMain` verwendet auf mobilen Ansichten einen Button als Menüschalter. Ein `pointerdown`-Handler auf dem Window prüft, ob der Klick außerhalb des Headers stattfindet, und schließł ein ge öffnetes Menü dann automatisch.
+`HeaderMain` verwendet auf mobilen Ansichten einen Button als Menüschalter. Ein `pointerdown`-Handler auf dem Window prüft, ob der Klick außerhalb des Headers stattfindet, und schließt ein geöffnetes Menü dann automatisch.
 
 Klicks auf Burger und Navigation bleiben innerhalb des Headers und werden deshalb nicht als Außenklick behandelt.
 
@@ -288,9 +288,9 @@ npm run build
 npm test
 ```
 
-`npm run lint` prüft Prettier und ESLint für den gesamten `src`-Ordner. Die Regel `svelte/no-navigation-without-resolve` ist deaktiviert, weil das Projekt interne und externe URLs abh ängig vom jeweiligen Ziel unterschiedlich behandelt.
+`npm run lint` prüft Prettier und ESLint für den gesamten `src`-Ordner. Die Regel `svelte/no-navigation-without-resolve` ist deaktiviert, weil das Projekt interne und externe URLs abhängig vom jeweiligen Ziel unterschiedlich behandelt.
 
-Bei Änderungen an Übersetzungen sollten alle unterst ützten Locale-Kataloge auf identische Schl üssel geprüft werden.
+Bei Änderungen an Übersetzungen sollten alle unterstützten Locale-Kataloge auf identische Schlüssel geprüft werden.
 
 ## Teststrategie
 
@@ -299,10 +299,10 @@ Die Teststruktur orientiert sich an Testarten und fachlicher Ebene, nicht an tec
 ### Testebenen
 
 - `tests/acceptance/`  
-  Acceptance-Tests (end2end) mit Playwright für fachliche Nutzerfl üsse
+  Acceptance-Tests (end2end) mit Playwright für fachliche Nutzerflüsse
 
 - `tests/acceptance/accessibility/`  
-  Accessibility-Tests mit Playwright + axe-core für WCAG A/AA-Konformit ät
+  Accessibility-Tests mit Playwright + axe-core für WCAG A/AA-Konformität
 
 - `tests/integration/components/`  
   Komponententests mit Vitest für isolierte Svelte-Komponenten
@@ -319,7 +319,7 @@ Die Teststruktur orientiert sich an Testarten und fachlicher Ebene, nicht an tec
   feste Testdaten, die in mehreren Tests wiederverwendet werden können
 
 - `tests/mocks/`  
-  Mock-Funktionen oder Ersatzverhalten für externe Abh ängigkeiten
+  Mock-Funktionen oder Ersatzverhalten für externe Abhängigkeiten
 
 - `tests/setup/`  
   gemeinsame Test-Helfer und projektweite Testvorbereitung
@@ -333,5 +333,5 @@ Die Testabdeckung folgt möglichst nah der Praxis im agilen Entwicklungsalltag:
 1. Eine User Story oder ein Use Case beschreibt das gewünschte Verhalten.
 2. Acceptance-Tests prüfen den vollständigen Nutzerfluss.
 3. Komponenten- und Integrationstests prüfen das Zusammenspiel der beteiligten Teile.
-4. Unit-Tests sichern reine Hilfsfunktionen und Randf älle ab.
-5. Accessibility-Tests prüfen die WCAG 2.2 AA-Konformit ät für Seiten und Interaktionen.
+4. Unit-Tests sichern reine Hilfsfunktionen und Randfälle ab.
+5. Accessibility-Tests prüfen die WCAG 2.2 AA-Konformität für Seiten und Interaktionen.
