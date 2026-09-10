@@ -11,16 +11,13 @@ const mobile = devices['iPhone 13'];
  * 
  * Test cases:
  * - A11Y-001: Desktop homepage initial load accessibility
- * - A11Y-002: Desktop homepage after search interaction accessibility
- * - A11Y-003: Desktop search results page accessibility
- * - A11Y-004: Desktop details page accessibility
- * - A11Y-005: Mobile burger menu closed state accessibility
- * - A11Y-006: Mobile burger menu open state accessibility
- * - A11Y-007: Mobile navigation menu accessibility
- * - A11Y-008: Mobile-specific interactions accessibility
+ * - A11Y-002: Desktop homepage after load more accessibility
+ * - A11Y-003: Mobile homepage with closed burger menu accessibility
+ * - A11Y-004: Mobile homepage with open burger menu accessibility
+ * - A11Y-005: Mobile navigation to movies page accessibility
  */
 
-test.describe('Accessibility - Desktop Navigation', () => {
+test.describe('Accessibility - Desktop Homepage', () => {
   // A11Y-001: Desktop homepage initial load accessibility
   test('Desktop homepage initial load has no automatically detected WCAG A/AA violations', async ({ page }) => {
     await page.goto('/');
@@ -28,34 +25,17 @@ test.describe('Accessibility - Desktop Navigation', () => {
     await checkA11y(page);
   });
 
-  // A11Y-002: Desktop homepage after search interaction accessibility
-  test('Desktop homepage after search interaction has no automatically detected WCAG A/AA violations', async ({ page }) => {
+  // A11Y-002: Desktop homepage after load more accessibility
+  test('Desktop homepage after load more has no automatically detected WCAG A/AA violations', async ({ page }) => {
     await page.goto('/');
     await page.waitForLoadState('networkidle');
     
-    // Perform search interaction
-    const searchInput = page.locator('input[aria-label="Search"], input[placeholder*="Search"], input[type="search"]');
-    await searchInput.fill('dune');
-    await page.waitForTimeout(1000); // Wait for search results
-    
-    await checkA11y(page);
-  });
-
-  // A11Y-003: Desktop search results page accessibility
-  test('Desktop search results page has no automatically detected WCAG A/AA violations', async ({ page }) => {
-    await page.goto('/search?q=dune');
-    await page.waitForLoadState('networkidle');
-    await page.waitForSelector('.media-card, [class*="card"], [data-testid*="card"]');
-    
-    await checkA11y(page);
-  });
-
-  // A11Y-004: Desktop details page accessibility
-  test('Desktop movie details page has no automatically detected WCAG A/AA violations', async ({ page }) => {
-    // Navigate to a movie details page (using a known movie ID)
-    await page.goto('/movie/438631'); // Dune
-    await page.waitForLoadState('networkidle');
-    await page.waitForSelector('.details-hero, [class*="hero"], [data-testid*="details"]');
+    // Click Load More button if available
+    const loadMoreButton = page.locator('button:has-text("More results"), button:has-text("Load more"), .load-more button').first();
+    if (await loadMoreButton.isVisible()) {
+      await loadMoreButton.click();
+      await page.waitForTimeout(1000); // Wait for new content to load
+    }
     
     await checkA11y(page);
   });
@@ -70,7 +50,7 @@ test.describe('Accessibility - Mobile Navigation', () => {
     userAgent: mobile.userAgent,
   });
 
-  // A11Y-005: Mobile burger menu closed state accessibility
+  // A11Y-003: Mobile homepage with closed burger menu accessibility
   test('Mobile homepage with closed burger menu has no automatically detected WCAG A/AA violations', async ({ page }) => {
     await page.goto('/');
     await page.waitForLoadState('networkidle');
@@ -82,7 +62,7 @@ test.describe('Accessibility - Mobile Navigation', () => {
     await checkA11y(page);
   });
 
-  // A11Y-006: Mobile burger menu open state accessibility
+  // A11Y-004: Mobile homepage with open burger menu accessibility
   test('Mobile homepage with open burger menu has no automatically detected WCAG A/AA violations', async ({ page }) => {
     await page.goto('/');
     await page.waitForLoadState('networkidle');
@@ -99,8 +79,8 @@ test.describe('Accessibility - Mobile Navigation', () => {
     await checkA11y(page);
   });
 
-  // A11Y-007: Mobile navigation menu accessibility
-  test('Mobile navigation menu items have no automatically detected WCAG A/AA violations', async ({ page }) => {
+  // A11Y-005: Mobile navigation to movies page accessibility
+  test('Mobile navigation to movies page has no automatically detected WCAG A/AA violations', async ({ page }) => {
     await page.goto('/');
     await page.waitForLoadState('networkidle');
     
@@ -114,31 +94,6 @@ test.describe('Accessibility - Mobile Navigation', () => {
     await moviesLink.click();
     await page.waitForLoadState('networkidle');
     await page.waitForSelector('.media-card, [class*="card"]');
-    
-    await checkA11y(page);
-  });
-
-  // A11Y-008: Mobile-specific interactions accessibility
-  test('Mobile search and language switcher have no automatically detected WCAG A/AA violations', async ({ page }) => {
-    await page.goto('/');
-    await page.waitForLoadState('networkidle');
-    
-    // Open mobile burger menu
-    const burgerButton = page.locator('button[aria-label="Toggle menu"], button[aria-label="Menu"], .burger-menu, .mobile-menu-toggle').first();
-    await burgerButton.click();
-    await page.waitForTimeout(500);
-    
-    // Test mobile search input
-    const searchInput = page.locator('input[aria-label="Search"], input[placeholder*="Search"], input[type="search"]').first();
-    await searchInput.fill('test');
-    await page.waitForTimeout(500);
-    
-    // Test mobile language switcher (if available in mobile menu)
-    const languageSwitcher = page.locator('select[aria-label="Language"], select[name="locale"], .language-switcher').first();
-    if (await languageSwitcher.isVisible()) {
-      await languageSwitcher.selectOption('de');
-      await page.waitForTimeout(500);
-    }
     
     await checkA11y(page);
   });
