@@ -52,7 +52,7 @@
 		margin-top: 2rem;
 
 		.ui.primary.button {
-			background: var(--mediatype-label-blue);
+			background-color: var(--mediatype-label-blue);
 		}
 
 		.button.loading {

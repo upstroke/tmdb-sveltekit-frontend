@@ -45,9 +45,13 @@
 	}
 
 	.ui.label.blue {
-	background: var(--mediatype-label-blue);
+		background-color: var(--mediatype-label-blue)!important;
+		border-color: var(--mediatype-label-blue)!important;
+		color: white;
 	}
 	.ui.label.teal {
-		background: var(--mediatype-label-teal);
+		background-color: var(--mediatype-label-teal)!important;
+		border-color: var(--mediatype-label-teal)!important;
+		color: white;
 	}
 </style>
