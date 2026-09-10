@@ -16,8 +16,7 @@
 	let showLoading = $state(false);
 	let resultsClosed = $state(false);
 	let error = $state(null);
-	let announceNoResults = $state(false);
-	let announceResultCount = $state(0);
+	let announcement = $state('');
 
 	let hasResults = $derived(movies.length > 0 || tvShows.length > 0);
 	let hasSearchTerm = $derived(query.trim().length >= 4);
@@ -25,13 +24,16 @@
 		!resultsClosed && (showLoading || !!error || (hasSearchTerm && !hasResults))
 	);
 	let totalResults = $derived(movies.length + tvShows.length);
+	let resultsVisible = $derived(!resultsClosed && (hasResults || loading || !!error));
 
 	let debounceTimer;
 	let loadingTimer;
+	let announcementTimer;
 	let controller;
 	let previousLocale = $state(null);
 
 	const searchHintId = 'typeahead-search-hint';
+	const resultsId = 'typeahead-search-results';
 
 	$effect(() => {
 		if (previousLocale == null) {
@@ -86,20 +88,36 @@
 		return resolve('/tv-shows/[id]', { id: String(item.id) });
 	}
 
+	function clearAnnouncement() {
+		clearTimeout(announcementTimer);
+		announcement = '';
+	}
+
+	function scheduleAnnouncement(message) {
+		clearTimeout(announcementTimer);
+		announcement = '';
+
+		if (!message) return;
+
+		announcementTimer = setTimeout(() => {
+			announcement = message;
+		}, 500);
+	}
+
 	function resetResults() {
 		clearTimeout(loadingTimer);
+		clearAnnouncement();
 		showLoading = false;
 		loading = false;
 		resultsClosed = false;
 		movies = [];
 		tvShows = [];
 		error = null;
-		announceNoResults = false;
-		announceResultCount = 0;
 	}
 
 	function handleInput() {
 		clearTimeout(debounceTimer);
+		clearAnnouncement();
 
 		const term = query.trim();
 		if (term.length < 4) {
@@ -108,33 +126,31 @@
 		}
 
 		resultsClosed = false;
-		announceNoResults = false;
-		announceResultCount = 0;
 		debounceTimer = setTimeout(() => search(term), 300);
 	}
 
 	async function search(term) {
 		controller?.abort();
 		clearTimeout(loadingTimer);
+		clearAnnouncement();
 		showLoading = false;
 		controller = new AbortController();
 
 		loading = true;
 		error = null;
-		announceNoResults = false;
-		announceResultCount = 0;
 		loadingTimer = setTimeout(() => {
 			if (loading) showLoading = true;
 		}, 300);
 
 		try {
 			const response = await fetch(
-				`/search?q=${encodeURIComponent(term)}&locale=${encodeURIComponent(activeLocale)}`,
+			`/search?q=${encodeURIComponent(term)}&locale=${encodeURIComponent(activeLocale)}`,
 				{ signal: controller.signal }
 			);
 
 			if (!response.ok) {
 				error = messages.searchError;
+				scheduleAnnouncement(messages.searchError);
 				return;
 			}
 
@@ -142,15 +158,18 @@
 			movies = deduplicateById(data.movies ?? []);
 			tvShows = deduplicateById(data.tvShows ?? []);
 
-			// Trigger announcements AFTER data is loaded
-			if (movies.length + tvShows.length > 0) {
-				announceResultCount = movies.length + tvShows.length;
-			} else if (hasSearchTerm && !hasResults) {
-				announceNoResults = true;
+			const resultCount = movies.length + tvShows.length;
+			if (resultCount > 0) {
+				scheduleAnnouncement(
+					messages.searchResultsCount.replace('{count}', String(resultCount))
+				);
+			} else if (term.length >= 4) {
+				scheduleAnnouncement(messages.searchNoResults);
 			}
 		} catch (exception) {
 			if (exception.name === 'AbortError') return;
 			error = exception instanceof Error ? exception.message : messages.searchError;
+			scheduleAnnouncement(messages.searchError);
 		} finally {
 			clearTimeout(loadingTimer);
 			showLoading = false;
@@ -165,8 +184,7 @@
 	}
 
 	function closeResults() {
-		announceNoResults = false;
-		announceResultCount = 0;
+		clearAnnouncement();
 		resultsClosed = true;
 	}
 
@@ -177,7 +195,7 @@
 	}
 
 	function showResults() {
-		if (query.trim().length >= 4 && (movies.length > 0 || tvShows.length > 0 || loading || error)) {
+		if (query.trim().length >= 4 && (hasResults || loading || error)) {
 			resultsClosed = false;
 		}
 	}
@@ -190,7 +208,11 @@
 		<label class="u-sr-only" for="typeahead-search-input">{texts.searchInput}</label>
 		<div class="input-wrapper">
 			<input
+				aria-autocomplete="list"
+				aria-controls={resultsId}
 				aria-describedby={searchHintId}
+				aria-expanded={resultsVisible && hasResults}
+				aria-haspopup="listbox"
 				autocomplete="off"
 				bind:value={query}
 				id="typeahead-search-input"
@@ -203,16 +225,14 @@
 
 			<i aria-hidden="true" class="search icon"></i>
 
-			<!-- Static hint only -->
 			<p class="u-sr-only" id={searchHintId}>{messages.searchHint}</p>
 
 			{#if hasStatusMessage}
-				<!-- Visible UI only (no aria-live here) -->
 				<div id="status-messages-layer">
 					<section id="status-messages" aria-hidden="true">
 						{#if error}
 							<div class="search-error-panel">
-								<p class="result result-error">{error === messages.searchError ? messages.searchError : error}</p>
+								<p class="result result-error">{error}</p>
 							</div>
 						{:else if loading}
 							<p class="result">{messages.searchLoading}</p>
@@ -226,8 +246,8 @@
 			{/if}
 		</div>
 
-		{#if !resultsClosed && hasResults}
-			<div id="typeahead-search-results" aria-label={messages.searchResults}>
+		{#if resultsVisible && hasResults}
+			<div id={resultsId} role="listbox" aria-label={messages.searchResults}>
 				<section class="category" aria-labelledby="typeahead-movies-heading">
 					<h2
 						id="typeahead-movies-heading"
@@ -237,7 +257,7 @@
 					</h2>
 					<ul class="results" aria-label={titles.movies}>
 						{#each movies as item (item.id)}
-							<li>
+							<li role="option">
 								<a
 									class="result"
 									data-result-link="true"
@@ -280,14 +300,14 @@
 				{#if tvShows.length > 0}
 					<section class="category" aria-labelledby="typeahead-tv-heading">
 						<h2
-							id="typeahead-tv-heading"
-							class="ui label blue {titles.tvShows ? '' : 'u-not-available'}"
+						id="typeahead-tv-heading"
+						class="ui label blue {titles.tvShows ? '' : 'u-not-available'}"
 						>
-							{titles.tvShows}
+						{titles.tvShows}
 						</h2>
 						<ul class="results" aria-label={titles.tvShows}>
 							{#each tvShows as item (item.id)}
-								<li>
+								<li role="option">
 									<a
 										class="result"
 										data-result-link="true"
@@ -332,14 +352,8 @@
 	</form>
 </search>
 
-<!-- Global live region OUTSIDE the search component -->
 <div class="u-sr-only" aria-live="polite" aria-atomic="true">
-	{#if announceNoResults}
-		<p>{messages.searchNoResults}</p>
-	{/if}
-	{#if announceResultCount > 0}
-		<p>{messages.searchResultsCount.replace('{count}', String(announceResultCount))}</p>
-	{/if}
+	{announcement}
 </div>
 
 <style lang="scss">
