@@ -3,10 +3,12 @@ import { test, expect } from '@playwright/test';
 import { checkA11y } from '../../setup/a11y.js';
 
 const RESULT_LINK_SELECTOR = 'a.result[data-result-link="true"]';
+const SEARCH_INPUT_SELECTOR = '#typeahead-search-input';
 
 async function openResults(page, term = 'Hero') {
-  const searchInput = page.getByRole('searchbox');
+  const searchInput = page.locator(SEARCH_INPUT_SELECTOR);
 
+  await expect(searchInput).toHaveAttribute('type', 'search');
   await searchInput.fill(term);
 
   const resultsContainer = page.locator('#typeahead-search-results');
