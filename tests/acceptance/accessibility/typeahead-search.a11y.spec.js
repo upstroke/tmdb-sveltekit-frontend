@@ -41,6 +41,9 @@ test.describe('Accessibility - Typeahead Search', () => {
   // A11Y-TS-001
   test(
     '[A11Y-TS-001] Desktop typeahead search results has no automatically detected WCAG A/AA violations',
+    {
+      tag: ['@accessibility', '@a11y', '@desktop', '@typeahead-search']
+    },
     async ({ page }) => {
       const { searchInput } = await openResults(page);
 
@@ -52,6 +55,9 @@ test.describe('Accessibility - Typeahead Search', () => {
   // A11Y-TS-002
   test(
     '[A11Y-TS-002] Desktop typeahead search keyboard interaction has no automatically detected WCAG A/AA violations',
+    {
+      tag: ['@accessibility', '@a11y', '@desktop', '@typeahead-search', '@keyboard']
+    },
     async ({ page }) => {
       const { searchInput, resultsContainer, resultLinks } = await openResults(page);
 
@@ -73,6 +79,9 @@ test.describe('Accessibility - Typeahead Search', () => {
   // A11Y-TS-005
   test(
     '[A11Y-TS-005] Selected typeahead search result exposes aria-selected',
+    {
+      tag: ['@accessibility', '@a11y', '@desktop', '@typeahead-search', '@selection']
+    },
     async ({ page }) => {
       const { resultLinks } = await openResults(page);
       const resultLink = resultLinks.first();
@@ -119,6 +128,9 @@ test.describe('Accessibility - Typeahead Search Mobile', () => {
   // A11Y-TS-003
   test(
     '[A11Y-TS-003] Mobile iOS typeahead search results has no automatically detected WCAG A/AA violations',
+    {
+      tag: ['@accessibility', '@a11y', '@mobile', '@ios', '@typeahead-search']
+    },
     async ({ page }) => {
       await openResults(page, 'Hero');
       await checkA11y(page);
@@ -128,6 +140,9 @@ test.describe('Accessibility - Typeahead Search Mobile', () => {
   // A11Y-TS-004
   test(
     '[A11Y-TS-004] Mobile Android typeahead search results has no automatically detected WCAG A/AA violations',
+    {
+      tag: ['@accessibility', '@a11y', '@mobile', '@android', '@typeahead-search']
+    },
     async ({ page }) => {
       await openResults(page, 'Breaking');
       await checkA11y(page);
