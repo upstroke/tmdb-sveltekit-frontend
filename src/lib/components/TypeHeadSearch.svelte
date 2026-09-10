@@ -36,6 +36,7 @@
 	const searchHintId = 'typeahead-search-hint';
 	const resultsId = 'typeahead-search-results';
 
+	// Re-run the search when the active locale changes while a valid query is present.
 	$effect(() => {
 		if (previousLocale == null) {
 			previousLocale = activeLocale;
@@ -94,6 +95,7 @@
 		announcement = '';
 	}
 
+	// Delay live-region updates so VoiceOver can finish announcing typed input first.
 	function scheduleAnnouncement(message) {
 		clearTimeout(announcementTimer);
 		announcement = '';
@@ -117,6 +119,7 @@
 		error = null;
 	}
 
+	// Debounce user input to avoid sending a request for every keystroke.
 	function handleInput() {
 		clearTimeout(debounceTimer);
 		clearAnnouncement();
@@ -181,6 +184,7 @@
 		}
 	}
 
+	// Escape closes the popup even when focus is on a result link and restores focus to the input.
 	function handleKeydown(event) {
 		if (event.key === 'Escape') {
 			event.preventDefault();
@@ -188,6 +192,7 @@
 		}
 	}
 
+	// Keep the selected result state separate from popup visibility.
 	function selectResult(resultKey) {
 		selectedResultKey = resultKey;
 		closeResults();
@@ -335,13 +340,14 @@
 								</li>
 							{/each}
 						</ul>
-					</section>
+				</section>
 				{/if}
 			</div>
 		{/if}
 	</form>
 </search>
 
+<!-- Keep the live region mounted so screen readers can detect content updates. -->
 <div class="u-sr-only" aria-live="polite" aria-atomic="true">{announcement}</div>
 
 <style lang="scss">
