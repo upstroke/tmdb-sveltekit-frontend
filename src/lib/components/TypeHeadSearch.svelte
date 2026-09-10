@@ -70,9 +70,7 @@
 		if (!message) return;
 		announcementTimer = setTimeout(() => { requestAnimationFrame(() => { announcement = message; }); }, 500);
 	}
-	function resetResults() {
-		clearTimeout(loadingTimer); clearAnnouncement(); showLoading = false; loading = false; resultsClosed = false; selectedResultKey = null; movies = []; tvShows = []; error = null;
-	}
+	function resetResults() { clearTimeout(loadingTimer); clearAnnouncement(); showLoading = false; loading = false; resultsClosed = false; selectedResultKey = null; movies = []; tvShows = []; error = null; }
 	function handleInput() {
 		clearTimeout(debounceTimer); clearAnnouncement(); selectedResultKey = null;
 		const term = query.trim();
@@ -122,14 +120,16 @@
 		{#if hasResults}
 			<div id={resultsId} role="listbox" aria-label={messages.searchResults} class:results-closed={resultsClosed} style:display={resultsClosed ? 'none' : ''}>
 				{#if movies.length > 0}
-					<div role="group" aria-label={titles.movies}>
+					<div role="group" aria-labelledby="typeahead-movies-heading">
+						<h2 id="typeahead-movies-heading" class="typeahead-results-heading ui label blue {titles.movies ? '' : 'u-not-available'}">{titles.movies}</h2>
 						{#each movies as item (item.id)}
 							<a role="option" class="result" data-result-link="true" href={withLocale(resultHref(item))} onclick={() => selectResult(`movie-${item.id}`)} aria-selected={selectedResultKey === `movie-${item.id}` ? 'true' : 'false'} aria-labelledby={'typeahead-result-type-movie-' + item.id + ' typeahead-result-title-movie-' + item.id + ' typeahead-result-desc-movie-' + item.id}><figure class="image" aria-hidden="true"><img src={item.posterUrl || item.imageUrl || notAvailable} alt="" /></figure><div class="content"><header class="result-header"><h3 class="title {item.title ? '' : 'u-not-available'}" id={'typeahead-result-title-movie-' + item.id}>{item.title}</h3></header><p class="description" id={'typeahead-result-desc-movie-' + item.id}><time class={item.date ? '' : 'u-not-available'} datetime={item.date}>{formatYear(item.date)}</time><span aria-hidden="true"> · </span><span class="rating" aria-label={ratingAriaLabel(item.rating)}><i class="yellow star icon" aria-hidden="true"></i><span class={item.rating ? '' : 'u-not-available'}>{formatRating(item.rating)}</span></span></p><span class="u-sr-only" id={'typeahead-result-type-movie-' + item.id}>{titles.movies}</span></div></a>
 						{/each}
 					</div>
 				{/if}
 				{#if tvShows.length > 0}
-					<div role="group" aria-label={titles.tvShows}>
+					<div role="group" aria-labelledby="typeahead-tv-heading">
+						<h2 id="typeahead-tv-heading" class="typeahead-results-heading ui label blue {titles.tvShows ? '' : 'u-not-available'}">{titles.tvShows}</h2>
 						{#each tvShows as item (item.id)}
 							<a role="option" class="result" data-result-link="true" href={withLocale(resultHref(item))} onclick={() => selectResult(`tv-${item.id}`)} aria-selected={selectedResultKey === `tv-${item.id}` ? 'true' : 'false'} aria-labelledby={'typeahead-result-type-tv-' + item.id + ' typeahead-result-title-tv-' + item.id + ' typeahead-result-desc-tv-' + item.id}><figure class="image" aria-hidden="true"><img src={item.posterUrl || item.imageUrl || notAvailable} alt="" /></figure><div class="content"><header class="result-header"><h3 class="title {item.title ? '' : 'u-not-available'}" id={'typeahead-result-title-tv-' + item.id}>{item.title}</h3></header><p class="description" id={'typeahead-result-desc-tv-' + item.id}><time class={item.date ? '' : 'u-not-available'} datetime={item.date}>{formatYear(item.date)}</time><span aria-hidden="true"> · </span><span class="rating" aria-label={ratingAriaLabel(item.rating)}><i class="yellow star icon" aria-hidden="true"></i><span class={item.rating ? '' : 'u-not-available'}>{formatRating(item.rating)}</span></span></p><span class="u-sr-only" id={'typeahead-result-type-tv-' + item.id}>{titles.tvShows}</span></div></a>
 						{/each}
@@ -157,6 +157,7 @@
 		#typeahead-search-results [role="group"] > a.result:hover, #typeahead-search-results [role="group"] > a.result:focus-visible, #typeahead-search-results [role="group"] > a.result[aria-selected="true"] { background: rgba(0, 0, 0, 0.08); }
 		#typeahead-search-results [role="group"] > a.result:focus-visible { outline: 2px solid #2185d0; outline-offset: -3px; }
 		#typeahead-search-results .category { background: white; }
+		.typeahead-results-heading { font-size: 1em; font-weight: 500; width: 100%; border-radius: 0; &.ui.label.blue { background-color: var(--mediatype-label-blue); border-color: var(--mediatype-label-blue); color: white; } &.ui.label.teal { background-color: var(--mediatype-label-teal); border-color: var(--mediatype-label-teal); color: white; } }
 		.image { align-self: stretch; flex: 0 0 2em; width: 2em; height: 3em; max-height: 3em; margin: 0 1rem 0 0; overflow: hidden; }
 		.image img { display: block; width: 100%; height: 100%; min-height: 100%; object-fit: cover; }
 		.content { position: relative; display: flex; flex-direction: column; min-width: 0; }
