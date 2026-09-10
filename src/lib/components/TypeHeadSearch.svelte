@@ -395,7 +395,8 @@
 					transition: background-color 180ms ease;
 
 					&:hover,
-					&:has(a.result:focus-visible) {
+					&:has(a.result:focus-visible),
+					&:has(a.result[aria-current]){
 						background: rgba(0, 0, 0, 0.08);
 					}
 
