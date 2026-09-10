@@ -103,7 +103,9 @@
 		if (!message) return;
 
 		announcementTimer = setTimeout(() => {
-			announcement = message;
+			requestAnimationFrame(() => {
+				announcement = message;
+			});
 		}, 500);
 	}
 
@@ -222,7 +224,8 @@
 
 <svelte:window onclick={handleWindowClick} />
 
-<search id="typeahead-search">
+<!-- svelte-ignore a11y_no_static_element_interactions -->
+<search id="typeahead-search" onkeydown={handleKeydown}>
 	<form id="typeahead-search-form" onsubmit={(event) => event.preventDefault()} role="search">
 		<label class="u-sr-only" for="typeahead-search-input">{texts.searchInput}</label>
 		<div class="input-wrapper">
