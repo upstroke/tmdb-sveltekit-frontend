@@ -51,6 +51,10 @@
 		justify-content: center;
 		margin-top: 2rem;
 
+		.ui.primary.button {
+			background: var(--mediatype-label-blue);
+		}
+
 		.button.loading {
 			pointer-events: none;
 		}

@@ -40,5 +40,14 @@
 	.ui.label.teal {
 		z-index: 1;
 		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+		font-size: 0.9rem;
+		color: white;
+	}
+
+	.ui.label.blue {
+	background: var(--mediatype-label-blue);
+	}
+	.ui.label.teal {
+		background: var(--mediatype-label-teal);
 	}
 </style>

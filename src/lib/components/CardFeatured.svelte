@@ -267,11 +267,11 @@
 	}
 
 	.featured-card-type--movie {
-		background-color: #2185d0;
+		background-color: var(--mediatype-label-blue);
 	}
 
 	.featured-card-type--tv {
-		background-color: #00b5ad;
+		background-color: var(--mediatype-label-teal);
 	}
 
 	.featured-card-genres {
