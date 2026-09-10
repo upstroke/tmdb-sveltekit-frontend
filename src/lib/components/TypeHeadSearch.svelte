@@ -222,17 +222,18 @@
 
 <svelte:window onclick={handleWindowClick} />
 
-<search id="typeahead-search" onkeydown={handleKeydown}>
+<search id="typeahead-search">
 	<form id="typeahead-search-form" onsubmit={(event) => event.preventDefault()} role="search">
 		<label class="u-sr-only" for="typeahead-search-input">{texts.searchInput}</label>
 		<div class="input-wrapper">
 			<input
 				bind:this={inputElement}
-				aria-autocomplete="list"
 				aria-controls={resultsId}
 				aria-describedby={searchHintId}
 				aria-expanded={resultsVisible && hasResults}
 				aria-haspopup="listbox"
+				role="combobox"
+				aria-autocomplete="list"
 				autocomplete="off"
 				bind:value={query}
 				id="typeahead-search-input"
@@ -267,81 +268,75 @@
 
 		{#if resultsVisible && hasResults}
 			<div id={resultsId} role="listbox" aria-label={messages.searchResults}>
-				<section class="category" aria-labelledby="typeahead-movies-heading">
+				<div role="group" aria-labelledby="typeahead-movies-heading">
 					<h2 id="typeahead-movies-heading" class="ui label blue {titles.movies ? '' : 'u-not-available'}">
 						{titles.movies}
 					</h2>
-					<ul class="results" aria-label={titles.movies}>
-						{#each movies as item (item.id)}
-							<li role="option">
-								<a
-									class="result"
-									data-result-link="true"
-									href={withLocale(resultHref(item))}
-									onclick={() => selectResult(`movie-${item.id}`)}
-									aria-selected={selectedResultKey === `movie-${item.id}` ? 'true' : undefined}
-									aria-labelledby={'typeahead-result-type-movie-' + item.id + ' typeahead-result-title-movie-' + item.id + ' typeahead-result-desc-movie-' + item.id}
-								>
-									<figure class="image" aria-hidden="true">
-										<img src={item.posterUrl || item.imageUrl || notAvailable} alt="" />
-									</figure>
-									<div class="content">
-										<header class="result-header">
-											<h3 class="title {item.title ? '' : 'u-not-available'}" id={'typeahead-result-title-movie-' + item.id}>{item.title}</h3>
-										</header>
-										<p class="description" id={'typeahead-result-desc-movie-' + item.id}>
-											<time class={item.date ? '' : 'u-not-available'} datetime={item.date}>{formatYear(item.date)}</time>
-											<span aria-hidden="true"> · </span>
-											<span class="rating" aria-label={ratingAriaLabel(item.rating)}>
-												<i class="yellow star icon" aria-hidden="true"></i>
-												<span class={item.rating ? '' : 'u-not-available'}>{formatRating(item.rating)}</span>
-											</span>
-										</p>
-										<span class="u-sr-only" id={'typeahead-result-type-movie-' + item.id}>{titles.movies}</span>
-									</div>
-								</a>
-								</li>
-						{/each}
-					</ul>
-				</section>
+					{#each movies as item (item.id)}
+						<a
+							role="option"
+							class="result"
+							data-result-link="true"
+							href={withLocale(resultHref(item))}
+							onclick={() => selectResult(`movie-${item.id}`)}
+							aria-selected={selectedResultKey === `movie-${item.id}` ? 'true' : 'false'}
+							aria-labelledby={'typeahead-result-type-movie-' + item.id + ' typeahead-result-title-movie-' + item.id + ' typeahead-result-desc-movie-' + item.id}
+						>
+							<figure class="image" aria-hidden="true">
+								<img src={item.posterUrl || item.imageUrl || notAvailable} alt="" />
+							</figure>
+							<div class="content">
+								<header class="result-header">
+									<h3 class="title {item.title ? '' : 'u-not-available'}" id={'typeahead-result-title-movie-' + item.id}>{item.title}</h3>
+								</header>
+								<p class="description" id={'typeahead-result-desc-movie-' + item.id}>
+									<time class={item.date ? '' : 'u-not-available'} datetime={item.date}>{formatYear(item.date)}</time>
+									<span aria-hidden="true"> · </span>
+									<span class="rating" aria-label={ratingAriaLabel(item.rating)}>
+										<i class="yellow star icon" aria-hidden="true"></i>
+										<span class={item.rating ? '' : 'u-not-available'}>{formatRating(item.rating)}</span>
+									</span>
+								</p>
+								<span class="u-sr-only" id={'typeahead-result-type-movie-' + item.id}>{titles.movies}</span>
+							</div>
+						</a>
+					{/each}
+				</div>
 
 				{#if tvShows.length > 0}
-					<section class="category" aria-labelledby="typeahead-tv-heading">
+					<div role="group" aria-labelledby="typeahead-tv-heading">
 						<h2 id="typeahead-tv-heading" class="ui label blue {titles.tvShows ? '' : 'u-not-available'}">{titles.tvShows}</h2>
-						<ul class="results" aria-label={titles.tvShows}>
-							{#each tvShows as item (item.id)}
-								<li role="option">
-									<a
-										class="result"
-										data-result-link="true"
-										href={withLocale(resultHref(item))}
-										onclick={() => selectResult(`tv-${item.id}`)}
-										aria-selected={selectedResultKey === `tv-${item.id}` ? 'true' : undefined}
-										aria-labelledby={'typeahead-result-type-tv-' + item.id + ' typeahead-result-title-tv-' + item.id + ' typeahead-result-desc-tv-' + item.id}
-									>
-										<figure class="image" aria-hidden="true">
-											<img src={item.posterUrl || item.imageUrl || notAvailable} alt="" />
-										</figure>
-										<div class="content">
-											<header class="result-header">
-												<h3 class="title {item.title ? '' : 'u-not-available'}" id={'typeahead-result-title-tv-' + item.id}>{item.title}</h3>
-											</header>
-											<p class="description" id={'typeahead-result-desc-tv-' + item.id}>
-												<time class={item.date ? '' : 'u-not-available'} datetime={item.date}>{formatYear(item.date)}</time>
-												<span aria-hidden="true"> · </span>
-												<span class="rating" aria-label={ratingAriaLabel(item.rating)}>
-													<i class="yellow star icon" aria-hidden="true"></i>
-													<span class={item.rating ? '' : 'u-not-available'}>{formatRating(item.rating)}</span>
-												</span>
-											</p>
-											<span class="u-sr-only" id={'typeahead-result-type-tv-' + item.id}>{titles.tvShows}</span>
-										</div>
-									</a>
-								</li>
-							{/each}
-						</ul>
-				</section>
-				{/if}
+						{#each tvShows as item (item.id)}
+							<a
+								role="option"
+								class="result"
+								data-result-link="true"
+								href={withLocale(resultHref(item))}
+								onclick={() => selectResult(`tv-${item.id}`)}
+								aria-selected={selectedResultKey === `tv-${item.id}` ? 'true' : 'false'}
+								aria-labelledby={'typeahead-result-type-tv-' + item.id + ' typeahead-result-title-tv-' + item.id + ' typeahead-result-desc-tv-' + item.id}
+							>
+								<figure class="image" aria-hidden="true">
+									<img src={item.posterUrl || item.imageUrl || notAvailable} alt="" />
+								</figure>
+								<div class="content">
+									<header class="result-header">
+										<h3 class="title {item.title ? '' : 'u-not-available'}" id={'typeahead-result-title-tv-' + item.id}>{item.title}</h3>
+									</header>
+									<p class="description" id={'typeahead-result-desc-tv-' + item.id}>
+										<time class={item.date ? '' : 'u-not-available'} datetime={item.date}>{formatYear(item.date)}</time>
+										<span aria-hidden="true"> · </span>
+										<span class="rating" aria-label={ratingAriaLabel(item.rating)}>
+											<i class="yellow star icon" aria-hidden="true"></i>
+											<span class={item.rating ? '' : 'u-not-available'}>{formatRating(item.rating)}</span>
+										</span>
+									</p>
+									<span class="u-sr-only" id={'typeahead-result-type-tv-' + item.id}>{titles.tvShows}</span>
+								</div>
+							</a>
+						{/each}
+				</div>
+			{/if}
 			</div>
 		{/if}
 	</form>
@@ -420,109 +415,95 @@
 			background: white;
 		}
 
+		#typeahead-search-results [role="group"] {
+			background: white;
+		}
+
+		#typeahead-search-results [role="group"] > a.result {
+			display: flex;
+			padding: 0.5em 1em;
+			transition: background-color 180ms ease;
+		}
+
+		#typeahead-search-results [role="group"] > a.result:hover,
+		#typeahead-search-results [role="group"] > a.result:focus-visible,
+		#typeahead-search-results [role="group"] > a.result[aria-selected="true"] {
+			background: rgba(0, 0, 0, 0.08);
+		}
+
+		#typeahead-search-results [role="group"] > a.result:focus-visible {
+			outline: 2px solid #2185d0;
+			outline-offset: -3px;
+		}
+
 		#typeahead-search-results .category {
 			background: white;
+		}
 
-			#typeahead-movies-heading,
-			#typeahead-tv-heading {
-				font-size: 1em;
-				font-weight: 500;
-				width: 100%;
-				border-radius: 0;
+		#typeahead-movies-heading,
+		#typeahead-tv-heading {
+			font-size: 1em;
+			font-weight: 500;
+			width: 100%;
+			border-radius: 0;
 
-				&.ui.label.blue {
-					background-color: var(--mediatype-label-blue);
-					border-color: var(--mediatype-label-blue);
-					color: white;
-				}
-
-				&.ui.label.teal {
-					background-color: var(--mediatype-label-teal);
-					border-color: var(--mediatype-label-teal);
-					color: white;
-				}
+			&.ui.label.blue {
+				background-color: var(--mediatype-label-blue);
+				border-color: var(--mediatype-label-blue);
+				color: white;
 			}
 
-			ul.results {
-				margin: 0;
-				padding: 0;
-
-				> li {
-					list-style: none;
-					padding: 0.5em 1em;
-					transition: background-color 180ms ease;
-
-					&:hover,
-					&:has(a.result:focus-visible),
-					&:has(> a.result[aria-selected="true"]) {
-						background: rgba(0, 0, 0, 0.08);
-					}
-
-					&:has(a.result:focus-visible) {
-						outline: 2px solid #2185d0;
-						outline-offset: -3px;
-					}
-
-					&:hover a.result,
-					&:has(a.result:focus-visible) a.result {
-						background: transparent;
-					}
-
-					&:has(a.result:focus-visible) a.result {
-						outline: none;
-					}
-
-					> a {
-						display: flex;
-					}
-				}
+			&.ui.label.teal {
+				background-color: var(--mediatype-label-teal);
+				border-color: var(--mediatype-label-teal);
+				color: white;
 			}
+		}
 
-			.image {
-				align-self: stretch;
-				flex: 0 0 2em;
-				width: 2em;
-				height: 3em;
-				max-height: 3em;
-				margin: 0 1rem 0 0;
-				overflow: hidden;
-			}
+		.image {
+			align-self: stretch;
+			flex: 0 0 2em;
+			width: 2em;
+			height: 3em;
+			max-height: 3em;
+			margin: 0 1rem 0 0;
+			overflow: hidden;
+		}
 
-			.image img {
-				display: block;
-				width: 100%;
-				height: 100%;
-				min-height: 100%;
-				object-fit: cover;
-			}
+		.image img {
+			display: block;
+			width: 100%;
+			height: 100%;
+			min-height: 100%;
+			object-fit: cover;
+		}
 
-			.content {
-				position: relative;
-				display: flex;
-				flex-direction: column;
-				min-width: 0;
-			}
+		.content {
+			position: relative;
+			display: flex;
+			flex-direction: column;
+			min-width: 0;
+		}
 
-			.result-header {
-				min-width: 0;
-				white-space: normal;
-			}
+		.result-header {
+			min-width: 0;
+			white-space: normal;
+		}
 
-			.title {
-				color: black;
-				padding-right: 0;
-				line-height: 1;
-				font-size: 1em;
-				font-weight: bold;
-				white-space: normal;
-				overflow-wrap: anywhere;
-			}
+		.title {
+			color: black;
+			padding-right: 0;
+			line-height: 1;
+			font-size: 1em;
+			font-weight: bold;
+			white-space: normal;
+			overflow-wrap: anywhere;
+		}
 
-			.description {
-				line-height: 1.2;
-				color: var(--color-text-muted);
-				font-size: 1em;
-			}
+		.description {
+			line-height: 1.2;
+			color: var(--color-text-muted);
+			font-size: 1em;
 		}
 
 		#status-messages-layer {
