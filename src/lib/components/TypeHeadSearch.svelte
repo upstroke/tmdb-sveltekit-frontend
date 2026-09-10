@@ -23,7 +23,6 @@
 	let hasStatusMessage = $derived(
 		!resultsClosed && (showLoading || !!error || (hasSearchTerm && !hasResults))
 	);
-	let totalResults = $derived(movies.length + tvShows.length);
 	let resultsVisible = $derived(!resultsClosed && (hasResults || loading || !!error));
 
 	let debounceTimer;
@@ -144,7 +143,7 @@
 
 		try {
 			const response = await fetch(
-			`/search?q=${encodeURIComponent(term)}&locale=${encodeURIComponent(activeLocale)}`,
+				`/search?q=${encodeURIComponent(term)}&locale=${encodeURIComponent(activeLocale)}`,
 				{ signal: controller.signal }
 			);
 
@@ -203,7 +202,7 @@
 
 <svelte:window onclick={handleWindowClick} />
 
-<search id="typeahead-search">
+<search id="typeahead-search" onkeydown={handleKeydown}>
 	<form id="typeahead-search-form" onsubmit={(event) => event.preventDefault()} role="search">
 		<label class="u-sr-only" for="typeahead-search-input">{texts.searchInput}</label>
 		<div class="input-wrapper">
@@ -218,7 +217,6 @@
 				id="typeahead-search-input"
 				onfocus={showResults}
 				oninput={handleInput}
-				onkeydown={handleKeydown}
 				placeholder={texts.searchInput}
 				type="search"
 			/>
@@ -249,97 +247,37 @@
 		{#if resultsVisible && hasResults}
 			<div id={resultsId} role="listbox" aria-label={messages.searchResults}>
 				<section class="category" aria-labelledby="typeahead-movies-heading">
-					<h2
-						id="typeahead-movies-heading"
-						class="ui label blue {titles.movies ? '' : 'u-not-available'}"
-					>
+					<h2 id="typeahead-movies-heading" class="ui label blue {titles.movies ? '' : 'u-not-available'}">
 						{titles.movies}
 					</h2>
 					<ul class="results" aria-label={titles.movies}>
 						{#each movies as item (item.id)}
 							<li role="option">
-								<a
-									class="result"
-									data-result-link="true"
-									href={withLocale(resultHref(item))}
-									onclick={closeResults}
-									aria-labelledby={'typeahead-result-type-movie-' + item.id + ' typeahead-result-title-movie-' + item.id + ' typeahead-result-desc-movie-' + item.id}
-								>
-									<figure class="image" aria-hidden="true">
-										<img src={item.posterUrl || item.imageUrl || notAvailable} alt="" />
-									</figure>
+								<a class="result" data-result-link="true" href={withLocale(resultHref(item))} onclick={closeResults} aria-labelledby={'typeahead-result-type-movie-' + item.id + ' typeahead-result-title-movie-' + item.id + ' typeahead-result-desc-movie-' + item.id}>
+									<figure class="image" aria-hidden="true"><img src={item.posterUrl || item.imageUrl || notAvailable} alt="" /></figure>
 									<div class="content">
-										<header class="result-header">
-											<h3
-												class="title {item.title ? '' : 'u-not-available'}"
-												id={'typeahead-result-title-movie-' + item.id}
-											>
-												{item.title}
-											</h3>
-										</header>
-										<p class="description" id={'typeahead-result-desc-movie-' + item.id}>
-											<time class={item.date ? '' : 'u-not-available'} datetime={item.date}>
-												{formatYear(item.date)}
-											</time>
-											<span aria-hidden="true"> · </span>
-											<span class="rating" aria-label={ratingAriaLabel(item.rating)}>
-												<i class="yellow star icon" aria-hidden="true"></i>
-												<span class={item.rating ? '' : 'u-not-available'}>{formatRating(item.rating)}</span>
-											</span>
-										</p>
-										<span class="u-sr-only" id={'typeahead-result-type-movie-' + item.id}>
-											{titles.movies}
-										</span>
+										<header class="result-header"><h3 class="title {item.title ? '' : 'u-not-available'}" id={'typeahead-result-title-movie-' + item.id}>{item.title}</h3></header>
+										<p class="description" id={'typeahead-result-desc-movie-' + item.id}><time class={item.date ? '' : 'u-not-available'} datetime={item.date}>{formatYear(item.date)}</time><span aria-hidden="true"> · </span><span class="rating" aria-label={ratingAriaLabel(item.rating)}><i class="yellow star icon" aria-hidden="true"></i><span class={item.rating ? '' : 'u-not-available'}>{formatRating(item.rating)}</span></span></p>
+										<span class="u-sr-only" id={'typeahead-result-type-movie-' + item.id}>{titles.movies}</span>
 									</div>
 								</a>
-							</li>
+								</li>
 						{/each}
 					</ul>
 				</section>
 
 				{#if tvShows.length > 0}
 					<section class="category" aria-labelledby="typeahead-tv-heading">
-						<h2
-						id="typeahead-tv-heading"
-						class="ui label blue {titles.tvShows ? '' : 'u-not-available'}"
-						>
-						{titles.tvShows}
-						</h2>
+						<h2 id="typeahead-tv-heading" class="ui label blue {titles.tvShows ? '' : 'u-not-available'}">{titles.tvShows}</h2>
 						<ul class="results" aria-label={titles.tvShows}>
 							{#each tvShows as item (item.id)}
 								<li role="option">
-									<a
-										class="result"
-										data-result-link="true"
-										href={withLocale(resultHref(item))}
-										onclick={closeResults}
-										aria-labelledby={'typeahead-result-type-tv-' + item.id + ' typeahead-result-title-tv-' + item.id + ' typeahead-result-desc-tv-' + item.id}
-									>
-										<figure class="image" aria-hidden="true">
-											<img src={item.posterUrl || item.imageUrl || notAvailable} alt="" />
-										</figure>
+									<a class="result" data-result-link="true" href={withLocale(resultHref(item))} onclick={closeResults} aria-labelledby={'typeahead-result-type-tv-' + item.id + ' typeahead-result-title-tv-' + item.id + ' typeahead-result-desc-tv-' + item.id}>
+										<figure class="image" aria-hidden="true"><img src={item.posterUrl || item.imageUrl || notAvailable} alt="" /></figure>
 										<div class="content">
-											<header class="result-header">
-												<h3
-													class="title {item.title ? '' : 'u-not-available'}"
-													id={'typeahead-result-title-tv-' + item.id}
-												>
-													{item.title}
-												</h3>
-											</header>
-											<p class="description" id={'typeahead-result-desc-tv-' + item.id}>
-												<time class={item.date ? '' : 'u-not-available'} datetime={item.date}>
-													{formatYear(item.date)}
-												</time>
-												<span aria-hidden="true"> · </span>
-												<span class="rating" aria-label={ratingAriaLabel(item.rating)}>
-													<i class="yellow star icon" aria-hidden="true"></i>
-													<span class={item.rating ? '' : 'u-not-available'}>{formatRating(item.rating)}</span>
-												</span>
-											</p>
-											<span class="u-sr-only" id={'typeahead-result-type-tv-' + item.id}>
-												{titles.tvShows}
-											</span>
+											<header class="result-header"><h3 class="title {item.title ? '' : 'u-not-available'}" id={'typeahead-result-title-tv-' + item.id}>{item.title}</h3></header>
+											<p class="description" id={'typeahead-result-desc-tv-' + item.id}><time class={item.date ? '' : 'u-not-available'} datetime={item.date}>{formatYear(item.date)}</time><span aria-hidden="true"> · </span><span class="rating" aria-label={ratingAriaLabel(item.rating)}><i class="yellow star icon" aria-hidden="true"></i><span class={item.rating ? '' : 'u-not-available'}>{formatRating(item.rating)}</span></span></p>
+											<span class="u-sr-only" id={'typeahead-result-type-tv-' + item.id}>{titles.tvShows}</span>
 										</div>
 									</a>
 								</li>
@@ -352,9 +290,7 @@
 	</form>
 </search>
 
-<div class="u-sr-only" aria-live="polite" aria-atomic="true">
-	{announcement}
-</div>
+<div class="u-sr-only" aria-live="polite" aria-atomic="true">{announcement}</div>
 
 <style lang="scss">
 	@use '../../css/variables';
