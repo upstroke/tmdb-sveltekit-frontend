@@ -165,7 +165,7 @@ dd {
 		}
 
 		.certification-text {
-			color: rgba(0, 0, 0, 0.4);
+			color: var(--color-text-muted);
 		}
 
 		.certification-icon {
@@ -181,6 +181,11 @@ dd {
 }
 
 .ui.card {
+	.meta,
+	.extra {
+		color: var(--color-text-muted);
+	}
+
 	.card-meta {
 		display: flex;
 		flex-direction: column;
@@ -229,7 +234,7 @@ dd {
 }
 
 .u-not-available {
-	color: #999;
+	color: #666;
 }
 
 /* ============================================
@@ -388,7 +393,7 @@ main.ui.text.container.details-view {
    PROVIDER LIST
    ============================================ */
 .justwatch-attribution {
-	color: #999;
+	color: var(--color-text-muted);
 	font-weight: normal;
 	font-size: 60%;
 

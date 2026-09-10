@@ -6,7 +6,7 @@ Die Anwendung bietet eine Katalogansicht für Medieninhalte mit Trending-Bereich
 
 ## Ziel des Projekts
 
-Das Projekt dient als Frontend für eine TMDB-basierte Medienübersicht.
+Das Projekt dient als Frontend für eine TMDB-basierte Medien übersicht.
 
 Im Fokus stehen:
 
@@ -15,6 +15,7 @@ Im Fokus stehen:
 - robuste Behandlung unvollständiger API-Daten
 - saubere Trennung von UI, Hilfslogik und Service-Schicht
 - testbare Architektur mit Acceptance-, Komponenten-, Integrations- und Unit-Tests
+- Barrierefreiheit nach WCAG 2.2 AA durch automatisierte Tests
 
 ## Features
 
@@ -32,6 +33,31 @@ Im Fokus stehen:
 - gemeinsame Fallback-Logik für fehlende Bilder und Texte
 - gemeinsamer Fehlerdialog für API- und Ladefehler
 - wiederverwendbare Komponenten für Karten, Suche, Pagination und Fehlerzustände
+
+## Barrierefreiheit (Accessibility)
+
+Das Projekt umfasst automatisierte Accessibility-Tests zur Sicherstellung der WCAG 2.2 AA-Konformität:
+
+- **Accessibility-Checks** mit Playwright + axe-core (`@axe-core/playwright`) zur automatisierten Erkennung von WCAG A/AA-Verletzungen
+- **Test-Dateien:** `tests/acceptance/accessibility/*.a11y.spec.js`
+- **Testpläne:** `tests/acceptance/accessibility/*-testplan.md`
+- **Tags:** `@accessibility`, `@a11y`
+
+### Accessibility-Tests ausführen
+
+```bash
+# Alle Accessibility-Tests
+npx playwright test tests/acceptance/accessibility/
+
+# Accessibility-Tests nach Tag
+npx playwright test -g @accessibility
+npx playwright test -g @a11y
+
+# Kombiniert mit anderen Tags
+npx playwright test -g "(?=.*@accessibility)(?=.*@homepage)"
+```
+
+Weitere Details findest du in `tests/acceptance/accessibility/accessibility-testplan.md` und `docs/testing.md`.
 
 ## Internationalisierung
 
@@ -56,13 +82,13 @@ Die angezeigten Streaming-Anbieter und Watch-Links werden über die TMDB-API ber
 
 Für Svelte-5-Komponententests unter Vitest wird das offizielle Vite-Plugin `svelteTesting()` aus `@testing-library/svelte/vite` verwendet. Es ergänzt die Testumgebung für DOM-basierte Svelte-Tests automatisch um Cleanup und die Browser-Resolver-Condition, damit UI-Tests unter `jsdom` korrekt die Browser-Variante der Svelte-Module laden.
 
-## Tech Stack
+## Tech-Stack
 
 - SvelteKit 2.63
 - Svelte 5
 - Vite
 - Fomantic UI / Semantic UI Klassen
-- Playwright für Acceptance-Tests
+- Playwright für Acceptance-Tests (inklusive Accessibility)
 - Vitest für Komponenten-, Integrations- und Unit-Tests
 - Prettier und ESLint für Formatierung und Codequalität
 - Sass für Styles
@@ -158,9 +184,15 @@ static/
 
 tests/
   acceptance/
-  components/
+    accessibility/
+    loadmore/
+    navigation/
   integration/
+    components/
+    routes/
   unit/
+    routes/
+    tmdb-api/
   fixtures/
   mocks/
   setup/
@@ -171,7 +203,8 @@ test-results/ (entsteht bei Bedarf)
 ```
 
 ## Testdokumentation
-Diese Datei beschreibt das pragmatische Vorgehen für Tests <br>
+
+Diese Datei beschreibt das pragmatische Vorgehen für Tests  
 [Testdokumentation und Testvorgehen](docs/testing.md)
 
 ## Bedeutung der wichtigsten Ordner
@@ -184,6 +217,7 @@ Diese Datei beschreibt das pragmatische Vorgehen für Tests <br>
 - `src/lib/utils/` enthält Hilfsfunktionen für Formatierung, Paging und Duplikatbehandlung
 - `static/` enthält statische Assets
 - `tests/` enthält alle automatisierten Tests nach Testebene strukturiert
+- `tests/acceptance/accessibility/` enthält Accessibility-Tests mit axe-core
 - `coverage/` entsteht bei Bedarf durch Coverage-Läufe mit Vitest
 - `playwright-report/` enthält die HTML-Ausgabe der Playwright-Tests
 - `test-results/` enthält Laufzeit-Artefakte und Fehlerausgaben aus Playwright
@@ -206,7 +240,7 @@ Diese Datei beschreibt das pragmatische Vorgehen für Tests <br>
 - `CardDefault` rendert eine Standard-Medienkarte.
 - `CardFeatured` rendert eine hervorgehobene Medienkarte.
 - `DialogMessage` zeigt Fehler in konsistenter Form an.
-- `LoadMore` lädt weitere Einträge in paginierten Listen.
+- `LoadMore` l ädt weitere Einträge in paginierten Listen.
 - `TypeHeadSearch` stellt die Live-Suche bereit, lokalisiert Suchergebnisse und startet die Suche nach einem Sprachwechsel erneut.
 
 Globale Styles werden über `src/css/app.scss` geladen. Diese Datei bindet Fomantic UI, globale Sass-Variablen und anwendungsweite Styles ein; komponentenspezifische Styles bleiben in den jeweiligen `.svelte`-Komponenten.
@@ -215,18 +249,18 @@ Fallback-Bilder und Platzhaltertexte werden innerhalb der Komponenten zentral be
 
 ## Wichtige Hilfsfunktionen
 
-- `restorePagedList` stellt den Stand paginierter Listen aus dem Session Storage wieder her
+- `restorePagedList` stellt den Stand paginierter Listen aus dem Session-Storage wieder her
 - `getStoredPage` liest die zuletzt gespeicherte Seitenzahl einer Liste
 - `deduplicateMedia` entfernt doppelte Medieneinträge anhand von `mediaType` und `id`
 - `getMediaKey` erzeugt stabile Schlüssel für Medieneinträge
 - `deduplicateById` entfernt doppelte Objekte anhand ihrer ID
 - `formatDate` formatiert Datumswerte anhand der konfigurierten Locale
-- `resolveLocale` validiert Locales und fällt bei unbekannten Werten auf die Standardsprache zurück
+- `resolveLocale` validiert Locales und fällt bei unbekannten Werten auf die Standardsprache zur ück
 
 ## Fehlerbehandlung
 
 - Fehlende API-Daten werden über die gemeinsame `DialogMessage`-Komponente sichtbar gemacht.
-- Fehlende Bilder fallen auf ein gemeinsames Platzhalter-Asset zurück.
+- Fehlende Bilder fallen auf ein gemeinsames Platzhalter-Asset zur ück.
 - Fehlende Textwerte werden in Komponenten und Detailseiten normalisiert.
 - Listen- und Detailseiten bleiben nach Möglichkeit auch bei unvollständigen API-Antworten benutzbar.
 
@@ -267,6 +301,9 @@ Die Teststruktur orientiert sich an Testarten und fachlicher Ebene, nicht an tec
 - `tests/acceptance/`  
   Acceptance-Tests (end2end) mit Playwright für fachliche Nutzerflüsse
 
+- `tests/acceptance/accessibility/`  
+  Accessibility-Tests mit Playwright + axe-core für WCAG A/AA-Konformität
+
 - `tests/integration/components/`  
   Komponententests mit Vitest für isolierte Svelte-Komponenten
 
@@ -297,3 +334,4 @@ Die Testabdeckung folgt möglichst nah der Praxis im agilen Entwicklungsalltag:
 2. Acceptance-Tests prüfen den vollständigen Nutzerfluss.
 3. Komponenten- und Integrationstests prüfen das Zusammenspiel der beteiligten Teile.
 4. Unit-Tests sichern reine Hilfsfunktionen und Randfälle ab.
+5. Accessibility-Tests prüfen die WCAG 2.2 AA-Konformität für Seiten und Interaktionen.

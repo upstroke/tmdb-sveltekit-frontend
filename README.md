@@ -15,6 +15,7 @@ Its focus is on:
 - robust handling of incomplete API data
 - clean separation of UI, utility logic, and service layers
 - a testable architecture with acceptance, component, integration, and unit tests
+- accessibility compliance (WCAG 2.2 AA) through automated testing
 
 ## Features
 
@@ -33,6 +34,31 @@ Its focus is on:
 - Shared error dialog for API and loading errors
 - Reusable components for cards, search, pagination, and error states
 
+## Accessibility
+
+The project includes automated accessibility testing to ensure WCAG 2.2 AA compliance:
+
+- **Accessibility checks** with Playwright + axe-core (`@axe-core/playwright`) for automated WCAG A/AA violation detection
+- **Test files:** `tests/acceptance/accessibility/*.a11y.spec.js`
+- **Test plans:** `tests/acceptance/accessibility/*-testplan.md`
+- **Tags:** `@accessibility`, `@a11y`
+
+### Running Accessibility Tests
+
+```bash
+# All accessibility tests
+npx playwright test tests/acceptance/accessibility/
+
+# Accessibility tests by tag
+npx playwright test -g @accessibility
+npx playwright test -g @a11y
+
+# Combined with other tags
+npx playwright test -g "(?=.*@accessibility)(?=.*@homepage)"
+```
+
+For more details, see `tests/acceptance/accessibility/accessibility-testplan.md` and `docs/testing.md`.
+
 ## Internationalization
 
 Translation catalogs for UI text and rating formats are stored separately in:
@@ -50,7 +76,7 @@ The current route is preserved when the language changes. If the typeahead searc
 
 ## Streaming Data
 
-The displayed streaming providers and watch links are supplied through the TMDB API. The streaming data comes from JustWatch and is labeled “Provided by JustWatch” on movie and TV show detail pages.
+The displayed streaming providers and watch links are supplied through the TMDB API. The streaming data comes from JustWatch and is labeled "Provided by JustWatch" on movie and TV show detail pages.
 
 ## Testing Note
 
@@ -62,7 +88,7 @@ For Svelte 5 component tests with Vitest, the official `svelteTesting()` Vite pl
 - Svelte 5
 - Vite
 - Fomantic UI / Semantic UI classes
-- Playwright for acceptance tests
+- Playwright for acceptance tests (including accessibility)
 - Vitest for component, integration, and unit tests
 - Prettier and ESLint for formatting and code quality
 - Sass for styles
@@ -158,6 +184,7 @@ static/
 
 tests/
   acceptance/
+    accessibility/
     loadmore/
     navigation/
   integration/
@@ -191,6 +218,7 @@ Detailed Playwright end-to-end acceptance-test plans remain next to their execut
 - `src/lib/utils/` contains utility functions for formatting, pagination, and duplicate handling
 - `static/` contains static assets
 - `tests/` contains all automated tests organized by test level
+- `tests/acceptance/accessibility/` contains accessibility tests with axe-core
 - `coverage/` is created as needed by Vitest coverage runs
 - `playwright-report/` contains the HTML output of Playwright tests
 - `test-results/` contains runtime artifacts and error output from Playwright
@@ -272,6 +300,9 @@ The test structure is organized by test type and functional level, not by techni
 - `tests/acceptance/`  
   End-to-end acceptance tests with Playwright for functional user flows
 
+- `tests/acceptance/accessibility/`  
+  Accessibility tests with Playwright + axe-core for WCAG A/AA compliance
+
 - `tests/integration/components/`  
   Component integration tests with Vitest for isolated Svelte components
 
@@ -302,3 +333,4 @@ Test coverage should follow practical agile development as closely as possible:
 2. Acceptance tests verify the complete user flow.
 3. Component and integration tests verify the interaction between the involved parts.
 4. Unit tests protect pure utility functions and edge cases.
+5. Accessibility tests verify WCAG 2.2 AA compliance for pages and interactions.
