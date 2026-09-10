@@ -17,7 +17,7 @@ test.describe('Main navigation', () => {
 	test(
 		'[TC-NAV-001] Desktop: All main pages are reachable',
 		{
-			tag: ['@navigation', '@desktop', '@black-box', '@regression']
+			tag: ['@navigation', '@desktop', '@black-box', '@regression', '@a11y']
 		},
 		async ({ page }) => {
 			// Start on Home (localized en-US)
@@ -45,7 +45,7 @@ test.describe('Main navigation', () => {
 	test(
 		'[TC-NAV-002] Mobile: Burger menu opens and navigation works',
 		{
-			tag: ['@navigation', '@mobile', '@black-box', '@regression'],
+			tag: ['@navigation', '@mobile', '@black-box', '@regression', '@a11y'],
 			retries: 2 // Retry this test up to 2 times as seems to be flaky
 		},
 		async ({ page }) => {
@@ -82,7 +82,7 @@ test.describe('Main navigation', () => {
 	test(
 		'[TC-NAV-003] Mobile: Menu closes when clicking outside',
 		{
-			tag: ['@navigation', '@mobile', '@black-box', '@regression']
+			tag: ['@navigation', '@mobile', '@black-box', '@regression', '@a11y']
 		},
 		async ({ page }) => {
 			// Set the mobile viewport before loading the application
