@@ -2,7 +2,8 @@
 import { test, expect, devices } from '@playwright/test';
 import { checkA11y } from '../../setup/a11y.js';
 
-const mobile = devices['iPhone 13'];
+const mobileIOS = devices['iPhone 13'];
+const mobileAndroid = devices['Pixel 5'];
 
 /**
  * Accessibility tests for navigation flows (desktop and mobile).
@@ -41,17 +42,18 @@ test.describe('Accessibility - Desktop Homepage', () => {
   });
 });
 
-test.describe('Accessibility - Mobile Navigation', () => {
+// iOS Mobile Tests (iPhone 13)
+test.describe('Accessibility - Mobile iOS Navigation', () => {
   test.use({
-    viewport: mobile.viewport,
-    deviceScaleFactor: mobile.deviceScaleFactor,
-    isMobile: mobile.isMobile,
-    hasTouch: mobile.hasTouch,
-    userAgent: mobile.userAgent,
+    viewport: mobileIOS.viewport,
+    deviceScaleFactor: mobileIOS.deviceScaleFactor,
+    isMobile: mobileIOS.isMobile,
+    hasTouch: mobileIOS.hasTouch,
+    userAgent: mobileIOS.userAgent,
   });
 
   // A11Y-003: Mobile homepage with closed burger menu accessibility
-  test('Mobile homepage with closed burger menu has no automatically detected WCAG A/AA violations', async ({ page }) => {
+  test('Mobile iOS homepage with closed burger menu has no automatically detected WCAG A/AA violations', async ({ page }) => {
     await page.goto('/?locale=en-US');
     await page.waitForLoadState('networkidle');
     
@@ -64,7 +66,7 @@ test.describe('Accessibility - Mobile Navigation', () => {
   });
 
   // A11Y-004: Mobile homepage with open burger menu accessibility
-  test('Mobile homepage with open burger menu has no automatically detected WCAG A/AA violations', async ({ page }) => {
+  test('Mobile iOS homepage with open burger menu has no automatically detected WCAG A/AA violations', async ({ page }) => {
     await page.goto('/?locale=en-US');
     await page.waitForLoadState('networkidle');
     
@@ -80,7 +82,66 @@ test.describe('Accessibility - Mobile Navigation', () => {
   });
 
   // A11Y-005: Mobile navigation to movies page accessibility
-  test('Mobile navigation to movies page has no automatically detected WCAG A/AA violations', async ({ page }) => {
+  test('Mobile iOS navigation to movies page has no automatically detected WCAG A/AA violations', async ({ page }) => {
+    await page.goto('/?locale=en-US');
+    await page.waitForLoadState('networkidle');
+    
+    // Open mobile burger menu
+    const burgerButton = page.getByRole('button', { name: 'Open or close navigation' });
+    await burgerButton.click();
+    await page.waitForTimeout(500);
+    
+    // Navigate to Movies page via mobile menu
+    const moviesLink = page.getByRole('link', { name: 'Movies' });
+    await moviesLink.click();
+    await page.waitForLoadState('networkidle');
+    await page.waitForSelector('.media-card, [class*="card"]');
+    
+    await checkA11y(page);
+  });
+});
+
+// Android Mobile Tests (Pixel 5)
+test.describe('Accessibility - Mobile Android Navigation', () => {
+  test.use({
+    viewport: mobileAndroid.viewport,
+    deviceScaleFactor: mobileAndroid.deviceScaleFactor,
+    isMobile: mobileAndroid.isMobile,
+    hasTouch: mobileAndroid.hasTouch,
+    userAgent: mobileAndroid.userAgent,
+  });
+
+  // A11Y-006: Mobile homepage with closed burger menu accessibility
+  test('Mobile Android homepage with closed burger menu has no automatically detected WCAG A/AA violations', async ({ page }) => {
+    await page.goto('/?locale=en-US');
+    await page.waitForLoadState('networkidle');
+    
+    // Verify burger menu is closed
+    const burgerButton = page.getByRole('button', { name: 'Open or close navigation' });
+    await expect(burgerButton).toBeVisible();
+    await expect(burgerButton).toHaveAttribute('aria-expanded', 'false');
+    
+    await checkA11y(page);
+  });
+
+  // A11Y-007: Mobile homepage with open burger menu accessibility
+  test('Mobile Android homepage with open burger menu has no automatically detected WCAG A/AA violations', async ({ page }) => {
+    await page.goto('/?locale=en-US');
+    await page.waitForLoadState('networkidle');
+    
+    // Open mobile burger menu
+    const burgerButton = page.getByRole('button', { name: 'Open or close navigation' });
+    await burgerButton.click();
+    await page.waitForTimeout(500); // Wait for menu animation
+    
+    // Verify menu is open
+    await expect(burgerButton).toHaveAttribute('aria-expanded', 'true');
+    
+    await checkA11y(page);
+  });
+
+  // A11Y-008: Mobile navigation to movies page accessibility
+  test('Mobile Android navigation to movies page has no automatically detected WCAG A/AA violations', async ({ page }) => {
     await page.goto('/?locale=en-US');
     await page.waitForLoadState('networkidle');
     
