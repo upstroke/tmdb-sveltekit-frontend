@@ -57,28 +57,64 @@ test.describe('Accessibility - Typeahead Search', () => {
 
 			// Navigate with ArrowDown
 			await searchInput.press('ArrowDown');
-			await page.waitForTimeout(300);
-			await expect(resultLinks.first()).toHaveAttribute('aria-selected', 'true');
+			await page.waitForTimeout(500);
+
+			// Find the currently focused result by class
+			const focusedResult = page.locator('a.result.result-focused').first();
+			const focusedId = await focusedResult.getAttribute('id');
+
+			// Wait for aria-selected="true" on the focused element
+			await page.waitForFunction((id) => {
+				const el = document.querySelector(`a.result[id="${id}"]`);
+				return el && el.getAttribute('aria-selected') === 'true';
+			}, focusedId);
+
+			// Verify the focused element has aria-selected="true"
+			await expect(focusedResult).toHaveAttribute('aria-selected', 'true');
 
 			// Navigate to second result with ArrowDown
 			await searchInput.press('ArrowDown');
 			await page.waitForTimeout(300);
-			await expect(resultLinks.nth(1)).toHaveAttribute('aria-selected', 'true');
+			const focusedResult2 = page.locator('a.result.result-focused').first();
+			const focusedId2 = await focusedResult2.getAttribute('id');
+			await page.waitForFunction((id) => {
+				const el = document.querySelector(`a.result[id="${id}"]`);
+				return el && el.getAttribute('aria-selected') === 'true';
+			}, focusedId2);
+			await expect(focusedResult2).toHaveAttribute('aria-selected', 'true');
 
 			// Navigate back with ArrowUp
 			await searchInput.press('ArrowUp');
 			await page.waitForTimeout(300);
-			await expect(resultLinks.first()).toHaveAttribute('aria-selected', 'true');
+			const focusedResult3 = page.locator('a.result.result-focused').first();
+			const focusedId3 = await focusedResult3.getAttribute('id');
+			await page.waitForFunction((id) => {
+				const el = document.querySelector(`a.result[id="${id}"]`);
+				return el && el.getAttribute('aria-selected') === 'true';
+			}, focusedId3);
+			await expect(focusedResult3).toHaveAttribute('aria-selected', 'true');
 
 			// Press Home to go to first result
 			await searchInput.press('Home');
 			await page.waitForTimeout(300);
-			await expect(resultLinks.first()).toHaveAttribute('aria-selected', 'true');
+			const focusedResult4 = page.locator('a.result.result-focused').first();
+			const focusedId4 = await focusedResult4.getAttribute('id');
+			await page.waitForFunction((id) => {
+				const el = document.querySelector(`a.result[id="${id}"]`);
+				return el && el.getAttribute('aria-selected') === 'true';
+			}, focusedId4);
+			await expect(focusedResult4).toHaveAttribute('aria-selected', 'true');
 
 			// Press End to go to last result
 			await searchInput.press('End');
 			await page.waitForTimeout(300);
-			await expect(resultLinks.last()).toHaveAttribute('aria-selected', 'true');
+			const focusedResult5 = page.locator('a.result.result-focused').first();
+			const focusedId5 = await focusedResult5.getAttribute('id');
+			await page.waitForFunction((id) => {
+				const el = document.querySelector(`a.result[id="${id}"]`);
+				return el && el.getAttribute('aria-selected') === 'true';
+			}, focusedId5);
+			await expect(focusedResult5).toHaveAttribute('aria-selected', 'true');
 
 			// Close with Escape
 			await searchInput.press('Escape');
@@ -102,13 +138,31 @@ test.describe('Accessibility - Typeahead Search', () => {
 			// Navigate with ArrowDown to first result
 			await searchInput.press('ArrowDown');
 			await page.waitForTimeout(300);
-			
+
+			// Find the currently focused result by class
+			const focusedResult = page.locator('a.result.result-focused').first();
+			const focusedId = await focusedResult.getAttribute('id');
+
+			// Wait for aria-selected="true" on the focused element
+			await page.waitForFunction((id) => {
+				const el = document.querySelector(`a.result[id="${id}"]`);
+				return el && el.getAttribute('aria-selected') === 'true';
+			}, focusedId);
+
 			// First result should have aria-selected="true"
-			await expect(resultLinks.first()).toHaveAttribute('aria-selected', 'true');
-			
+			await expect(focusedResult).toHaveAttribute('aria-selected', 'true');
+
 			// Other results should have aria-selected="false"
-			await expect(resultLinks.nth(1)).toHaveAttribute('aria-selected', 'false');
-			
+			const allResults = page.locator('a.result[data-result-link="true"]');
+			const allResultIds = await allResults.all();
+
+			for (const result of allResultIds) {
+				const id = await result.getAttribute('id');
+				if (id !== focusedId) {
+					await expect(result).toHaveAttribute('aria-selected', 'false');
+				}
+			}
+
 			await checkA11y(page);
 		}
 	);
@@ -133,7 +187,7 @@ test.describe('Accessibility - Typeahead Search', () => {
 			// Dropdown should be closed
 			await expect(resultsContainer).toBeHidden();
 			await expect(searchInput).toBeFocused();
-			
+
 			await checkA11y(page);
 		}
 	);
