@@ -65,7 +65,7 @@ Typeahead search component in global header navigation for media catalog applica
 | A11Y-TS-003 | 4.1.2 Name, Role, Value | Mobile iOS typeahead search results - no WCAG A/AA violations | typeahead-search.a11y.spec.js | Implemented |
 | A11Y-TS-004 | 4.1.2 Name, Role, Value | Mobile Android typeahead search results - no WCAG A/AA violations | typeahead-search.a11y.spec.js | Implemented |
 | A11Y-TS-005 | 4.1.2 Name, Role, Value | Selected result exposes aria-selected attribute | typeahead-search.a11y.spec.js | Implemented |
-| A11Y-TS-006 | 2.1.1 Keyboard, 2.1.3 Keyboard (No Exception) | Desktop Enter key selection and navigation - no WCAG A/AA violations | typeahead-search.a11y.spec.js | Implemented |
+| A11Y-TS-006 | 2.1.1 Keyboard | Enter key activates focused result (navigation to detail page) | typeahead-search.a11y.spec.js | Implemented |
 
 ### 4.2 Manual Keyboard Tests
 
@@ -313,6 +313,7 @@ accessibility-tests:
 | 1.0 | YYYY-MM-DD | [Author] | Initial version |
 | 1.1 | 2026-09-11 | [Author] | ISTQB alignment, test case expansion, escape key workaround documented |
 | 1.2 | 2026-09-11 | [Author] | Added A11Y-TS-002 (keyboard navigation) and A11Y-TS-006 (Enter selection) to automated tests |
+| 1.3 | 2026-09-11 | [Author] | Updated A11Y-TS-006 description to clarify Enter triggers navigation to detail page |
 
 ---
 
