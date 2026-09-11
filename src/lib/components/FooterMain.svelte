@@ -28,7 +28,12 @@
 					</a>
 				</li>
 				<li>
-					<a class="item" href="https://www.justwatch.com/" rel="noopener noreferrer" target="_blank">
+					<a
+						class="item"
+						href="https://www.justwatch.com/"
+						rel="noopener noreferrer"
+						target="_blank"
+					>
 						Streaming-Provider
 					</a>
 					<span class="justwatch">© by JustWatch</span>
@@ -73,7 +78,7 @@
 
 	@media only screen and (max-width: 767.98px) {
 		ul.secondary.menu {
-			font-size: 0.80rem;
+			font-size: 0.8rem;
 		}
 	}
 </style>

@@ -69,7 +69,8 @@
 				"loadMore": "More results",
 				"dialogErrorTitle": "Load error",
 				"dialogOk": "OK",
-				"loadMoreLoading": "Loading more results …"
+				"loadMoreLoading": "Loading more results …",
+				"searchResultsCount": "{count} search results found"
 			},
 			"formats": {
 				"outOfTen": "out of 10",
@@ -159,7 +160,8 @@
 				"loadMore": "Weitere Ergebnisse",
 				"dialogErrorTitle": "Fehler beim Laden",
 				"dialogOk": "OK",
-				"loadMoreLoading": "Lade weitere Ergebnisse …"
+				"loadMoreLoading": "Lade weitere Ergebnisse …",
+				"searchResultsCount": "{count} Suchergebnisse gefunden"
 			},
 			"formats": {
 				"outOfTen": "von 10",
@@ -249,7 +251,8 @@
 				"loadMore": "Más resultados",
 				"dialogErrorTitle": "Error al cargar",
 				"dialogOk": "Aceptar",
-				"loadMoreLoading": "Cargando más resultados …"
+				"loadMoreLoading": "Cargando más resultados …",
+				"searchResultsCount": "{count} resultados de búsqueda encontrados"
 			},
 			"formats": {
 				"outOfTen": "de 10",
@@ -339,7 +342,8 @@
 				"loadMore": "Plus de résultats",
 				"dialogErrorTitle": "Erreur de chargement",
 				"dialogOk": "OK",
-				"loadMoreLoading": "Chargement de résultats supplémentaires …"
+				"loadMoreLoading": "Chargement de résultats supplémentaires …",
+				"searchResultsCount": "{count} résultats de recherche trouvés"
 			},
 			"formats": {
 				"outOfTen": "sur 10",
@@ -429,7 +433,8 @@
 				"loadMore": "Загрузить ещё",
 				"dialogErrorTitle": "Ошибка загрузки",
 				"dialogOk": "OK",
-				"loadMoreLoading": "Загрузка дополнительных результатов …"
+				"loadMoreLoading": "Загрузка дополнительных результатов …",
+				"searchResultsCount": "Найдено результатов: {count}"
 			},
 			"formats": {
 				"outOfTen": "из 10",
@@ -519,7 +524,8 @@
 				"loadMore": "Thêm kết quả",
 				"dialogErrorTitle": "Lỗi khi tải",
 				"dialogOk": "OK",
-				"loadMoreLoading": "Đang tải thêm kết quả …"
+				"loadMoreLoading": "Đang tải thêm kết quả …",
+				"searchResultsCount": "Đã tìm thấy {count} kết quả tìm kiếm"
 			},
 			"formats": {
 				"outOfTen": "trên 10",

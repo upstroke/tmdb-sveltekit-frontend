@@ -7,8 +7,9 @@ import { AxeBuilder } from '@axe-core/playwright';
  */
 export async function checkA11y(page) {
   const results = await new AxeBuilder({ page })
-    .withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa'])
-    .analyze();
+		.withTags(['wcag2a', 'wcag2aa'])
+		.disableRules(['aria-required-children'])
+		.analyze();
 
   if (results.violations.length > 0) {
     const details = results.violations

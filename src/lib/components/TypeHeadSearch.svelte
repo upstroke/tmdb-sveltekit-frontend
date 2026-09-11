@@ -6,24 +6,8 @@
 	import { i18n } from '$lib/stores/i18n';
 	import { resolveLocale } from '$lib/i18n/helpers';
 
-	const { labels: texts, messages, titles, formats, fallbacks } = $derived($i18n);
+	const { labels: texts, messages, titles, fallbacks } = $derived($i18n);
 	const activeLocale = $derived(resolveLocale(page.url.searchParams.get('locale')));
-
-	/**
-	 * Provides the typeahead search in the header for movies and TV shows.
-	 *
-	 * The component manages search term, loading state, error state, and
-	 * visibility of the results list entirely internally. From at least four
-	 * characters, the local `/search` route is queried with debounce, running
-	 * requests are aborted via `AbortController`, and responses are displayed
-	 * separately by media type.
-	 *
-	 * @component
-	 * @remarks This component expects no props.
-	 *
-	 * @example
-	 * <TypeHeadSearch />
-	 */
 
 	let query = $state('');
 	let movies = $state([]);
@@ -32,202 +16,170 @@
 	let showLoading = $state(false);
 	let resultsClosed = $state(false);
 	let error = $state(null);
+	let announcement = $state('');
+	let inputElement;
+	let focusedResultId = $state(null);
+	let lastSelectedResultId = $state(null);
 
 	let hasResults = $derived(movies.length > 0 || tvShows.length > 0);
 	let hasSearchTerm = $derived(query.trim().length >= 4);
-	let hasStatusMessage = $derived(
-		!resultsClosed && (showLoading || !!error || (hasSearchTerm && !hasResults))
-	);
+	let hasStatusMessage = $derived(!resultsClosed && (showLoading || !!error || (hasSearchTerm && !hasResults)));
+	let resultsVisible = $derived(!resultsClosed && (hasResults || loading || !!error));
 
 	let debounceTimer;
 	let loadingTimer;
+	let announcementTimer;
 	let controller;
 	let previousLocale = $state(null);
 
-	/**
-	 * Reagiert auf Locale-Wechsel und startet bei aktivem Suchbegriff eine neue Suche.
-	 *
-	 * Die aktuell angezeigten Treffer werden dadurch an die neue Locale angepasst,
-	 * ohne dass der Suchbegriff erneut eingegeben werden muss.
-	 *
-	 * @returns {void}
-	 */
+	const searchHintId = 'typeahead-search-hint';
+	const resultsId = 'typeahead-search-results';
+
+	function getAllResultIds() {
+		const movieIds = movies.map(m => `movie-${m.id}`);
+		const tvIds = tvShows.map(t => `tv-${t.id}`);
+		return [...movieIds, ...tvIds];
+	}
+
+	function focusResult(resultId) {
+		focusedResultId = resultId;
+
+		requestAnimationFrame(() => {
+			const focusedElement = document.querySelector(`a.result[aria-selected="true"]`);
+			if (focusedElement) {
+				focusedElement.scrollIntoView({
+					behavior: 'auto',
+					block: 'nearest'
+				});
+			}
+		});
+	}
+
+	function focusNextResult() {
+		const ids = getAllResultIds();
+		if (ids.length === 0) return;
+		const currentIndex = ids.indexOf(focusedResultId);
+		const nextIndex = currentIndex === -1 ? 0 : Math.min(currentIndex + 1, ids.length - 1);
+		focusResult(ids[nextIndex]);
+	}
+
+	function focusPreviousResult() {
+		const ids = getAllResultIds();
+		if (ids.length === 0) return;
+		const currentIndex = ids.indexOf(focusedResultId);
+		const previousIndex = currentIndex === -1 ? 0 : Math.max(currentIndex - 1, 0);
+		focusResult(ids[previousIndex]);
+	}
+
+	function focusFirstResult() {
+		const ids = getAllResultIds();
+		if (ids.length > 0) focusResult(ids[0]);
+	}
+
+	function focusLastResult() {
+		const ids = getAllResultIds();
+		if (ids.length > 0) focusResult(ids[ids.length - 1]);
+	}
+
+	$effect(() => {
+		if (!focusedResultId) return;
+
+		requestAnimationFrame(() => {
+			const focusedElement = document.querySelector(`a.result[aria-selected="true"]`);
+			if (focusedElement) {
+				const title = focusedElement.querySelector('.title')?.textContent;
+				const type = focusedElement.querySelector('.u-sr-only')?.textContent;
+				if (title && type) {
+					scheduleAnnouncement(`${type}: ${title}`);
+				}
+			}
+		});
+	});
+
 	$effect(() => {
 		if (previousLocale == null) {
 			previousLocale = activeLocale;
 			return;
 		}
-
-		if (activeLocale === previousLocale) {
-			return;
-		}
-
+		if (activeLocale === previousLocale) return;
 		previousLocale = activeLocale;
 		const term = query.trim();
-
-		if (term.length >= 4) {
-			void search(term);
-		}
+		if (term.length >= 4) void search(term);
 	});
 
-	/**
-	 * Formatiert einen Bewertungswert mit einer Nachkommastelle.
-	 *
-	 * @param {number | string | null | undefined} value - Ursprünglicher Bewertungswert.
-	 * @returns {string} Bewertung als String mit genau einer Nachkommastelle.
-	 */
-	function formatRating(value) {
-		return Number(value ?? 0).toFixed(1);
-	}
-
-	/**
-	 * Leitet aus einem Datumsstring das Jahr für die Trefferanzeige ab.
-	 *
-	 * @param {string | null | undefined} value - ISO-Datum eines Films oder einer Serie.
-	 * @returns {string} Vierstelliges Jahr oder ein Platzhalter ohne Datum.
-	 */
+	function formatRating(value) { return Number(value ?? 0).toFixed(1); }
 	function formatYear(value) {
 		if (!value) return fallbacks.dateFallback;
-
 		const date = new Date(value);
-		if (Number.isNaN(date.getTime())) {
-			return fallbacks.dateFallback;
-		}
-
+		if (Number.isNaN(date.getTime())) return fallbacks.dateFallback;
 		return String(date.getFullYear());
 	}
-
-	/**
-	 * Erstellt das Screenreader-Label für die dargestellte Bewertung.
-	 *
-	 * @param {number | string | null | undefined} value - Bewertungswert des Treffers.
-	 * @returns {string} Lokalisierter ARIA-Text für die Bewertungsausgabe.
-	 */
-	function ratingAriaLabel(value) {
-		return `${texts.rating}: ${formatRating(value)} ${formats.outOfTen}`;
-	}
-
-	const searchHintId = 'typeahead-search-hint';
-
-	/**
-	 * Ergänzt eine interne Route um die aktuell aktive Locale.
-	 *
-	 * @param {string} href - Interne Zielroute ohne oder mit bestehenden Query-Parametern.
-	 * @returns {string} Zielroute inklusive aktiver Locale.
-	 */
 	function withLocale(href) {
-		if (!href) {
-			return href;
-		}
-
+		if (!href) return href;
 		const url = new URL(href, page.url.origin);
 		url.searchParams.set('locale', activeLocale);
 		return `${url.pathname}${url.search}${url.hash}`;
 	}
-
-	/**
-	 * Ermittelt die interne Detailroute für einen Suchtreffer anhand seines Medientyps.
-	 *
-	 * @param {{ id: number | string, mediaType: 'movie' | 'tv' }} item - Suchtreffer aus der Ergebnisliste.
-	 * @returns {string} Interne Detailroute für Film- oder TV-Detailseite.
-	 */
 	function resultHref(item) {
-		if (item.mediaType === 'movie') {
-			return resolve('/movies/[id]', {
-				id: String(item.id)
-			});
-		}
-
-		return resolve('/tv-shows/[id]', {
-			id: String(item.id)
-		});
+		if (item.mediaType === 'movie') return resolve('/movies/[id]', { id: String(item.id) });
+		return resolve('/tv-shows/[id]', { id: String(item.id) });
 	}
-
-	/**
-	 * Setzt Ergebnislisten, Statusmeldungen und Ladezustände auf den Ausgangszustand zurück.
-	 *
-	 * Bereits laufende Ladehinweise werden dabei ebenfalls beendet.
-	 *
-	 * @returns {void}
-	 */
+	function clearAnnouncement() { clearTimeout(announcementTimer); announcement = ''; }
+	function scheduleAnnouncement(message) {
+		clearTimeout(announcementTimer);
+		announcement = '';
+		if (!message) return;
+		announcementTimer = setTimeout(() => { requestAnimationFrame(() => { announcement = message; }); }, 500);
+	}
 	function resetResults() {
 		clearTimeout(loadingTimer);
+		clearAnnouncement();
 		showLoading = false;
 		loading = false;
 		resultsClosed = false;
+		focusedResultId = null;
 		movies = [];
 		tvShows = [];
 		error = null;
 	}
-
-	/**
-	 * Verarbeitet Eingaben im Suchfeld und stößt die Suche mit Debounce erneut an.
-	 *
-	 * Bei weniger als vier Zeichen werden vorhandene Treffer und Statusmeldungen
-	 * sofort zurückgesetzt.
-	 *
-	 * @returns {void}
-	 */
 	function handleInput() {
 		clearTimeout(debounceTimer);
-
+		clearAnnouncement();
+		focusedResultId = null;
 		const term = query.trim();
-
-		if (term.length < 4) {
-			resetResults();
-			return;
-		}
-
+		if (term.length < 4) { resetResults(); return; }
 		resultsClosed = false;
 		debounceTimer = setTimeout(() => search(term), 300);
 	}
-
-	/**
-	 * Lädt Suchergebnisse für den übergebenen Begriff von der lokalen Search-Route.
-	 *
-	 * Laufende Requests werden vor einem neuen Aufruf abgebrochen, um veraltete
-	 * Antworten nicht mehr in den State zu übernehmen.
-	 *
-	 * @param {string} term - Bereinigter Suchbegriff ab vier Zeichen.
-	 * @returns {Promise<void>} Wird aufgelöst, sobald State und Ergebnislisten aktualisiert wurden.
-	 */
 	async function search(term) {
 		controller?.abort();
 		clearTimeout(loadingTimer);
+		clearAnnouncement();
+		focusedResultId = null;
 		showLoading = false;
 		controller = new AbortController();
-
 		loading = true;
 		error = null;
-		loadingTimer = setTimeout(() => {
-			if (loading) {
-				showLoading = true;
-			}
-		}, 300);
-
+		loadingTimer = setTimeout(() => { if (loading) showLoading = true; }, 300);
 		try {
-			const response = await fetch(
-				`/search?q=${encodeURIComponent(term)}&locale=${encodeURIComponent(activeLocale)}`,
-				{
-					signal: controller.signal
-				}
-			);
-
-			if (!response.ok) {
-				error = messages.searchError;
-				return;
-			}
-
+			const response = await fetch(`/search?q=${encodeURIComponent(term)}&locale=${encodeURIComponent(activeLocale)}`, { signal: controller.signal });
+			if (!response.ok) { error = messages.searchError; scheduleAnnouncement(messages.searchError); return; }
 			const data = await response.json();
-
 			movies = deduplicateById(data.movies ?? []);
 			tvShows = deduplicateById(data.tvShows ?? []);
-		} catch (exception) {
-			if (exception.name === 'AbortError') {
-				return;
+			const resultCount = movies.length + tvShows.length;
+			if (resultCount > 0) {
+				scheduleAnnouncement(messages.searchResultsCount.replace('{count}', String(resultCount)));
+				if (!focusedResultId) {
+					const firstId = getAllResultIds()[0];
+					if (firstId) focusResult(firstId);
+				}
 			}
-
+			else if (term.length >= 4) scheduleAnnouncement(messages.searchNoResults);
+		} catch (exception) {
+			if (exception.name === 'AbortError') return;
 			error = exception instanceof Error ? exception.message : messages.searchError;
+			scheduleAnnouncement(messages.searchError);
 		} finally {
 			clearTimeout(loadingTimer);
 			showLoading = false;
@@ -235,194 +187,210 @@
 		}
 	}
 
-	/**
-	 * Reagiert auf Tastatureingaben im Suchfeld und schließt die Trefferliste per Escape.
-	 *
-	 * @param {KeyboardEvent} event - Tastaturereignis des Suchfelds.
-	 * @returns {void}
-	 */
 	function handleKeydown(event) {
-		if (event.key === 'Escape') {
-			closeResults();
+		if (!resultsVisible || !hasResults) {
+			if (event.key === 'Escape') {
+				event.preventDefault();
+				closeResults({ restoreFocus: true });
+			}
+			return;
+		}
+
+		switch (event.key) {
+			case 'ArrowDown':
+				event.preventDefault();
+				focusNextResult();
+				break;
+			case 'ArrowUp':
+				event.preventDefault();
+				focusPreviousResult();
+				break;
+			case 'Enter':
+				event.preventDefault();
+				if (focusedResultId) {
+					const focusedLink = document.querySelector(`a.result[aria-selected="true"]`);
+					if (focusedLink) {
+						focusedLink.click();
+					}
+				}
+				break;
+			case 'Escape':
+				event.preventDefault();
+				closeResults({ restoreFocus: true });
+				break;
+			case 'Home':
+				event.preventDefault();
+				focusFirstResult();
+				break;
+			case 'End':
+				event.preventDefault();
+				focusLastResult();
+				break;
 		}
 	}
 
-	/**
-	 * Blendet die Ergebnisliste aus, ohne den Suchbegriff zurückzusetzen.
-	 *
-	 * @returns {void}
-	 */
-	function closeResults() {
+	function closeResults({ restoreFocus = false } = {}) {
+		clearAnnouncement();
 		resultsClosed = true;
-	}
 
-	/**
-	 * Schließt die Ergebnisliste bei Klicks außerhalb der Komponente.
-	 *
-	 * Click wird statt Pointerdown verwendet, damit Links innerhalb der
-	 * Trefferliste ihre Navigation normal abschließen können.
-	 *
-	 * @param {MouseEvent} event - Klickereignis auf Fensterebene.
-	 * @returns {void}
-	 */
-	function handleWindowClick(event) {
-		if (!event.target.closest('#typeahead-search')) {
-			closeResults();
+		// Store the last focused result before closing
+		if (focusedResultId) {
+			lastSelectedResultId = focusedResultId;
 		}
+
+		focusedResultId = null;
+		if (restoreFocus) inputElement?.focus();
 	}
 
-	/**
-	 * Blendet vorhandene Ergebnisse oder Statusmeldungen beim erneuten Fokussieren ein.
-	 *
-	 * @returns {void}
-	 */
+	function handleWindowClick(event) {
+		if (!event.target.closest('#typeahead-search')) closeResults();
+	}
+
 	function showResults() {
-		if (query.trim().length >= 4 && (movies.length > 0 || tvShows.length > 0 || loading || error)) {
+		if (query.trim().length >= 4 && (hasResults || loading || error)) {
 			resultsClosed = false;
+
+			// Restore focus to the last selected result if it's still in the results
+			if (lastSelectedResultId) {
+				const allIds = getAllResultIds();
+				if (allIds.includes(lastSelectedResultId)) {
+					// Result is still available, restore focus
+					focusedResultId = lastSelectedResultId;
+				}
+			}
+
+			// If no result was restored, focus the first result
+			if (!focusedResultId && hasResults) {
+				const firstId = getAllResultIds()[0];
+				if (firstId) focusResult(firstId);
+			}
 		}
 	}
 </script>
 
-<svelte:window onclick={handleWindowClick} />
+<svelte:window onclick={handleWindowClick} onkeydown={handleKeydown} />
 
 <search id="typeahead-search">
-	<form id="typeahead-search-form" onsubmit={(e) => e.preventDefault()} role="search">
+	<form id="typeahead-search-form" onsubmit={(event) => event.preventDefault()} role="search">
 		<label class="u-sr-only" for="typeahead-search-input">{texts.searchInput}</label>
 		<div class="input-wrapper">
 			<input
+				aria-autocomplete="list"
+				aria-controls={resultsId}
 				aria-describedby={searchHintId}
+				aria-expanded={resultsVisible && hasResults}
+				aria-haspopup="listbox"
+				aria-activedescendant={focusedResultId || undefined}
+				role="combobox"
 				autocomplete="off"
+				bind:this={inputElement}
 				bind:value={query}
 				id="typeahead-search-input"
 				onfocus={showResults}
 				oninput={handleInput}
-				onkeydown={handleKeydown}
 				placeholder={texts.searchInput}
 				type="search"
 			/>
-
 			<i aria-hidden="true" class="search icon"></i>
-
-			<p class="u-sr-only" id="typeahead-search-hint">{messages.searchHint}</p>
-
+			<p class="u-sr-only" id={searchHintId}>{messages.searchHint}</p>
 			{#if hasStatusMessage}
-				<div id="status-messages-layer">
-					{#if error}
-						<section id="status-messages" role="alert" aria-atomic="true">
-							<div class="search-error-panel">
-								<p class="result result-error">
-									{error === messages.searchError ? messages.searchError : error}
-								</p>
-							</div>
-						</section>
-					{:else if loading}
-						<section id="status-messages" role="status" aria-live="polite" aria-atomic="true">
-							<p class="result">{messages.searchLoading}</p>
-						</section>
-					{:else if hasSearchTerm && !hasResults}
-						<section id="status-messages" role="status" aria-live="polite" aria-atomic="true">
-							<div class="search-empty-state">
-								<p class="result {messages.searchNoResults ? '' : 'u-not-available'}">
-									{messages.searchNoResults}
-								</p>
-							</div>
-						</section>
-					{/if}
-				</div>
+				<div id="status-messages-layer"><section id="status-messages" aria-hidden="true">
+					{#if error}<div class="search-error-panel"><p class="result result-error">{error}</p></div>
+					{:else if loading}<p class="result">{messages.searchLoading}</p>
+					{:else if hasSearchTerm && !hasResults}<div class="search-empty-state"><p class="result">{messages.searchNoResults}</p></div>{/if}
+				</section></div>
 			{/if}
 		</div>
-
-		{#if !resultsClosed && hasResults}
-			<div id="typeahead-search-results" aria-label={messages.searchResults} aria-live="polite">
-				<section class="category" aria-labelledby="typeahead-movies-heading">
-					<h2
-						id="typeahead-movies-heading"
-						class="ui label blue {titles.movies ? '' : 'u-not-available'}"
-					>
-						{titles.movies}
-					</h2>
-					<ul class="results" aria-label={titles.movies}>
+		{#if hasResults}
+			<div
+				id={resultsId}
+				role="listbox"
+				aria-label={messages.searchResults}
+				aria-live="polite"
+				aria-atomic="false"
+				class:results-closed={resultsClosed}
+				style:display={resultsClosed ? 'none' : ''}
+			>
+				{#if movies.length > 0}
+					<div role="group" aria-labelledby="typeahead-movies-heading">
+						<h2 id="typeahead-movies-heading" class="typeahead-results-heading ui label blue {titles.movies ? '' : 'u-not-available'}">{titles.movies}</h2>
 						{#each movies as item (item.id)}
-							<li>
-								<a
-									class="result"
-									href={withLocale(resultHref(item))}
-									onclick={closeResults}
-									data-result-link="true"
-								>
-									<figure class="image" aria-hidden="true">
-										<img src={item.posterUrl || item.imageUrl || notAvailable} alt="" />
-									</figure>
-									<div class="content">
+							<a
+								role="option"
+								id={`movie-${item.id}`}
+								class="result"
+								class:result-focused={focusedResultId === `movie-${item.id}`}
+								data-result-link="true"
+								href={withLocale(resultHref(item))}
+								onclick={() => closeResults()}
+								aria-selected={focusedResultId === `movie-${item.id}` ? 'true' : 'false'}
+								aria-labelledby={`typeahead-result-type-movie-${item.id} typeahead-result-content-movie-${item.id}`}
+								tabindex={focusedResultId === `movie-${item.id}` ? 0 : -1}
+							>
+								<figure class="image" aria-hidden="true"><img src={item.posterUrl || item.imageUrl || notAvailable} alt="" /></figure>
+								<div class="content">
+									<span class="u-sr-only" id={`typeahead-result-type-movie-${item.id}`}>{titles.movies}</span>
+									<div id={`typeahead-result-content-movie-${item.id}`}>
 										<header class="result-header">
 											<h3 class="title {item.title ? '' : 'u-not-available'}">{item.title}</h3>
 										</header>
 										<p class="description">
-											<time class={item.date ? '' : 'u-not-available'} datetime={item.date}
-												>{formatYear(item.date)}</time
-											>
+											<time class={item.date ? '' : 'u-not-available'} datetime={item.date}>{formatYear(item.date)}</time>
 											<span aria-hidden="true"> · </span>
-											<span class="rating" aria-label={ratingAriaLabel(item.rating)}>
+											<span class="rating">
 												<i class="yellow star icon" aria-hidden="true"></i>
-												<span class={item.rating ? '' : 'u-not-available'}
-													>{formatRating(item.rating)}</span
-												>
+												<span class={item.rating ? '' : 'u-not-available'}>{formatRating(item.rating)}</span>
 											</span>
 										</p>
 									</div>
-								</a>
-							</li>
+								</div>
+							</a>
 						{/each}
-					</ul>
-				</section>
-
+					</div>
+				{/if}
 				{#if tvShows.length > 0}
-					<section class="category" aria-labelledby="typeahead-tv-heading">
-						<h2
-							id="typeahead-tv-heading"
-							class="ui label blue {titles.tvShows ? '' : 'u-not-available'}"
-						>
-							{titles.tvShows}
-						</h2>
-						<ul class="results" aria-label={titles.tvShows}>
-							{#each tvShows as item (item.id)}
-								<li>
-									<a
-										class="result"
-										href={withLocale(resultHref(item))}
-										onclick={closeResults}
-										data-result-link="true"
-									>
-										<figure class="image" aria-hidden="true">
-											<img src={item.posterUrl || item.imageUrl || notAvailable} alt="" />
-										</figure>
-										<div class="content">
-											<header class="result-header">
-												<h3 class="title {item.title ? '' : 'u-not-available'}">{item.title}</h3>
-											</header>
-											<p class="description">
-												<time class={item.date ? '' : 'u-not-available'} datetime={item.date}
-													>{formatYear(item.date)}</time
-												>
-												<span aria-hidden="true"> · </span>
-												<span class="rating" aria-label={ratingAriaLabel(item.rating)}>
-													<i class="yellow star icon" aria-hidden="true"></i>
-													<span class={item.rating ? '' : 'u-not-available'}
-														>{formatRating(item.rating)}</span
-													>
-												</span>
-											</p>
-										</div>
-									</a>
-								</li>
-							{/each}
-						</ul>
-					</section>
+					<div role="group" aria-labelledby="typeahead-tv-heading">
+						<h2 id="typeahead-tv-heading" class="typeahead-results-heading ui label blue {titles.tvShows ? '' : 'u-not-available'}">{titles.tvShows}</h2>
+						{#each tvShows as item (item.id)}
+							<a
+								role="option"
+								id={`tv-${item.id}`}
+								class="result"
+								class:result-focused={focusedResultId === `tv-${item.id}`}
+								data-result-link="true"
+								href={withLocale(resultHref(item))}
+								onclick={() => closeResults()}
+								aria-selected={focusedResultId === `tv-${item.id}` ? 'true' : 'false'}
+								aria-labelledby={`typeahead-result-type-tv-${item.id} typeahead-result-content-tv-${item.id}`}
+								tabindex={focusedResultId === `tv-${item.id}` ? 0 : -1}
+							>
+								<figure class="image" aria-hidden="true"><img src={item.posterUrl || item.imageUrl || notAvailable} alt="" /></figure>
+								<div class="content">
+									<span class="u-sr-only" id={`typeahead-result-type-tv-${item.id}`}>{titles.tvShows}</span>
+									<div id={`typeahead-result-content-tv-${item.id}`}>
+										<header class="result-header">
+											<h3 class="title {item.title ? '' : 'u-not-available'}">{item.title}</h3>
+										</header>
+										<p class="description">
+											<time class={item.date ? '' : 'u-not-available'} datetime={item.date}>{formatYear(item.date)}</time>
+											<span aria-hidden="true"> · </span>
+											<span class="rating">
+												<i class="yellow star icon" aria-hidden="true"></i>
+												<span class={item.rating ? '' : 'u-not-available'}>{formatRating(item.rating)}</span>
+											</span>
+										</p>
+									</div>
+								</div>
+							</a>
+						{/each}
+					</div>
 				{/if}
 			</div>
 		{/if}
 	</form>
 </search>
+
+<div class="u-sr-only" aria-live="polite" aria-atomic="true">{announcement}</div>
 
 <style lang="scss">
 	@use '../../css/variables';
@@ -445,10 +413,10 @@
 			align-items: center;
 			padding: 0.5rem 0;
 			flex-wrap: nowrap;
+		}
 
-			.search.icon {
-				margin-left: 0.5rem;
-			}
+		.search.icon {
+			margin-left: 0.5rem;
 		}
 
 		#typeahead-search-input {
@@ -462,20 +430,20 @@
 			white-space: nowrap;
 			overflow: hidden;
 			text-overflow: ellipsis;
+		}
 
-			&:focus-visible {
-				outline: 2px solid #2185d0 !important;
-				outline-offset: 0;
-				border: none;
-				box-shadow: none;
-			}
+		#typeahead-search-input:focus-visible {
+			outline: 2px solid var(--focus-ring-blue) !important;
+			outline-offset: 0;
+			border: none;
+			box-shadow: none;
+		}
 
-			&::-webkit-search-cancel-button {
-				filter: brightness(0) invert(1);
-				cursor: pointer;
-				position: relative;
-				margin-left: 0.5rem;
-			}
+		#typeahead-search-input::-webkit-search-cancel-button {
+			filter: brightness(0) invert(1);
+			cursor: pointer;
+			position: relative;
+			margin-left: 0.5rem;
 		}
 
 		#typeahead-search-results {
@@ -494,96 +462,97 @@
 			background: white;
 		}
 
+		#typeahead-search-results [role='group'] {
+			background: white;
+		}
+
+		#typeahead-search-results [role='group'] > a.result {
+			display: flex;
+			padding: 0.5em 1em;
+			transition: background-color 180ms ease;
+		}
+
+		#typeahead-search-results [role='group'] > a.result:hover,
+		#typeahead-search-results [role='group'] > a.result:focus-visible,
+		#typeahead-search-results [role='group'] > a.result[aria-selected='true'],
+		#typeahead-search-results [role='group'] > a.result.result-focused {
+			background: rgba(0, 0, 0, 0.08);
+		}
+
+		#typeahead-search-results [role='group'] > a.result:focus-visible,
+		#typeahead-search-results [role='group'] > a.result[aria-selected='true'],
+		#typeahead-search-results [role='group'] > a.result.result-focused {
+			outline: 2px solid var(--focus-ring-blue);
+			outline-offset: -2px;
+		}
+
 		#typeahead-search-results .category {
 			background: white;
+		}
 
-			#typeahead-movies-heading,
-			#typeahead-tv-heading {
-				font-size: 1em;
-				font-weight: 500;
-				width: 100%;
-				border-radius: 0;
+		.typeahead-results-heading {
+			font-size: 1em;
+			font-weight: 500;
+			width: 100%;
+			border-radius: 0;
+
+			&.ui.label.blue {
+				background-color: var(--mediatype-label-blue);
+				border-color: var(--mediatype-label-blue);
+				color: white;
 			}
 
-			ul.results {
-				margin: 0;
-				padding: 0;
-
-				> li {
-					list-style: none;
-					padding: 0.5em 1em;
-					transition: background-color 180ms ease;
-
-					&:hover,
-					&:has(a.result:focus-visible) {
-						background: rgba(0, 0, 0, 0.08);
-					}
-
-					&:has(a.result:focus-visible) {
-						outline: 2px solid #2185d0;
-						outline-offset: -3px;
-					}
-
-					&:hover a.result,
-					&:has(a.result:focus-visible) a.result {
-						background: transparent;
-					}
-
-					&:has(a.result:focus-visible) a.result {
-						outline: none;
-					}
-
-					> a {
-						display: flex;
-					}
-				}
+			&.ui.label.teal {
+				background-color: var(--mediatype-label-teal);
+				border-color: var(--mediatype-label-teal);
+				color: white;
 			}
+		}
 
-			.image {
-				align-self: stretch;
-				flex: 0 0 2em;
-				width: 2em;
-				height: 3em;
-				max-height: 3em;
-				margin: 0 1rem 0 0;
-				overflow: hidden;
-			}
+		.image {
+			align-self: stretch;
+			flex: 0 0 2em;
+			width: 2em;
+			height: 3em;
+			max-height: 3em;
+			margin: 0 1rem 0 0;
+			overflow: hidden;
+		}
 
-			.image img {
-				display: block;
-				width: 100%;
-				height: 100%;
-				min-height: 100%;
-				object-fit: cover;
-			}
+		.image img {
+			display: block;
+			width: 100%;
+			height: 100%;
+			min-height: 100%;
+			object-fit: cover;
+		}
 
-			.content {
-				position: relative;
-				display: flex;
-				flex-direction: column;
-				min-width: 0;
-			}
+		.content {
+			position: relative;
+			display: flex;
+			flex-direction: column;
+			min-width: 0;
+		}
 
-			.result-header {
-				min-width: 0;
-				white-space: normal;
-			}
+		.result-header {
+			min-width: 0;
+			white-space: normal;
+		}
 
-			.title {
-				color: black;
-				padding-right: 0;
-				line-height: 1;
-				font-size: 1em;
-				font-weight: bold;
-				white-space: normal;
-				overflow-wrap: anywhere;
-			}
+		.title {
+			color: black;
+			padding-right: 0;
+			line-height: 1;
+			font-size: 1em;
+			font-weight: bold;
+			white-space: normal;
+			overflow-wrap: anywhere;
+		}
 
-			.description {
-				line-height: 1.2;
-				color: #999;
-				font-size: 1em;
-			}
+		.description {
+			line-height: 1.2;
+			color: var(--color-text-muted);
+			font-size: 1em;
 		}
 
 		#status-messages-layer {

@@ -116,10 +116,7 @@
 	</button>
 
 	<div class="nav-wrapper">
-		<nav
-			id="navmenu"
-			aria-label={labels.mainNavigation}
-		>
+		<nav id="navmenu" aria-label={labels.mainNavigation}>
 			<ul class="nav-list">
 				{#each navItems as item (item.id)}
 					<li class="nav-item" id={item.id}>
@@ -319,4 +316,3 @@
 		}
 	}
 </style>
-
