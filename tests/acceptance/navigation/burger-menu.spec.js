@@ -60,30 +60,42 @@ test.describe('Burger menu', () => {
 			await page.goto('http://localhost:5173/?locale=en-US');
 			await expect(page).toHaveTitle(/Home.*TMDB/);
 
-			// Click burger menu button
-			await page.getByRole('button', { name: 'Open or close navigation' }).click();
+			const burgerButton = page.getByRole('button', {
+				name: 'Open or close navigation'
+			});
+			const tvShowsLink = page.getByRole('link', { name: 'TV shows' });
+			const homeLink = page.getByRole('link', { name: 'Home' });
+			const moviesLink = page.getByRole('link', { name: 'Movies' });
 
-			// WAIT for menu to be fully opened and links visible
-			await expect(page.getByRole('link', { name: 'TV shows' })).toBeVisible({ timeout: 5000 });
+			async function openBurgerMenu() {
+				await expect(burgerButton).toBeVisible({ timeout: 5000 });
+				await expect(burgerButton).toHaveAttribute('aria-expanded', 'false', {
+					timeout: 5000
+				});
 
-			// Navigate to TV Shows
-			await page.getByRole('link', { name: 'TV shows' }).click();
+				await burgerButton.click();
+
+				await expect(burgerButton).toHaveAttribute('aria-expanded', 'true', {
+					timeout: 5000
+				});
+			}
+
+			// Open menu and navigate to TV shows
+			await openBurgerMenu();
+			await expect(tvShowsLink).toBeVisible({ timeout: 5000 });
+			await tvShowsLink.click();
 			await expect(page).toHaveTitle(/TV.*TMDB/);
 
-			// Open burger menu again
-			await page.getByRole('button', { name: 'Open or close navigation' }).click();
-			await expect(page.getByRole('link', { name: 'Home' })).toBeVisible({ timeout: 5000 });
-
-			// Navigate to Home
-			await page.getByRole('link', { name: 'Home' }).click();
+			// Open menu on the TV shows page and return Home
+			await openBurgerMenu();
+			await expect(homeLink).toBeVisible({ timeout: 5000 });
+			await homeLink.click();
 			await expect(page).toHaveTitle(/Home.*TMDB/);
 
-			// Open burger menu again
-			await page.getByRole('button', { name: 'Open or close navigation' }).click();
-			await expect(page.getByRole('link', { name: 'Movies' })).toBeVisible({ timeout: 5000 });
-
-			// Navigate to Movies
-			await page.getByRole('link', { name: 'Movies' }).click();
+			// Open menu on Home and navigate to Movies
+			await openBurgerMenu();
+			await expect(moviesLink).toBeVisible({ timeout: 5000 });
+			await moviesLink.click();
 			await expect(page).toHaveTitle(/Movies.*TMDB/);
 		}
 	);
