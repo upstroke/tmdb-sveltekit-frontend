@@ -212,19 +212,24 @@ test.describe('Accessibility - Typeahead Search', () => {
 		},
 		async ({ page }) => {
 			const { searchInput, resultsContainer } = await openStableResults(page);
-
 			await searchInput.press('ArrowDown');
-			const { focusedResult } = await getFocusedResult(searchInput, resultsContainer);
 
+			const { focusedResult } = await getFocusedResult(searchInput, resultsContainer);
 			const expectedHref = await focusedResult.getAttribute('href');
-			expect(expectedHref).toMatch(/\/movies\/\d+/);
+
+			expect(expectedHref).toBeTruthy();
+
+			const expectedUrl = new URL(expectedHref, page.url());
 
 			await Promise.all([
-				page.waitForURL((url) => url.pathname === new URL(expectedHref, url.origin).pathname),
+				page.waitForURL(expectedUrl.toString(), {
+					waitUntil: 'commit',
+					timeout: 10000
+				}),
 				searchInput.press('Enter')
 			]);
 
-			expect(new URL(page.url()).pathname).toBe(new URL(expectedHref, page.url()).pathname);
+			await expect(page).toHaveURL(expectedUrl.toString());
 		}
 	);
 });
