@@ -4,21 +4,79 @@ import { checkA11y } from '../../setup/a11y.js';
 
 const RESULT_LINK_SELECTOR = 'a.result[data-result-link="true"]';
 const SEARCH_INPUT_SELECTOR = '#typeahead-search-input';
+const RESULTS_CONTAINER_SELECTOR = '#typeahead-search-results';
 
 async function openResults(page, term = 'Hero') {
 	const searchInput = page.locator(SEARCH_INPUT_SELECTOR);
+	const resultsContainer = page.locator(RESULTS_CONTAINER_SELECTOR);
+	const resultLinks = resultsContainer.locator(RESULT_LINK_SELECTOR);
 
 	await expect(searchInput).toHaveAttribute('type', 'search');
 	await searchInput.fill(term);
 
-	const resultsContainer = page.locator('#typeahead-search-results');
-	await expect(resultsContainer).toBeVisible();
+	await expect(searchInput).toBeFocused();
+	await expect(searchInput).toHaveAttribute('aria-expanded', 'true', { timeout: 10000 });
+	await expect(resultsContainer).toBeVisible({ timeout: 10000 });
+	await expect(resultLinks.first()).toBeVisible({ timeout: 10000 });
+	await expect.poll(async () => resultLinks.count(), { timeout: 10000 }).toBeGreaterThan(0);
 
 	return {
 		searchInput,
 		resultsContainer,
-		resultLinks: resultsContainer.locator(RESULT_LINK_SELECTOR)
+		resultLinks
 	};
+}
+
+async function openStableResults(page, term) {
+	const { searchInput, resultsContainer, resultLinks } = await openResults(page, term);
+
+	await expect(searchInput).toBeFocused();
+	await expect(searchInput).toHaveAttribute('aria-expanded', 'true', {
+		timeout: 10000
+	});
+	await expect(resultsContainer).toBeVisible({ timeout: 10000 });
+	await expect(resultLinks.first()).toBeVisible({ timeout: 10000 });
+	await expect.poll(async () => resultLinks.count(), { timeout: 10000 }).toBeGreaterThan(0);
+
+	return {
+		searchInput,
+		resultsContainer,
+		resultLinks
+	};
+}
+
+async function getFocusedResult(searchInput, resultsContainer) {
+	await expect(searchInput).toHaveAttribute('aria-activedescendant', /.+/, {
+		timeout: 5000
+	});
+
+	const focusedId = await searchInput.getAttribute('aria-activedescendant');
+
+	expect(focusedId).toBeTruthy();
+
+	const focusedResult = resultsContainer.locator(
+		`a.result[data-result-link="true"][id="${focusedId}"]`
+	);
+
+	await expect(focusedResult).toBeVisible({ timeout: 5000 });
+	await expect(focusedResult).toHaveAttribute('aria-selected', 'true', {
+		timeout: 5000
+	});
+
+	return {
+		focusedId,
+		focusedResult
+	};
+}
+
+async function getChangedFocusedResult(searchInput, resultsContainer, previousId) {
+	await expect
+		.poll(async () => searchInput.getAttribute('aria-activedescendant'), {
+			timeout: 5000
+		})
+		.not.toBe(previousId);
+
+	return getFocusedResult(searchInput, resultsContainer);
 }
 
 test.describe('Accessibility - Typeahead Search', () => {
@@ -35,7 +93,7 @@ test.describe('Accessibility - Typeahead Search', () => {
 			tag: ['@accessibility', '@a11y', '@desktop', '@typeahead-search']
 		},
 		async ({ page }) => {
-			const { searchInput, resultLinks } = await openResults(page);
+			const { searchInput, resultLinks } = await openStableResults(page);
 
 			await expect(searchInput).toBeFocused();
 			await expect(resultLinks.first()).toBeVisible();
@@ -50,76 +108,68 @@ test.describe('Accessibility - Typeahead Search', () => {
 			tag: ['@accessibility', '@a11y', '@desktop', '@typeahead-search', '@keyboard']
 		},
 		async ({ page }) => {
-			const { searchInput, resultsContainer, resultLinks } = await openResults(page);
+			const { searchInput, resultsContainer, resultLinks } = await openStableResults(page);
 
-			const resultCount = await resultLinks.count();
-			expect(resultCount).toBeGreaterThanOrEqual(2);
+			await expect
+				.poll(async () => resultLinks.count(), { timeout: 5000 })
+				.toBeGreaterThanOrEqual(2);
 
-			// Navigate with ArrowDown
+			const firstResultId = await resultLinks.first().getAttribute('id');
+			const lastResultId = await resultLinks.last().getAttribute('id');
+			const initialFocusedId = await searchInput.getAttribute('aria-activedescendant');
+
 			await searchInput.press('ArrowDown');
-			await page.waitForTimeout(500);
 
-			// Find the currently focused result by class
-			const focusedResult = page.locator('a.result.result-focused').first();
-			const focusedId = await focusedResult.getAttribute('id');
+			const { focusedId: firstFocusedId } = initialFocusedId
+				? await getChangedFocusedResult(searchInput, resultsContainer, initialFocusedId)
+				: await getFocusedResult(searchInput, resultsContainer);
 
-			// Wait for aria-selected="true" on the focused element
-			await page.waitForFunction((id) => {
-				const el = document.querySelector(`a.result[id="${id}"]`);
-				return el && el.getAttribute('aria-selected') === 'true';
-			}, focusedId);
+			expect(firstFocusedId).toBeTruthy();
 
-			// Verify the focused element has aria-selected="true"
-			await expect(focusedResult).toHaveAttribute('aria-selected', 'true');
-
-			// Navigate to second result with ArrowDown
 			await searchInput.press('ArrowDown');
-			await page.waitForTimeout(300);
-			const focusedResult2 = page.locator('a.result.result-focused').first();
-			const focusedId2 = await focusedResult2.getAttribute('id');
-			await page.waitForFunction((id) => {
-				const el = document.querySelector(`a.result[id="${id}"]`);
-				return el && el.getAttribute('aria-selected') === 'true';
-			}, focusedId2);
-			await expect(focusedResult2).toHaveAttribute('aria-selected', 'true');
 
-			// Navigate back with ArrowUp
+			const { focusedId: secondFocusedId } = await getChangedFocusedResult(
+				searchInput,
+				resultsContainer,
+				firstFocusedId
+			);
+
+			expect(secondFocusedId).not.toBe(firstFocusedId);
+
 			await searchInput.press('ArrowUp');
-			await page.waitForTimeout(300);
-			const focusedResult3 = page.locator('a.result.result-focused').first();
-			const focusedId3 = await focusedResult3.getAttribute('id');
-			await page.waitForFunction((id) => {
-				const el = document.querySelector(`a.result[id="${id}"]`);
-				return el && el.getAttribute('aria-selected') === 'true';
-			}, focusedId3);
-			await expect(focusedResult3).toHaveAttribute('aria-selected', 'true');
 
-			// Press Home to go to first result
+			const { focusedId: previousFocusedId } = await getChangedFocusedResult(
+				searchInput,
+				resultsContainer,
+				secondFocusedId
+			);
+
+			expect(previousFocusedId).toBe(firstFocusedId);
+
 			await searchInput.press('Home');
-			await page.waitForTimeout(300);
-			const focusedResult4 = page.locator('a.result.result-focused').first();
-			const focusedId4 = await focusedResult4.getAttribute('id');
-			await page.waitForFunction((id) => {
-				const el = document.querySelector(`a.result[id="${id}"]`);
-				return el && el.getAttribute('aria-selected') === 'true';
-			}, focusedId4);
-			await expect(focusedResult4).toHaveAttribute('aria-selected', 'true');
 
-			// Press End to go to last result
+			await expect(searchInput).toHaveAttribute('aria-activedescendant', firstResultId, {
+				timeout: 5000
+			});
+
+			const { focusedId: homeFocusedId } = await getFocusedResult(searchInput, resultsContainer);
+			expect(homeFocusedId).toBe(firstResultId);
+
 			await searchInput.press('End');
-			await page.waitForTimeout(300);
-			const focusedResult5 = page.locator('a.result.result-focused').first();
-			const focusedId5 = await focusedResult5.getAttribute('id');
-			await page.waitForFunction((id) => {
-				const el = document.querySelector(`a.result[id="${id}"]`);
-				return el && el.getAttribute('aria-selected') === 'true';
-			}, focusedId5);
-			await expect(focusedResult5).toHaveAttribute('aria-selected', 'true');
 
-			// Close with Escape
+			await expect(searchInput).toHaveAttribute('aria-activedescendant', lastResultId, {
+				timeout: 5000
+			});
+
+			const { focusedId: endFocusedId } = await getFocusedResult(searchInput, resultsContainer);
+			expect(endFocusedId).toBe(lastResultId);
+
 			await searchInput.press('Escape');
-			await page.waitForTimeout(500);
-			await expect(resultsContainer).toBeHidden();
+
+			await expect(searchInput).toHaveAttribute('aria-expanded', 'false', {
+				timeout: 5000
+			});
+			await expect(resultsContainer).toBeHidden({ timeout: 5000 });
 			await expect(searchInput).toBeFocused();
 
 			await checkA11y(page);
@@ -133,31 +183,18 @@ test.describe('Accessibility - Typeahead Search', () => {
 			tag: ['@accessibility', '@a11y', '@desktop', '@typeahead-search', '@keyboard']
 		},
 		async ({ page }) => {
-			const { searchInput } = await openResults(page);
+			const { searchInput, resultsContainer, resultLinks } = await openStableResults(page);
 
-			// Navigate with ArrowDown to first result
 			await searchInput.press('ArrowDown');
-			await page.waitForTimeout(300);
+			const { focusedId, focusedResult } = await getFocusedResult(searchInput, resultsContainer);
 
-			// Find the currently focused result by class
-			const focusedResult = page.locator('a.result.result-focused').first();
-			const focusedId = await focusedResult.getAttribute('id');
-
-			// Wait for aria-selected="true" on the focused element
-			await page.waitForFunction((id) => {
-				const el = document.querySelector(`a.result[id="${id}"]`);
-				return el && el.getAttribute('aria-selected') === 'true';
-			}, focusedId);
-
-			// First result should have aria-selected="true"
 			await expect(focusedResult).toHaveAttribute('aria-selected', 'true');
 
-			// Other results should have aria-selected="false"
-			const allResults = page.locator('a.result[data-result-link="true"]');
-			const allResultIds = await allResults.all();
-
-			for (const result of allResultIds) {
+			const resultCount = await resultLinks.count();
+			for (let index = 0; index < resultCount; index += 1) {
+				const result = resultLinks.nth(index);
 				const id = await result.getAttribute('id');
+
 				if (id !== focusedId) {
 					await expect(result).toHaveAttribute('aria-selected', 'false');
 				}
@@ -174,34 +211,20 @@ test.describe('Accessibility - Typeahead Search', () => {
 			tag: ['@accessibility', '@a11y', '@desktop', '@typeahead-search', '@keyboard']
 		},
 		async ({ page }) => {
-			const { searchInput } = await openResults(page);
+			const { searchInput, resultsContainer } = await openStableResults(page);
 
-			// Navigate to first result
 			await searchInput.press('ArrowDown');
-			await page.waitForTimeout(300);
+			const { focusedResult } = await getFocusedResult(searchInput, resultsContainer);
 
-			// Find the currently focused result by class
-			const focusedResult = page.locator('a.result.result-focused').first();
-			const focusedId = await focusedResult.getAttribute('id');
-
-			// Wait for aria-selected="true" on the focused element
-			await page.waitForFunction((id) => {
-				const el = document.querySelector(`a.result[id="${id}"]`);
-				return el && el.getAttribute('aria-selected') === 'true';
-			}, focusedId);
-
-			// Focused result should have aria-selected="true"
-			await expect(focusedResult).toHaveAttribute('aria-selected', 'true');
-
-			// Get the href before navigation
 			const expectedHref = await focusedResult.getAttribute('href');
 			expect(expectedHref).toMatch(/\/movies\/\d+/);
 
-			// Press Enter and wait for navigation
-			await Promise.all([page.waitForURL(/\/movies\/\d+/), searchInput.press('Enter')]);
+			await Promise.all([
+				page.waitForURL((url) => url.pathname === new URL(expectedHref, url.origin).pathname),
+				searchInput.press('Enter')
+			]);
 
-			// Verify we navigated to the expected page
-			expect(page.url()).toContain(expectedHref);
+			expect(new URL(page.url()).pathname).toBe(new URL(expectedHref, page.url()).pathname);
 		}
 	);
 });
@@ -236,7 +259,7 @@ test.describe('Accessibility - Typeahead Search Mobile', () => {
 			tag: ['@accessibility', '@a11y', '@mobile', '@ios', '@typeahead-search']
 		},
 		async ({ page }) => {
-			await openResults(page, 'Hero');
+			await openStableResults(page, 'Hero');
 			await checkA11y(page);
 		}
 	);
@@ -248,7 +271,7 @@ test.describe('Accessibility - Typeahead Search Mobile', () => {
 			tag: ['@accessibility', '@a11y', '@mobile', '@android', '@typeahead-search']
 		},
 		async ({ page }) => {
-			await openResults(page, 'Breaking');
+			await openStableResults(page, 'Breaking');
 			await checkA11y(page);
 		}
 	);
