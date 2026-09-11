@@ -34,10 +34,8 @@ async function openStableResults(page, term) {
 	await expect(searchInput).toHaveAttribute('aria-expanded', 'true', {
 		timeout: 10000
 	});
-
 	await expect(resultsContainer).toBeVisible({ timeout: 10000 });
 	await expect(resultLinks.first()).toBeVisible({ timeout: 10000 });
-
 	await expect.poll(async () => resultLinks.count(), { timeout: 10000 }).toBeGreaterThan(0);
 
 	return {
@@ -46,7 +44,6 @@ async function openStableResults(page, term) {
 		resultLinks
 	};
 }
-
 
 async function getFocusedResult(searchInput, resultsContainer) {
 	await expect(searchInput).toHaveAttribute('aria-activedescendant', /.+/, {
@@ -82,7 +79,6 @@ async function getChangedFocusedResult(searchInput, resultsContainer, previousId
 	return getFocusedResult(searchInput, resultsContainer);
 }
 
-
 test.describe('Accessibility - Typeahead Search', () => {
 	test.beforeEach(async ({ page }) => {
 		await page.setViewportSize({ width: 1920, height: 1080 });
@@ -97,7 +93,7 @@ test.describe('Accessibility - Typeahead Search', () => {
 			tag: ['@accessibility', '@a11y', '@desktop', '@typeahead-search']
 		},
 		async ({ page }) => {
-			const { searchInput, resultLinks } = await openResults(page);
+			const { searchInput, resultLinks } = await openStableResults(page);
 
 			await expect(searchInput).toBeFocused();
 			await expect(resultLinks.first()).toBeVisible();
@@ -112,7 +108,7 @@ test.describe('Accessibility - Typeahead Search', () => {
 			tag: ['@accessibility', '@a11y', '@desktop', '@typeahead-search', '@keyboard']
 		},
 		async ({ page }) => {
-			const { searchInput, resultsContainer, resultLinks } = await openResults(page);
+			const { searchInput, resultsContainer, resultLinks } = await openStableResults(page);
 
 			await expect
 				.poll(async () => resultLinks.count(), { timeout: 5000 })
@@ -120,8 +116,6 @@ test.describe('Accessibility - Typeahead Search', () => {
 
 			const firstResultId = await resultLinks.first().getAttribute('id');
 			const lastResultId = await resultLinks.last().getAttribute('id');
-
-			// ArrowDown: the active result must become a valid selected option.
 			const initialFocusedId = await searchInput.getAttribute('aria-activedescendant');
 
 			await searchInput.press('ArrowDown');
@@ -132,7 +126,6 @@ test.describe('Accessibility - Typeahead Search', () => {
 
 			expect(firstFocusedId).toBeTruthy();
 
-			// ArrowDown: must advance to another result.
 			await searchInput.press('ArrowDown');
 
 			const { focusedId: secondFocusedId } = await getChangedFocusedResult(
@@ -143,7 +136,6 @@ test.describe('Accessibility - Typeahead Search', () => {
 
 			expect(secondFocusedId).not.toBe(firstFocusedId);
 
-			// ArrowUp: must return to the previously active result.
 			await searchInput.press('ArrowUp');
 
 			const { focusedId: previousFocusedId } = await getChangedFocusedResult(
@@ -154,7 +146,6 @@ test.describe('Accessibility - Typeahead Search', () => {
 
 			expect(previousFocusedId).toBe(firstFocusedId);
 
-			// Home always selects the first available result.
 			await searchInput.press('Home');
 
 			await expect(searchInput).toHaveAttribute('aria-activedescendant', firstResultId, {
@@ -164,7 +155,6 @@ test.describe('Accessibility - Typeahead Search', () => {
 			const { focusedId: homeFocusedId } = await getFocusedResult(searchInput, resultsContainer);
 			expect(homeFocusedId).toBe(firstResultId);
 
-			// End always selects the last available result.
 			await searchInput.press('End');
 
 			await expect(searchInput).toHaveAttribute('aria-activedescendant', lastResultId, {
@@ -174,7 +164,6 @@ test.describe('Accessibility - Typeahead Search', () => {
 			const { focusedId: endFocusedId } = await getFocusedResult(searchInput, resultsContainer);
 			expect(endFocusedId).toBe(lastResultId);
 
-			// Escape closes the listbox and restores focus to the combobox.
 			await searchInput.press('Escape');
 
 			await expect(searchInput).toHaveAttribute('aria-expanded', 'false', {
@@ -194,7 +183,7 @@ test.describe('Accessibility - Typeahead Search', () => {
 			tag: ['@accessibility', '@a11y', '@desktop', '@typeahead-search', '@keyboard']
 		},
 		async ({ page }) => {
-			const { searchInput, resultsContainer, resultLinks } = await openResults(page);
+			const { searchInput, resultsContainer, resultLinks } = await openStableResults(page);
 
 			await searchInput.press('ArrowDown');
 			const { focusedId, focusedResult } = await getFocusedResult(searchInput, resultsContainer);
@@ -222,7 +211,7 @@ test.describe('Accessibility - Typeahead Search', () => {
 			tag: ['@accessibility', '@a11y', '@desktop', '@typeahead-search', '@keyboard']
 		},
 		async ({ page }) => {
-			const { searchInput, resultsContainer } = await openResults(page);
+			const { searchInput, resultsContainer } = await openStableResults(page);
 
 			await searchInput.press('ArrowDown');
 			const { focusedResult } = await getFocusedResult(searchInput, resultsContainer);
@@ -270,7 +259,7 @@ test.describe('Accessibility - Typeahead Search Mobile', () => {
 			tag: ['@accessibility', '@a11y', '@mobile', '@ios', '@typeahead-search']
 		},
 		async ({ page }) => {
-			await openResults(page, 'Hero');
+			await openStableResults(page, 'Hero');
 			await checkA11y(page);
 		}
 	);
@@ -282,7 +271,7 @@ test.describe('Accessibility - Typeahead Search Mobile', () => {
 			tag: ['@accessibility', '@a11y', '@mobile', '@android', '@typeahead-search']
 		},
 		async ({ page }) => {
-			await openResults(page, 'Breaking');
+			await openStableResults(page, 'Breaking');
 			await checkA11y(page);
 		}
 	);
