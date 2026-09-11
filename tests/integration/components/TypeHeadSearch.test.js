@@ -5,7 +5,7 @@ import { getLocaleText } from '$lib/i18n/resolver.js';
 import { DEFAULT_LOCALE } from '$lib/i18n/config.js';
 import { cleanupAll, resetAll } from '$tests/setup/test-utils.js';
 
-const { labels, messages, titles, fallbacks } = getLocaleText(DEFAULT_LOCALE);
+const { labels, messages, fallbacks } = getLocaleText(DEFAULT_LOCALE);
 
 vi.mock('$app/paths', () => ({
 	resolve: vi.fn((path, params) => {
