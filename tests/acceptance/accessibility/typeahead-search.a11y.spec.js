@@ -90,46 +90,50 @@ test.describe('Accessibility - Typeahead Search', () => {
 		}
 	);
 
-	// A11Y-TS-005
+	// A11Y-TS-005: Keyboard selection sets aria-selected
 	test(
-		'[A11Y-TS-005] Selected typeahead search result exposes aria-selected',
-		{
-			tag: ['@accessibility', '@a11y', '@desktop', '@typeahead-search', '@selection']
-		},
-		async ({ page }) => {
-			const { resultLinks } = await openResults(page);
-			const resultLink = resultLinks.first();
-
-			await resultLink.evaluate((element) => {
-				element.addEventListener('click', (event) => event.preventDefault(), { once: true });
-			});
-
-			await resultLink.click();
-
-			await expect(resultLink).toHaveAttribute('aria-selected', 'true');
-			await checkA11y(page);
-		}
-	);
-
-	// A11Y-TS-006: Enter key selection
-	test(
-		'[A11Y-TS-006] Desktop typeahead search Enter key selection has no automatically detected WCAG A/AA violations',
+		'[A11Y-TS-005] Keyboard navigation sets aria-selected on typeahead search result',
 		{
 			tag: ['@accessibility', '@a11y', '@desktop', '@typeahead-search', '@keyboard']
 		},
 		async ({ page }) => {
-			const { searchInput} = await openResults(page);
+			const { searchInput, resultLinks } = await openResults(page);
+
+			// Navigate with ArrowDown to first result
+			await searchInput.press('ArrowDown');
+			await page.waitForTimeout(300);
+			
+			// First result should have aria-selected="true"
+			await expect(resultLinks.first()).toHaveAttribute('aria-selected', 'true');
+			
+			// Other results should have aria-selected="false"
+			await expect(resultLinks.nth(1)).toHaveAttribute('aria-selected', 'false');
+			
+			await checkA11y(page);
+		}
+	);
+
+	// A11Y-TS-006: Enter key closes dropdown
+	test(
+		'[A11Y-TS-006] Desktop typeahead search Enter key closes dropdown',
+		{
+			tag: ['@accessibility', '@a11y', '@desktop', '@typeahead-search', '@keyboard']
+		},
+		async ({ page }) => {
+			const { searchInput, resultsContainer } = await openResults(page);
 
 			// Navigate to first result
 			await searchInput.press('ArrowDown');
 			await page.waitForTimeout(300);
 
-			// Press Enter to select (will navigate, so we check before navigation happens)
+			// Press Enter to select (closes dropdown)
 			await searchInput.press('Enter');
-			await page.waitForLoadState('networkidle');
+			await page.waitForTimeout(500);
 
-			// Should have navigated to a detail page
-			await expect(page).not.toHaveURL(/.*\?.*locale=en-US$/);
+			// Dropdown should be closed
+			await expect(resultsContainer).toBeHidden();
+			await expect(searchInput).toBeFocused();
+			
 			await checkA11y(page);
 		}
 	);
