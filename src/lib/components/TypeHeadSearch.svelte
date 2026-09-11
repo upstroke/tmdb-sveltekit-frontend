@@ -6,7 +6,7 @@
 	import { i18n } from '$lib/stores/i18n';
 	import { resolveLocale } from '$lib/i18n/helpers';
 
-	const { labels: texts, messages, titles, formats, fallbacks } = $derived($i18n);
+	const { labels: texts, messages, titles, fallbacks } = $derived($i18n);
 	const activeLocale = $derived(resolveLocale(page.url.searchParams.get('locale')));
 
 	let query = $state('');
@@ -17,7 +17,6 @@
 	let resultsClosed = $state(false);
 	let error = $state(null);
 	let announcement = $state('');
-	let selectedResultKey = $state(null);
 	let inputElement;
 	let focusedResultId = $state(null);
 
@@ -43,7 +42,7 @@
 
 	function focusResult(resultId) {
 		focusedResultId = resultId;
-		
+
 		// Scroll focused result into view
 		requestAnimationFrame(() => {
 			const focusedElement = document.querySelector(`a.result[aria-selected="true"]`);
@@ -82,6 +81,22 @@
 		if (ids.length > 0) focusResult(ids[ids.length - 1]);
 	}
 
+	// Announce focused result for screen readers
+	$effect(() => {
+		if (!focusedResultId) return;
+
+		requestAnimationFrame(() => {
+			const focusedElement = document.querySelector(`a.result[aria-selected="true"]`);
+			if (focusedElement) {
+				const title = focusedElement.querySelector('.title')?.textContent;
+				const type = focusedElement.querySelector('.u-sr-only')?.textContent;
+				if (title && type) {
+					scheduleAnnouncement(`${type}: ${title}`);
+				}
+			}
+		});
+	});
+
 	$effect(() => {
 		if (previousLocale == null) {
 			previousLocale = activeLocale;
@@ -100,7 +115,6 @@
 		if (Number.isNaN(date.getTime())) return fallbacks.dateFallback;
 		return String(date.getFullYear());
 	}
-	function ratingAriaLabel(value) { return `${texts.rating}: ${formatRating(value)} ${formats.outOfTen}`; }
 	function withLocale(href) {
 		if (!href) return href;
 		const url = new URL(href, page.url.origin);
@@ -124,7 +138,6 @@
 		showLoading = false;
 		loading = false;
 		resultsClosed = false;
-		selectedResultKey = null;
 		focusedResultId = null;
 		movies = [];
 		tvShows = [];
@@ -133,7 +146,6 @@
 	function handleInput() {
 		clearTimeout(debounceTimer);
 		clearAnnouncement();
-		selectedResultKey = null;
 		focusedResultId = null;
 		const term = query.trim();
 		if (term.length < 4) { resetResults(); return; }
@@ -144,7 +156,6 @@
 		controller?.abort();
 		clearTimeout(loadingTimer);
 		clearAnnouncement();
-		selectedResultKey = null;
 		focusedResultId = null;
 		showLoading = false;
 		controller = new AbortController();
@@ -197,7 +208,7 @@
 				break;
 			case 'Enter':
 				event.preventDefault();
-				if (focusedResultId) selectResult(focusedResultId);
+				if (focusedResultId) closeResults();
 				break;
 			case 'Escape':
 				event.preventDefault();
@@ -212,11 +223,6 @@
 				focusLastResult();
 				break;
 		}
-	}
-
-	function selectResult(resultKey) {
-		selectedResultKey = resultKey;
-		closeResults();
 	}
 
 	function closeResults({ restoreFocus = false } = {}) {
@@ -269,7 +275,15 @@
 			{/if}
 		</div>
 		{#if hasResults}
-			<div id={resultsId} role="listbox" aria-label={messages.searchResults} class:results-closed={resultsClosed} style:display={resultsClosed ? 'none' : ''}>
+			<div
+				id={resultsId}
+				role="listbox"
+				aria-label={messages.searchResults}
+				aria-live="polite"
+				aria-atomic="false"
+				class:results-closed={resultsClosed}
+				style:display={resultsClosed ? 'none' : ''}
+			>
 				{#if movies.length > 0}
 					<div role="group" aria-labelledby="typeahead-movies-heading">
 						<h2 id="typeahead-movies-heading" class="typeahead-results-heading ui label blue {titles.movies ? '' : 'u-not-available'}">{titles.movies}</h2>
@@ -280,25 +294,27 @@
 								class:result-focused={focusedResultId === `movie-${item.id}`}
 								data-result-link="true"
 								href={withLocale(resultHref(item))}
-								onclick={() => selectResult(`movie-${item.id}`)}
+								onclick={() => closeResults()}
 								aria-selected={focusedResultId === `movie-${item.id}` ? 'true' : 'false'}
-								aria-labelledby={'typeahead-result-type-movie-' + item.id + ' typeahead-result-title-movie-' + item.id + ' typeahead-result-desc-movie-' + item.id}
+								aria-labelledby={`typeahead-result-type-movie-${item.id} typeahead-result-content-movie-${item.id}`}
 								tabindex={focusedResultId === `movie-${item.id}` ? 0 : -1}
 							>
 								<figure class="image" aria-hidden="true"><img src={item.posterUrl || item.imageUrl || notAvailable} alt="" /></figure>
 								<div class="content">
-									<header class="result-header">
-										<h3 class="title {item.title ? '' : 'u-not-available'}" id={'typeahead-result-title-movie-' + item.id}>{item.title}</h3>
-									</header>
-									<p class="description" id={'typeahead-result-desc-movie-' + item.id}>
-										<time class={item.date ? '' : 'u-not-available'} datetime={item.date}>{formatYear(item.date)}</time>
-										<span aria-hidden="true"> · </span>
-										<span class="rating" aria-label={ratingAriaLabel(item.rating)}>
-											<i class="yellow star icon" aria-hidden="true"></i>
-											<span class={item.rating ? '' : 'u-not-available'}>{formatRating(item.rating)}</span>
-										</span>
-									</p>
-									<span class="u-sr-only" id={'typeahead-result-type-movie-' + item.id}>{titles.movies}</span>
+									<span class="u-sr-only" id={`typeahead-result-type-movie-${item.id}`}>{titles.movies}</span>
+									<div id={`typeahead-result-content-movie-${item.id}`}>
+										<header class="result-header">
+											<h3 class="title {item.title ? '' : 'u-not-available'}">{item.title}</h3>
+										</header>
+										<p class="description">
+											<time class={item.date ? '' : 'u-not-available'} datetime={item.date}>{formatYear(item.date)}</time>
+											<span aria-hidden="true"> · </span>
+											<span class="rating">
+												<i class="yellow star icon" aria-hidden="true"></i>
+												<span class={item.rating ? '' : 'u-not-available'}>{formatRating(item.rating)}</span>
+											</span>
+										</p>
+									</div>
 								</div>
 							</a>
 						{/each}
@@ -314,25 +330,27 @@
 								class:result-focused={focusedResultId === `tv-${item.id}`}
 								data-result-link="true"
 								href={withLocale(resultHref(item))}
-								onclick={() => selectResult(`tv-${item.id}`)}
+								onclick={() => closeResults()}
 								aria-selected={focusedResultId === `tv-${item.id}` ? 'true' : 'false'}
-								aria-labelledby={'typeahead-result-type-tv-' + item.id + ' typeahead-result-title-tv-' + item.id + ' typeahead-result-desc-tv-' + item.id}
+								aria-labelledby={`typeahead-result-type-tv-${item.id} typeahead-result-content-tv-${item.id}`}
 								tabindex={focusedResultId === `tv-${item.id}` ? 0 : -1}
 							>
 								<figure class="image" aria-hidden="true"><img src={item.posterUrl || item.imageUrl || notAvailable} alt="" /></figure>
 								<div class="content">
-									<header class="result-header">
-										<h3 class="title {item.title ? '' : 'u-not-available'}" id={'typeahead-result-title-tv-' + item.id}>{item.title}</h3>
-									</header>
-									<p class="description" id={'typeahead-result-desc-tv-' + item.id}>
-										<time class={item.date ? '' : 'u-not-available'} datetime={item.date}>{formatYear(item.date)}</time>
-										<span aria-hidden="true"> · </span>
-										<span class="rating" aria-label={ratingAriaLabel(item.rating)}>
-											<i class="yellow star icon" aria-hidden="true"></i>
-											<span class={item.rating ? '' : 'u-not-available'}>{formatRating(item.rating)}</span>
-										</span>
-									</p>
-									<span class="u-sr-only" id={'typeahead-result-type-tv-' + item.id}>{titles.tvShows}</span>
+									<span class="u-sr-only" id={`typeahead-result-type-tv-${item.id}`}>{titles.tvShows}</span>
+									<div id={`typeahead-result-content-tv-${item.id}`}>
+										<header class="result-header">
+											<h3 class="title {item.title ? '' : 'u-not-available'}">{item.title}</h3>
+										</header>
+										<p class="description">
+											<time class={item.date ? '' : 'u-not-available'} datetime={item.date}>{formatYear(item.date)}</time>
+											<span aria-hidden="true"> · </span>
+											<span class="rating">
+												<i class="yellow star icon" aria-hidden="true"></i>
+												<span class={item.rating ? '' : 'u-not-available'}>{formatRating(item.rating)}</span>
+											</span>
+										</p>
+									</div>
 								</div>
 							</a>
 						{/each}
