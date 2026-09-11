@@ -174,7 +174,7 @@ test.describe('Accessibility - Typeahead Search', () => {
 			tag: ['@accessibility', '@a11y', '@desktop', '@typeahead-search', '@keyboard']
 		},
 		async ({ page }) => {
-			const { searchInput} = await openResults(page);
+			const { searchInput } = await openResults(page);
 
 			// Navigate to first result
 			await searchInput.press('ArrowDown');
@@ -193,17 +193,15 @@ test.describe('Accessibility - Typeahead Search', () => {
 			// Focused result should have aria-selected="true"
 			await expect(focusedResult).toHaveAttribute('aria-selected', 'true');
 
-			// Verify the link has a valid href (ready for navigation)
-			const href = await focusedResult.getAttribute('href');
-			expect(href).toMatch(/\/movies\/\d+/);
+			// Get the href before navigation
+			const expectedHref = await focusedResult.getAttribute('href');
+			expect(expectedHref).toMatch(/\/movies\/\d+/);
 
-			// Press Enter and wait for potential navigation
-			await Promise.race([
-				searchInput.press('Enter'),
-				page.waitForNavigation({ waitUntil: 'commit', timeout: 2000 }).catch(() => {})
-			]);
+			// Press Enter and wait for navigation
+			await Promise.all([page.waitForURL(/\/movies\/\d+/), searchInput.press('Enter')]);
 
-			// Accessibility test complete - Enter can be pressed on focused result
+			// Verify we navigated to the expected page
+			expect(page.url()).toContain(expectedHref);
 		}
 	);
 });
