@@ -46,9 +46,10 @@ describe('Layout (+layout.svelte)', () => {
 
 		await waitFor(() => {
 			// TypeHeadSearch should have a search input
-			const searchInput = screen.getByRole('searchbox');
+			const searchInput = document.getElementById('typeahead-search-input');
+
 			expect(searchInput).toBeInTheDocument();
-			// Use i18n label for placeholder
+			expect(searchInput).toHaveAttribute('role', 'combobox');
 			expect(searchInput).toHaveAttribute('placeholder', labels.searchInput);
 		});
 	});
