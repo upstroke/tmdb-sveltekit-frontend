@@ -88,7 +88,7 @@ describe('TypeHeadSearch', () => {
 	it('renders search field correctly', () => {
 		render(TypeHeadSearch);
 
-		const input = screen.getByRole('searchbox');
+		const input = screen.getByRole('combobox');
 		expect(input).toBeInTheDocument();
 		expect(input).toHaveAttribute('placeholder', labels.searchInput);
 	});
@@ -113,7 +113,7 @@ describe('TypeHeadSearch', () => {
 	it('shows no results for less than 4 characters', async () => {
 		render(TypeHeadSearch);
 
-		const input = screen.getByRole('searchbox');
+		const input = screen.getByRole('combobox');
 		await fireEvent.input(input, { target: { value: 'abc' } });
 
 		const results = screen.queryByRole('list');
@@ -122,18 +122,31 @@ describe('TypeHeadSearch', () => {
 
 	// Statement coverage: loading state is displayed
 	it('shows loading state', async () => {
+		vi.useFakeTimers();
+
+		let resolveFetch;
+		const fetchPromise = new Promise((resolve) => {
+			resolveFetch = resolve;
+		});
+
+		vi.spyOn(global, 'fetch').mockReturnValueOnce(fetchPromise);
+
 		render(TypeHeadSearch);
 
-		const input = screen.getByRole('searchbox');
+		const input = screen.getByRole('combobox');
 		await fireEvent.input(input, { target: { value: 'test' } });
 
-		await vi.waitFor(
-			() => {
-				const loading = screen.getByRole('status');
-				expect(loading).toBeInTheDocument();
-			},
-			{ timeout: 500 }
-		);
+		await vi.advanceTimersByTimeAsync(300);
+
+		const loading = screen.getByText(messages.searchLoading);
+		expect(loading).toBeInTheDocument();
+
+		resolveFetch({
+			ok: true,
+			json: () => Promise.resolve(mockFetchData)
+		});
+
+		await vi.runAllTimersAsync();
 	});
 
 	// Statement coverage: The search shows an error state on failed fetch.
@@ -147,7 +160,7 @@ describe('TypeHeadSearch', () => {
 
 		render(TypeHeadSearch);
 
-		const input = screen.getByRole('searchbox');
+		const input = screen.getByRole('combobox');
 		await fireEvent.input(input, { target: { value: 'test' } });
 
 		await vi.advanceTimersByTimeAsync(300);
@@ -159,12 +172,12 @@ describe('TypeHeadSearch', () => {
 	it('shows search results on successful fetch', async () => {
 		render(TypeHeadSearch);
 
-		const input = screen.getByRole('searchbox');
+		const input = screen.getByRole('combobox');
 		await fireEvent.input(input, { target: { value: 'Inception' } });
 
 		await vi.waitFor(
 			() => {
-				const moviesHeading = screen.queryByText(titles.movies);
+				const moviesHeading = document.getElementById('typeahead-movies-heading');
 				expect(moviesHeading).toBeInTheDocument();
 			},
 			{ timeout: 1000 }
@@ -183,7 +196,7 @@ describe('TypeHeadSearch', () => {
 	it('renders TV shows section', async () => {
 		render(TypeHeadSearch);
 
-		const input = screen.getByRole('searchbox');
+		const input = screen.getByRole('combobox');
 		await fireEvent.input(input, { target: { value: 'breaking' } });
 
 		await vi.waitFor(
@@ -202,18 +215,18 @@ describe('TypeHeadSearch', () => {
 	it('result links have correct href', async () => {
 		render(TypeHeadSearch);
 
-		const input = screen.getByRole('searchbox');
+		const input = screen.getByRole('combobox');
 		await fireEvent.input(input, { target: { value: 'inception' } });
 
 		await vi.waitFor(
 			() => {
-				const links = screen.queryAllByRole('link');
+				const links = screen.queryAllByRole('option');
 				expect(links.length).toBeGreaterThan(0);
 			},
 			{ timeout: 1000 }
 		);
 
-		const movieLink = screen.getByText('Inception').closest('a');
+		const movieLink = document.getElementById('movie-1');
 		expect(movieLink).toHaveAttribute('href', expect.stringContaining('/movies/1'));
 		expect(movieLink).toHaveAttribute('href', expect.stringContaining('locale='));
 	});
@@ -222,7 +235,7 @@ describe('TypeHeadSearch', () => {
 	it('rating is formatted', async () => {
 		render(TypeHeadSearch);
 
-		const input = screen.getByRole('searchbox');
+		const input = screen.getByRole('combobox');
 		await fireEvent.input(input, { target: { value: 'inception' } });
 
 		await vi.waitFor(
@@ -238,7 +251,7 @@ describe('TypeHeadSearch', () => {
 	it('year is formatted', async () => {
 		render(TypeHeadSearch);
 
-		const input = screen.getByRole('searchbox');
+		const input = screen.getByRole('combobox');
 		await fireEvent.input(input, { target: { value: 'inception' } });
 
 		await vi.waitFor(
@@ -250,11 +263,11 @@ describe('TypeHeadSearch', () => {
 		);
 	});
 
-	// Zweigberdeckung: The search closes results on Escape.
+	// Statement coverage: The search closes results on Escape.
 	it('Escape closes results', async () => {
 		render(TypeHeadSearch);
 
-		const input = screen.getByRole('searchbox');
+		const input = screen.getByRole('combobox');
 		await fireEvent.input(input, { target: { value: 'inception' } });
 
 		await vi.waitFor(
@@ -267,15 +280,15 @@ describe('TypeHeadSearch', () => {
 
 		await fireEvent.keyDown(input, { key: 'Escape' });
 
-		const results = screen.queryByLabelText(messages.searchResults);
-		expect(results).not.toBeInTheDocument();
+		const results = screen.getByRole('listbox', { name: messages.searchResults });
+		expect(results).toHaveStyle({ display: 'none' });
 	});
 
 	// Statement coverage: click outside closes results
 	it('click outside closes results', async () => {
 		render(TypeHeadSearch);
 
-		const input = screen.getByRole('searchbox');
+		const input = screen.getByRole('combobox');
 		await fireEvent.input(input, { target: { value: 'inception' } });
 
 		await vi.waitFor(
@@ -288,15 +301,15 @@ describe('TypeHeadSearch', () => {
 
 		await fireEvent.click(document.body);
 
-		const results = screen.queryByLabelText(messages.searchResults);
-		expect(results).not.toBeInTheDocument();
+		const results = screen.getByRole('listbox', { name: messages.searchResults });
+		expect(results).toHaveStyle({ display: 'none' });
 	});
 
 	// Statement coverage: focus shows results again
 	it('focus shows results again', async () => {
 		render(TypeHeadSearch);
 
-		const input = screen.getByRole('searchbox');
+		const input = screen.getByRole('combobox');
 		await fireEvent.input(input, { target: { value: 'inception' } });
 
 		await vi.waitFor(
@@ -310,8 +323,8 @@ describe('TypeHeadSearch', () => {
 		await fireEvent.keyDown(input, { key: 'Escape' });
 		await fireEvent.focus(input);
 
-		const results = screen.queryByLabelText(messages.searchResults);
-		expect(results).toBeInTheDocument();
+		const results = screen.getByRole('listbox', { name: messages.searchResults });
+		expect(results).not.toHaveStyle({ display: 'none' });
 	});
 
 	// Statement coverage: no results state
@@ -325,7 +338,7 @@ describe('TypeHeadSearch', () => {
 
 		render(TypeHeadSearch);
 
-		const input = screen.getByRole('searchbox');
+		const input = screen.getByRole('combobox');
 		await fireEvent.input(input, { target: { value: 'nothingfound' } });
 
 		await vi.waitFor(
@@ -362,12 +375,12 @@ describe('TypeHeadSearch', () => {
 
 		const { container } = render(TypeHeadSearch);
 
-		const input = screen.getByRole('searchbox');
+		const input = screen.getByRole('combobox');
 		await fireEvent.input(input, { target: { value: 'noposter' } });
 
 		await vi.waitFor(
 			() => {
-				const img = container.querySelector('.category img');
+				const img = container.querySelector('.image img');
 				expect(img).toHaveAttribute('src', '/fallback.jpg');
 			},
 			{ timeout: 1000 }
@@ -390,12 +403,12 @@ describe('TypeHeadSearch', () => {
 
 		const { container } = render(TypeHeadSearch);
 
-		const input = screen.getByRole('searchbox');
+		const input = screen.getByRole('combobox');
 		await fireEvent.input(input, { target: { value: 'noimages' } });
 
 		await vi.waitFor(
 			() => {
-				const img = container.querySelector('.category img');
+				const img = container.querySelector('.image img');
 				expect(img).toHaveAttribute('src', expect.stringContaining('not-available'));
 			},
 			{ timeout: 1000 }
@@ -427,7 +440,7 @@ describe('TypeHeadSearch', () => {
 
 		render(TypeHeadSearch);
 
-		const input = screen.getByRole('searchbox');
+		const input = screen.getByRole('combobox');
 		await fireEvent.input(input, { target: { value: 'invaliddate' } });
 
 		await vi.waitFor(
@@ -464,7 +477,7 @@ describe('TypeHeadSearch', () => {
 
 		render(TypeHeadSearch);
 
-		const input = screen.getByRole('searchbox');
+		const input = screen.getByRole('combobox');
 		await fireEvent.input(input, { target: { value: 'nullrating' } });
 
 		await vi.waitFor(
@@ -480,7 +493,7 @@ describe('TypeHeadSearch', () => {
 	it('input has correct placeholder text', () => {
 		render(TypeHeadSearch);
 
-		const input = screen.getByRole('searchbox');
+		const input = screen.getByRole('combobox');
 		expect(input).toHaveAttribute('placeholder', labels.searchInput);
 	});
 
@@ -525,12 +538,12 @@ describe('TypeHeadSearch', () => {
 
 		render(TypeHeadSearch);
 
-		const input = screen.getByRole('searchbox');
+		const input = screen.getByRole('combobox');
 		await fireEvent.input(input, { target: { value: 'duplicate' } });
 
 		await vi.waitFor(
 			() => {
-				const movieItems = screen.queryAllByRole('listitem');
+				const movieItems = screen.queryAllByRole('option');
 				expect(movieItems).toHaveLength(1);
 			},
 			{ timeout: 1000 }
