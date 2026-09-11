@@ -46,7 +46,7 @@ test.describe('Main navigation', () => {
 		'[TC-NAV-002] Mobile: Burger menu opens and navigation works',
 		{
 			tag: ['@navigation', '@mobile', '@black-box', '@regression', '@a11y'],
-			retries: 2 // Retry this test up to 2 times as seems to be flaky
+			retries: 2
 		},
 		async ({ page }) => {
 			// Mobile viewport
@@ -56,24 +56,36 @@ test.describe('Main navigation', () => {
 			await page.goto('http://localhost:5173/?locale=en-US');
 			await expect(page).toHaveTitle(/Home.*TMDB/);
 
-			// Click burger menu button
-			await page.getByRole('button', { name: 'Open or close navigation' }).click();
+			const burgerButton = page.getByRole('button', {
+				name: 'Open or close navigation'
+			});
+			const tvShowsLink = page.getByRole('link', { name: 'TV shows' });
+			const homeLink = page.getByRole('link', { name: 'Home' });
 
-			// WAIT for menu to be fully opened and links visible
-			await expect(page.getByRole('link', { name: 'TV shows' })).toBeVisible({ timeout: 5000 });
+			await expect(burgerButton).toBeVisible();
+			await expect(burgerButton).toHaveAttribute('aria-expanded', 'false');
+
+			// Open the menu and wait for its semantic state before interacting with links
+			await burgerButton.click();
+			await expect(burgerButton).toHaveAttribute('aria-expanded', 'true', { timeout: 5000 });
+			await expect(tvShowsLink).toBeVisible({ timeout: 5000 });
 
 			// Navigate to TV Shows
-			await page.getByRole('link', { name: 'TV shows' }).click();
+			await tvShowsLink.click();
 			await expect(page).toHaveTitle(/TV.*TMDB/);
 
-			// Click burger menu button
-			await page.getByRole('button', { name: 'Open or close navigation' }).click();
+			// The new page has its own header, so confirm the closed state before reopening it
+			await expect(burgerButton).toBeVisible();
+			await expect(burgerButton).toHaveAttribute('aria-expanded', 'false');
+			await expect(homeLink).toBeHidden();
 
-			// WAIT for menu to be fully opened and links visible
-			await expect(page.getByRole('link', { name: 'Home' })).toBeVisible({ timeout: 5000 });
+			// Open the menu again and wait for its semantic state before interacting with links
+			await burgerButton.click();
+			await expect(burgerButton).toHaveAttribute('aria-expanded', 'true', { timeout: 5000 });
+			await expect(homeLink).toBeVisible({ timeout: 5000 });
 
 			// Navigate to Home
-			await page.getByRole('link', { name: 'Home' }).click();
+			await homeLink.click();
 			await expect(page).toHaveTitle(/Home.*TMDB/);
 		}
 	);
