@@ -1,12 +1,12 @@
 <script>
-	import { resolve } from '$app/paths';
-	import { page } from '$app/state';
-	import { deduplicateById } from '$lib/utils/deduplicateById';
+	import {resolve} from '$app/paths';
+	import {page} from '$app/state';
+	import {deduplicateById} from '$lib/utils/deduplicateById';
 	import notAvailable from '$lib/assets/not-available.png';
-	import { i18n } from '$lib/stores/i18n';
-	import { resolveLocale } from '$lib/i18n/helpers';
+	import {i18n} from '$lib/stores/i18n';
+	import {resolveLocale} from '$lib/i18n/helpers';
 
-	const { labels: texts, messages, titles, fallbacks } = $derived($i18n);
+	const {labels: texts, messages, titles, fallbacks} = $derived($i18n);
 	const activeLocale = $derived(resolveLocale(page.url.searchParams.get('locale')));
 
 	let query = $state('');
@@ -108,30 +108,45 @@
 		if (term.length >= 4) void search(term);
 	});
 
-	function formatRating(value) { return Number(value ?? 0).toFixed(1); }
+	function formatRating(value) {
+		return Number(value ?? 0).toFixed(1);
+	}
+
 	function formatYear(value) {
 		if (!value) return fallbacks.dateFallback;
 		const date = new Date(value);
 		if (Number.isNaN(date.getTime())) return fallbacks.dateFallback;
 		return String(date.getFullYear());
 	}
+
 	function withLocale(href) {
 		if (!href) return href;
 		const url = new URL(href, page.url.origin);
 		url.searchParams.set('locale', activeLocale);
 		return `${url.pathname}${url.search}${url.hash}`;
 	}
+
 	function resultHref(item) {
-		if (item.mediaType === 'movie') return resolve('/movies/[id]', { id: String(item.id) });
-		return resolve('/tv-shows/[id]', { id: String(item.id) });
+		if (item.mediaType === 'movie') return resolve('/movies/[id]', {id: String(item.id)});
+		return resolve('/tv-shows/[id]', {id: String(item.id)});
 	}
-	function clearAnnouncement() { clearTimeout(announcementTimer); announcement = ''; }
+
+	function clearAnnouncement() {
+		clearTimeout(announcementTimer);
+		announcement = '';
+	}
+
 	function scheduleAnnouncement(message) {
 		clearTimeout(announcementTimer);
 		announcement = '';
 		if (!message) return;
-		announcementTimer = setTimeout(() => { requestAnimationFrame(() => { announcement = message; }); }, 500);
+		announcementTimer = setTimeout(() => {
+			requestAnimationFrame(() => {
+				announcement = message;
+			});
+		}, 500);
 	}
+
 	function resetResults() {
 		clearTimeout(loadingTimer);
 		clearAnnouncement();
@@ -143,15 +158,20 @@
 		tvShows = [];
 		error = null;
 	}
+
 	function handleInput() {
 		clearTimeout(debounceTimer);
 		clearAnnouncement();
 		focusedResultId = null;
 		const term = query.trim();
-		if (term.length < 4) { resetResults(); return; }
+		if (term.length < 4) {
+			resetResults();
+			return;
+		}
 		resultsClosed = false;
 		debounceTimer = setTimeout(() => search(term), 300);
 	}
+
 	async function search(term) {
 		controller?.abort();
 		clearTimeout(loadingTimer);
@@ -161,10 +181,16 @@
 		controller = new AbortController();
 		loading = true;
 		error = null;
-		loadingTimer = setTimeout(() => { if (loading) showLoading = true; }, 300);
+		loadingTimer = setTimeout(() => {
+			if (loading) showLoading = true;
+		}, 300);
 		try {
-			const response = await fetch(`/search?q=${encodeURIComponent(term)}&locale=${encodeURIComponent(activeLocale)}`, { signal: controller.signal });
-			if (!response.ok) { error = messages.searchError; scheduleAnnouncement(messages.searchError); return; }
+			const response = await fetch(`/search?q=${encodeURIComponent(term)}&locale=${encodeURIComponent(activeLocale)}`, {signal: controller.signal});
+			if (!response.ok) {
+				error = messages.searchError;
+				scheduleAnnouncement(messages.searchError);
+				return;
+			}
 			const data = await response.json();
 			movies = deduplicateById(data.movies ?? []);
 			tvShows = deduplicateById(data.tvShows ?? []);
@@ -175,8 +201,7 @@
 					const firstId = getAllResultIds()[0];
 					if (firstId) focusResult(firstId);
 				}
-			}
-			else if (term.length >= 4) scheduleAnnouncement(messages.searchNoResults);
+			} else if (term.length >= 4) scheduleAnnouncement(messages.searchNoResults);
 		} catch (exception) {
 			if (exception.name === 'AbortError') return;
 			error = exception instanceof Error ? exception.message : messages.searchError;
@@ -192,7 +217,7 @@
 		if (!resultsVisible || !hasResults) {
 			if (event.key === 'Escape') {
 				event.preventDefault();
-				closeResults({ restoreFocus: true });
+				closeResults({restoreFocus: true});
 			}
 			return;
 		}
@@ -212,7 +237,7 @@
 				break;
 			case 'Escape':
 				event.preventDefault();
-				closeResults({ restoreFocus: true });
+				closeResults({restoreFocus: true});
 				break;
 			case 'Home':
 				event.preventDefault();
@@ -225,7 +250,7 @@
 		}
 	}
 
-	function closeResults({ restoreFocus = false } = {}) {
+	function closeResults({restoreFocus = false} = {}) {
 		clearAnnouncement();
 		resultsClosed = true;
 		focusedResultId = null;
@@ -241,7 +266,7 @@
 	}
 </script>
 
-<svelte:window onclick={handleWindowClick} onkeydown={handleKeydown} />
+<svelte:window onclick={handleWindowClick} onkeydown={handleKeydown}/>
 
 <search id="typeahead-search">
 	<form id="typeahead-search-form" onsubmit={(event) => event.preventDefault()} role="search">
@@ -267,11 +292,16 @@
 			<i aria-hidden="true" class="search icon"></i>
 			<p class="u-sr-only" id={searchHintId}>{messages.searchHint}</p>
 			{#if hasStatusMessage}
-				<div id="status-messages-layer"><section id="status-messages" aria-hidden="true">
-					{#if error}<div class="search-error-panel"><p class="result result-error">{error}</p></div>
-					{:else if loading}<p class="result">{messages.searchLoading}</p>
-					{:else if hasSearchTerm && !hasResults}<div class="search-empty-state"><p class="result">{messages.searchNoResults}</p></div>{/if}
-				</section></div>
+				<div id="status-messages-layer">
+					<section id="status-messages" aria-hidden="true">
+						{#if error}
+							<div class="search-error-panel"><p class="result result-error">{error}</p></div>
+						{:else if loading}<p class="result">{messages.searchLoading}</p>
+						{:else if hasSearchTerm && !hasResults}
+							<div class="search-empty-state"><p class="result">{messages.searchNoResults}</p></div>
+						{/if}
+					</section>
+				</div>
 			{/if}
 		</div>
 		{#if hasResults}
@@ -286,7 +316,8 @@
 			>
 				{#if movies.length > 0}
 					<div role="group" aria-labelledby="typeahead-movies-heading">
-						<h2 id="typeahead-movies-heading" class="typeahead-results-heading ui label blue {titles.movies ? '' : 'u-not-available'}">{titles.movies}</h2>
+						<h2 id="typeahead-movies-heading"
+						    class="typeahead-results-heading ui label blue {titles.movies ? '' : 'u-not-available'}">{titles.movies}</h2>
 						{#each movies as item (item.id)}
 							<a
 								role="option"
@@ -299,7 +330,8 @@
 								aria-labelledby={`typeahead-result-type-movie-${item.id} typeahead-result-content-movie-${item.id}`}
 								tabindex={focusedResultId === `movie-${item.id}` ? 0 : -1}
 							>
-								<figure class="image" aria-hidden="true"><img src={item.posterUrl || item.imageUrl || notAvailable} alt="" /></figure>
+								<figure class="image" aria-hidden="true"><img src={item.posterUrl || item.imageUrl || notAvailable}
+								                                              alt=""/></figure>
 								<div class="content">
 									<span class="u-sr-only" id={`typeahead-result-type-movie-${item.id}`}>{titles.movies}</span>
 									<div id={`typeahead-result-content-movie-${item.id}`}>
@@ -307,7 +339,8 @@
 											<h3 class="title {item.title ? '' : 'u-not-available'}">{item.title}</h3>
 										</header>
 										<p class="description">
-											<time class={item.date ? '' : 'u-not-available'} datetime={item.date}>{formatYear(item.date)}</time>
+											<time class={item.date ? '' : 'u-not-available'}
+											      datetime={item.date}>{formatYear(item.date)}</time>
 											<span aria-hidden="true"> · </span>
 											<span class="rating">
 												<i class="yellow star icon" aria-hidden="true"></i>
@@ -322,7 +355,8 @@
 				{/if}
 				{#if tvShows.length > 0}
 					<div role="group" aria-labelledby="typeahead-tv-heading">
-						<h2 id="typeahead-tv-heading" class="typeahead-results-heading ui label blue {titles.tvShows ? '' : 'u-not-available'}">{titles.tvShows}</h2>
+						<h2 id="typeahead-tv-heading"
+						    class="typeahead-results-heading ui label blue {titles.tvShows ? '' : 'u-not-available'}">{titles.tvShows}</h2>
 						{#each tvShows as item (item.id)}
 							<a
 								role="option"
@@ -335,7 +369,8 @@
 								aria-labelledby={`typeahead-result-type-tv-${item.id} typeahead-result-content-tv-${item.id}`}
 								tabindex={focusedResultId === `tv-${item.id}` ? 0 : -1}
 							>
-								<figure class="image" aria-hidden="true"><img src={item.posterUrl || item.imageUrl || notAvailable} alt="" /></figure>
+								<figure class="image" aria-hidden="true"><img src={item.posterUrl || item.imageUrl || notAvailable}
+								                                              alt=""/></figure>
 								<div class="content">
 									<span class="u-sr-only" id={`typeahead-result-type-tv-${item.id}`}>{titles.tvShows}</span>
 									<div id={`typeahead-result-content-tv-${item.id}`}>
@@ -343,7 +378,8 @@
 											<h3 class="title {item.title ? '' : 'u-not-available'}">{item.title}</h3>
 										</header>
 										<p class="description">
-											<time class={item.date ? '' : 'u-not-available'} datetime={item.date}>{formatYear(item.date)}</time>
+											<time class={item.date ? '' : 'u-not-available'}
+											      datetime={item.date}>{formatYear(item.date)}</time>
 											<span aria-hidden="true"> · </span>
 											<span class="rating">
 												<i class="yellow star icon" aria-hidden="true"></i>
@@ -365,35 +401,193 @@
 
 <style lang="scss">
 	@use '../../css/variables';
-	#typeahead-search { flex: 1; display: flex; justify-content: flex-end;
-		#typeahead-search-form { position: relative; flex: 1; display: flex; }
-		.input-wrapper { flex: 1; display: flex; justify-content: flex-end; align-items: center; padding: 0.5rem 0; flex-wrap: nowrap; }
-		.search.icon { margin-left: 0.5rem; }
-		#typeahead-search-input { border: none; background: transparent; color: white; padding: 0.5rem 0 0.5rem 0.5rem; margin-right: 0.5rem; line-height: 0; width: 50%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-		#typeahead-search-input:focus-visible { outline: 2px solid #2185d0 !important; outline-offset: 0; border: none; box-shadow: none; }
-		#typeahead-search-input::-webkit-search-cancel-button { filter: brightness(0) invert(1); cursor: pointer; position: relative; margin-left: 0.5rem; }
-		#typeahead-search-results { position: fixed; right: 2px; top: var(--header-height); z-index: 1002; color: black; min-width: var(--typeahead-search-results-width); max-width: var(--typeahead-search-results-width); max-height: calc(100vh - var(--header-height) - var(--footer-height) - 6px); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5); overflow-x: hidden; overflow-y: auto; border-radius: 6px; background: white; }
-		#typeahead-search-results [role="group"] { background: white; }
-		#typeahead-search-results [role="group"] > a.result { display: flex; padding: 0.5em 1em; transition: background-color 180ms ease; }
+
+	#typeahead-search {
+		flex: 1;
+		display: flex;
+		justify-content: flex-end;
+
+		#typeahead-search-form {
+			position: relative;
+			flex: 1;
+			display: flex;
+		}
+
+		.input-wrapper {
+			flex: 1;
+			display: flex;
+			justify-content: flex-end;
+			align-items: center;
+			padding: 0.5rem 0;
+			flex-wrap: nowrap;
+		}
+
+		.search.icon {
+			margin-left: 0.5rem;
+		}
+
+		#typeahead-search-input {
+			border: none;
+			background: transparent;
+			color: white;
+			padding: 0.5rem 0 0.5rem 0.5rem;
+			margin-right: 0.5rem;
+			line-height: 0;
+			width: 50%;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+
+		#typeahead-search-input:focus-visible {
+			outline: 2px solid var(--focus-ring-blue) !important;
+			outline-offset: 0;
+			border: none;
+			box-shadow: none;
+		}
+
+		#typeahead-search-input::-webkit-search-cancel-button {
+			filter: brightness(0) invert(1);
+			cursor: pointer;
+			position: relative;
+			margin-left: 0.5rem;
+		}
+
+		#typeahead-search-results {
+			position: fixed;
+			right: 2px;
+			top: var(--header-height);
+			z-index: 1002;
+			color: black;
+			min-width: var(--typeahead-search-results-width);
+			max-width: var(--typeahead-search-results-width);
+			max-height: calc(100vh - var(--header-height) - var(--footer-height) - 6px);
+			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+			overflow-x: hidden;
+			overflow-y: auto;
+			border-radius: 6px;
+			background: white;
+		}
+
+		#typeahead-search-results [role="group"] {
+			background: white;
+		}
+
+		#typeahead-search-results [role="group"] > a.result {
+			display: flex;
+			padding: 0.5em 1em;
+			transition: background-color 180ms ease;
+		}
+
 		#typeahead-search-results [role="group"] > a.result:hover,
 		#typeahead-search-results [role="group"] > a.result:focus-visible,
 		#typeahead-search-results [role="group"] > a.result[aria-selected="true"],
 		#typeahead-search-results [role="group"] > a.result.result-focused {
 			background: rgba(0, 0, 0, 0.08);
-			outline: 2px solid #2185d0;
+		}
+
+		#typeahead-search-results [role="group"] > a.result:focus-visible,
+		#typeahead-search-results [role="group"] > a.result[aria-selected="true"],
+		#typeahead-search-results [role="group"] > a.result.result-focused {
+			outline: 2px solid var(--focus-ring-blue);
 			outline-offset: -2px;
 		}
-		#typeahead-search-results .category { background: white; }
-		.typeahead-results-heading { font-size: 1em; font-weight: 500; width: 100%; border-radius: 0; &.ui.label.blue { background-color: var(--mediatype-label-blue); border-color: var(--mediatype-label-blue); color: white; } &.ui.label.teal { background-color: var(--mediatype-label-teal); border-color: var(--mediatype-label-teal); color: white; } }
-		.image { align-self: stretch; flex: 0 0 2em; width: 2em; height: 3em; max-height: 3em; margin: 0 1rem 0 0; overflow: hidden; }
-		.image img { display: block; width: 100%; height: 100%; min-height: 100%; object-fit: cover; }
-		.content { position: relative; display: flex; flex-direction: column; min-width: 0; }
-		.result-header { min-width: 0; white-space: normal; }
-		.title { color: black; padding-right: 0; line-height: 1; font-size: 1em; font-weight: bold; white-space: normal; overflow-wrap: anywhere; }
-		.description { line-height: 1.2; color: var(--color-text-muted); font-size: 1em; }
-		#status-messages-layer { position: absolute; right: 32px; top: calc(var(--header-height) + 0.5rem); z-index: 1000; }
-		#status-messages { padding: 0.85rem; color: black; background: white; border-radius: 6px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5); overflow: hidden; }
-		#status-messages .search-empty-state, #status-messages .search-error-panel, #status-messages .result, #status-messages .result-error { margin: 0; }
-		@media only screen and (max-width: 767.98px) { #typeahead-search-results { min-width: unset; max-width: unset; width: 100vw; } }
+
+		#typeahead-search-results .category {
+			background: white;
+		}
+
+		.typeahead-results-heading {
+			font-size: 1em;
+			font-weight: 500;
+			width: 100%;
+			border-radius: 0;
+
+			&.ui.label.blue {
+				background-color: var(--mediatype-label-blue);
+				border-color: var(--mediatype-label-blue);
+				color: white;
+			}
+
+			&.ui.label.teal {
+				background-color: var(--mediatype-label-teal);
+				border-color: var(--mediatype-label-teal);
+				color: white;
+			}
+		}
+
+		.image {
+			align-self: stretch;
+			flex: 0 0 2em;
+			width: 2em;
+			height: 3em;
+			max-height: 3em;
+			margin: 0 1rem 0 0;
+			overflow: hidden;
+		}
+
+		.image img {
+			display: block;
+			width: 100%;
+			height: 100%;
+			min-height: 100%;
+			object-fit: cover;
+		}
+
+		.content {
+			position: relative;
+			display: flex;
+			flex-direction: column;
+			min-width: 0;
+		}
+
+		.result-header {
+			min-width: 0;
+			white-space: normal;
+		}
+
+		.title {
+			color: black;
+			padding-right: 0;
+			line-height: 1;
+			font-size: 1em;
+			font-weight: bold;
+			white-space: normal;
+			overflow-wrap: anywhere;
+		}
+
+		.description {
+			line-height: 1.2;
+			color: var(--color-text-muted);
+			font-size: 1em;
+		}
+
+		#status-messages-layer {
+			position: absolute;
+			right: 32px;
+			top: calc(var(--header-height) + 0.5rem);
+			z-index: 1000;
+		}
+
+		#status-messages {
+			padding: 0.85rem;
+			color: black;
+			background: white;
+			border-radius: 6px;
+			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+			overflow: hidden;
+		}
+
+		#status-messages .search-empty-state, #status-messages .search-error-panel, #status-messages .result, #status-messages .result-error {
+			margin: 0;
+		}
+
+		@media only screen and (max-width: 767.98px) {
+			#typeahead-search-results {
+				min-width: unset;
+				max-width: unset;
+				width: 100vw;
+			}
+		}
 	}
 </style>
