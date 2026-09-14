@@ -294,11 +294,26 @@
 			<i aria-hidden="true" class="search icon"></i>
 			<p class="u-sr-only" id={searchHintId}>{messages.searchHint}</p>
 			{#if hasStatusMessage}
-				<div id="status-messages-layer"><section id="status-messages" aria-hidden="true">
-					{#if error}<div class="search-error-panel"><p class="result result-error">{error}</p></div>
-					{:else if loading}<p class="result">{messages.searchLoading}</p>
-					{:else if hasSearchTerm && !hasResults}<div class="search-empty-state"><p class="result">{messages.searchNoResults}</p></div>{/if}
-				</section></div>
+				<div id="status-messages-layer">
+					<section
+						id="status-messages"
+						role={error ? 'alert' : 'status'}
+						aria-live={error ? 'assertive' : 'polite'}
+						aria-atomic="true"
+					>
+						{#if error}
+							<div class="search-error-panel">
+								<p class="result result-error">{error}</p>
+							</div>
+						{:else if loading}
+							<p class="result">{messages.searchLoading}</p>
+						{:else if hasSearchTerm && !hasResults}
+							<div class="search-empty-state">
+								<p class="result">{messages.searchNoResults}</p>
+							</div>
+						{/if}
+					</section>
+				</div>
 			{/if}
 		</div>
 		{#if hasResults}
