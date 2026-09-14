@@ -6,7 +6,7 @@
 	import { i18n } from '$lib/stores/i18n';
 	import { resolveLocale } from '$lib/i18n/helpers';
 
-	const { labels: texts, messages, titles, fallbacks } = $derived($i18n);
+	const { labels: texts, messages, formats, titles, labels, fallbacks } = $derived($i18n);
 	const activeLocale = $derived(resolveLocale(page.url.searchParams.get('locale')));
 
 	let query = $state('');
@@ -338,8 +338,14 @@
 											<time class={item.date ? '' : 'u-not-available'} datetime={item.date}>{formatYear(item.date)}</time>
 											<span aria-hidden="true"> · </span>
 											<span class="rating">
-												<i class="yellow star icon" aria-hidden="true"></i>
-												<span class={item.rating ? '' : 'u-not-available'}>{formatRating(item.rating)}</span>
+												{#if item.rating !== null && item.rating !== undefined}
+													<i class="yellow star icon" aria-hidden="true"></i>
+													<span class="u-sr-only">{labels.rating}</span>
+													<span class="rating-value {item.rating ? '' : 'u-not-available'}">{item.rating}</span>
+													<span class="u-sr-only">{formats.outOfTen}</span>
+												{:else}
+													<span class="u-not-available">{fallbacks.notAvailable}</span>
+												{/if}
 											</span>
 										</p>
 									</div>
@@ -375,8 +381,14 @@
 											<time class={item.date ? '' : 'u-not-available'} datetime={item.date}>{formatYear(item.date)}</time>
 											<span aria-hidden="true"> · </span>
 											<span class="rating">
-												<i class="yellow star icon" aria-hidden="true"></i>
-												<span class={item.rating ? '' : 'u-not-available'}>{formatRating(item.rating)}</span>
+												{#if item.rating !== null && item.rating !== undefined}
+													<i class="yellow star icon" aria-hidden="true"></i>
+													<span class="u-sr-only">{labels.rating}</span>
+													<span class="rating-value {item.rating ? '' : 'u-not-available'}">{item.rating}</span>
+													<span class="u-sr-only">{formats.outOfTen}</span>
+												{:else}
+													<span class="u-not-available">{fallbacks.notAvailable}</span>
+												{/if}
 											</span>
 										</p>
 									</div>
@@ -531,6 +543,7 @@
 			position: relative;
 			display: flex;
 			flex-direction: column;
+			justify-content: center;
 			min-width: 0;
 		}
 
@@ -550,9 +563,9 @@
 		}
 
 		.description {
-			line-height: 1.2;
+			line-height: 1.6;
 			color: var(--color-text-muted);
-			font-size: 1em;
+			font-size: .85em;
 		}
 
 		#status-messages-layer {
