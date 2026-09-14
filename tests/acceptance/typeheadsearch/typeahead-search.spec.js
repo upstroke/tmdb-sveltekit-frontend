@@ -247,7 +247,9 @@ test.describe('Typeahead Search', () => {
 				await route.abort('failed');
 			});
 
-			const searchInput = page.getByRole('searchbox');
+			const searchInput = page.getByRole('combobox', {
+				name: 'Search movies & TV'
+			});
 			await searchInput.click();
 			await searchInput.clear();
 			await searchInput.fill('Hero');
