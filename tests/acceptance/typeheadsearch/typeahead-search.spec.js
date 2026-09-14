@@ -3,6 +3,15 @@ import { test, expect } from '@playwright/test';
 test.describe('Typeahead Search', () => {
 	test.beforeEach(async ({ page }) => {
 		await page.goto('/');
+
+		// Temporaeres Debug-Logging fuer Search-Requests
+		await page.route(async (route) => {
+			const url = route.request().url();
+			if (url.includes('/search')) {
+				console.log('Intercepted search URL:', url);
+			}
+			await route.continue();
+		});
 	});
 
 	function getSearchInput(page) {
@@ -25,7 +34,7 @@ test.describe('Typeahead Search', () => {
 		let requestCount = 0;
 
 		await page.route(
-			(url) => url.pathname === '/search',
+			(url) => url.toString().includes('/search'),
 			async (route) => {
 				requestCount += 1;
 				await handler(route);
