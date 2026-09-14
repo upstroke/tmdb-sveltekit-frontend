@@ -1,33 +1,31 @@
-// playwright.config.js
 import { defineConfig } from '@playwright/test';
 
 export default defineConfig({
 	testDir: './tests/acceptance',
 
-	// IMPORTANT: Timeout increased from 30s to 60s
 	timeout: 60 * 1000,
 
-	// NEW: Expect timeout for assertions
 	expect: {
 		timeout: 10 * 1000
 	},
 
-	// NEW: Retry on flakiness (1x local, 2x CI)
-	retries: process.env.CI ? 2 : 1,
+	// Lokal jeden Fehler sofort sichtbar machen.
+	retries: process.env.CI ? 2 : 0,
 
 	// IMPORTANT: Only 1 worker for stability
 	workers: 1,
 	fullyParallel: false,
 
-	// NEW: Browser launch options for stability
 	use: {
 		baseURL: 'http://127.0.0.1:4173',
-		trace: 'on-first-retry',
-		screenshot: 'only-on-failure',
-		video: 'retain-on-failure', // NEW: Video on failure for debugging
+
+		// Für diesen einen Diagnose-Lauf deaktivieren.
+		trace: 'off',
+		screenshot: 'off',
+		video: 'off',
+
 		headless: true,
 
-		// NEW: Browser flags against hanging
 		launchOptions: {
 			args: [
 				'--disable-gpu',
@@ -50,13 +48,15 @@ export default defineConfig({
 		}
 	],
 
-	reporter: process.env.CI ? 'github' : [['list', { printSteps: true }]],
+	reporter: [['line']],
 
-	// IMPORTANT: Timeout also for web server
 	webServer: {
 		command: 'npm run dev:acceptance',
 		port: 4173,
-		reuseExistingServer: !process.env.CI,
+
+		// Entscheidend: keinen alten lokalen Dev-Server mitnehmen.
+		reuseExistingServer: false,
+
 		timeout: 60 * 1000
 	}
 });

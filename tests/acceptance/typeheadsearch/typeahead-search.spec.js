@@ -27,7 +27,9 @@ test.describe('Typeahead Search', () => {
 			tag: ['@search', '@typeahead', '@e2e', '@black-box', '@regression']
 		},
 		async ({ page }) => {
-			const searchInput = page.getByRole('searchbox');
+			const searchInput = page.getByRole('combobox', {
+				name: 'Search movies & TV'
+			});
 			await searchInput.click();
 			await searchInput.clear();
 			await searchInput.fill('Hero');
@@ -56,7 +58,9 @@ test.describe('Typeahead Search', () => {
 			tag: ['@search', '@typeahead', '@e2e', '@black-box', '@regression']
 		},
 		async ({ page }) => {
-			const searchInput = page.getByRole('searchbox');
+			const searchInput = page.getByRole('combobox', {
+				name: 'Search movies & TV'
+			});
 			await searchInput.click();
 			await searchInput.clear();
 			await searchInput.fill('Breaking Bad');
@@ -87,7 +91,9 @@ test.describe('Typeahead Search', () => {
 			tag: ['@search', '@typeahead', '@e2e', '@black-box', '@negative', '@regression']
 		},
 		async ({ page }) => {
-			const searchInput = page.getByRole('searchbox');
+			const searchInput = page.getByRole('combobox', {
+				name: 'Search movies & TV'
+			});
 			await searchInput.click();
 			await searchInput.clear();
 			await searchInput.fill('XYZNOTFOUND123');
@@ -111,7 +117,9 @@ test.describe('Typeahead Search', () => {
 			tag: ['@search', '@typeahead', '@e2e', '@black-box', '@boundary', '@regression']
 		},
 		async ({ page }) => {
-			const searchInput = page.getByRole('searchbox');
+			const searchInput = page.getByRole('combobox', {
+				name: 'Search movies & TV'
+			});
 			await searchInput.click();
 			await searchInput.clear();
 
@@ -132,7 +140,9 @@ test.describe('Typeahead Search', () => {
 			tag: ['@search', '@typeahead', '@e2e', '@accessibility', '@black-box', '@regression']
 		},
 		async ({ page }) => {
-			const searchInput = page.getByRole('searchbox');
+			const searchInput = page.getByRole('combobox', {
+				name: 'Search movies & TV'
+			});
 			await searchInput.click();
 			await searchInput.clear();
 			await searchInput.fill('Hero');
@@ -166,7 +176,9 @@ test.describe('Typeahead Search', () => {
 			tag: ['@search', '@typeahead', '@e2e', '@accessibility', '@black-box', '@regression']
 		},
 		async ({ page }) => {
-			const searchInput = page.getByRole('searchbox');
+			const searchInput = page.getByRole('combobox', {
+				name: 'Search movies & TV'
+			});
 			await searchInput.click();
 			await searchInput.clear();
 			await searchInput.fill('Hero');
@@ -198,7 +210,9 @@ test.describe('Typeahead Search', () => {
 				await route.continue();
 			});
 
-			const searchInput = page.getByRole('searchbox');
+			const searchInput = page.getByRole('combobox', {
+				name: 'Search movies & TV'
+			});
 			await searchInput.click();
 			await searchInput.clear();
 			await searchInput.fill('Hero');
