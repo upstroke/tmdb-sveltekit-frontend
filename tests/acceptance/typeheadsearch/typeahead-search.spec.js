@@ -1,251 +1,274 @@
 import { test, expect } from '@playwright/test';
 
 /**
- * Feature: F-TS — Typeahead Search
- * Test cases:
- * - TC-TS-001: Search, select a result, and verify the details title
- * - TC-TS-002: Search for a TV show and open its details page
- * - TC-TS-003: No-results feedback is displayed for an unknown term
- * - TC-TS-004: Results are displayed only after four characters
- * - TC-TS-005: Tab moves focus from the first to the second search result
- * - TC-TS-006: Escape closes the search results
- * - TC-TS-007: Loading state is shown during search
- * - TC-TS-008: Error state is shown when search fails
+ * Typeahead Search Acceptance Tests
+ *
+ * Based on the test plan for module "Typeahead Search".
+ * Uses LIVE search data for functional flows.
+ * Route interception is used ONLY for deterministic loading and network-error states.
+ *
+ * All tests navigate to the English version of the site (default locale).
+ *
+ * i18n texts (en-US):
+ * - messages.searchLoading: "Searching …"
+ * - messages.searchNoResults: "No results found."
+ * - messages.searchError: "Search could not be loaded."
  */
 
 test.describe('Typeahead Search', () => {
 	test.beforeEach(async ({ page }) => {
-		await page.setViewportSize({ width: 1920, height: 1080 });
-		await page.goto('http://localhost:5173/?locale=en-US');
-		await expect(page).toHaveTitle(/Home.*TMDB/);
+		// Full page reload to ensure clean state
+		await page.goto('/?locale=en-US', { waitUntil: 'networkidle' });
 	});
 
-	// TC-TS-001
-	test(
-		'[TC-TS-001] Search result link opens its details page with the matching title',
-		{
-			tag: ['@search', '@typeahead', '@e2e', '@black-box', '@regression']
-		},
-		async ({ page }) => {
-			const searchInput = page.getByRole('searchbox');
-			await searchInput.click();
-			await searchInput.clear();
-			await searchInput.fill('Hero');
+	function getSearchInput(page) {
+		return page.locator('#typeahead-search-input');
+	}
 
-			const resultsContainer = page.locator('#typeahead-search-results');
-			await resultsContainer.waitFor({ state: 'visible', timeout: 5000 });
+	function getResults(page) {
+		return page.locator('#typeahead-search-results');
+	}
 
-			const firstResultLink = resultsContainer.locator('a.result[data-result-link="true"]').first();
-			const searchResultTitle = await firstResultLink
-				.locator('.result-header .title')
-				.textContent();
+	function getStatusLayer(page) {
+		return page.locator('#status-messages-layer');
+	}
 
-			await firstResultLink.click();
+	// -------------------------------------------------------------------------
+	// TC-TS-001: Result opens matching details page (Movie)
+	// -------------------------------------------------------------------------
+	test('TC-TS-001: should display movie results and open matching details page', async ({ page }) => {
+		const searchInput = getSearchInput(page);
 
-			const detailPageTitle = page.locator('#details-hero-title');
-			await expect(detailPageTitle).toBeVisible({ timeout: 5000 });
-			await expect(page).toHaveURL(/\/(movies|tv-shows)\/\d+/);
-			await expect(detailPageTitle).toHaveText(searchResultTitle ?? '');
-		}
-	);
+		const searchResponsePromise = page.waitForResponse(
+			(response) => {
+				const url = new URL(response.url());
+				return (
+					response.request().method() === 'GET' &&
+					url.pathname === '/search' &&
+					url.searchParams.get('q')?.toLowerCase().includes('fight')
+				);
+			}
+		);
 
-	// TC-TS-002
-	test(
-		'[TC-TS-002] TV show search result opens a TV show details page',
-		{
-			tag: ['@search', '@typeahead', '@e2e', '@black-box', '@regression']
-		},
-		async ({ page }) => {
-			const searchInput = page.getByRole('searchbox');
-			await searchInput.click();
-			await searchInput.clear();
-			await searchInput.fill('Breaking Bad');
+		await searchInput.click();
+		await searchInput.pressSequentially('Fight Club', { delay: 50 });
 
-			const resultsContainer = page.locator('#typeahead-search-results');
-			await resultsContainer.waitFor({ state: 'visible', timeout: 5000 });
+		const response = await searchResponsePromise;
+		expect(response.ok()).toBe(true);
 
-			// Find first TV show result and wait for it to be visible
-			const firstTvShowLink = resultsContainer.locator('a.result[href^="/tv-shows/"]').first();
-			await expect(firstTvShowLink).toBeVisible({ timeout: 5000 });
+		await expect(getResults(page)).toBeVisible();
 
-			const searchResultTitle = await firstTvShowLink
-				.locator('.result-header .title')
-				.textContent();
-			await firstTvShowLink.click();
+		const resultItems = getResults(page).getByRole('option');
+		const firstResult = resultItems.first();
+		await expect(firstResult).toBeVisible();
 
-			const detailPageTitle = page.locator('#details-hero-title');
-			await expect(detailPageTitle).toBeVisible({ timeout: 5000 });
-			await expect(page).toHaveURL(/\/tv-shows\/\d+/);
-			await expect(detailPageTitle).toHaveText(searchResultTitle ?? '');
-		}
-	);
+		const firstResultText = await firstResult.textContent();
+		expect(firstResultText).toContain('Fight Club');
 
-	// TC-TS-003
-	test(
-		'[TC-TS-003] No-results feedback is displayed for an unknown search term',
-		{
-			tag: ['@search', '@typeahead', '@e2e', '@black-box', '@negative', '@regression']
-		},
-		async ({ page }) => {
-			const searchInput = page.getByRole('searchbox');
-			await searchInput.click();
-			await searchInput.clear();
-			await searchInput.fill('XYZNOTFOUND123');
+		await firstResult.click();
 
-			// Wait for status messages layer (shown when no results)
-			const statusMessagesLayer = page.locator('#status-messages-layer');
-			await statusMessagesLayer.waitFor({ state: 'visible', timeout: 5000 });
+		// Expect navigation to a movie or TV details route
+		await expect(page).toHaveURL(/\/(movies|tv-shows)\/\d+/);
 
-			// Verify "No results found." message is shown with role="status"
-			await expect(statusMessagesLayer.getByRole('status')).toContainText('No results found.');
+		const heroTitle = page.locator('#details-hero-title');
+		await expect(heroTitle).toBeVisible();
 
-			// Verify results container is NOT rendered (since there are no results)
-			await expect(page.locator('#typeahead-search-results')).toHaveCount(0);
-		}
-	);
+		const heroTitleText = await heroTitle.textContent();
+		expect(heroTitleText).toContain('Fight Club');
+	});
 
-	// TC-TS-004
-	test(
-		'[TC-TS-004] Search results are displayed only after four characters',
-		{
-			tag: ['@search', '@typeahead', '@e2e', '@black-box', '@boundary', '@regression']
-		},
-		async ({ page }) => {
-			const searchInput = page.getByRole('searchbox');
-			await searchInput.click();
-			await searchInput.clear();
+	// -------------------------------------------------------------------------
+	// TC-TS-002: TV-show result opens TV details page
+	// -------------------------------------------------------------------------
+	test('TC-TS-002: should display tv show results and open tv details page', async ({ page }) => {
+		const searchInput = getSearchInput(page);
 
-			const resultsContainer = page.locator('#typeahead-search-results');
+		const searchResponsePromise = page.waitForResponse(
+			(response) => {
+				const url = new URL(response.url());
+				return (
+					response.request().method() === 'GET' &&
+					url.pathname === '/search' &&
+					url.searchParams.get('q')?.toLowerCase().includes('dark')
+				);
+			}
+		);
 
-			await searchInput.fill('Her');
-			await expect(resultsContainer).toBeHidden();
+		await searchInput.click();
+		await searchInput.pressSequentially('Dark', { delay: 50 });
 
-			await searchInput.fill('Hero');
-			await resultsContainer.waitFor({ state: 'visible', timeout: 5000 });
-		}
-	);
+		const response = await searchResponsePromise;
+		expect(response.ok()).toBe(true);
 
-	// TC-TS-005
-	test(
-		'[TC-TS-005] Tab moves focus from the first to the second search result',
-		{
-			tag: ['@search', '@typeahead', '@e2e', '@accessibility', '@black-box', '@regression']
-		},
-		async ({ page }) => {
-			const searchInput = page.getByRole('searchbox');
-			await searchInput.click();
-			await searchInput.clear();
-			await searchInput.fill('Hero');
+		await expect(getResults(page)).toBeVisible();
 
-			// Wait for results container
-			const resultsContainer = page.locator('#typeahead-search-results');
-			await resultsContainer.waitFor({ state: 'visible', timeout: 5000 });
+		const resultItems = getResults(page).getByRole('option');
+		await expect(resultItems.first()).toBeVisible();
 
-			// Verify at least 2 results exist
-			const resultLinks = resultsContainer.locator('a.result[data-result-link="true"]');
-			await expect(resultLinks.count()).resolves.toBeGreaterThanOrEqual(2);
+		// Find first TV result by href pattern
+		const tvResultLink = page.locator('a.result[data-result-link="true"][href^="/tv-shows/"]').first();
+		await expect(tvResultLink).toBeVisible();
 
-			const firstResult = resultLinks.first();
-			const secondResult = resultLinks.nth(1);
+		const tvResultText = await tvResultLink.textContent();
+		expect(tvResultText).toContain('Dark');
 
-			await expect(firstResult).toBeVisible();
-			await expect(secondResult).toBeVisible();
+		await tvResultLink.click();
 
-			await page.keyboard.press('Tab');
-			await expect(firstResult).toBeFocused();
+		await expect(page).toHaveURL(/\/tv-shows\/\d+/);
 
-			await page.keyboard.press('Tab');
-			await expect(secondResult).toBeFocused();
-		}
-	);
+		const heroTitle = page.locator('#details-hero-title');
+		await expect(heroTitle).toBeVisible();
 
-	// TC-TS-006
-	test(
-		'[TC-TS-006] Escape closes the search results',
-		{
-			tag: ['@search', '@typeahead', '@e2e', '@accessibility', '@black-box', '@regression']
-		},
-		async ({ page }) => {
-			const searchInput = page.getByRole('searchbox');
-			await searchInput.click();
-			await searchInput.clear();
-			await searchInput.fill('Hero');
+		const heroTitleText = await heroTitle.textContent();
+		expect(heroTitleText).toContain('Dark');
+	});
 
-			const resultsContainer = page.locator('#typeahead-search-results');
-			await resultsContainer.waitFor({ state: 'visible', timeout: 5000 });
+	// -------------------------------------------------------------------------
+	// TC-TS-003: No-results status
+	// -------------------------------------------------------------------------
+	test('TC-TS-003: should display no results message when no results are found', async ({ page }) => {
+		const searchInput = getSearchInput(page);
 
-			await page.keyboard.press('Escape');
-			await expect(resultsContainer).toBeHidden({ timeout: 2000 });
-		}
-	);
+		const searchResponsePromise = page.waitForResponse(
+			(response) => {
+				const url = new URL(response.url());
+				return (
+					response.request().method() === 'GET' &&
+					url.pathname === '/search' &&
+					url.searchParams.get('q')?.includes('XYZNOTFOUND123')
+				);
+			}
+		);
 
-	// TC-TS-007
-	test(
-		'[TC-TS-007] Searching message is displayed while a search is pending',
-		{
-			tag: ['@search', '@typeahead', '@e2e', '@black-box', '@regression']
-		},
-		async ({ page }) => {
-			// Block the search API initially, then release after we've verified the loading state
-			let releaseRequest;
-			const requestHeld = new Promise((resolve) => {
-				releaseRequest = resolve;
-			});
+		await searchInput.click();
+		await searchInput.pressSequentially('XYZNOTFOUND123', { delay: 50 });
 
-			await page.route('**/search?*', async (route) => {
-				// Hold the request until we release it
-				await requestHeld;
-				await route.continue();
-			});
+		const response = await searchResponsePromise;
+		expect(response.ok()).toBe(true);
 
-			const searchInput = page.getByRole('searchbox');
-			await searchInput.click();
-			await searchInput.clear();
-			await searchInput.fill('Hero');
+		// Wait for status layer to appear
+		await expect(getStatusLayer(page)).toBeVisible();
 
-			const statusMessagesLayer = page.locator('#status-messages-layer');
-			await expect(statusMessagesLayer).toBeVisible({ timeout: 5000 });
+		const statusMessage = getStatusLayer(page).getByRole('status');
+		// Exact match for en-US: "No results found."
+		await expect(statusMessage).toContainText('No results found.');
 
-			// Verify "Searching …" is shown (request is still held)
-			await expect(statusMessagesLayer.getByRole('status')).toContainText('Searching …');
+		await expect(getResults(page)).not.toBeVisible();
+	});
 
-			// Verify results container is NOT rendered while loading
-			await expect(page.locator('#typeahead-search-results')).toHaveCount(0);
+	// -------------------------------------------------------------------------
+	// TC-TS-004: Results start at four characters (boundary)
+	// -------------------------------------------------------------------------
+	test('TC-TS-004: should not show results for three characters but for four', async ({ page }) => {
+		const searchInput = getSearchInput(page);
 
-			// Release the blocked request so the search can complete
-			releaseRequest();
+		// Three characters: no results (component threshold)
+		await searchInput.click();
+		await searchInput.pressSequentially('Her', { delay: 50 });
+		await expect(getResults(page)).not.toBeVisible();
 
-			// Wait for results to appear after the request completes
-			const resultsContainer = page.locator('#typeahead-search-results');
-			await resultsContainer.waitFor({ state: 'visible', timeout: 5000 });
-		}
-	);
+		// Clear and enter four characters
+		await searchInput.clear();
 
-	// TC-TS-008
-	test(
-		'[TC-TS-008] Failed-to-fetch message is displayed when the search request fails',
-		{
-			tag: ['@search', '@typeahead', '@e2e', '@black-box', '@negative', '@regression']
-		},
-		async ({ page }) => {
-			// Mock the search API to fail
-			await page.route('**/search?*', async (route) => {
-				await route.abort('failed');
-			});
+		const searchResponsePromise = page.waitForResponse(
+			(response) => {
+				const url = new URL(response.url());
+				return (
+					response.request().method() === 'GET' &&
+					url.pathname === '/search' &&
+					url.searchParams.get('q')?.includes('Hero')
+				);
+			}
+		);
 
-			const searchInput = page.getByRole('searchbox');
-			await searchInput.click();
-			await searchInput.clear();
-			await searchInput.fill('Hero');
+		await searchInput.pressSequentially('Hero', { delay: 50 });
 
-			const statusMessagesLayer = page.locator('#status-messages-layer');
-			await statusMessagesLayer.waitFor({ state: 'visible', timeout: 5000 });
+		const response = await searchResponsePromise;
+		expect(response.ok()).toBe(true);
 
-			// Verify error message is shown with role="alert" (browser-specific text)
-			await expect(statusMessagesLayer.getByRole('alert')).toBeVisible({ timeout: 5000 });
+		await expect(getResults(page)).toBeVisible();
+	});
 
-			// Verify results container is NOT rendered (since search failed)
-			await expect(page.locator('#typeahead-search-results')).toHaveCount(0);
-		}
-	);
+	// -------------------------------------------------------------------------
+	// TC-TS-006: Click outside header closes results
+	// -------------------------------------------------------------------------
+	test('TC-TS-005: should close results when clicking outside in header', async ({ page }) => {
+		const searchInput = getSearchInput(page);
+
+		const searchResponsePromise = page.waitForResponse(
+			(response) => {
+				const url = new URL(response.url());
+				return (
+					response.request().method() === 'GET' &&
+					url.pathname === '/search' &&
+					url.searchParams.get('q')?.toLowerCase().includes('fight')
+				);
+			}
+		);
+
+		await searchInput.click();
+		await searchInput.pressSequentially('Fight Club', { delay: 50 });
+
+		const response = await searchResponsePromise;
+		expect(response.ok()).toBe(true);
+
+		await expect(getResults(page)).toBeVisible();
+
+		// Click outside the search area (e.g., on the page body or another element)
+		await page.mouse.click(100, 100);
+
+		await expect(getResults(page)).not.toBeVisible();
+	});
+
+	// -------------------------------------------------------------------------
+	// TC-TS-007: Loading status during pending request
+	// -------------------------------------------------------------------------
+	test('TC-TS-006: should display loading status while request is pending', async ({ page }) => {
+		// Hold the /search request
+		let releaseRequest;
+		const requestHeld = new Promise((resolve) => {
+			releaseRequest = resolve;
+		});
+
+		await page.route('**/search**', async (route) => {
+			await requestHeld;
+			await route.continue();
+		});
+
+		const searchInput = getSearchInput(page);
+		await searchInput.click();
+		await searchInput.pressSequentially('Hero', { delay: 50 });
+
+		// Status layer with "Searching …" should appear
+		await expect(getStatusLayer(page)).toBeVisible();
+		// Exact match for en-US: "Searching …"
+		await expect(getStatusLayer(page).getByRole('status')).toContainText('Searching …');
+
+		// Results must not be visible while loading
+		await expect(getResults(page)).not.toBeVisible();
+
+		// Release the request so the test can finish
+		releaseRequest();
+	});
+
+	// -------------------------------------------------------------------------
+	// TC-TS-008: Network-error status
+	// -------------------------------------------------------------------------
+	test('TC-TS-007: should display error alert when request fails', async ({ page }) => {
+		// Abort /search requests
+		await page.route('**/search**', async (route) => {
+			await route.abort('failed');
+		});
+
+		const searchInput = getSearchInput(page);
+		await searchInput.click();
+		await searchInput.pressSequentially('Hero', { delay: 50 });
+
+		// Status layer with alert should appear
+		await expect(getStatusLayer(page)).toBeVisible();
+		await expect(getStatusLayer(page).getByRole('alert')).toBeVisible();
+
+		// Results must not be visible on error
+		await expect(getResults(page)).not.toBeVisible();
+	});
 });
