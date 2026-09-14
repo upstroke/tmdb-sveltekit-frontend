@@ -1,17 +1,28 @@
 import { test, expect } from '@playwright/test';
 
+/**
+ * Typeahead Search Acceptance Tests
+ *
+ * Based on the test plan for module "Typeahead Search".
+ * Uses live search data for functional flows and route interception
+ * only for deterministic loading and network-error states.
+ *
+ * Known fixtures from tests/fixtures/tmdb/tmdb.fixtures.js:
+ * - Movie: "Fight Club" (id: 550, media_type: "movie")
+ * - TV: "Dark" (id: 420, media_type: "tv")
+ *
+ * All tests navigate to the English version of the site (default locale).
+ *
+ * i18n texts (en-US):
+ * - messages.searchLoading: "Searching …"
+ * - messages.searchNoResults: "No results found."
+ * - messages.searchError: "Search could not be loaded."
+ */
+
 test.describe('Typeahead Search', () => {
 	test.beforeEach(async ({ page }) => {
-		await page.goto('/');
-
-		// Temporaeres Debug-Logging fuer Search-Requests
-		await page.route(async (route) => {
-			const url = route.request().url();
-			if (url.includes('/search')) {
-				console.log('Intercepted search URL:', url);
-			}
-			await route.continue();
-		});
+		// Navigate to English version (default locale)
+		await page.goto('/?locale=en-US');
 	});
 
 	function getSearchInput(page) {
@@ -22,208 +33,186 @@ test.describe('Typeahead Search', () => {
 		return page.locator('#typeahead-search-results');
 	}
 
-	async function fulfillSearch(route, data) {
-		await route.fulfill({
-			status: 200,
-			contentType: 'application/json',
-			body: JSON.stringify(data)
-		});
+	function getStatusLayer(page) {
+		return page.locator('#status-messages-layer');
 	}
 
-	async function mockSearch(page, handler) {
-		let requestCount = 0;
-
-		await page.route(
-			(url) => url.toString().includes('/search'),
-			async (route) => {
-				requestCount += 1;
-				await handler(route);
-			}
-		);
-
-		return async () => {
-			await expect.poll(() => requestCount).toBeGreaterThan(0);
-		};
-	}
-
-	const movieResult = {
-		id: 1,
-		media_type: 'movie',
-		title: 'Hero Movie',
-		poster_path: '/poster1.jpg',
-		release_date: '2020-01-01'
-	};
-
-	const tvShowResult = {
-		id: 2,
-		media_type: 'tv',
-		name: 'Breaking TV Show',
-		poster_path: '/poster2.jpg',
-		first_air_date: '2019-01-01'
-	};
-
-	const movieResult1 = {
-		id: 1,
-		media_type: 'movie',
-		title: 'Multi Movie 1',
-		poster_path: '/poster1.jpg',
-		release_date: '2020-01-01'
-	};
-
-	const movieResult2 = {
-		id: 2,
-		media_type: 'movie',
-		title: 'Multi Movie 2',
-		poster_path: '/poster2.jpg',
-		release_date: '2021-01-01'
-	};
-
-	test('TC-TS-001: should display movie results when searching for a movie', async ({ page }) => {
-		const waitForSearchRequest = await mockSearch(page, (route) =>
-			fulfillSearch(route, {
-				movies: [movieResult],
-				tvShows: []
-			})
-		);
-
+	// -------------------------------------------------------------------------
+	// TC-TS-001: Result opens matching details page (Movie)
+	// -------------------------------------------------------------------------
+	test('TC-TS-001: should display movie results and open matching details page', async ({ page }) => {
 		const searchInput = getSearchInput(page);
-		await searchInput.fill('Hero');
+		await searchInput.fill('Fight Club');
 
-		await waitForSearchRequest();
+		await expect(getResults(page)).toBeVisible();
+
+		const resultItems = getResults(page).getByRole('option');
+		const firstResult = resultItems.first();
+		await expect(firstResult).toBeVisible();
+
+		const firstResultText = await firstResult.textContent();
+		expect(firstResultText).toContain('Fight Club');
+
+		await firstResult.click();
+
+		// Expect navigation to a movie or TV details route
+		await expect(page).toHaveURL(/\/(movies|tv-shows)\/\d+/);
+
+		const heroTitle = page.locator('#details-hero-title');
+		await expect(heroTitle).toBeVisible();
+
+		const heroTitleText = await heroTitle.textContent();
+		expect(heroTitleText).toContain('Fight Club');
+	});
+
+	// -------------------------------------------------------------------------
+	// TC-TS-002: TV-show result opens TV details page
+	// -------------------------------------------------------------------------
+	test('TC-TS-002: should display tv show results and open tv details page', async ({ page }) => {
+		const searchInput = getSearchInput(page);
+		await searchInput.fill('Dark');
 
 		await expect(getResults(page)).toBeVisible();
 
 		const resultItems = getResults(page).getByRole('option');
 		await expect(resultItems.first()).toBeVisible();
 
-		const firstResultText = await resultItems.first().textContent();
-		expect(firstResultText).toContain('Hero Movie');
-		expect(firstResultText).toContain('2020');
+		// Find first TV result by href pattern
+		const tvResultLink = page.locator('a.result[data-result-link="true"][href^="/tv-shows/"]').first();
+		await expect(tvResultLink).toBeVisible();
+
+		const tvResultText = await tvResultLink.textContent();
+		expect(tvResultText).toContain('Dark');
+
+		await tvResultLink.click();
+
+		await expect(page).toHaveURL(/\/tv-shows\/\d+/);
+
+		const heroTitle = page.locator('#details-hero-title');
+		await expect(heroTitle).toBeVisible();
+
+		const heroTitleText = await heroTitle.textContent();
+		expect(heroTitleText).toContain('Dark');
 	});
 
-	test('TC-TS-002: should display tv show results when searching for a tv show', async ({
-		page
-	}) => {
-		const waitForSearchRequest = await mockSearch(page, (route) =>
-			fulfillSearch(route, {
-				movies: [],
-				tvShows: [tvShowResult]
-			})
-		);
-
+	// -------------------------------------------------------------------------
+	// TC-TS-003: No-results status
+	// -------------------------------------------------------------------------
+	test('TC-TS-003: should display no results message when no results are found', async ({ page }) => {
 		const searchInput = getSearchInput(page);
-		await searchInput.fill('Breaking');
+		await searchInput.fill('XYZNOTFOUND123');
 
-		await waitForSearchRequest();
+		// Wait for status layer to appear
+		await expect(getStatusLayer(page)).toBeVisible();
 
-		await expect(getResults(page)).toBeVisible();
-
-		const resultItems = getResults(page).getByRole('option');
-		await expect(resultItems.first()).toBeVisible();
-
-		const firstResultText = await resultItems.first().textContent();
-		expect(firstResultText).toContain('Breaking TV Show');
-		expect(firstResultText).toContain('2019');
-	});
-
-	test('TC-TS-003: should display no results message when no results are found', async ({
-		page
-	}) => {
-		const waitForSearchRequest = await mockSearch(page, (route) =>
-			fulfillSearch(route, {
-				movies: [],
-				tvShows: []
-			})
-		);
-
-		const searchInput = getSearchInput(page);
-		await searchInput.fill('NonExistentQuery123');
-
-		await waitForSearchRequest();
+		const statusMessage = getStatusLayer(page).getByRole('status');
+		// Exact match for en-US: "No results found."
+		await expect(statusMessage).toContainText('No results found.');
 
 		await expect(getResults(page)).not.toBeVisible();
-		await expect(page.getByRole('status')).toContainText('No results found.');
 	});
 
-	test('TC-TS-004: should display loading state while searching', async ({ page }) => {
-		let releaseRequest;
-		let requestIntercepted = false;
+	// -------------------------------------------------------------------------
+	// TC-TS-004: Results start at four characters (boundary)
+	// -------------------------------------------------------------------------
+	test('TC-TS-004: should not show results for three characters but for four', async ({ page }) => {
+		const searchInput = getSearchInput(page);
 
+		// Three characters: no results
+		await searchInput.fill('Her');
+		await expect(getResults(page)).not.toBeVisible();
+
+		// Clear and enter four characters
+		await searchInput.clear();
+		await searchInput.fill('Hero');
+
+		await expect(getResults(page)).toBeVisible();
+	});
+
+	// -------------------------------------------------------------------------
+	// TC-TS-005: Tab moves to next result (keyboard navigation)
+	// -------------------------------------------------------------------------
+	test('TC-TS-005: should move focus through result links with Tab', async ({ page }) => {
+		const searchInput = getSearchInput(page);
+		// Use a term that returns multiple results (e.g. "Fight" -> movie + TV)
+		await searchInput.fill('Fight');
+
+		await expect(getResults(page)).toBeVisible();
+
+		const resultItems = getResults(page).getByRole('option');
+		await expect(resultItems.first()).toBeVisible();
+
+		// Move focus from search input to first result
+		await page.keyboard.press('Tab');
+		await expect(resultItems.first()).toBeFocused();
+
+		// Move to second result
+		await page.keyboard.press('Tab');
+		await expect(resultItems.nth(1)).toBeFocused();
+	});
+
+	// -------------------------------------------------------------------------
+	// TC-TS-006: Escape closes results
+	// -------------------------------------------------------------------------
+	test('TC-TS-006: should close results when pressing Escape', async ({ page }) => {
+		const searchInput = getSearchInput(page);
+		await searchInput.fill('Fight Club');
+
+		await expect(getResults(page)).toBeVisible();
+
+		// Press Escape in the search field
+		await searchInput.press('Escape');
+
+		await expect(getResults(page)).not.toBeVisible();
+	});
+
+	// -------------------------------------------------------------------------
+	// TC-TS-007: Loading status during pending request
+	// -------------------------------------------------------------------------
+	test('TC-TS-007: should display loading status while request is pending', async ({ page }) => {
+		// Hold the /search request
+		let releaseRequest;
 		const requestHeld = new Promise((resolve) => {
 			releaseRequest = resolve;
 		});
 
-		await page.route(
-			(url) => url.pathname === '/search',
-			async (route) => {
-				requestIntercepted = true;
-
-				await requestHeld;
-
-				await fulfillSearch(route, {
-					movies: [movieResult],
-					tvShows: []
-				});
-			}
-		);
+		await page.route('**/search*', async (route) => {
+			await requestHeld;
+			await route.continue();
+		});
 
 		const searchInput = getSearchInput(page);
 		await searchInput.fill('Hero');
 
-		await expect.poll(() => requestIntercepted).toBe(true);
+		// Status layer with "Searching …" should appear
+		await expect(getStatusLayer(page)).toBeVisible();
+		// Exact match for en-US: "Searching …"
+		await expect(getStatusLayer(page).getByRole('status')).toContainText('Searching …');
 
-		await expect(page.getByRole('status')).toContainText('Searching …');
+		// Results must not be visible while loading
+		await expect(getResults(page)).not.toBeVisible();
 
+		// Release the request so the test can finish
 		releaseRequest();
-
-		await expect(getResults(page)).toBeVisible();
 	});
 
-	test('TC-TS-005: should display error message when search fails', async ({ page }) => {
-		await page.route(
-			(url) => url.pathname === '/search',
-			async (route) => {
-				await route.fulfill({
-					status: 503,
-					contentType: 'application/json',
-					body: JSON.stringify({
-						message: 'Search service unavailable'
-					})
-				});
-			}
-		);
+	// -------------------------------------------------------------------------
+	// TC-TS-008: Network-error status
+	// -------------------------------------------------------------------------
+	test('TC-TS-008: should display error alert when request fails', async ({ page }) => {
+		// Abort /search requests
+		await page.route('**/search*', async (route) => {
+			await route.abort('failed');
+		});
 
 		const searchInput = getSearchInput(page);
-		await searchInput.fill('ErrorQuery');
+		await searchInput.fill('Hero');
 
-		await expect(page.getByRole('alert')).toBeVisible();
-		await expect(page.getByRole('alert')).toContainText(/.+/);
-	});
+		// Status layer with alert should appear
+		await expect(getStatusLayer(page)).toBeVisible();
+		await expect(getStatusLayer(page).getByRole('alert')).toBeVisible();
 
-	test('TC-TS-006: should display multiple results when multiple items are returned', async ({
-		page
-	}) => {
-		const waitForSearchRequest = await mockSearch(page, (route) =>
-			fulfillSearch(route, {
-				movies: [movieResult1, movieResult2],
-				tvShows: []
-			})
-		);
-
-		const searchInput = getSearchInput(page);
-		await searchInput.fill('Multi');
-
-		await waitForSearchRequest();
-
-		await expect(getResults(page)).toBeVisible();
-
-		const resultItems = getResults(page).getByRole('option');
-		await expect(resultItems).toHaveCount(2);
-
-		const firstResultText = await resultItems.first().textContent();
-		expect(firstResultText).toContain('Multi Movie 1');
-
-		const secondResultText = await resultItems.last().textContent();
-		expect(secondResultText).toContain('Multi Movie 2');
+		// Results must not be visible on error
+		await expect(getResults(page)).not.toBeVisible();
 	});
 });
