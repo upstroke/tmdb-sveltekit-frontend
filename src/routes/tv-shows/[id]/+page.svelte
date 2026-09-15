@@ -5,6 +5,7 @@
 	import DialogMessage from '$lib/components/DialogMessage.svelte';
 	import DetailsHero from '$lib/components/DetailsHero.svelte';
 	import MediaTypeLabel from '$lib/components/MediaTypeLabel.svelte';
+	import TabGroupe from '$lib/components/TabGroupe.svelte';
 	import notAvailable from '$lib/assets/not-available.png';
 	import { DEFAULT_LOCALE } from '$lib/i18n/config';
 	import { i18n } from '$lib/stores/i18n';
@@ -47,6 +48,15 @@
 	let runtime = $derived(tvShow?.runtime ?? null);
 	let castMembers = $derived(deduplicateById(tvShow?.cast ?? []));
 	let crew = $derived(deduplicateById(tvShow?.crew ?? []));
+
+	let seasons = $derived(tvShow?.seasons ?? []);
+	let seasonTabs = $derived(
+		seasons.map((season) => ({
+			id: String(season.season_number),
+			label: season.name ?? `Season ${season.season_number}`,
+			content: season.overview || fallbacks.notAvailable
+		}))
+	);
 </script>
 
 <svelte:head>
@@ -200,6 +210,18 @@
 				>
 			</p>
 		</section>
+
+		{#if seasonTabs.length}
+			<section aria-labelledby="seasons-heading">
+				<h3
+					id="seasons-heading"
+					class="ui medium dividing header"
+				>
+					{labels.seasons ?? 'Seasons'}
+				</h3>
+				<TabGroupe tabs={seasonTabs} ariaLabel={labels.seasons ?? 'Seasons'} />
+			</section>
+		{/if}
 
 		<section aria-labelledby="watch-providers-heading">
 			<h3 id="watch-providers-heading" class="ui medium dividing header">
