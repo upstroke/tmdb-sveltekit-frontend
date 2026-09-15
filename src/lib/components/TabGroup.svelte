@@ -91,7 +91,7 @@
 </script>
 
 <div class="ui secondary menu" role="tablist" aria-label={ariaLabel}>
-	{#each tabs as tab, index}
+	{#each tabs as tab, index (tab.id)}
 		<button
 			bind:this={tabRefs[index]}
 			class="item"
@@ -111,7 +111,7 @@
 	{/each}
 </div>
 
-{#each tabs as tab}
+{#each tabs as tab (tab.id)}
 	<div
 		class="ui tab segment"
 		class:active={isSelected(tab.id)}
