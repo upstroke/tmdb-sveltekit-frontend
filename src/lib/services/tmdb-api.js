@@ -535,6 +535,41 @@ export function createTmdbApi(fetchFn, apiKey, language = DEFAULT_LOCALE) {
 		};
 	}
 
+	/**
+	 * Returns the episodes of a specific TV show season.
+	 *
+	 * Each episode includes its number, title, overview, air date, runtime,
+	 * rating, and still image URL.
+	 *
+	 * @param {number|string} showId - TMDB ID of the TV show.
+	 * @param {number} seasonNumber - Season number (0 = specials).
+	 * @returns {Promise<Object>} Normalized season object with episode list.
+	 */
+	async function getTVSeasonDetails(showId, seasonNumber) {
+		const data = await request(`/tv/${showId}/season/${seasonNumber}`);
+
+		const episodes = (data.episodes ?? []).map((ep) => ({
+			id: ep.id,
+			episodeNumber: ep.episode_number,
+			name: ep.name ?? '',
+			overview: ep.overview ?? '',
+			airDate: ep.air_date ?? null,
+			runtime: ep.runtime ?? null,
+			rating: ep.vote_average ?? 0,
+			stillUrl: getImageUrl(ep.still_path ?? '', 'w300') || null
+		}));
+
+		return {
+			id: data.id,
+			seasonNumber: data.season_number,
+			name: data.name ?? '',
+			overview: data.overview ?? '',
+			airDate: data.air_date ?? null,
+			posterUrl: getImageUrl(data.poster_path ?? '', 'w342') || null,
+			episodes
+		};
+	}
+
 	async function searchMedia(query, page = 1) {
 		const data = await request('/search/multi', { query, page, include_adult: false });
 		const items = data.results ?? [];
@@ -577,6 +612,7 @@ export function createTmdbApi(fetchFn, apiKey, language = DEFAULT_LOCALE) {
 		getFeaturedToday,
 		getMovieDetails,
 		getTVShowDetails,
+		getTVSeasonDetails,
 		searchMedia
 	};
 }
