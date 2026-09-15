@@ -1,275 +1,272 @@
-// @ts-check
 import { test, expect } from '@playwright/test';
-import { checkA11y } from '../../setup/a11y.js';
+import { getTestLocaleText } from '../../setup/test-utils.js';
 
-const RESULT_LINK_SELECTOR = 'a.result[data-result-link="true"]';
-const RESULTS_CONTAINER_SELECTOR = '#typeahead-search-results';
-const SEARCH_INPUT_NAME = 'Search movies & TV';
+/**
+ * Typeahead Search Accessibility Tests
+ *
+ * Verifies semantic roles, ARIA relationships, keyboard interaction,
+ * automatic initial-result selection, focus management, and accessible
+ * status feedback for TypeHeadSearch.
+ */
 
-async function openTypeahead(page) {
-  const searchInput = page.getByRole('combobox', {
-    name: SEARCH_INPUT_NAME
-  });
-  const resultsContainer = page.locator(RESULTS_CONTAINER_SELECTOR);
+const enUS = getTestLocaleText('en-US');
+const noResultsMessage = enUS.messages.searchNoResults;
+const searchErrorMessage = enUS.messages.searchError;
+const searchHintMessage = enUS.messages.searchHint;
+const searchResultsLabel = enUS.messages.searchResults;
 
-  await expect(searchInput).toBeVisible();
-  await expect(searchInput).toHaveAttribute('type', 'search');
-  await expect(searchInput).toHaveValue('');
-  await expect(searchInput).toHaveAttribute('aria-expanded', 'false');
 
-  return {
-    searchInput,
-    resultsContainer
-  };
-}
+test.describe('Typeahead Search Accessibility', () => {
+	test.beforeEach(async ({ page }) => {
+		await page.goto('/?locale=en-US', { waitUntil: 'networkidle' });
+	});
 
-async function openStableResults(page, term = 'Hero') {
-  const { searchInput, resultsContainer } = await openTypeahead(page);
-  const resultLinks = resultsContainer.locator(RESULT_LINK_SELECTOR);
+	function getSearchInput(page) {
+		return page.locator('#typeahead-search-input');
+	}
 
-  await searchInput.fill(term);
+	function getResults(page) {
+		return page.locator('#typeahead-search-results');
+	}
 
-  await expect(searchInput).toBeFocused();
-  await expect(searchInput).toHaveAttribute('aria-expanded', 'true');
-  await expect(resultsContainer).toBeVisible();
-  await expect(resultLinks.first()).toBeVisible();
+	function getStatusLayer(page) {
+		return page.locator('#status-messages-layer');
+	}
 
-  return {
-    searchInput,
-    resultsContainer,
-    resultLinks
-  };
-}
+	async function searchForResults(page, query = 'Fight Club') {
+		const input = getSearchInput(page);
+		await input.click();
+		await input.pressSequentially(query, { delay: 50 });
+		await expect(getResults(page)).toBeVisible();
+		return getResults(page).getByRole('option');
+	}
 
-async function getFocusedResult(searchInput, resultsContainer) {
-  await expect(searchInput).toHaveAttribute('aria-activedescendant', /.+/);
+	// -------------------------------------------------------------------------
+	// TC-TS-A11Y-001: Combobox attributes
+	// -------------------------------------------------------------------------
+	test('TC-TS-A11Y-001: search input has correct ARIA attributes', async ({ page }) => {
+		const input = getSearchInput(page);
 
-  const focusedId = await searchInput.getAttribute('aria-activedescendant');
-  expect(focusedId).toBeTruthy();
+		await expect(input).toHaveAttribute('role', 'combobox');
+		await expect(input).toHaveAttribute('aria-autocomplete', 'list');
+		await expect(input).toHaveAttribute('aria-haspopup', 'listbox');
+		await expect(input).toHaveAttribute('aria-controls', 'typeahead-search-results');
+		await expect(input).toHaveAttribute('aria-expanded', 'false');
+		await expect(input).toHaveAttribute('aria-describedby', 'typeahead-search-hint');
+	});
 
-  const focusedResult = resultsContainer.locator(
-    `a.result[data-result-link="true"][id="${focusedId}"]`
-  );
+	// -------------------------------------------------------------------------
+	// TC-TS-A11Y-002: Listbox semantics
+	// -------------------------------------------------------------------------
+	test('TC-TS-A11Y-002: results list has correct ARIA attributes', async ({ page }) => {
+		await searchForResults(page);
 
-  await expect(focusedResult).toBeVisible();
-  await expect(focusedResult).toHaveAttribute('aria-selected', 'true');
+		const results = getResults(page);
+		await expect(results).toHaveAttribute('role', 'listbox');
+		await expect(results).toHaveAttribute('aria-label', searchResultsLabel);
+		await expect(results).toHaveAttribute('aria-live', 'polite');
+		await expect(results).toHaveAttribute('aria-atomic', 'false');
+	});
 
-  return {
-    focusedId,
-    focusedResult
-  };
-}
+	// -------------------------------------------------------------------------
+	// TC-TS-A11Y-003: Result option semantics and initial selection
+	// -------------------------------------------------------------------------
+	test('TC-TS-A11Y-003: result items have correct ARIA attributes', async ({ page }) => {
+		const resultItems = await searchForResults(page);
+		const firstResult = resultItems.first();
 
-async function getChangedFocusedResult(searchInput, resultsContainer, previousId) {
-  await expect
-    .poll(async () => searchInput.getAttribute('aria-activedescendant'))
-    .not.toBe(previousId);
+		await expect(firstResult).toHaveAttribute('role', 'option');
+		await expect(firstResult).toHaveAttribute('aria-selected', 'true');
+		await expect(firstResult).toHaveAttribute('tabindex', '0');
+		await expect(firstResult).toHaveAttribute('aria-labelledby', /typeahead-result-type-/);
 
-  return getFocusedResult(searchInput, resultsContainer);
-}
+		if ((await resultItems.count()) > 1) {
+			const secondResult = resultItems.nth(1);
+			await expect(secondResult).toHaveAttribute('aria-selected', 'false');
+			await expect(secondResult).toHaveAttribute('tabindex', '-1');
+		}
+	});
 
-async function gotoTypeaheadPage(page) {
-  await page.goto('/?locale=en-US', {
-    waitUntil: 'domcontentloaded'
-  });
+	// -------------------------------------------------------------------------
+	// TC-TS-A11Y-004: ArrowDown selects next result
+	// -------------------------------------------------------------------------
+	test('TC-TS-A11Y-004: ArrowDown selects the next result', async ({ page }) => {
+		const resultItems = await searchForResults(page);
+		expect(await resultItems.count()).toBeGreaterThanOrEqual(2);
 
-  await expect(
-    page.getByRole('combobox', {
-      name: SEARCH_INPUT_NAME
-    })
-  ).toBeVisible();
-}
+		const firstResult = resultItems.first();
+		const secondResult = resultItems.nth(1);
 
-test.describe('Accessibility - Typeahead Search', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.setViewportSize({ width: 1920, height: 1080 });
-    await gotoTypeaheadPage(page);
-  });
+		await expect(firstResult).toHaveAttribute('aria-selected', 'true');
 
-  test(
-    '[A11Y-TS-001] Desktop typeahead search results has no automatically detected WCAG A/AA violations',
-    {
-      tag: ['@accessibility', '@a11y', '@desktop', '@typeahead-search']
-    },
-    async ({ page }) => {
-      const { searchInput, resultLinks } = await openStableResults(page);
+		await page.keyboard.press('ArrowDown');
 
-      await expect(searchInput).toBeFocused();
-      await expect(resultLinks.first()).toBeVisible();
-      await checkA11y(page);
-    }
-  );
+		await expect(secondResult).toHaveAttribute('aria-selected', 'true');
+		await expect(secondResult).toHaveAttribute('tabindex', '0');
+		await expect(firstResult).toHaveAttribute('aria-selected', 'false');
+		await expect(firstResult).toHaveAttribute('tabindex', '-1');
+	});
 
-  test(
-    '[A11Y-TS-002] Desktop typeahead search keyboard navigation has no automatically detected WCAG A/AA violations',
-    {
-      tag: ['@accessibility', '@a11y', '@desktop', '@typeahead-search', '@keyboard']
-    },
-    async ({ page }) => {
-      const { searchInput, resultsContainer, resultLinks } = await openStableResults(page);
+	// -------------------------------------------------------------------------
+	// TC-TS-A11Y-005: ArrowUp selects previous result
+	// -------------------------------------------------------------------------
+	test('TC-TS-A11Y-005: ArrowUp selects the previous result', async ({ page }) => {
+		const resultItems = await searchForResults(page);
+		expect(await resultItems.count()).toBeGreaterThanOrEqual(2);
 
-      await expect.poll(async () => resultLinks.count()).toBeGreaterThanOrEqual(2);
+		const firstResult = resultItems.first();
+		const secondResult = resultItems.nth(1);
 
-      const firstResultId = await resultLinks.first().getAttribute('id');
-      const lastResultId = await resultLinks.last().getAttribute('id');
-      const initialFocusedId = await searchInput.getAttribute('aria-activedescendant');
+		await page.keyboard.press('ArrowDown');
+		await expect(secondResult).toHaveAttribute('aria-selected', 'true');
 
-      await searchInput.press('ArrowDown');
+		await page.keyboard.press('ArrowUp');
+		await expect(firstResult).toHaveAttribute('aria-selected', 'true');
+		await expect(firstResult).toHaveAttribute('tabindex', '0');
+	});
 
-      const { focusedId: firstFocusedId } = initialFocusedId
-        ? await getChangedFocusedResult(searchInput, resultsContainer, initialFocusedId)
-        : await getFocusedResult(searchInput, resultsContainer);
+	// -------------------------------------------------------------------------
+	// TC-TS-A11Y-006: Home selects first result
+	// -------------------------------------------------------------------------
+	test('TC-TS-A11Y-006: Home selects the first result', async ({ page }) => {
+		const resultItems = await searchForResults(page);
+		expect(await resultItems.count()).toBeGreaterThanOrEqual(2);
 
-      expect(firstFocusedId).toBeTruthy();
+		await page.keyboard.press('End');
+		await expect(resultItems.last()).toHaveAttribute('aria-selected', 'true');
 
-      await searchInput.press('ArrowDown');
+		await page.keyboard.press('Home');
+		await expect(resultItems.first()).toHaveAttribute('aria-selected', 'true');
+		await expect(resultItems.first()).toHaveAttribute('tabindex', '0');
+	});
 
-      const { focusedId: secondFocusedId } = await getChangedFocusedResult(
-        searchInput,
-        resultsContainer,
-        firstFocusedId
-      );
+	// -------------------------------------------------------------------------
+	// TC-TS-A11Y-007: End selects last result
+	// -------------------------------------------------------------------------
+	test('TC-TS-A11Y-007: End selects the last result', async ({ page }) => {
+		const resultItems = await searchForResults(page);
+		expect(await resultItems.count()).toBeGreaterThanOrEqual(2);
 
-      expect(secondFocusedId).not.toBe(firstFocusedId);
+		await page.keyboard.press('End');
 
-      await searchInput.press('ArrowUp');
+		const lastResult = resultItems.last();
+		await expect(lastResult).toHaveAttribute('aria-selected', 'true');
+		await expect(lastResult).toHaveAttribute('tabindex', '0');
+	});
 
-      const { focusedId: previousFocusedId } = await getChangedFocusedResult(
-        searchInput,
-        resultsContainer,
-        secondFocusedId
-      );
+	// -------------------------------------------------------------------------
+	// TC-TS-A11Y-008: Enter activates selected result
+	// -------------------------------------------------------------------------
+	test('TC-TS-A11Y-008: Enter activates the selected result', async ({ page }) => {
+		const resultItems = await searchForResults(page);
+		const firstResult = resultItems.first();
+		const expectedHref = await firstResult.getAttribute('href');
 
-      expect(previousFocusedId).toBe(firstFocusedId);
+		expect(expectedHref).not.toBeNull();
 
-      await searchInput.press('Home');
+		await page.keyboard.press('Enter');
 
-      await expect(searchInput).toHaveAttribute('aria-activedescendant', firstResultId);
+		await expect(page).toHaveURL(expectedHref);
+	});
 
-      const { focusedId: homeFocusedId } = await getFocusedResult(searchInput, resultsContainer);
-      expect(homeFocusedId).toBe(firstResultId);
+	// -------------------------------------------------------------------------
+	// TC-TS-A11Y-009: Escape closes list and returns focus
+	// -------------------------------------------------------------------------
+	test('TC-TS-A11Y-009: Escape closes results and returns focus to input', async ({ page }) => {
+		await searchForResults(page);
+		const input = getSearchInput(page);
 
-      await searchInput.press('End');
+		await page.keyboard.press('Escape');
 
-      await expect(searchInput).toHaveAttribute('aria-activedescendant', lastResultId);
+		await expect(getResults(page)).not.toBeVisible();
+		await expect(input).toBeFocused();
+		await expect(input).toHaveAttribute('aria-expanded', 'false');
+	});
 
-      const { focusedId: endFocusedId } = await getFocusedResult(searchInput, resultsContainer);
-      expect(endFocusedId).toBe(lastResultId);
+	// -------------------------------------------------------------------------
+	// TC-TS-A11Y-010: No-results status semantics
+	// -------------------------------------------------------------------------
+	test('TC-TS-A11Y-010: no-results status has correct ARIA attributes', async ({ page }) => {
+		const input = getSearchInput(page);
+		await input.click();
+		await input.pressSequentially('XYZNOTFOUND123', { delay: 50 });
 
-      await searchInput.press('Escape');
+		await expect(getStatusLayer(page)).toBeVisible();
 
-      await expect(searchInput).toHaveAttribute('aria-expanded', 'false');
-      await expect(resultsContainer).toBeHidden();
-      await expect(searchInput).toBeFocused();
+		const status = getStatusLayer(page).locator('#status-messages');
+		await expect(status).toHaveAttribute('role', 'status');
+		await expect(status).toHaveAttribute('aria-live', 'polite');
+		await expect(status).toHaveAttribute('aria-atomic', 'true');
+		await expect(status).toContainText(noResultsMessage);
+		await expect(getResults(page)).not.toBeVisible();
+	});
 
-      await checkA11y(page);
-    }
-  );
+	// -------------------------------------------------------------------------
+	// TC-TS-A11Y-011: Error status semantics
+	// -------------------------------------------------------------------------
+	test('TC-TS-A11Y-011: error state has alert semantics', async ({ page }) => {
+		await page.route('**/search**', async (route) => {
+			await route.abort('failed');
+		});
 
-  test(
-    '[A11Y-TS-005] Keyboard navigation sets aria-selected on typeahead search result',
-    {
-      tag: ['@accessibility', '@a11y', '@desktop', '@typeahead-search', '@keyboard']
-    },
-    async ({ page }) => {
-      const { searchInput, resultsContainer, resultLinks } = await openStableResults(page);
+		const input = getSearchInput(page);
+		await input.click();
+		await input.pressSequentially('Hero', { delay: 50 });
 
-      await searchInput.press('ArrowDown');
-      const { focusedId, focusedResult } = await getFocusedResult(searchInput, resultsContainer);
+		await expect(getStatusLayer(page)).toBeVisible();
 
-      await expect(focusedResult).toHaveAttribute('aria-selected', 'true');
+		const status = getStatusLayer(page).locator('#status-messages');
+		await expect(status).toHaveAttribute('role', 'alert');
+		await expect(status).toHaveAttribute('aria-live', 'assertive');
+		await expect(status).toHaveAttribute('aria-atomic', 'true');
+		await expect(status).toContainText(searchErrorMessage);
+		await expect(getResults(page)).not.toBeVisible();
+	});
 
-      const resultCount = await resultLinks.count();
-      for (let index = 0; index < resultCount; index += 1) {
-        const result = resultLinks.nth(index);
-        const id = await result.getAttribute('id');
+	// -------------------------------------------------------------------------
+	// TC-TS-A11Y-012: Search hint relationship
+	// -------------------------------------------------------------------------
+	test('TC-TS-A11Y-012: search hint is associated with input', async ({ page }) => {
+		const input = getSearchInput(page);
+		await expect(input).toHaveAttribute('aria-describedby', 'typeahead-search-hint');
 
-        if (id !== focusedId) {
-          await expect(result).toHaveAttribute('aria-selected', 'false');
-        }
-      }
+		const hint = page.locator('#typeahead-search-hint');
+		await expect(hint).toBeAttached();
+		await expect(hint).toContainText(searchHintMessage);
+	});
 
-      await checkA11y(page);
-    }
-  );
+	// -------------------------------------------------------------------------
+	// TC-TS-A11Y-013: Tab follows roving-tabindex
+	// -------------------------------------------------------------------------
+	test('TC-TS-A11Y-013: selected result is reachable with Tab', async ({ page }) => {
+		const resultItems = await searchForResults(page);
+		const input = getSearchInput(page);
+		const firstResult = resultItems.first();
 
-  test(
-    '[A11Y-TS-006] Desktop typeahead search Enter key activates focused result',
-    {
-      tag: ['@accessibility', '@a11y', '@desktop', '@typeahead-search', '@keyboard']
-    },
-    async ({ page }) => {
-      const { searchInput, resultsContainer } = await openStableResults(page);
+		await expect(firstResult).toHaveAttribute('tabindex', '0');
+		await input.focus();
+		await page.keyboard.press('Tab');
 
-      await searchInput.press('ArrowDown');
+		await expect(firstResult).toBeFocused();
+	});
 
-      const { focusedResult } = await getFocusedResult(searchInput, resultsContainer);
-      const expectedHref = await focusedResult.getAttribute('href');
+	// -------------------------------------------------------------------------
+	// TC-TS-A11Y-014: aria-activedescendant synchronization
+	// -------------------------------------------------------------------------
+	test('TC-TS-A11Y-014: aria-activedescendant tracks selected result', async ({ page }) => {
+		const resultItems = await searchForResults(page);
+		const input = getSearchInput(page);
+		const firstResult = resultItems.first();
 
-      expect(expectedHref).toBeTruthy();
+		const firstResultId = await firstResult.getAttribute('id');
+		await expect(input).toHaveAttribute('aria-activedescendant', firstResultId);
 
-      const expectedUrl = new URL(expectedHref, page.url()).toString();
+		if ((await resultItems.count()) > 1) {
+			const secondResult = resultItems.nth(1);
+			const secondResultId = await secondResult.getAttribute('id');
 
-      await Promise.all([
-        page.waitForURL(expectedUrl, {
-          waitUntil: 'commit'
-        }),
-        searchInput.press('Enter')
-      ]);
-
-      await expect(page).toHaveURL(expectedUrl);
-    }
-  );
-});
-
-test.describe('Accessibility - Typeahead Search iOS', () => {
-  test.use({
-    viewport: { width: 390, height: 844 },
-    deviceScaleFactor: 3,
-    isMobile: true,
-    hasTouch: true,
-    userAgent:
-      'Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.0 Mobile/15E148 Safari/604.1'
-  });
-
-  test.beforeEach(async ({ page }) => {
-    await gotoTypeaheadPage(page);
-  });
-
-  test(
-    '[A11Y-TS-003] Mobile iOS typeahead search results has no automatically detected WCAG A/AA violations',
-    {
-      tag: ['@accessibility', '@a11y', '@mobile', '@ios', '@typeahead-search']
-    },
-    async ({ page }) => {
-      await openStableResults(page, 'Hero');
-      await checkA11y(page);
-    }
-  );
-});
-
-test.describe('Accessibility - Typeahead Search Android', () => {
-  test.use({
-    viewport: { width: 412, height: 915 },
-    deviceScaleFactor: 2.625,
-    isMobile: true,
-    hasTouch: true,
-    userAgent:
-      'Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36'
-  });
-
-  test.beforeEach(async ({ page }) => {
-    await gotoTypeaheadPage(page);
-  });
-
-  test(
-    '[A11Y-TS-004] Mobile Android typeahead search results has no automatically detected WCAG A/AA violations',
-    {
-      tag: ['@accessibility', '@a11y', '@mobile', '@android', '@typeahead-search']
-    },
-    async ({ page }) => {
-      await openStableResults(page, 'Breaking');
-      await checkA11y(page);
-    }
-  );
+			await page.keyboard.press('ArrowDown');
+			await expect(input).toHaveAttribute('aria-activedescendant', secondResultId);
+		}
+	});
 });

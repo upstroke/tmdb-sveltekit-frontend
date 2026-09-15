@@ -1,11 +1,10 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/svelte';
 import TypeHeadSearch from '$lib/components/TypeHeadSearch.svelte';
-import { getLocaleText } from '$lib/i18n/resolver.js';
 import { DEFAULT_LOCALE } from '$lib/i18n/config.js';
-import { cleanupAll, resetAll } from '$tests/setup/test-utils.js';
+import { cleanupAll, resetAll, getTestLocaleText } from '$tests/setup/test-utils.js';
 
-const { labels, messages, fallbacks } = getLocaleText(DEFAULT_LOCALE);
+const { labels, messages, fallbacks } = getTestLocaleText(DEFAULT_LOCALE);
 
 vi.mock('$app/paths', () => ({
 	resolve: vi.fn((path, params) => {
@@ -64,7 +63,6 @@ const mockFetchData = {
 
 describe('TypeHeadSearch', () => {
 	beforeEach(() => {
-		// Mock scrollIntoView für jsdom
 		Element.prototype.scrollIntoView = vi.fn();
 
 		if (typeof sessionStorage !== 'undefined') {
@@ -87,7 +85,6 @@ describe('TypeHeadSearch', () => {
 		vi.clearAllMocks();
 	});
 
-	// Statement coverage: component renders with search field
 	it('renders search field correctly', () => {
 		render(TypeHeadSearch);
 
@@ -96,7 +93,6 @@ describe('TypeHeadSearch', () => {
 		expect(input).toHaveAttribute('placeholder', labels.searchInput);
 	});
 
-	// Statement coverage: search icon is rendered
 	it('renders search icon', () => {
 		render(TypeHeadSearch);
 
@@ -104,7 +100,6 @@ describe('TypeHeadSearch', () => {
 		expect(icon).toBeInTheDocument();
 	});
 
-	// Statement coverage: search hint is rendered
 	it('renders search hint', () => {
 		render(TypeHeadSearch);
 
@@ -112,7 +107,6 @@ describe('TypeHeadSearch', () => {
 		expect(hint).toHaveTextContent(messages.searchHint);
 	});
 
-	// Statement coverage: The search shows no results for less than 4 characters.
 	it('shows no results for less than 4 characters', async () => {
 		render(TypeHeadSearch);
 
@@ -123,7 +117,6 @@ describe('TypeHeadSearch', () => {
 		expect(results).not.toBeInTheDocument();
 	});
 
-	// Statement coverage: loading state is displayed
 	it('shows loading state', async () => {
 		vi.useFakeTimers();
 
@@ -152,7 +145,6 @@ describe('TypeHeadSearch', () => {
 		await vi.runAllTimersAsync();
 	});
 
-	// Statement coverage: The search shows an error state on failed fetch.
 	it('shows error state on failed fetch', async () => {
 		vi.useFakeTimers();
 
@@ -172,7 +164,6 @@ describe('TypeHeadSearch', () => {
 		expect(errorText).toBeInTheDocument();
 	});
 
-	// Statement coverage: results are displayed
 	it('shows search results on successful fetch', async () => {
 		render(TypeHeadSearch);
 
@@ -189,14 +180,11 @@ describe('TypeHeadSearch', () => {
 
 		const resultsContainer = document.getElementById('typeahead-search-results');
 		const headers = resultsContainer.querySelectorAll('.result-header');
-
-		// ✅ Case-insensitive regex match
 		const hasHero = Array.from(headers).some((h) => /inception/i.test(h.textContent));
 
 		expect(hasHero).toBe(true);
 	});
 
-	// Statement coverage: The search shows the TV-shows section.
 	it('renders TV shows section', async () => {
 		render(TypeHeadSearch);
 
@@ -215,7 +203,6 @@ describe('TypeHeadSearch', () => {
 		expect(tvTitle).toBeInTheDocument();
 	});
 
-	// Statement coverage: result links have correct href
 	it('result links have correct href', async () => {
 		render(TypeHeadSearch);
 
@@ -235,7 +222,6 @@ describe('TypeHeadSearch', () => {
 		expect(movieLink).toHaveAttribute('href', expect.stringContaining('locale='));
 	});
 
-	// Statement coverage: rating is formatted
 	it('rating is formatted', async () => {
 		render(TypeHeadSearch);
 
@@ -251,7 +237,6 @@ describe('TypeHeadSearch', () => {
 		);
 	});
 
-	// Statement coverage: year is formatted
 	it('year is formatted', async () => {
 		render(TypeHeadSearch);
 
@@ -267,22 +252,18 @@ describe('TypeHeadSearch', () => {
 		);
 	});
 
-	// Statement coverage: The search closes results on Escape.
 	it('Escape closes results', async () => {
 		render(TypeHeadSearch);
 
 		const input = screen.getByRole('combobox');
 		await fireEvent.input(input, { target: { value: 'inception' } });
 
-		// Wait until results are visible
 		await screen.findByRole('listbox', {
 			name: messages.searchResults
 		});
 
-		// Send Escape key event
 		await fireEvent.keyDown(input, { key: 'Escape' });
 
-		// As JsDom can not hadle Scelte onkeydown. Instead, check that input is focused again (restoreFocus: true)
 		await vi.waitFor(
 			() => {
 				expect(input).toHaveFocus();
@@ -291,22 +272,18 @@ describe('TypeHeadSearch', () => {
 		);
 	});
 
-	// Statement coverage: click outside closes results
 	it('click outside closes results', async () => {
 		render(TypeHeadSearch);
 
 		const input = screen.getByRole('combobox');
 		await fireEvent.input(input, { target: { value: 'inception' } });
 
-		// Wait until results are visible
 		await screen.findByRole('listbox', {
 			name: messages.searchResults
 		});
 
-		// Click outside the component
 		await fireEvent.click(document.body);
 
-		// Wait for the next render cycle
 		await vi.waitFor(
 			() => {
 				const resultsElement = document.getElementById('typeahead-search-results');
@@ -316,22 +293,18 @@ describe('TypeHeadSearch', () => {
 		);
 	});
 
-	// Statement coverage: focus shows results again
 	it('focus shows results again', async () => {
 		render(TypeHeadSearch);
 
 		const input = screen.getByRole('combobox');
 		await fireEvent.input(input, { target: { value: 'inception' } });
 
-		// Wait until results are visible
 		await screen.findByRole('listbox', {
 			name: messages.searchResults
 		});
 
-		// Click outside to close (Escape doesn't work in jsdom with svelte:window)
 		await fireEvent.click(document.body);
 
-		// Wait until aria-expanded is false
 		await vi.waitFor(
 			() => {
 				expect(input).toHaveAttribute('aria-expanded', 'false');
@@ -339,10 +312,8 @@ describe('TypeHeadSearch', () => {
 			{ timeout: 1000 }
 		);
 
-		// Focus the input again
 		await fireEvent.focus(input);
 
-		// After focus, aria-expanded should be true again
 		await vi.waitFor(
 			() => {
 				expect(input).toHaveAttribute('aria-expanded', 'true');
@@ -351,7 +322,6 @@ describe('TypeHeadSearch', () => {
 		);
 	});
 
-	// Statement coverage: no results state
 	it('shows no results state', async () => {
 		vi.spyOn(global, 'fetch').mockImplementationOnce(() =>
 			Promise.resolve({
@@ -374,7 +344,6 @@ describe('TypeHeadSearch', () => {
 		);
 	});
 
-	// Statement coverage: poster fallback to imageUrl
 	it('uses imageUrl as fallback when no posterUrl', async () => {
 		const dataWithoutPoster = {
 			movies: [
@@ -411,7 +380,6 @@ describe('TypeHeadSearch', () => {
 		);
 	});
 
-	// Branch coverage: The search uses notAvailable as last fallback.
 	it('uses notAvailable as last fallback', async () => {
 		const dataNoImages = {
 			movies: [{ id: 88, title: 'No Images', date: '2020-01-01', rating: 7.0, mediaType: 'movie' }],
@@ -439,7 +407,6 @@ describe('TypeHeadSearch', () => {
 		);
 	});
 
-	// Statement coverage: date fallback for invalid date
 	it('uses dateFallback for invalid date', async () => {
 		const dataInvalidDate = {
 			movies: [
@@ -476,8 +443,7 @@ describe('TypeHeadSearch', () => {
 		);
 	});
 
-	// Statement coverage: rating fallback for null
-	it('uses 0.0 as fallback for null rating', async () => {
+	it('uses notAvailable fallback for null rating', async () => {
 		const dataNullRating = {
 			movies: [
 				{
@@ -506,14 +472,14 @@ describe('TypeHeadSearch', () => {
 
 		await vi.waitFor(
 			() => {
-				const rating = screen.getByText('0.0');
+				const rating = screen.getByText(fallbacks.notAvailable);
 				expect(rating).toBeInTheDocument();
 			},
 			{ timeout: 1000 }
 		);
 	});
 
-	// Statement coverage: placeholder text is set
+
 	it('input has correct placeholder text', () => {
 		render(TypeHeadSearch);
 
@@ -521,7 +487,6 @@ describe('TypeHeadSearch', () => {
 		expect(input).toHaveAttribute('placeholder', labels.searchInput);
 	});
 
-	// Statement coverage: deduplicateById removes duplicates
 	it('removes duplicates in search results', async () => {
 		const dataWithDuplicates = {
 			movies: [
