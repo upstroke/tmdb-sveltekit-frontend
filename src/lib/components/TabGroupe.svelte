@@ -13,24 +13,26 @@
 	 *
 	 * @component
 	 * @prop {TabItem[]} tabs - List of tab items to render.
-	 * @prop {string} [activeTab] - ID of the initially active tab. Defaults to the first tab.
+	 * @prop {string} [initialTab] - ID of the initially active tab. Defaults to the first tab.
 	 * @prop {string} [ariaLabel=''] - Accessible label for the tab list.
 	 *
 	 * @example
-	 * <TabGroup
+	 * <TabGroupe
 	 * 	tabs={[
 	 * 		{ id: 'one', label: 'One', content: 'Content 1' },
 	 * 		{ id: 'two', label: 'Two', content: 'Content 2' }
 	 * 	]}
-	 * 	activeTab="one"
 	 * 	ariaLabel="Example tabs"
 	 * />
 	 */
 	let {
 		tabs = [],
-		activeTab = $derived(tabs[0]?.id ?? ''),
+		initialTab = undefined,
 		ariaLabel = ''
 	} = $props();
+
+	/** @type {string} */
+	let activeTab = $state(initialTab ?? tabs[0]?.id ?? '');
 
 	/** @type {HTMLButtonElement[]} */
 	let tabRefs = $state([]);
