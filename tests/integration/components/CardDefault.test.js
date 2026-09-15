@@ -1,12 +1,11 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render } from '@testing-library/svelte';
 import CardDefault from '$lib/components/CardDefault.svelte';
-import { getLocaleText } from '$lib/i18n/resolver.js';
 import { DEFAULT_LOCALE } from '$lib/i18n/config.js';
-import { cleanupAll, resetAll } from '$tests/setup/test-utils.js';
+import { getTestLocaleText, cleanupAll, resetAll } from '$tests/setup/test-utils.js';
 import notAvailable from '$lib/assets/not-available.png';
 
-const { labels, formats, fallbacks } = getLocaleText(DEFAULT_LOCALE);
+const { labels, formats, fallbacks } = getTestLocaleText(DEFAULT_LOCALE);
 
 vi.mock('$app/paths', () => ({
 	resolve: vi.fn((path, params) => {

@@ -1,11 +1,11 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/svelte';
 import LoadMore from '$lib/components/LoadMore.svelte';
-import { getLocaleText } from '$lib/i18n/resolver.js';
-import { cleanupAll, resetAll } from '$tests/setup/test-utils.js';
+import { getTestLocaleText, cleanupAll, resetAll } from '$tests/setup/test-utils.js';
+import { DEFAULT_LOCALE } from '$lib/i18n/config.js';
 
 // Get messages once before vi.mock - this is allowed!
-const { messages } = getLocaleText();
+const { messages } = getTestLocaleText(DEFAULT_LOCALE);
 
 vi.mock('$lib/stores/i18n', async () => ({
 	i18n: {
