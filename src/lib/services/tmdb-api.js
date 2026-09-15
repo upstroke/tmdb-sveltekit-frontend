@@ -512,6 +512,10 @@ export function createTmdbApi(fetchFn, apiKey, language = DEFAULT_LOCALE) {
 	/**
 	 * Returns the detail data of a TV show.
 	 *
+	 * The response includes season metadata such as the total number of seasons
+	 * and episodes. The `seasons` array contains one entry per season with its
+	 * name, episode count, air date, and poster path.
+	 *
 	 * @param {number|string} id - TMDB ID of the TV show.
 	 * @returns {Promise<Object>} Normalized TV show detail object.
 	 */
@@ -524,7 +528,10 @@ export function createTmdbApi(fetchFn, apiKey, language = DEFAULT_LOCALE) {
 		return {
 			...mapped,
 			certification,
-			providers
+			providers,
+			numberOfSeasons: details.number_of_seasons ?? null,
+			numberOfEpisodes: details.number_of_episodes ?? null,
+			seasons: details.seasons ?? []
 		};
 	}
 
