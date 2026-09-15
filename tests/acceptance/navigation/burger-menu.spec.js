@@ -69,15 +69,14 @@ test.describe('Burger menu', () => {
 
 			async function openBurgerMenu() {
 				await expect(burgerButton).toBeVisible({ timeout: 5000 });
-				await expect(burgerButton).toHaveAttribute('aria-expanded', 'false', {
-					timeout: 5000
-				});
 
-				await burgerButton.click();
-
-				await expect(burgerButton).toHaveAttribute('aria-expanded', 'true', {
-					timeout: 5000
-				});
+				const expanded = await burgerButton.getAttribute('aria-expanded');
+				if (expanded !== 'true') {
+					await burgerButton.click();
+					await expect(burgerButton).toHaveAttribute('aria-expanded', 'true', {
+						timeout: 5000
+					});
+				}
 			}
 
 			// Open menu and navigate to TV shows

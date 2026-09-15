@@ -178,9 +178,9 @@
 			else if (term.length >= 4) scheduleAnnouncement(messages.searchNoResults);
 		} catch (exception) {
 			if (exception.name === 'AbortError') return;
-			error = exception instanceof Error ? exception.message : messages.searchError;
+			error = messages.searchError;
 			scheduleAnnouncement(messages.searchError);
-		} finally {
+		}finally {
 			clearTimeout(loadingTimer);
 			showLoading = false;
 			loading = false;
@@ -356,7 +356,7 @@
 												{#if item.rating !== null && item.rating !== undefined}
 													<i class="yellow star icon" aria-hidden="true"></i>
 													<span class="u-sr-only">{labels.rating}</span>
-													<span class="rating-value {item.rating ? '' : 'u-not-available'}">{item.rating}</span>
+													<span class="rating-value {item.rating ? '' : 'u-not-available'}">{formatRating(item.rating)}</span>
 													<span class="u-sr-only">{formats.outOfTen}</span>
 												{:else}
 													<span class="u-not-available">{fallbacks.notAvailable}</span>
@@ -399,7 +399,7 @@
 												{#if item.rating !== null && item.rating !== undefined}
 													<i class="yellow star icon" aria-hidden="true"></i>
 													<span class="u-sr-only">{labels.rating}</span>
-													<span class="rating-value {item.rating ? '' : 'u-not-available'}">{item.rating}</span>
+													<span class="rating-value {item.rating ? '' : 'u-not-available'}">{formatRating(item.rating)}</span>
 													<span class="u-sr-only">{formats.outOfTen}</span>
 												{:else}
 													<span class="u-not-available">{fallbacks.notAvailable}</span>
