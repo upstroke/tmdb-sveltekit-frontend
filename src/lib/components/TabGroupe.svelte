@@ -131,8 +131,31 @@
 
 
 <style lang="scss">
-	.ui.pointing.secondary.menu .item {
-		cursor: pointer;
-		font-size: 1.2em;
+	@use '../../css/variables';
+
+	.ui.pointing.secondary.menu {
+		border-bottom: 1px solid rgba(34, 36, 38, 0.15);
+
+		.item {
+			cursor: pointer;
+			font-size: 1.2em;
+
+			&.active {
+				border-color: var(--focus-ring-blue);
+			}
+
+			&:hover:not(.active) {
+				border-color: var(--color-text-muted);
+			}
+		}
+	}
+
+	.ui.tab {
+		font-size: 1rem;
+		&.segment {
+			border: none;
+			box-shadow: none;
+			padding: 0;
+		}
 	}
 </style>
