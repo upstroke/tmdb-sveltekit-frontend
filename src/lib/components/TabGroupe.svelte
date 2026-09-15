@@ -5,16 +5,19 @@
 	 * @typedef {Object} TabItem
 	 * @property {string} id
 	 * @property {string} label
-	 * @property {string} content
+	 * @property {string} [content]
+	 * @property {Array<{episode_number: number, name: string, overview: string, air_date: string|null}>} [episodes]
 	 */
 
 	/**
 	 * An accessible tab group component with keyboard navigation.
+	 * Supports lazy-loaded episode lists per tab panel.
 	 *
 	 * @component
 	 * @prop {TabItem[]} tabs - List of tab items to render.
 	 * @prop {string} [initialTab] - ID of the initially active tab. Defaults to the first tab.
 	 * @prop {string} [ariaLabel=''] - Accessible label for the tab list.
+	 * @prop {(id: string) => void} [onTabSelect] - Callback fired when a tab is selected.
 	 *
 	 * @example
 	 * <TabGroupe
@@ -28,7 +31,8 @@
 	let {
 		tabs = [],
 		initialTab = undefined,
-		ariaLabel = ''
+		ariaLabel = '',
+		onTabSelect = undefined
 	} = $props();
 
 	/** @type {string} */
@@ -38,13 +42,14 @@
 	let tabRefs = $state([]);
 
 	/**
-	 * Selects a tab by id.
+	 * Selects a tab by id and fires the optional onTabSelect callback.
 	 *
 	 * @param {string} id
 	 * @returns {void}
 	 */
 	function selectTab(id) {
 		activeTab = id;
+		onTabSelect?.(id);
 	}
 
 	/**
@@ -89,6 +94,7 @@
 		const nextIndex = getNextIndex(event.key, index);
 		activeTab = tabs[nextIndex].id;
 		tabRefs[nextIndex]?.focus();
+		onTabSelect?.(tabs[nextIndex].id);
 	}
 </script>
 
@@ -124,7 +130,29 @@
 		hidden={!isSelected(tab.id)}
 		tabindex="0"
 	>
-		<p>{tab.content}</p>
+		{#if tab.loading}
+			<p aria-live="polite">Loading…</p>
+		{:else if tab.episodes && tab.episodes.length > 0}
+			<ol class="episodes-list">
+				{#each tab.episodes as episode (episode.episode_number)}
+					<li class="episode-item">
+						<strong class="episode-title">
+							{episode.episode_number}. {episode.name}
+						</strong>
+						{#if episode.air_date}
+							<span class="episode-air-date">{episode.air_date}</span>
+						{/if}
+						{#if episode.overview}
+							<p class="episode-overview">{episode.overview}</p>
+						{/if}
+					</li>
+				{/each}
+			</ol>
+		{:else if tab.episodes && tab.episodes.length === 0}
+			<p>{tab.content ?? ''}</p>
+		{:else}
+			<p>{tab.content ?? ''}</p>
+		{/if}
 	</div>
 {/each}
 
@@ -157,5 +185,36 @@
 			box-shadow: none;
 			padding: 0;
 		}
+	}
+
+	.episodes-list {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+	}
+
+	.episode-item {
+		display: flex;
+		flex-direction: column;
+		gap: 0.25rem;
+		padding-bottom: 1rem;
+		border-bottom: 1px solid rgba(34, 36, 38, 0.1);
+
+		&:last-child {
+			border-bottom: none;
+		}
+	}
+
+	.episode-air-date {
+		font-size: 0.875rem;
+		color: var(--color-text-muted, #666);
+	}
+
+	.episode-overview {
+		margin: 0;
+		font-size: 0.9rem;
 	}
 </style>

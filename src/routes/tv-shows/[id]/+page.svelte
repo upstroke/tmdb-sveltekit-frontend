@@ -50,13 +50,47 @@
 	let crew = $derived(deduplicateById(tvShow?.crew ?? []));
 
 	let seasons = $derived(tvShow?.seasons ?? []);
+
+	/** @type {Record<string, Array>} */
+	let loadedEpisodes = $state({});
+
+	/** @type {string | null} */
+	let loadingTab = $state(null);
+
 	let seasonTabs = $derived(
 		seasons.map((season) => ({
 			id: String(season.season_number),
 			label: season.name ?? `Season ${season.season_number}`,
-			content: season.overview || fallbacks.notAvailable
+			content: season.overview || fallbacks.notAvailable,
+			episodes: loadedEpisodes[String(season.season_number)] ?? null,
+			loading: loadingTab === String(season.season_number)
 		}))
 	);
+
+	/**
+	 * Loads episodes for the selected season tab if not already cached.
+	 *
+	 * @param {string} tabId - The season_number as string.
+	 * @returns {Promise<void>}
+	 */
+	async function handleTabSelect(tabId) {
+		if (loadedEpisodes[tabId] !== undefined) return;
+
+		loadingTab = tabId;
+		try {
+			const res = await fetch(`/tv-shows/${data.tvShow?.id}/api/season?seasonNumber=${tabId}`);
+			if (!res.ok) {
+				loadedEpisodes[tabId] = [];
+				return;
+			}
+			const json = await res.json();
+			loadedEpisodes[tabId] = json.episodes ?? [];
+		} catch {
+			loadedEpisodes[tabId] = [];
+		} finally {
+			loadingTab = null;
+		}
+	}
 </script>
 
 <svelte:head>
@@ -219,7 +253,11 @@
 				>
 					{labels.seasons ?? 'Seasons'}
 				</h3>
-				<TabGroupe tabs={seasonTabs} ariaLabel={labels.seasons ?? 'Seasons'} />
+				<TabGroupe
+					tabs={seasonTabs}
+					ariaLabel={labels.seasons ?? 'Seasons'}
+					onTabSelect={handleTabSelect}
+				/>
 			</section>
 		{/if}
 
