@@ -2,10 +2,10 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { cleanup, fireEvent, render, screen } from '@testing-library/svelte';
 import * as environment from '$app/environment';
 import HeaderMain from '$lib/components/HeaderMain.svelte';
-import { getLocaleText } from '$lib/i18n/resolver.js';
 import { DEFAULT_LOCALE } from '$lib/i18n/config.js';
+import { getTestLocaleText } from '$tests/setup/test-utils.js';
 
-const { labels } = getLocaleText(DEFAULT_LOCALE);
+const { labels } = getTestLocaleText(DEFAULT_LOCALE);
 
 vi.mock('$app/state', () => ({
 	page: {

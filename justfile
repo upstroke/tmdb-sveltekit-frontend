@@ -22,10 +22,6 @@ format:
 	npm run format
 
 # Testing recipes
-test:
-	@echo "Running all tests..."
-	npm run test:all
-
 test-unit:
 	@echo "Running unit tests..."
 	npm run test:unit

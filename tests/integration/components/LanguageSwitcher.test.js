@@ -1,11 +1,11 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it} from 'vitest';
 import { cleanup, render, screen } from '@testing-library/svelte';
 import LanguageSwitcher from '$lib/components/LanguageSwitcher.svelte';
 import { getSupportedLocales } from '$lib/i18n/helpers.js';
-import { getLocaleText } from '$lib/i18n/resolver.js';
+import { getTestLocaleText } from '$tests/setup/test-utils.js';
 import { DEFAULT_LOCALE } from '$lib/i18n/config.js';
 
-const { labels } = getLocaleText(DEFAULT_LOCALE);
+const { labels } = getTestLocaleText(DEFAULT_LOCALE);
 
 describe('LanguageSwitcher', () => {
 	beforeEach(() => {

@@ -1,8 +1,7 @@
-import { getLocaleText } from '$lib/i18n/resolver.js';
-import { DEFAULT_LOCALE } from '$lib/i18n/config';
+import { DEFAULT_LOCALE } from '$lib/i18n/config.js';
+import { getTestLocaleText } from '$tests/setup/test-utils.js';
 
-// Get real i18n data from ui.json
-const localeData = getLocaleText(DEFAULT_LOCALE);
+const localeData = getTestLocaleText(DEFAULT_LOCALE);
 
 // Central mock data for i18n
 export const i18nMockDefault = {
