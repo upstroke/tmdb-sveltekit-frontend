@@ -92,7 +92,7 @@
 	}
 </script>
 
-<div class="ui secondary menu" role="tablist" aria-label={ariaLabel}>
+<div class="ui pointing secondary menu" role="tablist" aria-label={ariaLabel}>
 	{#each tabs as tab, index (tab.id)}
 		<button
 			bind:this={tabRefs[index]}
@@ -131,32 +131,8 @@
 
 
 <style lang="scss">
-	@use '../../css/variables';
-
-	.ui.secondary.menu[role='tablist'] > button.item {
-		appearance: none;
-		background: none;
-		border: 0;
-		padding: inherit;
-		margin: 0;
-		font: inherit;
-		color: inherit;
-		text-align: inherit;
-		line-height: inherit;
+	.ui.pointing.secondary.menu .item {
 		cursor: pointer;
-	}
-
-	.ui.secondary.menu[role='tablist'] > button.item:disabled {
-		cursor: not-allowed;
-	}
-
-	.ui.secondary.menu[role='tablist'] > button.item:focus-visible {
-		outline: 2px solid currentColor;
-		outline-offset: 2px;
-		border-radius: 0.28571429rem;
-	}
-
-	.ui.tab.segment[hidden] {
-		display: none !important;
+		font-size: 1.2em;
 	}
 </style>

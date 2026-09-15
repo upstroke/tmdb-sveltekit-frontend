@@ -215,7 +215,7 @@
 			<section aria-labelledby="seasons-heading">
 				<h3
 					id="seasons-heading"
-					class="ui medium dividing header"
+					class="u-sr-only"
 				>
 					{labels.seasons ?? 'Seasons'}
 				</h3>
