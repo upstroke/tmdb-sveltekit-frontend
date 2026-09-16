@@ -1,6 +1,10 @@
 <script>
 	import { i18n } from '$lib/stores/i18n';
+	import { formatDate } from '$lib/utils/formatDate.js';
+	import {page} from "$app/state";
+	import {DEFAULT_LOCALE} from "$lib/i18n/config.js";
 	const { labels } = $derived($i18n);
+
 
 	/**
 	 * A single tab item.
@@ -143,7 +147,7 @@
 							{episode.episode_number}. {episode.name}
 						</h4>
 						{#if episode.air_date}
-							<span class="u-sr-only">{labels.firstAirDate}</span><span class="episode-air-date">{episode.air_date}</span>
+							<span class="u-sr-only">{labels.firstAirDate}</span><time class="episode-air-date">{formatDate(episode.air_date, page.url.searchParams.get('locale') ?? DEFAULT_LOCALE)}</time>
 						{/if}
 						{#if episode.overview}
 							<p class="episode-overview">{episode.overview}</p>
@@ -209,8 +213,8 @@
 			margin-bottom: 0;
 		}
 
-		.episode-overview p {
-			margin-bottom: 0.5rem;
+		p.episode-overview {
+			margin-bottom: 0;
 		}
 	}
 
