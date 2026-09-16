@@ -91,6 +91,16 @@
 			loadingTab = null;
 		}
 	}
+
+	/**
+	 * Automatically loads episodes for the first available season on mount.
+	 */
+	$effect(() => {
+		const firstSeason = seasons[0];
+		if (firstSeason) {
+			handleTabSelect(String(firstSeason.season_number));
+		}
+	});
 </script>
 
 <svelte:head>
@@ -251,11 +261,11 @@
 					id="seasons-heading"
 					class="u-sr-only"
 				>
-					{labels.seasons}
+					{labels.seasons ?? 'Seasons'}
 				</h3>
 				<TabGroupe
 					tabs={seasonTabs}
-					ariaLabel={labels.seasons}
+					ariaLabel={labels.seasons ?? 'Seasons'}
 					onTabSelect={handleTabSelect}
 				/>
 			</section>
