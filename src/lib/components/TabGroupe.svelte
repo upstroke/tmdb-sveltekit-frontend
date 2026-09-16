@@ -27,7 +27,8 @@
 	 * - Tab (from tablist): not intercepted → browser moves focus to the active tabpanel.
 	 *
 	 * Inside the tabpanel (episode list):
-	 * - ArrowDown / ArrowUp: move focus between episode list items (roving tabindex).
+	 * - ArrowDown / ArrowUp: move focus between episode list items (roving tabindex,
+	 *   delegated to the ol element via event.target.closest('li')).
 	 *   preventDefault keeps focus inside the list.
 	 * - Home / End: jump to first / last episode.
 	 * - Tab: not intercepted → focus leaves the panel naturally.
@@ -65,12 +66,6 @@
 
 	/** @type {HTMLButtonElement[]} */
 	let tabRefs = $state([]);
-
-	/**
-	 * Per-tab episode list item refs: episodeRefs[tabIndex][episodeIndex] → <li>.
-	 * @type {HTMLLIElement[][]}
-	 */
-	let episodeRefs = $state(tabs.map(() => []));
 
 	/**
 	 * Currently focused episode index per tab.
@@ -149,38 +144,51 @@
 	}
 
 	/**
-	 * Handles keyboard interaction within an episode list.
+	 * Delegated keydown handler for an episode list (ol.episodes-list).
+	 *
+	 * A single listener on the <ol> catches all key events bubbling up from
+	 * its <li> children. The currently focused <li> is resolved via
+	 * event.target.closest('li'), so no per-item refs or per-item onkeydown
+	 * bindings are needed.
 	 *
 	 * ArrowDown / ArrowUp / Home / End navigate between list items and call
-	 * preventDefault to keep focus inside the list (trap). The Tab key is
+	 * preventDefault to keep focus inside the list (soft trap). The Tab key is
 	 * intentionally not intercepted so focus leaves the panel naturally.
 	 *
 	 * @param {KeyboardEvent} event
-	 * @param {number} tabIndex - Index of the parent tab.
-	 * @param {number} episodeIndex - Index of the currently focused episode.
+	 * @param {number} tabIndex - Index of the parent tab in the tabs array.
 	 * @param {number} total - Total number of episodes in this tab.
 	 * @returns {void}
 	 */
-	function handleEpisodeKeydown(event, tabIndex, episodeIndex, total) {
+	function handleEpisodeListKeydown(event, tabIndex, total) {
+		const navigationKeys = ['ArrowDown', 'ArrowUp', 'Home', 'End'];
+		if (!navigationKeys.includes(event.key)) return;
+
+		// Resolve the focused <li> from the event target.
+		const li = /** @type {Element} */ (event.target).closest('li');
+		if (!li) return;
+
+		// Derive the current index from the roving-tabindex attribute.
+		const currentIndex = focusedEpisodeIndex[tabIndex];
+
 		/** @type {Record<string, number>} */
 		const moves = {
-			ArrowDown: (episodeIndex + 1) % total,
-			ArrowUp: (episodeIndex - 1 + total) % total,
+			ArrowDown: (currentIndex + 1) % total,
+			ArrowUp: (currentIndex - 1 + total) % total,
 			Home: 0,
 			End: total - 1
 		};
 
-		if (!(event.key in moves)) {
-			// Tab and all other keys fall through – focus leaves the panel naturally.
-			return;
-		}
-
 		// Prevent page scroll and keep focus inside the episode list.
 		event.preventDefault();
 
-		const nextEpisode = moves[event.key];
-		focusedEpisodeIndex[tabIndex] = nextEpisode;
-		episodeRefs[tabIndex][nextEpisode]?.focus();
+		const nextIndex = moves[event.key];
+		focusedEpisodeIndex[tabIndex] = nextIndex;
+
+		// Focus the sibling <li> at nextIndex via the parent <ol>.
+		const ol = /** @type {HTMLOListElement} */ (event.currentTarget);
+		const items = /** @type {NodeListOf<HTMLLIElement>} */ (ol.querySelectorAll('li.episode-item'));
+		items[nextIndex]?.focus();
 	}
 </script>
 
@@ -219,14 +227,14 @@
 		{#if tab.loading}
 			<p aria-live="polite">Loading…</p>
 		{:else if tab.episodes && tab.episodes.length > 0}
-			<ol class="episodes-list">
+			<ol
+				class="episodes-list"
+				onkeydown={(event) => handleEpisodeListKeydown(event, tabIndex, tab.episodes.length)}
+			>
 				{#each tab.episodes as episode, episodeIndex (episode.episode_number)}
 					<li
-						bind:this={episodeRefs[tabIndex][episodeIndex]}
 						class="episode-item"
 						tabindex={episodeIndex === focusedEpisodeIndex[tabIndex] ? 0 : -1}
-						onkeydown={(event) =>
-							handleEpisodeKeydown(event, tabIndex, episodeIndex, tab.episodes.length)}
 					>
 						<h4 class="episode-title">
 							{episode.episode_number}. {episode.name}
