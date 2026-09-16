@@ -23,7 +23,7 @@
 	 * @component
 	 * @prop {TabItem[]} tabs - List of tab items to render.
 	 * @prop {string} [initialTab] - ID of the initially active tab. Defaults to the first tab.
-	 * @prop {string} [ariaLabel=''] - Accessible label for the tab list.
+	 * @prop {string} ariaLabel - Accessible label for the tab list. Required for WCAG compliance.
 	 * @prop {(id: string) => void} [onTabSelect] - Callback fired when a tab is selected.
 	 *
 	 * @example
@@ -41,6 +41,10 @@
 		ariaLabel = '',
 		onTabSelect = undefined
 	} = $props();
+
+	if (import.meta.env.DEV && !ariaLabel) {
+		console.warn('[TabGroupe] The ariaLabel prop is required for accessibility (WCAG 4.1.2). Please provide a descriptive label for the tab list.');
+	}
 
 	/** @type {string} */
 	let activeTab = $state(initialTab ?? tabs[0]?.id ?? '');
@@ -135,7 +139,7 @@
 		role="tabpanel"
 		aria-labelledby={"tab-" + tab.id}
 		hidden={!isSelected(tab.id)}
-		tabindex="0"
+		tabindex={isSelected(tab.id) ? 0 : -1}
 	>
 		{#if tab.loading}
 			<p aria-live="polite">Loading…</p>
@@ -174,6 +178,12 @@
 		.item {
 			cursor: pointer;
 			font-size: 1.2em;
+
+			&:focus-visible {
+				outline: 2px solid var(--focus-ring-blue);
+				outline-offset: 2px;
+				border-radius: 2px;
+			}
 
 			&.active {
 				border-color: var(--focus-ring-blue);
