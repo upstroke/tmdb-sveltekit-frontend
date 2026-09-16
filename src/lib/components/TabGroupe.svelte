@@ -3,7 +3,7 @@
 	import { formatDate } from '$lib/utils/formatDate.js';
 	import { page } from '$app/state';
 	import { DEFAULT_LOCALE } from '$lib/i18n/config.js';
-	const { labels } = $derived($i18n);
+	const { labels, messages } = $derived($i18n);
 
 	/**
 	 * A single tab item.
@@ -225,7 +225,7 @@
 		tabindex={isSelected(tab.id) ? 0 : -1}
 	>
 		{#if tab.loading}
-			<p aria-live="polite">Loading…</p>
+			<p aria-live="polite">{messages.loading}</p>
 		{:else if tab.episodes && tab.episodes.length > 0}
 			<ol
 				class="episodes-list"
@@ -300,7 +300,7 @@
 	.episodes-list {
 		list-style: none;
 		margin: 0;
-		padding: 0;
+		padding: 0 .5rem;
 		display: flex;
 		flex-direction: column;
 		gap: 1rem;
