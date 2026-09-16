@@ -105,6 +105,22 @@
 			handleTabSelect(String(firstSeason.season_number));
 		}
 	});
+
+	/**
+	 * Clear the episode cache whenever the locale changes so that all seasons
+	 * are re-fetched in the new language. Then immediately reload the first season.
+	 */
+	$effect(() => {
+		// Establish a reactive dependency on locale
+		const _locale = page.url.searchParams.get('locale') ?? DEFAULT_LOCALE;
+
+		loadedEpisodes = {};
+
+		const firstSeason = seasons[0];
+		if (firstSeason) {
+			handleTabSelect(String(firstSeason.season_number));
+		}
+	});
 </script>
 
 <svelte:head>
