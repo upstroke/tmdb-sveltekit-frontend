@@ -237,6 +237,7 @@ Diese Datei beschreibt das pragmatische Vorgehen für Tests
 - `LanguageSwitcher` ändert die aktive Locale und lädt die aktuelle Route mit der neuen Sprache neu.
 - `FooterMain` stellt den globalen Footer als eigene Layout-Komponente bereit.
 - `DetailsHero` kapselt den gemeinsamen Hero-/Poster-Bereich der Film- und Serien-Detailseiten.
+- `TabGroupe` rendert zugängliche Tabs für Staffel-/Detailbereiche und unterstützt Tastaturnavigation sowie asynchrones Nachladen pro Tab.
 - `CardDefault` rendert eine Standard-Medienkarte.
 - `CardFeatured` rendert eine hervorgehobene Medienkarte.
 - `DialogMessage` zeigt Fehler in konsistenter Form an.

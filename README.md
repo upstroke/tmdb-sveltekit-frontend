@@ -238,6 +238,7 @@ Detailed Playwright end-to-end acceptance-test plans remain next to their execut
 - `LanguageSwitcher` changes the active locale and reloads the current route in the new language.
 - `FooterMain` provides the global footer as a dedicated layout component.
 - `DetailsHero` encapsulates the shared hero/poster area of movie and TV show detail pages.
+- `TabGroupe` renders accessible tabs for season/detail areas and supports keyboard navigation as well as async per-tab loading.
 - `CardDefault` renders a standard media card.
 - `CardFeatured` renders a featured media card.
 - `DialogMessage` displays errors consistently.

@@ -404,8 +404,8 @@
 
 		<section aria-labelledby="crew-heading">
 			<h3
-				id="cast-heading"
-				class="ui medium dividing header {labels.crewt ? '' : 'u-not-available'}"
+				id="crew-heading"
+				class="ui medium dividing header {labels.crew ? '' : 'u-not-available'}"
 			>
 				{labels.crew}
 			</h3>
