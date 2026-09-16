@@ -1,4 +1,7 @@
 <script>
+	import { i18n } from '$lib/stores/i18n';
+	const { labels } = $derived($i18n);
+
 	/**
 	 * A single tab item.
 	 *
@@ -136,11 +139,11 @@
 			<ol class="episodes-list">
 				{#each tab.episodes as episode (episode.episode_number)}
 					<li class="episode-item">
-						<strong class="episode-title">
+						<h4 class="episode-title">
 							{episode.episode_number}. {episode.name}
-						</strong>
+						</h4>
 						{#if episode.air_date}
-							<span class="episode-air-date">{episode.air_date}</span>
+							<span class="u-sr-only">{labels.firstAirDate}</span><span class="episode-air-date">{episode.air_date}</span>
 						{/if}
 						{#if episode.overview}
 							<p class="episode-overview">{episode.overview}</p>
@@ -200,11 +203,14 @@
 		display: flex;
 		flex-direction: column;
 		gap: 0.25rem;
-		padding-bottom: 1rem;
-		border-bottom: 1px solid rgba(34, 36, 38, 0.1);
+		margin-bottom: 0.5rem;
 
-		&:last-child {
-			border-bottom: none;
+		.episode-title {
+			margin-bottom: 0;
+		}
+
+		.episode-overview p {
+			margin-bottom: 0.5rem;
 		}
 	}
 
