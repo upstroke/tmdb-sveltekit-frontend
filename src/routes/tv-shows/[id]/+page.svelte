@@ -1,5 +1,6 @@
 <script>
 	import { page } from '$app/state';
+	import { untrack } from 'svelte';
 	import { deduplicateById } from '$lib/utils/deduplicateById';
 	import { formatHomepageLabel } from '$lib/utils/formatHomepageLabel';
 	import DialogMessage from '$lib/components/DialogMessage.svelte';
@@ -101,16 +102,17 @@
 	 * reset the episode cache and load the first season fresh.
 	 */
 	$effect(() => {
-		// Reactive dependency on tvShow identity — fires on initial mount and on every locale change
-		const _id = tvShow?.id;
-
-		loadedEpisodes = {};
-		loadingTab = null;
-
+		tvShow?.id; // reactive dependency
 		const firstSeason = seasons[0];
-		if (firstSeason) {
-			handleTabSelect(String(firstSeason.season_number));
-		}
+
+		untrack(() => {
+			loadedEpisodes = {};
+			loadingTab = null;
+
+			if (firstSeason) {
+				handleTabSelect(String(firstSeason.season_number));
+			}
+		});
 	});
 </script>
 
