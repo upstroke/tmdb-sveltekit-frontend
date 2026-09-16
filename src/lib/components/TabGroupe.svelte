@@ -20,6 +20,15 @@
 	 * An accessible tab group component with keyboard navigation.
 	 * Supports lazy-loaded episode lists per tab panel.
 	 *
+	 * Keyboard behaviour (WAI-ARIA Tabs Pattern):
+	 * - Tab: moves focus into the tablist, landing on the active tab (tabindex=0).
+	 *   A second Tab leaves the tablist and moves focus to the active tabpanel.
+	 * - ArrowRight / ArrowLeft: cycle focus between tabs within the tablist.
+	 *   preventDefault keeps the browser from leaving the tablist via these keys.
+	 * - Home / End: jump to the first / last tab.
+	 * - Tab (from within the tablist): not intercepted → browser moves focus
+	 *   naturally to the next focusable element (the active tabpanel).
+	 *
 	 * @component
 	 * @prop {TabItem[]} tabs - List of tab items to render.
 	 * @prop {string} [initialTab] - ID of the initially active tab. Defaults to the first tab.
@@ -89,23 +98,33 @@
 	}
 
 	/**
-	 * Handles keyboard interaction on a tab.
+	 * Handles keyboard interaction on a tab button.
+	 *
+	 * Arrow keys and Home/End navigate within the tablist and call preventDefault
+	 * so the browser does not scroll or leave the list. The Tab key is intentionally
+	 * not intercepted: the browser moves focus to the next element in the natural
+	 * tab order, which is the active tabpanel (tabindex=0).
 	 *
 	 * @param {KeyboardEvent} event
 	 * @param {number} index
 	 * @returns {void}
 	 */
 	function handleTabKeydown(event, index) {
-		if (!['ArrowRight', 'ArrowLeft', 'Home', 'End'].includes(event.key)) {
+		const navigationKeys = ['ArrowRight', 'ArrowLeft', 'Home', 'End'];
+
+		if (!navigationKeys.includes(event.key)) {
+			// Tab and all other keys fall through – no preventDefault.
+			// Tab will move focus to the active tabpanel naturally.
 			return;
 		}
 
+		// Prevent page scroll and keep focus inside the tablist.
 		event.preventDefault();
 
 		const nextIndex = getNextIndex(event.key, index);
-		activeTab = tabs[nextIndex].id;
+		// Use selectTab() to keep state and onTabSelect callback in sync.
+		selectTab(tabs[nextIndex].id);
 		tabRefs[nextIndex]?.focus();
-		onTabSelect?.(tabs[nextIndex].id);
 	}
 </script>
 
