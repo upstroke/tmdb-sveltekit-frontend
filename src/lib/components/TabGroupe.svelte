@@ -21,10 +21,11 @@
 	 *
 	 * Keyboard behaviour (WAI-ARIA Tabs Pattern):
 	 * - Tab: moves focus into the tablist, landing on the active tab (tabindex=0).
-	 *   A second Tab moves focus to the active tabpanel.
+	 *   A second Tab moves focus to the first episode item in the active tabpanel.
 	 * - ArrowRight / ArrowLeft / Home / End: cycle focus between tab buttons.
 	 *   preventDefault keeps the browser from leaving the tablist via these keys.
-	 * - Tab (from tablist): not intercepted → browser moves focus to the active tabpanel.
+	 * - Tab (from tablist): not intercepted → browser moves focus to the first
+	 *   focusable element inside the active tabpanel (first episode <li>).
 	 *
 	 * Inside the tabpanel (episode list):
 	 * - ArrowDown / ArrowUp: move focus between episode list items (roving tabindex,
@@ -119,7 +120,7 @@
 	 * Arrow keys and Home/End navigate within the tablist and call preventDefault
 	 * so the browser does not scroll or leave the list. The Tab key is intentionally
 	 * not intercepted: the browser moves focus to the next element in the natural
-	 * tab order, which is the active tabpanel (tabindex=0).
+	 * tab order, which is the first episode item in the active tabpanel (tabindex=0).
 	 *
 	 * @param {KeyboardEvent} event
 	 * @param {number} index
@@ -130,7 +131,7 @@
 
 		if (!navigationKeys.includes(event.key)) {
 			// Tab and all other keys fall through – no preventDefault.
-			// Tab will move focus to the active tabpanel naturally.
+			// Tab will move focus to the first episode item in the active tabpanel.
 			return;
 		}
 
@@ -222,7 +223,6 @@
 		role="tabpanel"
 		aria-labelledby={"tab-" + tab.id}
 		hidden={!isSelected(tab.id)}
-		tabindex={isSelected(tab.id) ? 0 : -1}
 	>
 		{#if tab.loading}
 			<p aria-live="polite">{messages.loading}</p>
