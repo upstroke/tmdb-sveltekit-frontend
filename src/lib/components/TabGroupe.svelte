@@ -300,7 +300,7 @@
 	.episodes-list {
 		list-style: none;
 		margin: 0;
-		padding: 0 .5rem;
+		padding: 0;
 		display: flex;
 		flex-direction: column;
 		gap: 1rem;
@@ -310,12 +310,12 @@
 		display: flex;
 		flex-direction: column;
 		gap: 0.25rem;
+		padding: 0 .5rem;
 		margin-bottom: 0.5rem;
 
 		&:focus-visible {
-			outline: 2px solid var(--focus-ring-blue);
-			outline-offset: 4px;
-			border-radius: 2px;
+			background: rgba(0, 0, 0, 0.08);
+			outline-offset: 2px;
 		}
 
 		.episode-title {
