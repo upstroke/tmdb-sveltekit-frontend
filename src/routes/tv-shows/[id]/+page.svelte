@@ -251,11 +251,11 @@
 					id="seasons-heading"
 					class="u-sr-only"
 				>
-					{labels.seasons ?? 'Seasons'}
+					{labels.seasons}
 				</h3>
 				<TabGroupe
 					tabs={seasonTabs}
-					ariaLabel={labels.seasons ?? 'Seasons'}
+					ariaLabel={labels.seasons}
 					onTabSelect={handleTabSelect}
 				/>
 			</section>

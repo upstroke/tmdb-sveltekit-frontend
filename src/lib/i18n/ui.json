@@ -38,7 +38,9 @@
 				"streamingDataProvidedBy": "Provided by",
 				"providerTypeFlatrate": "Flatrate",
 				"providerTypeRent": "Rent",
-				"providerTypeBuy": "Buy"
+				"providerTypeBuy": "Buy",
+				"seasons": "Seasons",
+				"season": "Season"
 			},
 			"messages": {
 				"loadMoreError": "More content could not be loaded.",
@@ -129,7 +131,9 @@
 				"streamingDataProvidedBy": "Bereitgestellt von",
 				"providerTypeFlatrate": "Flatrate",
 				"providerTypeRent": "Leihen",
-				"providerTypeBuy": "Kaufen"
+				"providerTypeBuy": "Kaufen",
+				"seasons": "Staffeln",
+				"season": "Staffel"
 			},
 			"messages": {
 				"loadMoreError": "Weitere Inhalte konnten nicht geladen werden.",
@@ -220,7 +224,9 @@
 				"streamingDataProvidedBy": "Proporcionado por",
 				"providerTypeFlatrate": "Suscripción",
 				"providerTypeRent": "Alquilar",
-				"providerTypeBuy": "Comprar"
+				"providerTypeBuy": "Comprar",
+				"seasons": "Temporadas",
+				"season": "Temporada"
 			},
 			"messages": {
 				"loadMoreError": "No se pudo cargar más contenido.",
@@ -311,7 +317,9 @@
 				"streamingDataProvidedBy": "Fourni par",
 				"providerTypeFlatrate": "Abonnement",
 				"providerTypeRent": "Louer",
-				"providerTypeBuy": "Acheter"
+				"providerTypeBuy": "Acheter",
+				"seasons": "Saisons",
+				"season": "Saison"
 			},
 			"messages": {
 				"loadMoreError": "Impossible de charger plus de contenu.",
@@ -368,7 +376,7 @@
 			"languageCode": "ru-RU",
 			"languageShortCode": "RU",
 			"fallbacks": {
-				"notAvailable": "N/A",
+				"notAvailable": "Н/Д",
 				"dateFallback": "- -"
 			},
 			"labels": {
@@ -397,12 +405,14 @@
 				"navigationToggle": "Открыть или закрыть навигацию",
 				"mainNavigation": "Основная навигация",
 				"movie": "Фильм",
-				"tvShow": "ТВ",
+				"tvShow": "Телешоу",
 				"streamingProviders": "Стриминговые сервисы",
 				"streamingDataProvidedBy": "Предоставлено",
 				"providerTypeFlatrate": "Подписка",
 				"providerTypeRent": "Аренда",
-				"providerTypeBuy": "Покупка"
+				"providerTypeBuy": "Покупка",
+				"seasons": "сезоны",
+				"season": "сезон"
 			},
 			"messages": {
 				"loadMoreError": "Не удалось загрузить больше контента.",
@@ -493,7 +503,9 @@
 				"streamingDataProvidedBy": "Cung cấp bởi",
 				"providerTypeFlatrate": "Góµ»£c",
 				"providerTypeRent": "Thuêµª",
-				"providerTypeBuy": "Mua"
+				"providerTypeBuy": "Mua",
+				"seasons": "Mùa",
+				"season": "Mùa"
 			},
 			"messages": {
 				"loadMoreError": "Không thể tải thêm nội dung.",
