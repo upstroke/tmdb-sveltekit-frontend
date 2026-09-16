@@ -1,10 +1,9 @@
 <script>
 	import { i18n } from '$lib/stores/i18n';
 	import { formatDate } from '$lib/utils/formatDate.js';
-	import {page} from "$app/state";
-	import {DEFAULT_LOCALE} from "$lib/i18n/config.js";
+	import { page } from '$app/state';
+	import { DEFAULT_LOCALE } from '$lib/i18n/config.js';
 	const { labels } = $derived($i18n);
-
 
 	/**
 	 * A single tab item.
@@ -22,12 +21,16 @@
 	 *
 	 * Keyboard behaviour (WAI-ARIA Tabs Pattern):
 	 * - Tab: moves focus into the tablist, landing on the active tab (tabindex=0).
-	 *   A second Tab leaves the tablist and moves focus to the active tabpanel.
-	 * - ArrowRight / ArrowLeft: cycle focus between tabs within the tablist.
+	 *   A second Tab moves focus to the active tabpanel.
+	 * - ArrowRight / ArrowLeft / Home / End: cycle focus between tab buttons.
 	 *   preventDefault keeps the browser from leaving the tablist via these keys.
-	 * - Home / End: jump to the first / last tab.
-	 * - Tab (from within the tablist): not intercepted → browser moves focus
-	 *   naturally to the next focusable element (the active tabpanel).
+	 * - Tab (from tablist): not intercepted → browser moves focus to the active tabpanel.
+	 *
+	 * Inside the tabpanel (episode list):
+	 * - ArrowDown / ArrowUp: move focus between episode list items (roving tabindex).
+	 *   preventDefault keeps focus inside the list.
+	 * - Home / End: jump to first / last episode.
+	 * - Tab: not intercepted → focus leaves the panel naturally.
 	 *
 	 * @component
 	 * @prop {TabItem[]} tabs - List of tab items to render.
@@ -37,11 +40,11 @@
 	 *
 	 * @example
 	 * <TabGroupe
-	 * 	tabs={[
-	 * 		{ id: 'one', label: 'One', content: 'Content 1' },
-	 * 		{ id: 'two', label: 'Two', content: 'Content 2' }
-	 * 	]}
-	 * 	ariaLabel="Example tabs"
+	 *   tabs={[
+	 *     { id: 'one', label: 'One', content: 'Content 1' },
+	 *     { id: 'two', label: 'Two', content: 'Content 2' }
+	 *   ]}
+	 *   ariaLabel="Example tabs"
 	 * />
 	 */
 	let {
@@ -52,7 +55,9 @@
 	} = $props();
 
 	if (import.meta.env.DEV && !ariaLabel) {
-		console.warn('[TabGroupe] The ariaLabel prop is required for accessibility (WCAG 4.1.2). Please provide a descriptive label for the tab list.');
+		console.warn(
+			'[TabGroupe] The ariaLabel prop is required for accessibility (WCAG 4.1.2). Please provide a descriptive label for the tab list.'
+		);
 	}
 
 	/** @type {string} */
@@ -62,13 +67,29 @@
 	let tabRefs = $state([]);
 
 	/**
-	 * Selects a tab by id and fires the optional onTabSelect callback.
+	 * Per-tab episode list item refs: episodeRefs[tabIndex][episodeIndex] → <li>.
+	 * @type {HTMLLIElement[][]}
+	 */
+	let episodeRefs = $state(tabs.map(() => []));
+
+	/**
+	 * Currently focused episode index per tab.
+	 * Resets to 0 when a tab is activated.
+	 * @type {number[]}
+	 */
+	let focusedEpisodeIndex = $state(tabs.map(() => 0));
+
+	/**
+	 * Selects a tab by id, resets the focused episode index for that tab,
+	 * and fires the optional onTabSelect callback.
 	 *
 	 * @param {string} id
 	 * @returns {void}
 	 */
 	function selectTab(id) {
 		activeTab = id;
+		const tabIndex = tabs.findIndex((t) => t.id === id);
+		if (tabIndex !== -1) focusedEpisodeIndex[tabIndex] = 0;
 		onTabSelect?.(id);
 	}
 
@@ -83,13 +104,13 @@
 	}
 
 	/**
-	 * Returns the next tab index for keyboard navigation.
+	 * Returns the next tab button index for keyboard navigation.
 	 *
 	 * @param {string} key
 	 * @param {number} index
 	 * @returns {number}
 	 */
-	function getNextIndex(key, index) {
+	function getNextTabIndex(key, index) {
 		if (key === 'ArrowRight') return (index + 1) % tabs.length;
 		if (key === 'ArrowLeft') return (index - 1 + tabs.length) % tabs.length;
 		if (key === 'Home') return 0;
@@ -121,10 +142,45 @@
 		// Prevent page scroll and keep focus inside the tablist.
 		event.preventDefault();
 
-		const nextIndex = getNextIndex(event.key, index);
+		const nextIndex = getNextTabIndex(event.key, index);
 		// Use selectTab() to keep state and onTabSelect callback in sync.
 		selectTab(tabs[nextIndex].id);
 		tabRefs[nextIndex]?.focus();
+	}
+
+	/**
+	 * Handles keyboard interaction within an episode list.
+	 *
+	 * ArrowDown / ArrowUp / Home / End navigate between list items and call
+	 * preventDefault to keep focus inside the list (trap). The Tab key is
+	 * intentionally not intercepted so focus leaves the panel naturally.
+	 *
+	 * @param {KeyboardEvent} event
+	 * @param {number} tabIndex - Index of the parent tab.
+	 * @param {number} episodeIndex - Index of the currently focused episode.
+	 * @param {number} total - Total number of episodes in this tab.
+	 * @returns {void}
+	 */
+	function handleEpisodeKeydown(event, tabIndex, episodeIndex, total) {
+		/** @type {Record<string, number>} */
+		const moves = {
+			ArrowDown: (episodeIndex + 1) % total,
+			ArrowUp: (episodeIndex - 1 + total) % total,
+			Home: 0,
+			End: total - 1
+		};
+
+		if (!(event.key in moves)) {
+			// Tab and all other keys fall through – focus leaves the panel naturally.
+			return;
+		}
+
+		// Prevent page scroll and keep focus inside the episode list.
+		event.preventDefault();
+
+		const nextEpisode = moves[event.key];
+		focusedEpisodeIndex[tabIndex] = nextEpisode;
+		episodeRefs[tabIndex][nextEpisode]?.focus();
 	}
 </script>
 
@@ -149,7 +205,7 @@
 	{/each}
 </div>
 
-{#each tabs as tab (tab.id)}
+{#each tabs as tab, tabIndex (tab.id)}
 	<div
 		class="ui tab segment"
 		class:active={isSelected(tab.id)}
@@ -164,13 +220,25 @@
 			<p aria-live="polite">Loading…</p>
 		{:else if tab.episodes && tab.episodes.length > 0}
 			<ol class="episodes-list">
-				{#each tab.episodes as episode (episode.episode_number)}
-					<li class="episode-item">
+				{#each tab.episodes as episode, episodeIndex (episode.episode_number)}
+					<li
+						bind:this={episodeRefs[tabIndex][episodeIndex]}
+						class="episode-item"
+						tabindex={episodeIndex === focusedEpisodeIndex[tabIndex] ? 0 : -1}
+						onkeydown={(event) =>
+							handleEpisodeKeydown(event, tabIndex, episodeIndex, tab.episodes.length)}
+					>
 						<h4 class="episode-title">
 							{episode.episode_number}. {episode.name}
 						</h4>
 						{#if episode.air_date}
-							<span class="u-sr-only">{labels.firstAirDate}</span><time class="episode-air-date">{formatDate(episode.air_date, page.url.searchParams.get('locale') ?? DEFAULT_LOCALE)}</time>
+							<span class="u-sr-only">{labels.firstAirDate}</span><time
+								class="episode-air-date"
+								>{formatDate(
+									episode.air_date,
+									page.url.searchParams.get('locale') ?? DEFAULT_LOCALE
+								)}</time
+							>
 						{/if}
 						{#if episode.overview}
 							<p class="episode-overview">{episode.overview}</p>
@@ -185,8 +253,6 @@
 		{/if}
 	</div>
 {/each}
-
-
 
 <style lang="scss">
 	@use '../../css/variables';
@@ -237,6 +303,12 @@
 		flex-direction: column;
 		gap: 0.25rem;
 		margin-bottom: 0.5rem;
+
+		&:focus-visible {
+			outline: 2px solid var(--focus-ring-blue);
+			outline-offset: 4px;
+			border-radius: 2px;
+		}
 
 		.episode-title {
 			margin-bottom: 0;
