@@ -91,6 +91,16 @@
 			loadingTab = null;
 		}
 	}
+
+	/**
+	 * Automatically loads episodes for the first available season on mount.
+	 */
+	$effect(() => {
+		const firstSeason = seasons[0];
+		if (firstSeason) {
+			handleTabSelect(String(firstSeason.season_number));
+		}
+	});
 </script>
 
 <svelte:head>
