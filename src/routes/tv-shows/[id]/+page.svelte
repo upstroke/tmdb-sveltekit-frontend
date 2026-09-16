@@ -76,9 +76,13 @@
 	async function handleTabSelect(tabId) {
 		if (loadedEpisodes[tabId] !== undefined) return;
 
+		const locale = page.url.searchParams.get('locale') ?? DEFAULT_LOCALE;
+
 		loadingTab = tabId;
 		try {
-			const res = await fetch(`/tv-shows/${data.tvShow?.id}/api/season?seasonNumber=${tabId}`);
+			const res = await fetch(
+				`/tv-shows/${data.tvShow?.id}/api/season?seasonNumber=${tabId}&locale=${locale}`
+			);
 			if (!res.ok) {
 				loadedEpisodes[tabId] = [];
 				return;
