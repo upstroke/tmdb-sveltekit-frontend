@@ -43,6 +43,7 @@
 				"season": "Season"
 			},
 			"messages": {
+				"loading": "Loading …",
 				"loadMoreError": "More content could not be loaded.",
 				"unknownError": "Unknown error",
 				"pageSaveWarning": "Page state could not be saved:",
@@ -136,6 +137,7 @@
 				"season": "Staffel"
 			},
 			"messages": {
+				"loading": "Lade Inhalte …",
 				"loadMoreError": "Weitere Inhalte konnten nicht geladen werden.",
 				"unknownError": "Unbekannter Fehler",
 				"pageSaveWarning": "Seitenzustand konnte nicht gespeichert werden:",
@@ -229,6 +231,7 @@
 				"season": "Temporada"
 			},
 			"messages": {
+				"loading": "Cargando contenido …",
 				"loadMoreError": "No se pudo cargar más contenido.",
 				"unknownError": "Error desconocido",
 				"pageSaveWarning": "No se pudo guardar el estado de la página:",
@@ -322,6 +325,7 @@
 				"season": "Saison"
 			},
 			"messages": {
+				"loading": "Chargement du contenu …",
 				"loadMoreError": "Impossible de charger plus de contenu.",
 				"unknownError": "Erreur inconnue",
 				"pageSaveWarning": "Impossible d’enregistrer l’état de la page :",
@@ -415,6 +419,7 @@
 				"season": "сезон"
 			},
 			"messages": {
+				"loading": "Загрузка содержимого …",
 				"loadMoreError": "Не удалось загрузить больше контента.",
 				"unknownError": "Неизвестная ошибка",
 				"pageSaveWarning": "Не удалось сохранить состояние страницы:",
@@ -508,6 +513,7 @@
 				"season": "Mùa"
 			},
 			"messages": {
+				"loading": "Đang tải nội dung …",
 				"loadMoreError": "Không thể tải thêm nội dung.",
 				"unknownError": "Lỗi không xác định",
 				"pageSaveWarning": "Không thể lưu trạng thái trang:",
