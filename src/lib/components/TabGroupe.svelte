@@ -64,7 +64,7 @@
 	}
 
 	let activeTab = $state(initialTab ?? tabs[0]?.id ?? '');
-	let tabRefs = $state([]);
+	let tabRefs = [];
 
 	/**
 	 * Currently focused episode index per tab.
