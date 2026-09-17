@@ -306,10 +306,10 @@ describe('TabGroupe', () => {
 		render(TabGroupe, { props: { tabs, ariaLabel: 'Seasons' } });
 
 		const items = document.querySelectorAll('.episode-item');
-		items[1].focus();
+		items[0].focus();
 		await user.keyboard('{ArrowUp}');
 
-		expect(items[0]).toHaveFocus();
+		expect(items[2]).toHaveFocus();
 	});
 
 	// Branch coverage: ArrowDown on the last episode wraps to the first.

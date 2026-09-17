@@ -2,6 +2,7 @@
 	import { i18n } from '$lib/stores/i18n';
 	import { formatDate } from '$lib/utils/formatDate.js';
 	import { page } from '$app/state';
+	import { tick } from 'svelte';
 	import { DEFAULT_LOCALE } from '$lib/i18n/config.js';
 	const { labels, messages } = $derived($i18n);
 
@@ -62,25 +63,18 @@
 		);
 	}
 
-	/** @type {string} */
 	let activeTab = $state(initialTab ?? tabs[0]?.id ?? '');
-
-	/** @type {HTMLButtonElement[]} */
 	let tabRefs = $state([]);
 
 	/**
 	 * Currently focused episode index per tab.
 	 * Resets to 0 when a tab is activated.
-	 * @type {number[]}
 	 */
 	let focusedEpisodeIndex = $state(tabs.map(() => 0));
 
 	/**
 	 * Selects a tab by id, resets the focused episode index for that tab,
 	 * and fires the optional onTabSelect callback.
-	 *
-	 * @param {string} id
-	 * @returns {void}
 	 */
 	function selectTab(id) {
 		activeTab = id;
@@ -91,9 +85,6 @@
 
 	/**
 	 * Returns whether a tab is selected.
-	 *
-	 * @param {string} id
-	 * @returns {boolean}
 	 */
 	function isSelected(id) {
 		return activeTab === id;
@@ -101,10 +92,6 @@
 
 	/**
 	 * Returns the next tab button index for keyboard navigation.
-	 *
-	 * @param {string} key
-	 * @param {number} index
-	 * @returns {number}
 	 */
 	function getNextTabIndex(key, index) {
 		if (key === 'ArrowRight') return (index + 1) % tabs.length;
@@ -121,10 +108,6 @@
 	 * so the browser does not scroll or leave the list. The Tab key is intentionally
 	 * not intercepted: the browser moves focus to the next element in the natural
 	 * tab order, which is the first episode item in the active tabpanel (tabindex=0).
-	 *
-	 * @param {KeyboardEvent} event
-	 * @param {number} index
-	 * @returns {void}
 	 */
 	function handleTabKeydown(event, index) {
 		const navigationKeys = ['ArrowRight', 'ArrowLeft', 'Home', 'End'];
@@ -155,24 +138,18 @@
 	 * ArrowDown / ArrowUp / Home / End navigate between list items and call
 	 * preventDefault to keep focus inside the list (soft trap). The Tab key is
 	 * intentionally not intercepted so focus leaves the panel naturally.
-	 *
-	 * @param {KeyboardEvent} event
-	 * @param {number} tabIndex - Index of the parent tab in the tabs array.
-	 * @param {number} total - Total number of episodes in this tab.
-	 * @returns {void}
 	 */
-	function handleEpisodeListKeydown(event, tabIndex, total) {
+	async function handleEpisodeListKeydown(event, tabIndex, total) {
 		const navigationKeys = ['ArrowDown', 'ArrowUp', 'Home', 'End'];
 		if (!navigationKeys.includes(event.key)) return;
 
 		// Resolve the focused <li> from the event target.
-		const li = /** @type {Element} */ (event.target).closest('li');
+		const li = event.target.closest('li');
 		if (!li) return;
 
 		// Derive the current index from the roving-tabindex attribute.
 		const currentIndex = focusedEpisodeIndex[tabIndex];
 
-		/** @type {Record<string, number>} */
 		const moves = {
 			ArrowDown: (currentIndex + 1) % total,
 			ArrowUp: (currentIndex - 1 + total) % total,
@@ -187,8 +164,9 @@
 		focusedEpisodeIndex[tabIndex] = nextIndex;
 
 		// Focus the sibling <li> at nextIndex via the parent <ol>.
-		const ol = /** @type {HTMLOListElement} */ (event.currentTarget);
-		const items = /** @type {NodeListOf<HTMLLIElement>} */ (ol.querySelectorAll('li.episode-item'));
+		await tick();
+		const ol = event.currentTarget;
+		const items = ol.querySelectorAll('li.episode-item');
 		items[nextIndex]?.focus();
 	}
 </script>
