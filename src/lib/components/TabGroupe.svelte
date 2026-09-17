@@ -72,6 +72,11 @@
 	let focusedEpisodeIndex = $state(tabs.map(() => 0));
 
 	/**
+	 * Stores references to episode list <ol> elements per tab.
+	 */
+	let episodeListRefs = $state({});
+
+	/**
 	 * Selects a tab by id, resets the focused episode index for that tab,
 	 * and fires the optional onTabSelect callback.
 	 */
@@ -148,8 +153,11 @@
 		const li = event.target.closest('li');
 		if (!li) return;
 
-		// Derive the current index from the roving-tabindex attribute.
-		const currentIndex = focusedEpisodeIndex[tabIndex];
+		// Derive the current index from the focused element's position in the list.
+		const ol = event.currentTarget;
+		if (!ol) return;
+		const items = Array.from(ol.querySelectorAll('li.episode-item'));
+		const currentIndex = items.indexOf(li);
 
 		const moves = {
 			ArrowDown: (currentIndex + 1) % total,
@@ -164,17 +172,12 @@
 		const nextIndex = moves[event.key];
 		focusedEpisodeIndex[tabIndex] = nextIndex;
 
-		// Focus the sibling <li> at nextIndex via the parent <ol>.
+		// Update tabindex immediately on the current and next items.
+		items[currentIndex]?.setAttribute('tabindex', '-1');
+		items[nextIndex]?.setAttribute('tabindex', '0');
+
+		// Wait for Svelte to update the DOM, then focus the next element.
 		await tick();
-		const ol = event.currentTarget;
-		if (!ol) return;
-		const items = ol.querySelectorAll('li.episode-item');
-
-		// Update tabindex directly on DOM elements for immediate test assertion.
-		items.forEach((item, idx) => {
-			item.setAttribute('tabindex', idx === nextIndex ? '0' : '-1');
-		});
-
 		items[nextIndex]?.focus();
 	}
 </script>
@@ -215,6 +218,7 @@
 		{:else if tab.episodes && tab.episodes.length > 0}
 			<ol
 				class="episodes-list"
+				bind:this={episodeListRefs[tabIndex]}
 				onkeydown={(event) => handleEpisodeListKeydown(event, tabIndex, tab.episodes.length)}
 			>
 				{#each tab.episodes as episode, episodeIndex (episode.episode_number)}
