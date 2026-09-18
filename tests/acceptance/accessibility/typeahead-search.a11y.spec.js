@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { getTestLocaleText } from '../../setup/test-utils.js';
+import { checkA11y } from '$tests/setup/a11y.js';
 
 /**
  * Typeahead Search Accessibility Tests
@@ -40,6 +41,16 @@ test.describe('Typeahead Search Accessibility', () => {
 		await expect(getResults(page)).toBeVisible();
 		return getResults(page).getByRole('option');
 	}
+
+	test(
+		'Desktop initial load has no automatically detected WCAG A/AA violations',
+		{
+			tag: ['@accessibility', '@a11y', '@desktop']
+		},
+		async ({ page }) => {
+			await checkA11y(page);
+		}
+	);
 
 	// -------------------------------------------------------------------------
 	// TC-TS-A11Y-001: Combobox attributes
