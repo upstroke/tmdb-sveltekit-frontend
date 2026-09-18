@@ -23,7 +23,9 @@
 
 	let hasResults = $derived(movies.length > 0 || tvShows.length > 0);
 	let hasSearchTerm = $derived(query.trim().length >= 4);
-	let hasStatusMessage = $derived(!resultsClosed && (showLoading || !!error || (hasSearchTerm && !hasResults)));
+	let hasStatusMessage = $derived(
+		!resultsClosed && (showLoading || !!error || (hasSearchTerm && !hasResults))
+	);
 	let resultsVisible = $derived(!resultsClosed && (hasResults || loading || !!error));
 
 	let debounceTimer;
@@ -36,8 +38,8 @@
 	const resultsId = 'typeahead-search-results';
 
 	function getAllResultIds() {
-		const movieIds = movies.map(m => `movie-${m.id}`);
-		const tvIds = tvShows.map(t => `tv-${t.id}`);
+		const movieIds = movies.map((m) => `movie-${m.id}`);
+		const tvIds = tvShows.map((t) => `tv-${t.id}`);
 		return [...movieIds, ...tvIds];
 	}
 
@@ -107,7 +109,9 @@
 		if (term.length >= 4) void search(term);
 	});
 
-	function formatRating(value) { return Number(value ?? 0).toFixed(1); }
+	function formatRating(value) {
+		return Number(value ?? 0).toFixed(1);
+	}
 	function formatYear(value) {
 		if (!value) return fallbacks.dateFallback;
 		const date = new Date(value);
@@ -124,12 +128,19 @@
 		if (item.mediaType === 'movie') return resolve('/movies/[id]', { id: String(item.id) });
 		return resolve('/tv-shows/[id]', { id: String(item.id) });
 	}
-	function clearAnnouncement() { clearTimeout(announcementTimer); announcement = ''; }
+	function clearAnnouncement() {
+		clearTimeout(announcementTimer);
+		announcement = '';
+	}
 	function scheduleAnnouncement(message) {
 		clearTimeout(announcementTimer);
 		announcement = '';
 		if (!message) return;
-		announcementTimer = setTimeout(() => { requestAnimationFrame(() => { announcement = message; }); }, 500);
+		announcementTimer = setTimeout(() => {
+			requestAnimationFrame(() => {
+				announcement = message;
+			});
+		}, 500);
 	}
 	function resetResults() {
 		clearTimeout(loadingTimer);
@@ -147,7 +158,10 @@
 		clearAnnouncement();
 		focusedResultId = null;
 		const term = query.trim();
-		if (term.length < 4) { resetResults(); return; }
+		if (term.length < 4) {
+			resetResults();
+			return;
+		}
 		resultsClosed = false;
 		debounceTimer = setTimeout(() => search(term), 300);
 	}
@@ -160,10 +174,19 @@
 		controller = new AbortController();
 		loading = true;
 		error = null;
-		loadingTimer = setTimeout(() => { if (loading) showLoading = true; }, 300);
+		loadingTimer = setTimeout(() => {
+			if (loading) showLoading = true;
+		}, 300);
 		try {
-			const response = await fetch(`/search?q=${encodeURIComponent(term)}&locale=${encodeURIComponent(activeLocale)}`, { signal: controller.signal });
-			if (!response.ok) { error = messages.searchError; scheduleAnnouncement(messages.searchError); return; }
+			const response = await fetch(
+				`/search?q=${encodeURIComponent(term)}&locale=${encodeURIComponent(activeLocale)}`,
+				{ signal: controller.signal }
+			);
+			if (!response.ok) {
+				error = messages.searchError;
+				scheduleAnnouncement(messages.searchError);
+				return;
+			}
 			const data = await response.json();
 			movies = deduplicateById(data.movies ?? []);
 			tvShows = deduplicateById(data.tvShows ?? []);
@@ -174,13 +197,12 @@
 					const firstId = getAllResultIds()[0];
 					if (firstId) focusResult(firstId);
 				}
-			}
-			else if (term.length >= 4) scheduleAnnouncement(messages.searchNoResults);
+			} else if (term.length >= 4) scheduleAnnouncement(messages.searchNoResults);
 		} catch (exception) {
 			if (exception.name === 'AbortError') return;
 			error = messages.searchError;
 			scheduleAnnouncement(messages.searchError);
-		}finally {
+		} finally {
 			clearTimeout(loadingTimer);
 			showLoading = false;
 			loading = false;
@@ -328,7 +350,14 @@
 			>
 				{#if movies.length > 0}
 					<div role="group" aria-labelledby="typeahead-movies-heading">
-						<h2 id="typeahead-movies-heading" class="typeahead-results-heading ui label blue {titles.movies ? '' : 'u-not-available'}">{titles.movies}</h2>
+						<h2
+							id="typeahead-movies-heading"
+							class="typeahead-results-heading ui label blue {titles.movies
+								? ''
+								: 'u-not-available'}"
+						>
+							{titles.movies}
+						</h2>
 						{#each movies as item (item.id)}
 							<a
 								role="option"
@@ -342,21 +371,29 @@
 								aria-labelledby={`typeahead-result-type-movie-${item.id} typeahead-result-content-movie-${item.id}`}
 								tabindex={focusedResultId === `movie-${item.id}` ? 0 : -1}
 							>
-								<figure class="image" aria-hidden="true"><img src={item.posterUrl || item.imageUrl || notAvailable} alt="" /></figure>
+								<figure class="image" aria-hidden="true">
+									<img src={item.posterUrl || item.imageUrl || notAvailable} alt="" />
+								</figure>
 								<div class="content">
-									<span class="u-sr-only" id={`typeahead-result-type-movie-${item.id}`}>{titles.movies}</span>
+									<span class="u-sr-only" id={`typeahead-result-type-movie-${item.id}`}
+										>{titles.movies}</span
+									>
 									<div id={`typeahead-result-content-movie-${item.id}`}>
 										<header class="result-header">
 											<h3 class="title {item.title ? '' : 'u-not-available'}">{item.title}</h3>
 										</header>
 										<p class="description">
-											<time class={item.date ? '' : 'u-not-available'} datetime={item.date}>{formatYear(item.date)}</time>
+											<time class={item.date ? '' : 'u-not-available'} datetime={item.date}
+												>{formatYear(item.date)}</time
+											>
 											<span aria-hidden="true"> · </span>
 											<span class="rating">
 												{#if item.rating !== null && item.rating !== undefined}
 													<i class="yellow star icon" aria-hidden="true"></i>
 													<span class="u-sr-only">{labels.rating}</span>
-													<span class="rating-value {item.rating ? '' : 'u-not-available'}">{formatRating(item.rating)}</span>
+													<span class="rating-value {item.rating ? '' : 'u-not-available'}"
+														>{formatRating(item.rating)}</span
+													>
 													<span class="u-sr-only">{formats.outOfTen}</span>
 												{:else}
 													<span class="u-not-available">{fallbacks.notAvailable}</span>
@@ -371,7 +408,14 @@
 				{/if}
 				{#if tvShows.length > 0}
 					<div role="group" aria-labelledby="typeahead-tv-heading">
-						<h2 id="typeahead-tv-heading" class="typeahead-results-heading ui label blue {titles.tvShows ? '' : 'u-not-available'}">{titles.tvShows}</h2>
+						<h2
+							id="typeahead-tv-heading"
+							class="typeahead-results-heading ui label blue {titles.tvShows
+								? ''
+								: 'u-not-available'}"
+						>
+							{titles.tvShows}
+						</h2>
 						{#each tvShows as item (item.id)}
 							<a
 								role="option"
@@ -385,21 +429,29 @@
 								aria-labelledby={`typeahead-result-type-tv-${item.id} typeahead-result-content-tv-${item.id}`}
 								tabindex={focusedResultId === `tv-${item.id}` ? 0 : -1}
 							>
-								<figure class="image" aria-hidden="true"><img src={item.posterUrl || item.imageUrl || notAvailable} alt="" /></figure>
+								<figure class="image" aria-hidden="true">
+									<img src={item.posterUrl || item.imageUrl || notAvailable} alt="" />
+								</figure>
 								<div class="content">
-									<span class="u-sr-only" id={`typeahead-result-type-tv-${item.id}`}>{titles.tvShows}</span>
+									<span class="u-sr-only" id={`typeahead-result-type-tv-${item.id}`}
+										>{titles.tvShows}</span
+									>
 									<div id={`typeahead-result-content-tv-${item.id}`}>
 										<header class="result-header">
 											<h3 class="title {item.title ? '' : 'u-not-available'}">{item.title}</h3>
 										</header>
 										<p class="description">
-											<time class={item.date ? '' : 'u-not-available'} datetime={item.date}>{formatYear(item.date)}</time>
+											<time class={item.date ? '' : 'u-not-available'} datetime={item.date}
+												>{formatYear(item.date)}</time
+											>
 											<span aria-hidden="true"> · </span>
 											<span class="rating">
 												{#if item.rating !== null && item.rating !== undefined}
 													<i class="yellow star icon" aria-hidden="true"></i>
 													<span class="u-sr-only">{labels.rating}</span>
-													<span class="rating-value {item.rating ? '' : 'u-not-available'}">{formatRating(item.rating)}</span>
+													<span class="rating-value {item.rating ? '' : 'u-not-available'}"
+														>{formatRating(item.rating)}</span
+													>
 													<span class="u-sr-only">{formats.outOfTen}</span>
 												{:else}
 													<span class="u-not-available">{fallbacks.notAvailable}</span>
@@ -580,7 +632,7 @@
 		.description {
 			line-height: 1.6;
 			color: var(--color-text-muted);
-			font-size: .85em;
+			font-size: 0.85em;
 		}
 
 		#status-messages-layer {

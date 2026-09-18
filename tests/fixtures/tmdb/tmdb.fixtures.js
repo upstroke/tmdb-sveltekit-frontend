@@ -140,6 +140,123 @@ export const rawResponses = {
 	},
 	tvGenres: {
 		genres: [{ id: 9648, name: 'Mystery' }]
+	},
+	tvDetailsWithSeasons: {
+		id: 420,
+		name: 'Dark',
+		overview: 'A German sci-fi thriller.',
+		homepage: 'https://www.netflix.com/dark',
+		vote_average: 8.8,
+		first_air_date: '2017-12-01',
+		backdrop_path: '/dark-backdrop.jpg',
+		poster_path: '/dark-poster.jpg',
+		genres: [{ id: 10765, name: 'Sci-Fi & Fantasy' }],
+		episode_run_time: [60],
+		production_companies: [{ id: 1, name: 'Wiedemann & Berg' }],
+		number_of_seasons: 3,
+		number_of_episodes: 26,
+		seasons: [
+			{
+				id: 1001,
+				season_number: 1,
+				name: 'Season 1',
+				episode_count: 10,
+				air_date: '2017-12-01',
+				poster_path: '/dark-s1.jpg',
+				overview: 'The first season.'
+			},
+			{
+				id: 1002,
+				season_number: 2,
+				name: 'Season 2',
+				episode_count: 8,
+				air_date: '2019-06-21',
+				poster_path: '/dark-s2.jpg',
+				overview: 'The second season.'
+			},
+			{
+				id: 1003,
+				season_number: 3,
+				name: 'Season 3',
+				episode_count: 8,
+				air_date: '2020-06-27',
+				poster_path: '/dark-s3.jpg',
+				overview: 'The final season.'
+			}
+		],
+		videos: {
+			results: [{ site: 'YouTube', type: 'Trailer', key: 'darkTrailer' }]
+		},
+		credits: { cast: [], crew: [] }
+	},
+	seasonDetails: {
+		id: 1001,
+		season_number: 1,
+		name: 'Season 1',
+		overview: 'The first season of Dark.',
+		air_date: '2017-12-01',
+		poster_path: '/dark-s1.jpg',
+		episodes: [
+			{
+				id: 5001,
+				episode_number: 1,
+				name: 'Secrets',
+				overview: 'Children go missing in Winden.',
+				air_date: '2017-12-01',
+				runtime: 51,
+				vote_average: 8.5,
+				still_path: '/dark-s1e1.jpg'
+			},
+			{
+				id: 5002,
+				episode_number: 2,
+				name: 'Lies',
+				overview: 'The past and future collide.',
+				air_date: '2017-12-01',
+				runtime: 53,
+				vote_average: 8.3,
+				still_path: null
+			},
+			{
+				id: 5003,
+				episode_number: 3,
+				name: 'Past and Present',
+				overview: 'It is 1986. Ulrich suspects the boys are in the caves.',
+				air_date: '2017-12-01',
+				runtime: 45,
+				vote_average: 8.1,
+				still_path: '/dark-s1e3.jpg'
+			}
+		]
+	},
+	seasonDetailsSpecials: {
+		id: 1000,
+		season_number: 0,
+		name: 'Specials',
+		overview: 'Special episodes and extras.',
+		air_date: '2017-11-01',
+		poster_path: '/dark-specials.jpg',
+		episodes: [
+			{
+				id: 5000,
+				episode_number: 0,
+				name: 'Making Of',
+				overview: 'Behind the scenes.',
+				air_date: '2017-11-01',
+				runtime: 10,
+				vote_average: 7.5,
+				still_path: '/dark-making-of.jpg'
+			}
+		]
+	},
+	seasonDetailsEmpty: {
+		id: 1004,
+		season_number: 4,
+		name: 'Season 4',
+		overview: 'A season with no episodes yet.',
+		air_date: null,
+		poster_path: null,
+		episodes: []
 	}
 };
 
@@ -249,49 +366,241 @@ export const mappedFixtures = {
 		job: index === 0 ? undefined : `Job ${index + 1}`,
 		department: index === 0 ? undefined : `Department ${index + 1}`,
 		profile_path: index === 0 ? null : `/crew-${index + 1}.jpg`
-	}))
-};
-
-mappedFixtures.detailsWithCredits = {
-	...mappedFixtures.details,
-	credits: {
-		cast: mappedFixtures.cast,
-		crew: mappedFixtures.crew
+	})),
+	detailsWithCredits: {
+		...Array.from({ length: 1 }, () => ({
+			id: 680,
+			title: 'Pulp Fiction',
+			release_date: '1994-09-10',
+			overview: 'Multiple stories intertwine in Los Angeles.',
+			homepage: 'https://example.com/pulp-fiction',
+			genres: [{ id: 53, name: 'Thriller' }],
+			vote_average: 8.5,
+			runtime: 154,
+			episode_run_time: [45],
+			production_companies: [{ id: 14, name: 'Miramax' }],
+			backdrop_path: '/pulp-fiction-backdrop.jpg',
+			poster_path: '/pulp-fiction-poster.jpg',
+			certification: 'PG',
+			videos: {
+				results: [
+					{ site: 'YouTube', type: 'Trailer', official: false, key: 'firstTrailer' },
+					{ site: 'YouTube', type: 'Trailer', official: true, key: 'secondTrailer' },
+					{ site: 'Vimeo', type: 'Trailer', official: true, key: 'ignoreMe' }
+				]
+			},
+			credits: {
+				cast: Array.from({ length: 22 }, (_, index) => ({
+					id: index + 1,
+					credit_id: `cast-${index + 1}`,
+					name: `Cast Person ${index + 1}`,
+					character: `Character ${index + 1}`,
+					order: index,
+					profile_path: index === 0 ? null : `/cast-${index + 1}.jpg`
+				})),
+				crew: Array.from({ length: 21 }, (_, index) => ({
+					id: index + 1,
+					credit_id: `crew-${index + 1}`,
+					name: `Crew Person ${index + 1}`,
+					job: index === 0 ? undefined : `Job ${index + 1}`,
+					department: index === 0 ? undefined : `Department ${index + 1}`,
+					profile_path: index === 0 ? null : `/crew-${index + 1}.jpg`
+				}))
+			},
+			providers: [
+				{
+					providerId: 8,
+					providerName: 'Netflix',
+					logoPath: '/netflix.png',
+					link: 'https://netflix.com/de/title/80100172',
+					type: 'flatrate'
+				}
+			]
+		}))[0]
+	},
+	// TV-specific details fixture
+	tvShowDetails: {
+		id: 420,
+		title: 'Dark',
+		mediaType: 'tv',
+		rating: 8.2,
+		certification: 'PG',
+		genres: [{ id: 9648, name: 'Mystery' }],
+		overview: 'A missing child brings dark secrets to light.',
+		homepage: 'https://example.com/dark',
+		trailerUrls: [
+			{ url: 'https://youtube.com/watch?v=trailer1' },
+			{ url: 'https://youtube.com/watch?v=trailer2' }
+		],
+		releaseDate: '2017-12-01',
+		runtime: 60,
+		productionCompanies: [{ id: 1, name: 'Wiedemann & Berg Television' }],
+		cast: Array.from({ length: 5 }, (_, index) => ({
+			id: index + 1,
+			credit_id: `cast-${index + 1}`,
+			name: `Cast Person ${index + 1}`,
+			character: `Character ${index + 1}`,
+			order: index,
+			profile_path: index === 0 ? null : `/cast-${index + 1}.jpg`
+		})),
+		crew: Array.from({ length: 5 }, (_, index) => ({
+			id: index + 1,
+			credit_id: `crew-${index + 1}`,
+			name: `Crew Person ${index + 1}`,
+			job: index === 0 ? undefined : `Job ${index + 1}`,
+			department: index === 0 ? undefined : `Department ${index + 1}`,
+			profile_path: index === 0 ? null : `/crew-${index + 1}.jpg`
+		})),
+		imageUrl: '/dark-backdrop.jpg',
+		posterUrl: '/dark-poster.jpg'
+	},
+	tvProviders: {
+		providers: [
+			{
+				providerId: 8,
+				providerName: 'Netflix',
+				logoPath: '/netflix.png',
+				link: 'https://netflix.com/de/title/80100172',
+				type: 'flatrate'
+			}
+		]
+	},
+	tvShowDetailsWithSeasons: {
+		id: 420,
+		mediaType: 'tv',
+		title: 'Dark',
+		numberOfSeasons: 3,
+		numberOfEpisodes: 26,
+		seasons: [
+			{
+				id: 1001,
+				season_number: 1,
+				name: 'Season 1',
+				episode_count: 10,
+				air_date: '2017-12-01',
+				poster_path: '/dark-s1.jpg',
+				overview: 'The first season.',
+				episodes: [
+					{
+						id: 5001,
+						episode_number: 1,
+						name: 'Pilot',
+						overview: 'The beginning.',
+						air_date: '2021-01-01'
+					},
+					{
+						id: 5002,
+						episode_number: 2,
+						name: 'Follow-Up',
+						overview: 'The sequel.',
+						air_date: '2021-01-08'
+					},
+					{
+						id: 5003,
+						episode_number: 3,
+						name: 'Finale',
+						overview: 'The end.',
+						air_date: '2021-01-15'
+					}
+				]
+			},
+			{
+				id: 1002,
+				season_number: 2,
+				name: 'Season 2',
+				episode_count: 8,
+				air_date: '2019-06-21',
+				poster_path: '/dark-s2.jpg',
+				overview: 'The second season.',
+				episodes: [
+					{
+						id: 5004,
+						episode_number: 1,
+						name: 'New Start',
+						overview: 'Season 2 begins.',
+						air_date: '2022-01-01'
+					}
+				]
+			},
+			{
+				id: 1003,
+				season_number: 3,
+				name: 'Season 3',
+				episode_count: 8,
+				air_date: '2020-06-27',
+				poster_path: '/dark-s3.jpg',
+				overview: 'The final season.',
+				episodes: []
+			}
+		]
+	},
+	seasonDetails: {
+		id: 1001,
+		seasonNumber: 1,
+		name: 'Season 1',
+		overview: 'The first season of Dark.',
+		airDate: '2017-12-01',
+		posterUrl: 'https://image.tmdb.org/t/p/w342/dark-s1.jpg',
+		episodes: [
+			{
+				id: 5001,
+				episodeNumber: 1,
+				name: 'Secrets',
+				overview: 'Children go missing in Winden.',
+				airDate: '2017-12-01',
+				runtime: 51,
+				rating: 8.5,
+				stillUrl: 'https://image.tmdb.org/t/p/w300/dark-s1e1.jpg'
+			},
+			{
+				id: 5002,
+				episodeNumber: 2,
+				name: 'Lies',
+				overview: 'The past and future collide.',
+				airDate: '2017-12-01',
+				runtime: 53,
+				rating: 8.3,
+				stillUrl: null
+			},
+			{
+				id: 5003,
+				episodeNumber: 3,
+				name: 'Past and Present',
+				overview: "It's 1986. Ulrich suspects the boys are in the caves.",
+				airDate: '2017-12-01',
+				runtime: 45,
+				rating: 8.1,
+				stillUrl: 'https://image.tmdb.org/t/p/w300/dark-s1e3.jpg'
+			}
+		]
+	},
+	seasonDetailsSpecials: {
+		id: 1000,
+		seasonNumber: 0,
+		name: 'Specials',
+		overview: 'Special episodes and extras.',
+		airDate: '2017-11-01',
+		posterUrl: 'https://image.tmdb.org/t/p/w342/dark-specials.jpg',
+		episodes: [
+			{
+				id: 5000,
+				episodeNumber: 0,
+				name: 'Making Of',
+				overview: 'Behind the scenes.',
+				airDate: '2017-11-01',
+				runtime: 10,
+				rating: 7.5,
+				stillUrl: 'https://image.tmdb.org/t/p/w300/dark-making-of.jpg'
+			}
+		]
+	},
+	seasonDetailsEmpty: {
+		id: 1004,
+		seasonNumber: 4,
+		name: 'Season 4',
+		overview: 'A season with no episodes yet.',
+		airDate: null,
+		posterUrl: null,
+		episodes: []
 	}
-};
-
-// TV-specific details fixture
-mappedFixtures.tvShowDetails = {
-	id: 420,
-	title: 'Dark',
-	mediaType: 'tv',
-	rating: 8.2,
-	certification: 'PG',
-	genres: [{ id: 9648, name: 'Mystery' }],
-	overview: 'A missing child brings dark secrets to light.',
-	homepage: 'https://example.com/dark',
-	trailerUrls: [
-		{ url: 'https://youtube.com/watch?v=trailer1' },
-		{ url: 'https://youtube.com/watch?v=trailer2' }
-	],
-	releaseDate: '2017-12-01',
-	runtime: 60,
-	productionCompanies: [{ id: 1, name: 'Wiedemann & Berg Television' }],
-	cast: mappedFixtures.cast.slice(0, 5), // e.g. only first 5
-	crew: mappedFixtures.crew.slice(0, 5),
-	imageUrl: '/dark-backdrop.jpg',
-	posterUrl: '/dark-poster.jpg'
-};
-
-// Provider fixture for TV
-mappedFixtures.tvProviders = {
-	providers: [
-		{
-			providerId: 8,
-			providerName: 'Netflix',
-			logoPath: '/netflix.png',
-			link: 'https://netflix.com/de/title/80100172',
-			type: 'flatrate'
-		}
-	]
 };
