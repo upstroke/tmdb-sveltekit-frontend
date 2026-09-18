@@ -38,9 +38,12 @@
 				"streamingDataProvidedBy": "Provided by",
 				"providerTypeFlatrate": "Flatrate",
 				"providerTypeRent": "Rent",
-				"providerTypeBuy": "Buy"
+				"providerTypeBuy": "Buy",
+				"seasons": "Seasons",
+				"season": "Season"
 			},
 			"messages": {
+				"loading": "Loading …",
 				"loadMoreError": "More content could not be loaded.",
 				"unknownError": "Unknown error",
 				"pageSaveWarning": "Page state could not be saved:",
@@ -129,9 +132,12 @@
 				"streamingDataProvidedBy": "Bereitgestellt von",
 				"providerTypeFlatrate": "Flatrate",
 				"providerTypeRent": "Leihen",
-				"providerTypeBuy": "Kaufen"
+				"providerTypeBuy": "Kaufen",
+				"seasons": "Staffeln",
+				"season": "Staffel"
 			},
 			"messages": {
+				"loading": "Lade Inhalte …",
 				"loadMoreError": "Weitere Inhalte konnten nicht geladen werden.",
 				"unknownError": "Unbekannter Fehler",
 				"pageSaveWarning": "Seitenzustand konnte nicht gespeichert werden:",
@@ -220,9 +226,12 @@
 				"streamingDataProvidedBy": "Proporcionado por",
 				"providerTypeFlatrate": "Suscripción",
 				"providerTypeRent": "Alquilar",
-				"providerTypeBuy": "Comprar"
+				"providerTypeBuy": "Comprar",
+				"seasons": "Temporadas",
+				"season": "Temporada"
 			},
 			"messages": {
+				"loading": "Cargando contenido …",
 				"loadMoreError": "No se pudo cargar más contenido.",
 				"unknownError": "Error desconocido",
 				"pageSaveWarning": "No se pudo guardar el estado de la página:",
@@ -311,9 +320,12 @@
 				"streamingDataProvidedBy": "Fourni par",
 				"providerTypeFlatrate": "Abonnement",
 				"providerTypeRent": "Louer",
-				"providerTypeBuy": "Acheter"
+				"providerTypeBuy": "Acheter",
+				"seasons": "Saisons",
+				"season": "Saison"
 			},
 			"messages": {
+				"loading": "Chargement du contenu …",
 				"loadMoreError": "Impossible de charger plus de contenu.",
 				"unknownError": "Erreur inconnue",
 				"pageSaveWarning": "Impossible d’enregistrer l’état de la page :",
@@ -368,7 +380,7 @@
 			"languageCode": "ru-RU",
 			"languageShortCode": "RU",
 			"fallbacks": {
-				"notAvailable": "N/A",
+				"notAvailable": "Н/Д",
 				"dateFallback": "- -"
 			},
 			"labels": {
@@ -397,14 +409,17 @@
 				"navigationToggle": "Открыть или закрыть навигацию",
 				"mainNavigation": "Основная навигация",
 				"movie": "Фильм",
-				"tvShow": "ТВ",
+				"tvShow": "Телешоу",
 				"streamingProviders": "Стриминговые сервисы",
 				"streamingDataProvidedBy": "Предоставлено",
 				"providerTypeFlatrate": "Подписка",
 				"providerTypeRent": "Аренда",
-				"providerTypeBuy": "Покупка"
+				"providerTypeBuy": "Покупка",
+				"seasons": "сезоны",
+				"season": "сезон"
 			},
 			"messages": {
+				"loading": "Загрузка содержимого …",
 				"loadMoreError": "Не удалось загрузить больше контента.",
 				"unknownError": "Неизвестная ошибка",
 				"pageSaveWarning": "Не удалось сохранить состояние страницы:",
@@ -493,9 +508,12 @@
 				"streamingDataProvidedBy": "Cung cấp bởi",
 				"providerTypeFlatrate": "Góµ»£c",
 				"providerTypeRent": "Thuêµª",
-				"providerTypeBuy": "Mua"
+				"providerTypeBuy": "Mua",
+				"seasons": "Mùa",
+				"season": "Mùa"
 			},
 			"messages": {
+				"loading": "Đang tải nội dung …",
 				"loadMoreError": "Không thể tải thêm nội dung.",
 				"unknownError": "Lỗi không xác định",
 				"pageSaveWarning": "Không thể lưu trạng thái trang:",
