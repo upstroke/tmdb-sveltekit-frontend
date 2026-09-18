@@ -268,7 +268,7 @@ describe('TabGroupe', () => {
 		const tabButtons = screen.getAllByRole('tab');
 		await user.click(tabButtons[1]);
 
-		expect(onTabSelect).toHaveBeenCalledOnce();
+		expect(onTabSelect).toHaveBeenCalledTimes(1);
 		expect(onTabSelect).toHaveBeenCalledWith('season-2');
 	});
 
