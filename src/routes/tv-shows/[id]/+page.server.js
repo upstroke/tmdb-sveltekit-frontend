@@ -16,59 +16,57 @@ import { createTmdbApi } from '$lib/services/tmdb-api.js';
  * @returns {Promise<{ tvShow: Record<string, unknown> | null, providers: Object | null, error: string | null }>} TV show object for the detail page.
  */
 export async function load({ fetch, params, url }) {
-  const locale = resolveLocale(url.searchParams.get('locale'));
-  const { messages } = getLocaleText(locale);
+	const locale = resolveLocale(url.searchParams.get('locale'));
+	const { messages } = getLocaleText(locale);
 
-  if (!TMDB_API_KEY) {
-    return {
-      tvShow: null,
-      providers: null,
-      error: messages.apiKeyMissing
-    };
-  }
+	if (!TMDB_API_KEY) {
+		return {
+			tvShow: null,
+			error: messages.apiKeyMissing
+		};
+	}
 
-  try {
-    const api = createTmdbApi(fetch, TMDB_API_KEY, locale);
+	try {
+		const api = createTmdbApi(fetch, TMDB_API_KEY, locale);
 
-    const [details, providers] = await Promise.all([
-      api.getTVShowDetails(params.id),
-      api.getWatchProviders('tv', params.id)
-    ]);
+		const [details, providers] = await Promise.all([
+			api.getTVShowDetails(params.id),
+			api.getWatchProviders('tv', params.id)
+		]);
 
-    // Fetch episodes for each season
-    const seasonsWithEpisodes = await Promise.all(
-      (details.seasons || []).map(async (season) => {
-        try {
-          const seasonDetails = await api.getTVSeasonDetails(params.id, season.season_number);
-          return {
-            ...season,
-            episodes: seasonDetails.episodes
-          };
-        } catch (err) {
-          console.warn(`Failed to fetch season ${season.season_number}:`, err.message);
-          return {
-            ...season,
-            episodes: []
-          };
-        }
-      })
-    );
+		// Fetch episodes for each season
+		const seasonsWithEpisodes = await Promise.all(
+			(details.seasons || []).map(async (season) => {
+				try {
+					const seasonDetails = await api.getTVSeasonDetails(params.id, season.season_number);
+					return {
+						...season,
+						episodes: seasonDetails.episodes
+					};
+				} catch (err) {
+					console.warn(`Failed to fetch season ${season.season_number}:`, err.message);
+					return {
+						...season,
+						episodes: []
+					};
+				}
+			})
+		);
 
-    return {
-      tvShow: {
-        ...details,
-        seasons: seasonsWithEpisodes
-      },
-      providers,
-      error: null
-    };
-  } catch (error) {
-    console.error('Failed to load tv details:', error);
+		return {
+			tvShow: {
+				...details,
+				seasons: seasonsWithEpisodes
+			},
+			providers,
+			error: null
+		};
+	} catch (error) {
+		console.error('Failed to load tv details:', error);
 
-    return {
-      tvShow: null,
-      providers: null,
-      error: messages.tvShowLoadError
-    };
-  }
+		return {
+			tvShow: null,
+			error: messages.tvShowLoadError
+		};
+	}
 }
