@@ -15,7 +15,7 @@ test.describe('Load More - Movies (F-LM)', () => {
 			tag: ['@loadmore', '@movies', '@black-box', '@regression']
 		},
 		async ({ page }) => {
-			await page.goto('http://localhost:5173/movies?locale=en-US');
+			await page.goto('/movies?locale=en-US');
 			await expect(page).toHaveTitle(/Movies.*TMDB/);
 
 			const cardItems = page.locator('ul.media-card-list > li');
@@ -46,7 +46,7 @@ test.describe('Load More - Movies (F-LM)', () => {
 			tag: ['@loadmore', '@movies', '@black-box', '@regression']
 		},
 		async ({ page }) => {
-			await page.goto('http://localhost:5173/movies?locale=en-US');
+			await page.goto('/movies?locale=en-US');
 			await expect(page).toHaveTitle(/Movies.*TMDB/);
 
 			const cardItems = page.locator('ul.media-card-list > li');
@@ -97,7 +97,7 @@ test.describe('Load More - Movies (F-LM)', () => {
 			tag: ['@loadmore', '@movies', '@black-box', '@regression']
 		},
 		async ({ page }) => {
-			await page.goto('http://localhost:5173/movies?locale=en-US');
+			await page.goto('/movies?locale=en-US');
 			await expect(page).toHaveTitle(/Movies.*TMDB/);
 
 			const cardItems = page.locator('ul.media-card-list > li');

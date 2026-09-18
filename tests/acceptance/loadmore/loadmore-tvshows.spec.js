@@ -16,7 +16,7 @@ test.describe('Load More - TV Shows (F-LM)', () => {
 			tag: ['@loadmore', '@tvshows', '@black-box', '@regression']
 		},
 		async ({ page }) => {
-			await page.goto('http://localhost:5173/tv-shows?locale=en-US');
+			await page.goto('/tv-shows?locale=en-US');
 			await expect(page).toHaveTitle(/TV.*TMDB/);
 
 			const cardItems = page.locator('ul.media-card-list > li');
@@ -54,7 +54,7 @@ test.describe('Load More - TV Shows (F-LM)', () => {
 			tag: ['@loadmore', '@tvshows', '@black-box', '@regression']
 		},
 		async ({ page }) => {
-			await page.goto('http://localhost:5173/tv-shows?locale=en-US');
+			await page.goto('/tv-shows?locale=en-US');
 			await expect(page).toHaveTitle(/TV.*TMDB/);
 
 			const cardItems = page.locator('ul.media-card-list > li');

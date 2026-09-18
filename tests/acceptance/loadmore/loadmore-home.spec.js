@@ -17,7 +17,7 @@ test.describe('Load More - Home (F-LM)', () => {
 			tag: ['@loadmore', '@home', '@black-box', '@regression']
 		},
 		async ({ page }) => {
-			await page.goto('http://localhost:5173/?locale=en-US');
+			await page.goto('/?locale=en-US');
 			await expect(page).toHaveTitle(/Home.*TMDB/);
 
 			const cardItems = page.locator('ul.media-card-list > li');
@@ -55,7 +55,7 @@ test.describe('Load More - Home (F-LM)', () => {
 			tag: ['@loadmore', '@home', '@black-box', '@regression']
 		},
 		async ({ page }) => {
-			await page.goto('http://localhost:5173/?locale=en-US');
+			await page.goto('/?locale=en-US');
 			await expect(page).toHaveTitle(/Home.*TMDB/);
 
 			const cardItems = page.locator('ul.media-card-list > li');
@@ -103,7 +103,7 @@ test.describe('Load More - Home (F-LM)', () => {
 			tag: ['@loadmore', '@home', '@black-box', '@regression']
 		},
 		async ({ page }) => {
-			await page.goto('http://localhost:5173/?locale=en-US');
+			await page.goto('/?locale=en-US');
 			await expect(page).toHaveTitle(/Home.*TMDB/);
 
 			const cardItems = page.locator('ul.media-card-list > li');
