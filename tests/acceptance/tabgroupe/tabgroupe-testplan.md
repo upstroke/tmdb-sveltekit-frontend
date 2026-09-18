@@ -259,3 +259,4 @@ Scenario: Tab leaves the season selector
   And the "Season 1" tab has keyboard focus
   When I press "Tab"
   Then no season tab should have keyboard focus
+

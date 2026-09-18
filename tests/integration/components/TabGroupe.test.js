@@ -394,3 +394,4 @@ describe('TabGroupe', () => {
 		expect(refreshedItems[0]).toHaveAttribute('tabindex', '0');
 	});
 });
+
