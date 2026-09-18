@@ -186,8 +186,8 @@ describe('tv show detail route load', () => {
 			url: createUrl('?locale=en')
 		});
 
-		expect(result.tvShow.numberOfSeasons).toBe(3);
-		expect(result.tvShow.numberOfEpisodes).toBe(26);
+		expect(result.tvShow.number_of_seasons).toBe(3);
+		expect(result.tvShow.number_of_episodes).toBe(26);
 		expect(result.tvShow.seasons).toHaveLength(3);
 		expect(result.tvShow.seasons[0].episodes).toHaveLength(3);
 	});
@@ -217,7 +217,7 @@ describe('tv show detail route load', () => {
 		expect(result.tvShow.seasons[0].episodes).toEqual([]);
 		expect(consoleWarnSpy).toHaveBeenCalledWith(
 			'Failed to fetch season 1:',
-			expect.any(Error)
+			'season failed' // <-- err.message, nicht err!
 		);
 	});
 });
