@@ -51,6 +51,10 @@ test-all-ui:
 	@echo "Running all tests with UI..."
 	npm run test:acceptance:ui
 
+test-coverage:
+	@echo "Generating coverage report..."
+	npm run test:vitest:coverage
+
 test-precommit:
 	@echo "Running unit- and integration-tests..."
 	npm run test:precommit

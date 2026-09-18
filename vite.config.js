@@ -52,7 +52,7 @@ export default defineConfig({
 				perFile: true,
 
 				// 80% statement coverage
-				statements: 50
+				statements: 80
 			}
 		}
 	}
