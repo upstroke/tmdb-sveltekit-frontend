@@ -25,7 +25,7 @@
 		"test:components": "vitest run tests/integration/components",
 		"test:integration": "vitest run tests/integration",
 		"test:all": "npm run test:unit && npm run test:components && npm run test:integration && npm run test:acceptance",
-		"test:precommit": "echo 'Running unit tests...' && npm run test:unit && echo 'Running format check and ESLint...' && npm run lint && echo 'Running integration tests...' && npm run test:integration && echo 'All pre-commit checks passed.'"
+		"test:precommit": "echo 'Running unit tests...' && npm run --silent test:unit && echo 'Running format check and ESLint...' && npm run --silent lint && echo 'Running integration tests...' && npm run --silent test:integration && echo 'All pre-commit checks passed.'"
 	},
 	"devDependencies": {
 		"@axe-core/playwright": "^4.13.0",
