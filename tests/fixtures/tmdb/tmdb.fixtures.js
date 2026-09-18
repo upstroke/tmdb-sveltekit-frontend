@@ -479,7 +479,30 @@ export const mappedFixtures = {
 				episode_count: 10,
 				air_date: '2017-12-01',
 				poster_path: '/dark-s1.jpg',
-				overview: 'The first season.'
+				overview: 'The first season.',
+				episodes: [
+					{
+						id: 5001,
+						episode_number: 1,
+						name: 'Pilot',
+						overview: 'The beginning.',
+						air_date: '2021-01-01'
+					},
+					{
+						id: 5002,
+						episode_number: 2,
+						name: 'Follow-Up',
+						overview: 'The sequel.',
+						air_date: '2021-01-08'
+					},
+					{
+						id: 5003,
+						episode_number: 3,
+						name: 'Finale',
+						overview: 'The end.',
+						air_date: '2021-01-15'
+					}
+				]
 			},
 			{
 				id: 1002,
@@ -488,7 +511,16 @@ export const mappedFixtures = {
 				episode_count: 8,
 				air_date: '2019-06-21',
 				poster_path: '/dark-s2.jpg',
-				overview: 'The second season.'
+				overview: 'The second season.',
+				episodes: [
+					{
+						id: 5004,
+						episode_number: 1,
+						name: 'New Start',
+						overview: 'Season 2 begins.',
+						air_date: '2022-01-01'
+					}
+				]
 			},
 			{
 				id: 1003,
@@ -497,7 +529,8 @@ export const mappedFixtures = {
 				episode_count: 8,
 				air_date: '2020-06-27',
 				poster_path: '/dark-s3.jpg',
-				overview: 'The final season.'
+				overview: 'The final season.',
+				episodes: []
 			}
 		]
 	},

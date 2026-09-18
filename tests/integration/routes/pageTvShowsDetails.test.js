@@ -105,4 +105,85 @@ describe('TvShowDetailsPage (Integration)', () => {
 			expect(screen.getByText(i18n.contentLoadError)).toBeInTheDocument();
 		});
 	});
+
+	// Statement coverage: TV show detail page renders seasons with TabGroupe
+	it('renders TV show detail page with seasons and TabGroupe component', async () => {
+		const tvShowWithSeasons = {
+			...mappedFixtures.tvShowDetails,
+			numberOfSeasons: 3,
+			numberOfEpisodes: 26,
+			seasons: mappedFixtures.tvShowDetailsWithSeasons.seasons
+		};
+
+		const data = createData({ tvShow: tvShowWithSeasons });
+		render(TvShowDetailsPage, { props: { data } });
+
+		await waitFor(() => {
+			// TabGroupe tablist should be present
+			expect(screen.getByRole('tablist')).toBeInTheDocument();
+
+			// All season tabs should be rendered
+			const seasonTabs = screen.getAllByRole('tab');
+			expect(seasonTabs).toHaveLength(3);
+			expect(seasonTabs[0]).toHaveTextContent('Season 1');
+			expect(seasonTabs[1]).toHaveTextContent('Season 2');
+			expect(seasonTabs[2]).toHaveTextContent('Season 3');
+		});
+	});
+
+	// Statement coverage: First season episodes are displayed by default
+	it('displays episodes for the first season by default', async () => {
+		const tvShowWithSeasons = {
+			...mappedFixtures.tvShowDetails,
+			numberOfSeasons: 3,
+			numberOfEpisodes: 26,
+			seasons: mappedFixtures.tvShowDetailsWithSeasons.seasons
+		};
+
+		const data = createData({ tvShow: tvShowWithSeasons });
+		render(TvShowDetailsPage, { props: { data } });
+
+		await waitFor(() => {
+			// First season should be active
+			const seasonTabs = screen.getAllByRole('tab');
+			expect(seasonTabs[0]).toHaveAttribute('aria-selected', 'true');
+
+			// Episodes should be visible
+			expect(screen.getByText('1. Pilot')).toBeInTheDocument();
+			expect(screen.getByText('2. Follow-Up')).toBeInTheDocument();
+		});
+	});
+
+	// Branch coverage: Season with no episodes shows content fallback
+	it('shows content fallback for season with no episodes', async () => {
+		const tvShowWithEmptySeason = {
+			...mappedFixtures.tvShowDetails,
+			numberOfSeasons: 1,
+			numberOfEpisodes: 0,
+			seasons: [
+				{
+					id: 1001,
+					season_number: 1,
+					name: 'Season 1',
+					episode_count: 0,
+					air_date: '2017-12-01',
+					poster_path: '/dark-s1.jpg',
+					overview: 'The first season.',
+					episodes: []
+				}
+			]
+		};
+
+		const data = createData({ tvShow: tvShowWithEmptySeason });
+		const { container } = render(TvShowDetailsPage, { props: { data } });
+
+		await waitFor(() => {
+			// Should show season overview when episodes array is empty
+			expect(container.textContent).toContain('The first season.');
+
+			// Check that there's no episodes list
+			const episodesList = container.querySelector('ol.episodes-list');
+			expect(episodesList).not.toBeInTheDocument();
+		});
+	});
 });

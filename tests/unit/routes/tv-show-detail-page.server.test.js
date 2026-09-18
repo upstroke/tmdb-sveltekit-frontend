@@ -151,4 +151,73 @@ describe('tv show detail route load', () => {
 		});
 		expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to load tv details:', expect.any(Error));
 	});
+
+	// =========================================================================
+	// SEASONS TESTS — TV show detail route with seasons
+	// =========================================================================
+
+	// Statement coverage: the TV detail route loads TV details with seasons and episodes
+	it('successfully loads TV details with seasons and episodes', async () => {
+		const providers = {
+			link: rawResponses.tvWatchProviders.results.US.link,
+			providers: [
+				{
+					providerId: 119,
+					providerName: 'Amazon Video',
+					type: 'buy',
+					link: rawResponses.tvWatchProviders.results.US.link,
+					logoPath: '/amazon.png',
+					displayPriority: 2
+				}
+			]
+		};
+
+		const api = {
+			getTVShowDetails: vi.fn().mockResolvedValue(rawResponses.tvDetailsWithSeasons),
+			getWatchProviders: vi.fn().mockResolvedValue(providers),
+			getTVSeasonDetails: vi.fn().mockResolvedValue(rawResponses.seasonDetails)
+		};
+		mockCreateTmdbApi.mockReturnValue(api);
+		const { load } = await import('../../../src/routes/tv-shows/[id]/+page.server.js');
+
+		const result = await load({
+			fetch: vi.fn(),
+			params: { id: '420' },
+			url: createUrl('?locale=en')
+		});
+
+		expect(result.tvShow.numberOfSeasons).toBe(3);
+		expect(result.tvShow.numberOfEpisodes).toBe(26);
+		expect(result.tvShow.seasons).toHaveLength(3);
+		expect(result.tvShow.seasons[0].episodes).toHaveLength(3);
+	});
+
+	// Branch coverage: season loading failure returns empty episodes array
+	it('returns empty episodes array when season loading fails', async () => {
+		const providers = {
+			link: rawResponses.tvWatchProviders.results.US.link,
+			providers: []
+		};
+
+		const api = {
+			getTVShowDetails: vi.fn().mockResolvedValue(rawResponses.tvDetailsWithSeasons),
+			getWatchProviders: vi.fn().mockResolvedValue(providers),
+			getTVSeasonDetails: vi.fn().mockRejectedValue(new Error('season failed'))
+		};
+		mockCreateTmdbApi.mockReturnValue(api);
+		const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+		const { load } = await import('../../../src/routes/tv-shows/[id]/+page.server.js');
+
+		const result = await load({
+			fetch: vi.fn(),
+			params: { id: '420' },
+			url: createUrl('?locale=en')
+		});
+
+		expect(result.tvShow.seasons[0].episodes).toEqual([]);
+		expect(consoleWarnSpy).toHaveBeenCalledWith(
+			'Failed to fetch season 1:',
+			expect.any(Error)
+		);
+	});
 });
