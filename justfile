@@ -50,3 +50,7 @@ test-all:
 test-all-ui:
 	@echo "Running all tests with UI..."
 	npm run test:acceptance:ui
+
+test-precommit:
+	@echo "Running unit- and integration-tests..."
+	npm run test:precommit

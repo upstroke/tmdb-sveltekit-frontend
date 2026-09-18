@@ -147,7 +147,8 @@
 			<ol class="episodes-list" bind:this={episodeListRefs[tabIndex]}>
 				{#each tab.episodes as episode, episodeIndex (episode.id ?? episodeIndex)}
 					<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
-					<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->					<li
+					<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+					<li
 						class="episode-item"
 						tabindex={isSelected(tab.id) && episodeIndex === focusedEpisodeIndex[tabIndex] ? 0 : -1}
 						onkeydown={(event) =>

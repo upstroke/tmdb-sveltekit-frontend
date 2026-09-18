@@ -7,7 +7,7 @@
 		"dev": "vite dev",
 		"build": "vite build",
 		"preview": "vite preview",
-		"prepare": "svelte-kit sync || echo ''",
+		"prepare": "husky",
 		"lint": "npm run format:check && npm run lint:eslint",
 		"format": "prettier --write ./src",
 		"format:check": "prettier --check ./src",
@@ -24,7 +24,8 @@
 		"test:unit": "vitest run tests/unit --pool=threads",
 		"test:components": "vitest run tests/integration/components",
 		"test:integration": "vitest run tests/integration",
-		"test:all": "npm run test:unit && npm run test:components && npm run test:integration && npm run test:acceptance"
+		"test:all": "npm run test:unit && npm run test:components && npm run test:integration && npm run test:acceptance",
+		"test:precommit": "echo 'Running unit tests with coverage...' && npm run test:vitest:coverage && echo 'Running format check and ESLint...' && npm run lint && echo 'Running integration tests...' && npm run --silent test:integration && echo 'All pre-commit checks passed.'"
 	},
 	"devDependencies": {
 		"@axe-core/playwright": "^4.13.0",
@@ -43,6 +44,7 @@
 		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-svelte": "^3.19.0",
 		"globals": "^17.6.0",
+		"husky": "^9.1.7",
 		"jsdom": "^30.0.1",
 		"prettier": "^3.8.3",
 		"prettier-plugin-svelte": "^4.1.0",
