@@ -79,7 +79,7 @@ test.describe('Main navigation', () => {
 			tag: ['@navigation', '@desktop', '@black-box', '@regression', '@a11y']
 		},
 		async ({ page }) => {
-			await page.goto('http://localhost:5173/?locale=en-US');
+			await page.goto('/?locale=en-US');
 			await expect(page).toHaveTitle(/Home.*TMDB/);
 
 			await page.locator('#movies a').click();
@@ -107,7 +107,7 @@ test.describe('Main navigation', () => {
 		async ({ page }) => {
 			await page.setViewportSize({ width: 370, height: 667 });
 
-			await page.goto('http://localhost:5173/?locale=en-US');
+			await page.goto('/?locale=en-US');
 			await expect(page).toHaveTitle(/Home.*TMDB/);
 
 			const { burgerButton, homeLink, openBurgerMenu, closeBurgerMenu } =
@@ -134,7 +134,7 @@ test.describe('Main navigation', () => {
 		async ({ page }) => {
 			await page.setViewportSize({ width: 370, height: 667 });
 
-			await page.goto('http://localhost:5173/?locale=en-US');
+			await page.goto('/?locale=en-US');
 			await expect(page).toHaveTitle(/Home.*TMDB/);
 
 			const { burgerButton, homeLink, openBurgerMenu, closeBurgerMenu } =
@@ -189,7 +189,7 @@ test.describe('Main navigation', () => {
 		async ({ page }) => {
 			await page.setViewportSize({ width: 370, height: 667 });
 
-			await page.goto('http://localhost:5173/?locale=en-US');
+			await page.goto('/?locale=en-US');
 			await expect(page).toHaveTitle(/Home.*TMDB/);
 
 			const { burgerButton, homeLink, openBurgerMenu, closeBurgerMenu } =
