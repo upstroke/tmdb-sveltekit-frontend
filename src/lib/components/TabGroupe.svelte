@@ -8,21 +8,24 @@
 
 	let { tabs = [], initialTab = undefined, ariaLabel = '', onTabSelect = undefined } = $props();
 
-	if (import.meta.env.DEV && !ariaLabel) {
-		console.warn(
-			'[TabGroupe] The ariaLabel prop is required for accessibility (WCAG 4.1.2). Please provide a descriptive label for the tab list.'
-		);
-	}
+	$effect(() => {
+		if (import.meta.env.DEV && !ariaLabel) {
+			console.warn(
+				'[TabGroupe] The ariaLabel prop is required for accessibility (WCAG 4.1.2). Please provide a descriptive label for the tab list.'
+			);
+		}
+	});
 
 	// Ensure activeTab is always a string
-	let activeTab = $state(String(initialTab ?? tabs[0]?.id ?? ''));
+	let activeTab = $state(String(initialTab ?? ''));
 
 	$effect(() => {
-		// Sobald activeTab sich ändert, sucht Svelte das Element im AKTUELLEN DOM
+		if (!activeTab && tabs.length > 0) {
+			activeTab = String(tabs[0].id);
+		}
+
 		if (activeTab) {
 			const activeElement = document.getElementById(`tab-${activeTab}`);
-
-			// Korrektur: Nutze getAttribute('role'), da .role auf DOM-Knoten undefined sein kann
 			const currentRole = document.activeElement?.getAttribute('role');
 			const isButton = document.activeElement?.tagName === 'BUTTON';
 
@@ -32,6 +35,7 @@
 		}
 	});
 
+	// svelte-ignore state_referenced_locally
 	let focusedEpisodeIndex = $state(tabs.map(() => 0));
 	let episodeListRefs = $state({});
 
@@ -142,7 +146,8 @@
 		{:else if tab.episodes && tab.episodes.length > 0}
 			<ol class="episodes-list" bind:this={episodeListRefs[tabIndex]}>
 				{#each tab.episodes as episode, episodeIndex (episode.id ?? episodeIndex)}
-					<li
+					<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
+					<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->					<li
 						class="episode-item"
 						tabindex={isSelected(tab.id) && episodeIndex === focusedEpisodeIndex[tabIndex] ? 0 : -1}
 						onkeydown={(event) =>

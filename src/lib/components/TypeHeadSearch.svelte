@@ -410,7 +410,7 @@
 					<div role="group" aria-labelledby="typeahead-tv-heading">
 						<h2
 							id="typeahead-tv-heading"
-							class="typeahead-results-heading ui label blue {titles.tvShows
+							class="typeahead-results-heading ui label teal {titles.tvShows
 								? ''
 								: 'u-not-available'}"
 						>
@@ -563,10 +563,6 @@
 		#typeahead-search-results [role='group'] > a.result.result-focused {
 			outline: 2px solid var(--focus-ring-blue);
 			outline-offset: -2px;
-		}
-
-		#typeahead-search-results .category {
-			background: white;
 		}
 
 		.typeahead-results-heading {
