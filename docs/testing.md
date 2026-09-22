@@ -130,6 +130,19 @@ Coverage is generated with Vitest and V8. The coverage report is stored in the `
 
 Coverage numbers provide orientation and complement functional test selection. They do not replace it.
 
+Unit tests must maintain a minimum statement coverage of 80%.
+
+Before every commit, Husky runs the pre-commit checks automatically:
+
+- unit tests with coverage
+- formatting and ESLint checks
+- integration tests
+
+Run the same checks manually with:
+
+```bash
+npm run test:precommit
+
 ## Further Information
 
 - `README.md` for project context, installation, and architecture overview

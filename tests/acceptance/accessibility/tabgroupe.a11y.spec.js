@@ -8,13 +8,14 @@ test.describe('TabGroupe Accessibility', () => {
 	});
 
 	test(
-		'Desktop initial load has no automatically detected WCAG A/AA violations',
+		'TV detail page initial load has no automatically detected WCAG A/AA violations',
 		{
-			tag: ['@accessibility', '@a11y', '@desktop']
+			tag: ['@accessibility', '@a11y', '@desktop', '@tv-details', '@tabgroupe']
 		},
 		async ({ page }) => {
-			await page.goto('/?locale=en-US');
-			await page.waitForLoadState('networkidle');
+			await expect(page.getByRole('tablist')).toBeVisible();
+			await expect(page.getByRole('tabpanel').first()).toBeVisible();
+
 			await checkA11y(page);
 		}
 	);
@@ -78,21 +79,26 @@ test.describe('TabGroupe Accessibility', () => {
 		await expect(episodes.last()).toBeFocused();
 	});
 
-	test('keyboard navigation works with screen reader patterns', async ({ page }) => {
-		// Überspringt diesen Test ebenfalls, da er dieselbe Logik wie oben prüft
-		test.skip();
+	test(
+		'Switching to another season tab has no automatically detected WCAG A/AA violations',
+		{
+			tag: ['@accessibility', '@a11y', '@desktop', '@tabgroupe', '@season-tab']
+		},
+		async ({ page }) => {
+			const tabs = page.getByRole('tab');
+			await expect(tabs.first()).toBeVisible();
 
-		const tabs = page.getByRole('tab');
+			const tabCount = await tabs.count();
+			test.skip(
+				tabCount < 2,
+				'The page needs at least two season tabs for this accessibility check.'
+			);
 
-		await expect(tabs.first()).toBeVisible();
-		await tabs.first().focus();
-		await expect(tabs.first()).toBeFocused();
+			await tabs.nth(1).click();
+			await expect(tabs.nth(1)).toHaveAttribute('aria-selected', 'true');
+			await expect(page.getByRole('tabpanel').first()).toBeVisible();
 
-		await page.keyboard.press('ArrowRight');
-		await expect(tabs.nth(1)).toBeFocused();
-		await expect(tabs.nth(1)).toHaveAttribute('aria-selected', 'true');
-
-		await page.keyboard.press('Home');
-		await expect(tabs.first()).toBeFocused();
-	});
+			await checkA11y(page);
+		}
+	);
 });
