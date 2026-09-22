@@ -22,7 +22,7 @@ Domain subdirectories such as `tests/unit/routes/` and `tests/unit/tmdb-api/` ma
 ## Coverage and Classification
 
 - Use the ISTQB terms `statement coverage` and `branch coverage` in prompts and test comments.
-- For new tests, every executable statement in the affected source code should be executed at least once. Aim for 100% statement coverage of newly affected executable code.
+- For new tests, every executable statement in the affected source code should be executed at least once. Aim for 80% statement coverage of newly affected executable code.
 - Add branch-coverage cases deliberately where alternative, error, fallback, boundary, or rejection branches are functionally or technically relevant.
 - Do not add duplicate cases without a clearly new decision branch or behavioral risk.
 - Each `it` block receives exactly one short classification comment directly above it.

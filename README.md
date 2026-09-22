@@ -335,3 +335,31 @@ Test coverage should follow practical agile development as closely as possible:
 3. Component and integration tests verify the interaction between the involved parts.
 4. Unit tests protect pure utility functions and edge cases.
 5. Accessibility tests verify WCAG 2.2 AA compliance for pages and interactions.
+
+### Test Commands
+
+The project includes these test commands:
+
+- `npm run test:acceptance` - Run all acceptance tests with Playwright
+- `npm run test:vitest` - Run all Vitest unit and component tests 
+- `npm run test:unit` - Run only unit tests with coverage
+- `npm run test:components` - Run component integration tests
+- `npm run test:integration` - Run route and integration tests
+- `npm run test:all` - Run all tests in sequence
+
+## Project Structure
+
+The project follows a structured organization:
+
+- `src/lib/components/` - Reusable Svelte components (cards, search, pagination, error states)
+- `src/lib/stores/` - Svelte store implementations for global state management
+- `src/lib/utils/` - Utility functions and helpers for data processing, formatting, etc.
+- `src/lib/services/` - API service layer connecting to TMDB and other data sources
+- `src/lib/i18n/` - Internationalization handling with translation catalogs and locale management
+- `src/routes/` - SvelteKit route handlers for different pages and API endpoints
+
+## Documentation
+
+- `docs/testing.md` - General testing strategy documentation
+- `docs/testing/unit-tests.md` - Detailed unit test guidelines and coverage goals  
+- `docs/ai-prompts.md` - AI prompt examples for developers
