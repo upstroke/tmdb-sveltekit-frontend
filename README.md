@@ -14,8 +14,8 @@ Its focus is on:
 - reusable Svelte components
 - robust handling of incomplete API data
 - clean separation of UI, utility logic, and service layers
-- a testable architecture with acceptance, component, integration, and unit tests
-- accessibility compliance (WCAG 2.2 AA) through automated testing
+- a maintainable and testable architecture
+- accessibility compliance (WCAG 2.2 AA)
 
 ## Features
 
@@ -33,31 +33,6 @@ Its focus is on:
 - Shared fallback logic for missing images and text
 - Shared error dialog for API and loading errors
 - Reusable components for cards, search, pagination, and error states
-
-## Accessibility
-
-The project includes automated accessibility testing to ensure WCAG 2.2 AA compliance:
-
-- **Accessibility checks** with Playwright + axe-core (`@axe-core/playwright`) for automated WCAG A/AA violation detection
-- **Test files:** `tests/acceptance/accessibility/*.a11y.spec.js`
-- **Test plans:** `tests/acceptance/accessibility/*-testplan.md`
-- **Tags:** `@accessibility`, `@a11y`
-
-### Running Accessibility Tests
-
-```bash
-# All accessibility tests
-npx playwright test tests/acceptance/accessibility/
-
-# Accessibility tests by tag
-npx playwright test -g @accessibility
-npx playwright test -g @a11y
-
-# Combined with other tags
-npx playwright test -g "(?=.*@accessibility)(?=.*@homepage)"
-```
-
-For more details, see `tests/acceptance/accessibility/accessibility-testplan.md` and `docs/testing.md`.
 
 ## Internationalization
 
@@ -77,10 +52,6 @@ The current route is preserved when the language changes. If the typeahead searc
 ## Streaming Data
 
 The displayed streaming providers and watch links are supplied through the TMDB API. The streaming data comes from JustWatch and is labeled "Provided by JustWatch" on movie and TV show detail pages.
-
-## Testing Note
-
-For Svelte 5 component tests with Vitest, the official `svelteTesting()` Vite plugin from `@testing-library/svelte/vite` is used. It automatically adds cleanup and the browser resolver condition to the DOM-based test environment, allowing UI tests under `jsdom` to load the browser version of the Svelte modules correctly.
 
 ## Tech Stack
 
@@ -183,183 +154,18 @@ src/
 static/
 
 tests/
-  acceptance/
-    accessibility/
-    loadmore/
-    navigation/
-  integration/
-    components/
-    routes/
-  unit/
-    routes/
-    tmdb-api/
-  fixtures/
-  mocks/
-  setup/
 
-coverage/ (created when needed)
-playwright-report/ (created when needed)
-test-results/ (created when needed)
+docs/
 ```
 
-## Test Documentation
+## Testing
 
-The project test overview and test-level rules are documented in [Test documentation and testing approach](docs/testing.md).
+The testing overview, commands, directory structure, and detailed test-level guidance are documented in [docs/testing.md](docs/testing.md).
 
-Detailed Playwright end-to-end acceptance-test plans remain next to their executable specifications in `tests/acceptance/<feature>/`. For example, the navigation feature uses `tests/acceptance/navigation/navigation.spec.js` together with `tests/acceptance/navigation/navigation-testplan.md`.
-
-## Important Directory Roles
-
-- `src/routes/` contains pages and server-side routes
-- `src/lib/components/` contains reusable UI components
-- `src/lib/i18n/` contains translation catalogs and locale helper logic
-- `src/lib/services/` contains service logic for external data sources such as TMDB
-- `src/lib/stores/` contains global state such as locale and translations
-- `src/lib/utils/` contains utility functions for formatting, pagination, and duplicate handling
-- `static/` contains static assets
-- `tests/` contains all automated tests organized by test level
-- `tests/acceptance/accessibility/` contains accessibility tests with axe-core
-- `coverage/` is created as needed by Vitest coverage runs
-- `playwright-report/` contains the HTML output of Playwright tests
-- `test-results/` contains runtime artifacts and error output from Playwright
-
-## Pages and Routes
-
-- The homepage displays trending content and supports loading more content.
-- The movie page lists movie content with pagination and restore logic.
-- The TV show page lists TV content with the same pagination logic.
-- Detail pages display information about movies and TV shows, including cast, genres, runtime, and production companies.
-- The search route provides the localized typeahead search in the main navigation.
-- The `locale` query parameter is passed to pages, API routes, and detail navigation.
-
-## Core Components
-
-- `HeaderMain` renders global navigation, the mobile menu toggle, and the language switcher.
-- `LanguageSwitcher` changes the active locale and reloads the current route in the new language.
-- `FooterMain` provides the global footer as a dedicated layout component.
-- `DetailsHero` encapsulates the shared hero/poster area of movie and TV show detail pages.
-- `TabGroupe` renders accessible tabs for season/detail areas and supports keyboard navigation as well as async per-tab loading.
-- `CardDefault` renders a standard media card.
-- `CardFeatured` renders a featured media card.
-- `DialogMessage` displays errors consistently.
-- `LoadMore` loads additional entries in paginated lists.
-- `TypeHeadSearch` provides live search, localizes search results, and starts the search again after a language change.
-
-Global styles are loaded through `src/css/app.scss`. This file imports Fomantic UI, global Sass variables, and application-wide styles; component-specific styles remain in their respective `.svelte` components.
-
-Fallback images and placeholder text are handled centrally within the components so the same logic does not have to be duplicated across multiple pages.
-
-## Important Utility Functions
-
-- `restorePagedList` restores the state of paginated lists from Session Storage.
-- `getStoredPage` reads the last stored page number for a list.
-- `deduplicateMedia` removes duplicate media entries based on `mediaType` and `id`.
-- `getMediaKey` creates stable keys for media entries.
-- `deduplicateById` removes duplicate objects based on their ID.
-- `formatDate` formats date values according to the configured locale.
-- `resolveLocale` validates locales and falls back to the default language for unknown values.
-
-## Error Handling
-
-- Missing API data is made visible through the shared `DialogMessage` component.
-- Missing images fall back to a shared placeholder asset.
-- Missing text values are normalized in components and detail pages.
-- List and detail pages remain usable whenever possible, even with incomplete API responses.
-
-## Pagination and Restore Behavior
-
-- Pagination state is stored in Session Storage.
-- When returning to a list, the last visited page is restored.
-- The restore logic loads additional pages as needed until the stored state is reached.
-- Duplicate media entries are filtered before rendering.
-- After loading more content, the view scrolls to the first newly inserted position.
-
-## Mobile Menu
-
-On mobile views, `HeaderMain` uses a button as the menu toggle. A `pointerdown` handler on the window checks whether the click occurred outside the header and automatically closes an open menu.
-
-Clicks on the burger button and navigation remain inside the header and are therefore not treated as outside clicks.
-
-## Quality Assurance
-
-Before committing, at least the following commands should complete successfully:
-
-```bash
-npm run lint
-npm run build
-npm test
-```
-
-`npm run lint` checks Prettier and ESLint for the entire `src` directory. The `svelte/no-navigation-without-resolve` rule is disabled because the project handles internal and external URLs differently depending on the destination. When changing translations, check all supported locale catalogs for identical keys.
-
-## Test Strategy
-
-The test structure is organized by test type and functional level, not by technical aids such as mocks or fixtures.
-
-### Test Levels
-
-- `tests/acceptance/`  
-  End-to-end acceptance tests with Playwright for functional user flows
-
-- `tests/acceptance/accessibility/`  
-  Accessibility tests with Playwright + axe-core for WCAG A/AA compliance
-
-- `tests/integration/components/`  
-  Component integration tests with Vitest for isolated Svelte components
-
-- `tests/integration/routes/`  
-  Integration tests with Vitest for route behavior and interactions between multiple parts
-
-- `tests/unit/`  
-  Small unit tests for pure utility functions and clearly isolated logic
-
-### Helper Directories
-
-- `tests/fixtures/`  
-  fixed test data that can be reused across multiple tests
-
-- `tests/mocks/`  
-  mock functions or replacement behavior for external dependencies
-
-- `tests/setup/`  
-  shared test helpers and project-wide test preparation
-
-These directories are not separate test types; they are helper structures only.
-
-### Guiding Principle
-
-Test coverage should follow practical agile development as closely as possible:
-
-1. A user story or use case describes the desired behavior.
-2. Acceptance tests verify the complete user flow.
-3. Component and integration tests verify the interaction between the involved parts.
-4. Unit tests protect pure utility functions and edge cases.
-5. Accessibility tests verify WCAG 2.2 AA compliance for pages and interactions.
-
-### Test Commands
-
-The project includes these test commands:
-
-- `npm run test:acceptance` - Run all acceptance tests with Playwright
-- `npm run test:vitest` - Run all Vitest unit and component tests 
-- `npm run test:unit` - Run only unit tests with coverage
-- `npm run test:components` - Run component integration tests
-- `npm run test:integration` - Run route and integration tests
-- `npm run test:all` - Run all tests in sequence
-
-## Project Structure
-
-The project follows a structured organization:
-
-- `src/lib/components/` - Reusable Svelte components (cards, search, pagination, error states)
-- `src/lib/stores/` - Svelte store implementations for global state management
-- `src/lib/utils/` - Utility functions and helpers for data processing, formatting, etc.
-- `src/lib/services/` - API service layer connecting to TMDB and other data sources
-- `src/lib/i18n/` - Internationalization handling with translation catalogs and locale management
-- `src/routes/` - SvelteKit route handlers for different pages and API endpoints
+Detailed Playwright end-to-end acceptance-test plans remain next to their executable specifications in `tests/acceptance/<feature>/`.
 
 ## Documentation
 
-- `docs/testing.md` - General testing strategy documentation
-- `docs/testing/unit-tests.md` - Detailed unit test guidelines and coverage goals  
-- `docs/ai-prompts.md` - AI prompt examples for developers
+- `docs/testing.md` for testing strategy, commands, and test-level guidance
+- `docs/ai-prompts.md` for AI-assisted development rules
+- `docs/ai-prompt-examples.md` for example prompts

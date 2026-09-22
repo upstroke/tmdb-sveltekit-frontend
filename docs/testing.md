@@ -10,11 +10,35 @@ The project uses three automated test levels:
 - Integration tests with Vitest for Svelte components, route behavior, and interactions between controlled parts
 - End-to-end acceptance tests with Playwright for complete browser-based user flows
 
+## Accessibility Testing
+
+The project includes automated accessibility testing to support WCAG 2.2 AA compliance.
+
+- Accessibility checks use Playwright together with axe-core (`@axe-core/playwright`) for automated WCAG A/AA violation detection.
+- Accessibility test files are located under `tests/acceptance/accessibility/`.
+- Accessibility test plans remain next to the executable specifications as `*-testplan.md` files.
+- Common tags for these tests are `@accessibility` and `@a11y`.
+
+### Accessibility Commands
+
+```bash
+# All accessibility tests
+npx playwright test tests/acceptance/accessibility/
+
+# Accessibility tests by tag
+npx playwright test -g @accessibility
+npx playwright test -g @a11y
+
+# Combined with other tags
+npx playwright test -g "(?=.*@accessibility)(?=.*@homepage)"
+```
+
 ## Test Directory Structure
 
 ```text
 tests/
   acceptance/
+    accessibility/
     loadmore/
     navigation/
   integration/
@@ -32,6 +56,7 @@ tests/
 - `tests/integration/components/` contains Vitest component integration tests.
 - `tests/integration/routes/` contains Vitest route integration tests.
 - `tests/acceptance/<feature>/` contains Playwright end-to-end acceptance tests organized by user-visible feature.
+- `tests/acceptance/accessibility/` contains accessibility tests with Playwright and axe-core.
 - `tests/fixtures/` contains stable, reusable domain test data.
 - `tests/mocks/` contains reusable mock support for technical dependencies.
 - `tests/setup/` contains shared setup and cleanup utilities.
@@ -59,6 +84,10 @@ npm run test:vitest:coverage
 ```
 
 The `justfile` provides shortcuts for important commands, including `just test-vitest` and `just test-e2e`.
+
+## Vitest Setup Note
+
+For Svelte 5 component tests with Vitest, the official `svelteTesting()` Vite plugin from `@testing-library/svelte/vite` is used. It automatically adds cleanup and the browser resolver condition to the DOM-based test environment, allowing UI tests under `jsdom` to load the browser version of the Svelte modules correctly.
 
 ## Path Aliases
 
@@ -91,6 +120,7 @@ Test coverage follows practical agile development:
 2. Playwright acceptance tests verify complete, user-visible flows.
 3. Vitest integration tests verify interactions between the involved components, routes, stores, helpers, and controlled dependencies.
 4. Vitest unit tests protect pure utility functions, isolated logic, and relevant edge cases.
+5. Accessibility tests verify WCAG 2.2 AA compliance for pages and interactions.
 
 Use the narrowest test level that provides sufficient confidence. Add a higher-level test when the behavior depends on browser interaction, routing, responsive layout, or multiple application layers.
 
@@ -102,6 +132,6 @@ Coverage numbers provide orientation and complement functional test selection. T
 
 ## Further Information
 
-- `README.md` for project context, commands, and architecture
+- `README.md` for project context, installation, and architecture overview
 - `docs/ai-prompts.md` for AI-assisted development rules
 - `docs/ai-prompt-examples.md` for example prompts

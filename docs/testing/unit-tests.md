@@ -1,39 +1,125 @@
-# Unit Tests with Vitest
+# Unit Tests
+
+This guide defines the project rules for Vitest unit tests. Use unit tests for isolated logic with minimal dependencies and a clear, narrow subject under test.
 
 ## Scope
 
-Unit tests belong in `tests/unit/`.
+Unit tests are the right choice for:
 
-Use them for pure utility functions, isolated transformation logic, formatters, locale helpers, stores with narrowly controlled dependencies, route helpers, TMDB API helper logic, and relevant edge cases.
+- pure utility functions
+- isolated mapping and normalization logic
+- store helpers with controlled input and output
+- route helper logic that can be exercised without rendering the full route
+- TMDB API service methods with mocked fetch responses
+- fallback behavior and edge cases that are expensive to cover only through higher-level tests
 
-Domain subdirectories such as `tests/unit/routes/` and `tests/unit/tmdb-api/` may be used when they improve discoverability. Small, broadly used helpers may remain directly in `tests/unit/`.
+Do not use a unit test when the behavior mainly depends on rendered DOM output, browser interaction, routing, or collaboration between multiple components. Use integration or acceptance tests instead.
 
-## Rules
+## General Rules
 
-- Test one isolated unit or a small cohesive function group.
-- Do not start a browser, development server, or full application.
-- Prefer direct input/output assertions for pure functions.
-- Stub or mock technical dependencies only when isolation requires it.
-- Cover relevant normal, fallback, invalid, boundary, and error cases.
-- Use meaningful `describe` and `it` blocks that state behavior directly.
-- A test describes its behavior directly in the test file. Do not use additional metadata files or a test generator for unit-test documentation.
-- Comments are allowed when they briefly explain the functional goal of a test case.
+- Use Vitest.
+- Keep the test subject small and explicit.
+- Mock only true external dependencies.
+- Prefer stable fixtures over ad-hoc inline objects when the same domain data is reused.
+- Keep each test focused on one behavior or one fallback path.
+- Use descriptive test names that state the expected behavior.
+- Cover both the main path and the relevant edge cases.
 
-## Coverage and Classification
+## File Location
 
-- Use the ISTQB terms `statement coverage` and `branch coverage` in prompts and test comments.
-- For new tests, every executable statement in the affected source code should be executed at least once. Aim for 80% statement coverage of newly affected executable code.
-- Add branch-coverage cases deliberately where alternative, error, fallback, boundary, or rejection branches are functionally or technically relevant.
-- Do not add duplicate cases without a clearly new decision branch or behavioral risk.
-- Each `it` block receives exactly one short classification comment directly above it.
-- Analyze tests for a source file in a fixed order while collecting statement IDs already covered.
-- Classify a test as `statement coverage` as soon as it contributes at least one new statement ID toward 100% statement coverage of the source file.
-- Classify a test as `branch coverage` only when it contributes no new statement ID but checks an additional functionally or technically relevant decision path.
-- Do not use mixed labels. An additional branch check does not change the classification when the same test also covers new statements.
+Place unit tests under `tests/unit/`.
 
-## Commands
+Use subdirectories when they improve discoverability, for example:
 
-```bash
-npm run test:unit
-npm run test:vitest:coverage
+```text
+tests/unit/
+  routes/
+  tmdb-api/
 ```
+
+Match the test file name to the subject as closely as possible.
+
+## Test Structure
+
+Use the arrange-act-assert structure consistently.
+
+```js
+import { describe, expect, it } from 'vitest';
+import { formatDate } from '$lib/utils/date.js';
+
+describe('formatDate', () => {
+  it('formats ISO dates for the active locale', () => {
+    const result = formatDate('2024-05-01', 'de-DE');
+
+    expect(result).toBe('01.05.2024');
+  });
+});
+```
+
+Guidelines:
+
+- one `describe()` block per exported function or coherent unit
+- one `it()` block per observable behavior
+- avoid assertions that duplicate implementation details
+- assert the returned structure and visible contract, not internal temporary values
+
+## Fixtures and Mocks
+
+- Reuse shared fixtures from `tests/fixtures/` when they represent stable domain data.
+- Reuse shared mocks from `tests/mocks/` when the same dependency behavior is needed in multiple tests.
+- Keep one-off inline data only when it makes the individual test clearer.
+- Prefer small, readable fixtures over large, opaque payloads.
+
+If a fixture grows because of a new API field, update it carefully and keep unrelated fixture shapes unchanged.
+
+## TMDB API Unit Tests
+
+For TMDB API service tests under `tests/unit/tmdb-api/`, prefer a consistent pattern:
+
+- mock `fetch` responses with explicit per-call payloads
+- keep raw TMDB-like payloads separate from mapped UI expectations
+- verify the requested endpoint in addition to the returned data
+- cover both normal mapping and fallback behavior
+- add one focused test for each new service method
+
+Typical coverage areas for TMDB API unit tests:
+
+- endpoint selection
+- request parameters
+- mapping from TMDB response shape to UI shape
+- fallback handling for missing text, images, ratings, or nested data
+- branch behavior for empty arrays, missing objects, or unsupported values
+
+When possible, use reusable fixtures from `tests/fixtures/tmdb/`. If the new payload is highly specific to one method, a small local fixture inside the test file is acceptable.
+
+### Season and Episode Data
+
+For TV season work, unit tests should explicitly cover the contracts of season-related methods such as `getTVShowDetails()` and `getTVSeasonDetails()`.
+
+Relevant examples include:
+
+- `numberOfSeasons`, `numberOfEpisodes`, and `seasons` are exposed on TV detail results
+- season endpoints are called with the correct show ID and season number
+- episode fields are normalized consistently, for example `episodeNumber`, `airDate`, `runtime`, `rating`, and `stillUrl`
+- missing `still_path` values fall back to `null`
+- empty episode lists return a stable empty array rather than failing or changing shape
+
+## Edge Cases
+
+Unit tests should protect edge cases that are easy to break silently, for example:
+
+- empty arrays
+- missing optional fields
+- duplicate entries
+- invalid or unknown locale values
+- null or undefined API values that should fall back safely
+
+## Coverage Expectations
+
+Unit tests should protect logic that is deterministic and cheap to validate in isolation.
+
+High coverage is useful here, but coverage numbers are only a guide. Add tests where failures would be hard to notice from the UI alone.
+
+## When to Stop
+
+Do not keep expanding a unit test once it starts simulating multiple application layers. If you need routing, rendering, browser APIs, or user interaction to trust the result, move that behavior to an integration or acceptance test.

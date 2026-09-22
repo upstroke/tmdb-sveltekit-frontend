@@ -1,83 +1,111 @@
-# Playwright End-to-End Acceptance Tests
+# Playwright Acceptance Tests
+
+This guide defines the project rules for Playwright acceptance tests. Use acceptance tests for complete user-visible flows that require a real browser and realistic navigation.
 
 ## Scope
 
-Playwright end-to-end acceptance tests belong in `tests/acceptance/`.
+Acceptance tests are the right choice for:
 
-Organize tests by user-visible feature. Each substantial feature directory contains one or more Playwright `*.spec.js` files and exactly one related `*-testplan.md` file.
+- complete user journeys across one or more pages
+- navigation and routing behavior
+- browser-visible loading, restore, and error flows
+- locale changes across real navigation paths
+- accessibility checks that should run on full pages
+- regressions that are best validated in the actual browser environment
+
+Do not use Playwright for small isolated logic or component-only behavior that can be trusted with Vitest.
+
+## File Location
+
+Place acceptance tests under `tests/acceptance/<feature>/`.
+
+Each substantial feature directory should contain:
+
+- one or more `*.spec.js` files
+- one related `*-testplan.md` file that describes the covered user stories and scenarios
+
+Example:
 
 ```text
-tests/acceptance/
-  navigation/
-    navigation.spec.js
-    navigation-testplan.md
-  loadmore/
-    loadmore.spec.js
-    loadmore-home.spec.js
-    loadmore-movies.spec.js
-    loadmore-tvshows.spec.js
-    loadmore-testplan.md
+tests/acceptance/navigation/
+  navigation.spec.js
+  navigation-testplan.md
 ```
 
-The feature directory is the complete documentation and implementation unit for that acceptance-test feature. Do not create a central `docs/test-plans/` directory for these feature-specific plans.
+## General Rules
 
-## Test Perspective
+- Write tests from the user perspective.
+- Prefer stable selectors based on role, label, and visible text.
+- Keep scenarios realistic and business-oriented.
+- Avoid overspecifying intermediate implementation details.
+- Keep each scenario independent and repeatable.
+- Use helper functions only when they improve clarity and do not hide the intent of the test.
 
-- Test complete browser-based user workflows from a black-box perspective.
-- Verify behavior observable to users in the browser.
-- Use Playwright acceptance tests when confidence requires real browser behavior, routing, responsive layout, browser events, or interaction between multiple application layers.
-- Do not assert internal functions, component state, store values, or incidental DOM structure.
-- Read `playwright.config.js`, the affected feature's `*-testplan.md`, and all existing feature `*.spec.js` files before proposing changes.
-- The feature-local test plan is the source of truth for scope, exclusions, feature IDs, test case IDs, priorities, test design technique, viewports, tags, Gherkin scenarios, traceability, pass/fail criteria, and expected user-visible behavior.
+## What to Cover
 
-## Browser and Viewport Setup
+A Playwright acceptance test should cover behavior such as:
 
-- Use the browser projects and `webServer` configuration defined in `playwright.config.js`.
-- Do not hardcode a localhost port unless it is explicitly part of the project configuration or test contract.
-- Chromium is the default browser unless a task or configuration requires additional coverage.
-- Cover the default desktop viewport when desktop behavior is relevant.
-- Set an explicit mobile viewport before loading the application when responsive behavior is relevant. The existing navigation scenarios use `370x667`.
+- moving between routes
+- loading and restoring paginated content
+- changing locale and preserving route context
+- using search in realistic navigation flows
+- error handling visible to real users
+- accessibility scans on central pages and meaningful interaction states
 
-## Locator Strategy
+## Accessibility
 
-- Prefer accessible, user-oriented locators such as `getByRole` with an accessible name.
-- Prefer visible labels and accessibility contracts over implementation-specific selectors.
-- Use stable semantic CSS IDs only when an accessible locator is not sufficiently precise, for example `#home`, `#movies`, or `#tvshows`.
-- Avoid brittle selectors based on generated CSS classes, DOM position, `nth-child`, or layout-only structure.
+Use Playwright together with axe-core for automated accessibility checks on important pages and interaction states.
+
+Typical examples:
+
+- homepage
+- list pages
+- detail pages
+- dialogs or menus after opening
+- error states that appear after user interaction
+
+Document intentional exceptions explicitly. Do not disable rules broadly.
+
+## Tabs and Season Views
+
+User-visible tabbed detail areas should be covered at acceptance level only when the behavior matters as an actual browser journey.
+
+Good reasons to add Playwright coverage include:
+
+- a season tab changes visible content in a way that is central to the feature
+- per-tab loading affects real user flows
+- routing, deep linking, or browser history interacts with the active tab
+- a regression would likely be missed by component-level tests alone
+
+If the concern is only keyboard handling, ARIA semantics, or isolated async rendering inside a reusable tab component, prefer an integration test first.
+
+## Test Plans
+
+Each acceptance feature directory should contain exactly one nearby test plan file.
+
+The plan should describe:
+
+- the user story or feature goal
+- covered scenarios
+- states that must be included, for example loading, error, and success
+- special accessibility or locale considerations
+
+Keep the plan close to the executable tests so documentation and implementation evolve together.
 
 ## Assertions
 
-Verify user-observable outcomes such as:
+Prefer assertions against:
 
-- route or URL changes;
-- page titles;
-- visible and hidden state;
-- active navigation state using `aria-current`;
-- expanded or collapsed state using `aria-expanded`;
-- keyboard or pointer behavior when it is part of the requirement;
-- absence of unexpected browser-console errors when the feature test plan requires it.
+- visible content
+- roles and accessible names
+- URL changes when routing matters
+- browser-visible restore behavior
+- dialog, menu, or tab state as the user experiences it
 
-## Metadata and Test Plans
+Avoid assertions that only restate internal implementation details.
 
-- Use stable feature IDs such as `F-NAV`.
-- Use stable test case IDs such as `TC-NAV-001`.
-- Apply tags consistently, for example `@navigation`, `@desktop`, `@mobile`, `@black-box`, `@regression` and `@accessibility`.
-- Keep the test plan, decision table, Gherkin scenarios, traceability matrix, and all executable specifications synchronized.
-- When a task changes an acceptance-test specification, review whether the feature-local test plan must also be updated. When a task changes the test plan, review whether one or more specifications must also be updated.
-- If an implementation detail conflicts with the feature-local test plan, report the discrepancy before changing code or documentation.
+## Maintenance
 
-## Commands
+When a new feature becomes user-visible, first decide whether confidence belongs at acceptance, integration, or unit level.
 
-```bash
-npm run test:acceptance
-npx playwright test
-npx playwright test tests/acceptance/navigation/
-npx playwright test -g "@navigation"
-```
-
-Use UI mode or headed mode when investigating a failing browser workflow:
-
-```bash
-npx playwright test tests/acceptance/navigation/ --ui
-npx playwright test tests/acceptance/navigation/ --headed
-```
+Choose Playwright when the browser is part of the behavior contract. Otherwise, keep the test lower in the stack.
