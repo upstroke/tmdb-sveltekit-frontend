@@ -6,7 +6,7 @@ Die Anwendung bietet eine Katalogansicht für Medieninhalte mit Trending-Bereich
 
 ## Ziel des Projekts
 
-Das Projekt dient als Frontend für eine TMDB-basierte Medien übersicht.
+Das Projekt dient als Frontend für eine TMDB-basierte Medienübersicht.
 
 Im Fokus stehen:
 
@@ -14,8 +14,8 @@ Im Fokus stehen:
 - wiederverwendbare Svelte-Komponenten
 - robuste Behandlung unvollständiger API-Daten
 - saubere Trennung von UI, Hilfslogik und Service-Schicht
-- testbare Architektur mit Acceptance-, Komponenten-, Integrations- und Unit-Tests
-- Barrierefreiheit nach WCAG 2.2 AA durch automatisierte Tests
+- wartbare und testbare Architektur
+- Barrierefreiheit nach WCAG 2.2 AA
 
 ## Features
 
@@ -202,11 +202,6 @@ playwright-report/ (entsteht bei Bedarf)
 test-results/ (entsteht bei Bedarf)
 ```
 
-## Testdokumentation
-
-Diese Datei beschreibt das pragmatische Vorgehen für Tests  
-[Testdokumentation und Testvorgehen](docs/testing.md)
-
 ## Bedeutung der wichtigsten Ordner
 
 - `src/routes/` enthält Seiten und serverseitige Routen
@@ -241,7 +236,7 @@ Diese Datei beschreibt das pragmatische Vorgehen für Tests
 - `CardDefault` rendert eine Standard-Medienkarte.
 - `CardFeatured` rendert eine hervorgehobene Medienkarte.
 - `DialogMessage` zeigt Fehler in konsistenter Form an.
-- `LoadMore` l ädt weitere Einträge in paginierten Listen.
+- `LoadMore` lädt weitere Einträge in paginierten Listen.
 - `TypeHeadSearch` stellt die Live-Suche bereit, lokalisiert Suchergebnisse und startet die Suche nach einem Sprachwechsel erneut.
 
 Globale Styles werden über `src/css/app.scss` geladen. Diese Datei bindet Fomantic UI, globale Sass-Variablen und anwendungsweite Styles ein; komponentenspezifische Styles bleiben in den jeweiligen `.svelte`-Komponenten.
@@ -256,12 +251,12 @@ Fallback-Bilder und Platzhaltertexte werden innerhalb der Komponenten zentral be
 - `getMediaKey` erzeugt stabile Schlüssel für Medieneinträge
 - `deduplicateById` entfernt doppelte Objekte anhand ihrer ID
 - `formatDate` formatiert Datumswerte anhand der konfigurierten Locale
-- `resolveLocale` validiert Locales und fällt bei unbekannten Werten auf die Standardsprache zur ück
+- `resolveLocale` validiert Locales und fällt bei unbekannten Werten auf die Standardsprache zurück
 
 ## Fehlerbehandlung
 
 - Fehlende API-Daten werden über die gemeinsame `DialogMessage`-Komponente sichtbar gemacht.
-- Fehlende Bilder fallen auf ein gemeinsames Platzhalter-Asset zur ück.
+- Fehlende Bilder fallen auf ein gemeinsames Platzhalter-Asset zurück.
 - Fehlende Textwerte werden in Komponenten und Detailseiten normalisiert.
 - Listen- und Detailseiten bleiben nach Möglichkeit auch bei unvollständigen API-Antworten benutzbar.
 
@@ -292,6 +287,12 @@ npm test
 `npm run lint` prüft Prettier und ESLint für den gesamten `src`-Ordner. Die Regel `svelte/no-navigation-without-resolve` ist deaktiviert, weil das Projekt interne und externe URLs abhängig vom jeweiligen Ziel unterschiedlich behandelt.
 
 Bei Änderungen an Übersetzungen sollten alle unterstützten Locale-Kataloge auf identische Schlüssel geprüft werden.
+
+## Tests
+
+Die Testübersicht, Befehle, Verzeichnisstruktur und detaillierte Hinweise zu den einzelnen Testebenen sind in [docs/testing.md](docs/testing.md) dokumentiert.
+
+Detaillierte Playwright-Acceptance-Testpläne liegen jeweils neben den ausführbaren Spezifikationen in `tests/acceptance/<feature>/`.
 
 ## Teststrategie
 
@@ -336,3 +337,9 @@ Die Testabdeckung folgt möglichst nah der Praxis im agilen Entwicklungsalltag:
 3. Komponenten- und Integrationstests prüfen das Zusammenspiel der beteiligten Teile.
 4. Unit-Tests sichern reine Hilfsfunktionen und Randfälle ab.
 5. Accessibility-Tests prüfen die WCAG 2.2 AA-Konformität für Seiten und Interaktionen.
+
+## Dokumentation
+
+- `docs/testing.md` für Teststrategie, Befehle und Hinweise zu den Testebenen
+- `docs/ai-prompts.md` für Regeln zur KI-gestützten Entwicklung
+- `docs/ai-prompt-examples.md` für Beispiel-Prompts
