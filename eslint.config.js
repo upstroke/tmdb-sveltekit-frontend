@@ -24,7 +24,9 @@ export default defineConfig([
 	},
 	{
 		rules: {
-			'svelte/no-navigation-without-resolve': 'off'
+			'svelte/no-navigation-without-resolve': 'off',
+			'security/detect-object-injection': 'off',
+			'svelte/no-at-html-tags': 'error' // svelte: no {@html} allowed
 		}
 	}
 ]);

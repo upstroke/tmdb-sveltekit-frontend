@@ -93,6 +93,20 @@ Für Svelte-5-Komponententests unter Vitest wird das offizielle Vite-Plugin `sve
 - Prettier und ESLint für Formatierung und Codequalität
 - Sass für Styles
 
+## Sicherheit
+
+Die Anwendung setzt bei jedem Request HTTP-Sicherheits-Header über `src/hooks.server.js`.
+
+Dazu gehört eine Content Security Policy (CSP), die das Laden von Ressourcen auf vertrauenswürdige Quellen beschränkt:
+
+- Scripts: nur gleicher Origin, mit einem anfragespezifischen Nonce für SvelteKit-Inline-Scripts
+- Bilder: gleicher Origin und `image.tmdb.org`
+- API-Verbindungen: gleicher Origin und `api.themoviedb.org`
+- Frames: Einbettung per iframe ist blockiert (`frame-ancestors 'none'`)
+
+Statische Codeanalyse verwendet `eslint-plugin-security`, um unsichere Muster während der Entwicklung zu erkennen.
+Abhängigkeiten werden mit `npm audit` geprüft.
+
 ## Voraussetzungen
 
 - Node.js `v26.6.0`

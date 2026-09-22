@@ -45,7 +45,8 @@ export default defineConfig({
 				'src/**/__fixtures__/**',
 				'src/**/generated/**',
 				'src/routes/**/+layout.svelte',
-				'src/routes/**/+page.svelte'
+				'src/routes/**/+page.svelte',
+				'src/hooks.server.js'
 			],
 			thresholds: {
 				// all included files

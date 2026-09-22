@@ -64,6 +64,21 @@ The displayed streaming providers and watch links are supplied through the TMDB 
 - Prettier and ESLint for formatting and code quality
 - Sass for styles
 
+## Security
+
+The application sets HTTP security headers on every request via `src/hooks.server.js`.
+
+This includes a Content Security Policy (CSP) that restricts resource loading to trusted origins:
+
+- Scripts: same-origin only, with a per-request nonce for SvelteKit inline scripts
+- Images: same-origin and `image.tmdb.org`
+- API connections: same-origin and `api.themoviedb.org`
+- Frames: embedding via iframe is blocked (`frame-ancestors 'none'`)
+
+Static code analysis uses `eslint-plugin-security` to catch unsafe patterns during development.
+Dependencies are checked with `npm audit`.
+
+
 ## Requirements
 
 - Node.js `v26.6.0`
