@@ -38,12 +38,12 @@
 	async function handleChange(event) {
 		const nextLocale = resolveLocale(event.currentTarget.value);
 		selectedLocale = nextLocale;
-		locale.set(nextLocale);
 
-		// Sofortiges Update des lang-Attributs (vor der Server-Navigation)
-		if (typeof document !== 'undefined') {
-			document.documentElement.lang = nextLocale;
-		}
+		// locale.set() already writes sessionStorage, the session cookie and
+		// document.documentElement.lang before the navigation starts, so the
+		// server hook reads the correct cookie and %lang% is replaced with the
+		// right value in the freshly rendered HTML.
+		locale.set(nextLocale);
 
 		const nextUrl = new URL(page.url);
 		nextUrl.searchParams.set('locale', nextLocale);
@@ -54,6 +54,13 @@
 			keepFocus: true,
 			noScroll: true
 		});
+
+		// Re-apply after goto() because SvelteKit's client-side hydration of
+		// the freshly invalidated server HTML can overwrite the lang attribute
+		// that locale.set() wrote earlier.
+		if (typeof document !== 'undefined') {
+			document.documentElement.lang = nextLocale;
+		}
 	}
 </script>
 
