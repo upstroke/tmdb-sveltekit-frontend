@@ -44,6 +44,9 @@ function setCookieLocale(locale) {
  *
  * When setting a new locale, the value is additionally stored in
  * session storage and in a session cookie in the browser.
+ * The <html lang="..."> attribute is also updated immediately so that
+ * screen readers and assistive technologies reflect the new language
+ * without waiting for the next server-rendered response.
  *
  * @returns {{ subscribe: import('svelte/store').Readable<string>['subscribe'], set: (locale: string) => void }} Locale store with subscribe and set functions.
  */
@@ -64,6 +67,15 @@ function createLocaleStore() {
 					setCookieLocale(locale);
 				} catch (cookieError) {
 					console.warn(`The locale cookie could not be set: ${cookieError}`);
+				}
+
+				// Update <html lang="..."> immediately so that screen readers and
+				// assistive technologies reflect the new language without waiting
+				// for the next server-rendered response.
+				try {
+					document.documentElement.lang = locale;
+				} catch (domError) {
+					console.warn(`The lang attribute could not be updated: ${domError}`);
 				}
 			}
 
