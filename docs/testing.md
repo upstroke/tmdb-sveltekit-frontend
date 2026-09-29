@@ -69,6 +69,43 @@ The test plan is documented in `tests/acceptance/security/security-testplan.md`.
 npm run test:security
 ```
 
+## Running Tests by Tag
+
+Playwright tests can be filtered by tag using the `-g` flag. Tags are embedded directly in the test or `describe` title (e.g., `@security`, `@accessibility`).
+
+### Available Tags
+
+| Tag | Scope | Location |
+|-----|-------|----------|
+| `@security` | HTTP security header tests | `tests/acceptance/security/` |
+| `@accessibility` | Accessibility (axe-core) tests | `tests/acceptance/accessibility/` |
+| `@a11y` | Alias for `@accessibility` | `tests/acceptance/accessibility/` |
+
+### Commands
+
+```bash
+# Run all tests with a specific tag
+npx playwright test -g @security
+npx playwright test -g @accessibility
+
+# Combine multiple tags (AND — both must match)
+npx playwright test -g "(?=.*@security)(?=.*@homepage)"
+
+# Run a specific test file directly (no tag required)
+npx playwright test tests/acceptance/security/security-headers.spec.js
+```
+
+### Adding New Tags
+
+When adding a new Playwright test, place the tag directly in the `test()` or `test.describe()` title:
+
+```js
+test.describe('My Feature @mytag', () => { … });
+test('TC-XYZ-001: some behavior @mytag', async ({ page }) => { … });
+```
+
+Add the new tag to the table above so it remains discoverable.
+
 ## Test Directory Structure
 
 ```text
