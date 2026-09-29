@@ -74,6 +74,8 @@ Die Locale-Logik befindet sich in:
 
 Beim Sprachwechsel bleibt die aktuelle Route erhalten. Ist in der Typeahead-Suche ein Suchbegriff mit mindestens vier Zeichen vorhanden, werden die Ergebnisse automatisch mit der neuen Locale erneut geladen.
 
+Das `<html lang="...">`-Attribut wird bei jeder serverseitig gerenderten Antwort dynamisch auf die aktive Locale gesetzt. So erhalten Screenreader und Suchmaschinen stets den korrekten BCP-47-Sprachcode (WCAG 2.1 Erfolgskriterium 3.1.1). Der Locale-Store schreibt die gewählte Sprache sowohl in den `sessionStorage` als auch in ein Session-Cookie (`app-locale`). Der Server-Hook in `src/hooks.server.js` liest das Cookie aus und setzt den Wert über einen `%lang%`-Platzhalter in `src/app.html`.
+
 ## Streaming-Daten
 
 Die angezeigten Streaming-Anbieter und Watch-Links werden über die TMDB-API bereitgestellt. Die Streaming-Daten stammen von JustWatch und werden auf den Detailseiten für Filme und TV-Shows mit "Provided by JustWatch" gekennzeichnet.
