@@ -25,6 +25,7 @@ Its focus is on:
 - Typeahead search for movies and TV shows
 - Localized interface
 - Language switching through the global header
+- Dynamic update of the `lang` attribute on `<html>` when the language changes (client-side)
 - Typeahead search automatically repeated in the newly selected language when a search term is active
 - Search results use the currently active locale when clicked, even if the results were loaded before the language changed
 - Locale propagation through internal navigation and server-side data requests
@@ -48,6 +49,8 @@ Locale logic is located in:
 - `src/lib/stores/i18n.js` for access to loaded translations
 
 The current route is preserved when the language changes. If the typeahead search contains a search term of at least four characters, the results are automatically reloaded using the new locale.
+
+The `lang` attribute on `<html>` is updated client-side via a `$effect` in `src/routes/+layout.svelte`, so it stays current even during client-side language switches without a server round-trip.
 
 ## Streaming Data
 

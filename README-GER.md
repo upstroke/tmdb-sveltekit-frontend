@@ -25,6 +25,7 @@ Im Fokus stehen:
 - Typeahead-Suche für Filme und Serien
 - lokalisierte Oberfläche
 - Sprachwechsel über den globalen Header
+- dynamisches Setzen des `lang`-Attributs auf `<html>` bei Sprachwechsel (clientseitig)
 - erneute Typeahead-Suche in der neu gewählten Sprache bei aktivem Suchbegriff
 - Suchtreffer verwenden beim Klick die aktuell aktive Locale, auch wenn die Treffer vor dem Sprachwechsel geladen wurden
 - Weitergabe der Locale über interne Navigation und serverseitige Datenabfragen
@@ -73,6 +74,8 @@ Die Locale-Logik befindet sich in:
 - `src/lib/stores/i18n.js` für den Zugriff auf die geladenen Übersetzungen
 
 Beim Sprachwechsel bleibt die aktuelle Route erhalten. Ist in der Typeahead-Suche ein Suchbegriff mit mindestens vier Zeichen vorhanden, werden die Ergebnisse automatisch mit der neuen Locale erneut geladen.
+
+Das `lang`-Attribut auf `<html>` wird clientseitig über einen `$effect` in `src/routes/+layout.svelte` gesetzt, damit es auch bei clientseitigen Sprachwechseln ohne Server-Roundtrip aktuell bleibt.
 
 ## Streaming-Daten
 
