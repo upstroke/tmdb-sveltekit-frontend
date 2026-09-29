@@ -24,8 +24,9 @@
 		"test:unit": "vitest run tests/unit --pool=threads",
 		"test:components": "vitest run tests/integration/components",
 		"test:integration": "vitest run tests/integration",
-		"test:all": "npm run test:unit && npm run test:components && npm run test:integration && npm run test:acceptance",
-		"test:precommit": "echo 'Running unit tests with coverage...' && npm run test:vitest:coverage && echo 'Running format check and ESLint...' && npm run lint && echo 'Running integration tests...' && npm run test:integration && echo 'All pre-commit checks passed.'"
+		"test:security": "npm audit --audit-level=moderate",
+		"test:all": "npm run test:unit && npm run test:components && npm run test:integration && npm run test:acceptance && npm run test:security",
+		"test:precommit": "echo 'Running unit tests with coverage...' && npm run test:vitest:coverage && echo 'Running format check and ESLint...' && npm run lint && echo 'Running integration tests...' && npm run test:integration && echo 'Running security audit...' && npm run test:security && echo 'All pre-commit checks passed.'"
 	},
 	"devDependencies": {
 		"@axe-core/playwright": "^4.13.0",
