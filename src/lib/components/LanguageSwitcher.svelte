@@ -32,18 +32,26 @@
 	 * Die aktuelle Seite bleibt dabei erhalten und wird mit der neuen Locale
 	 * ohne Scroll- oder Fokusverlust neu geladen.
 	 *
+	 * Sets document.documentElement.lang synchronously before calling goto()
+	 * so that the DOM reflects the new locale immediately. A post-goto set
+	 * is insufficient because SvelteKit's invalidateAll re-render overwrites
+	 * the attribute with the server-rendered value.
+	 *
 	 * @param {Event & { currentTarget: HTMLSelectElement }} event - Änderungsereignis des Select-Felds.
 	 * @returns {Promise<void>} Wird aufgelöst, sobald die Navigation abgeschlossen ist.
 	 */
 	async function handleChange(event) {
 		const nextLocale = resolveLocale(event.currentTarget.value);
 		selectedLocale = nextLocale;
-
-		// locale.set() already writes sessionStorage, the session cookie and
-		// document.documentElement.lang before the navigation starts, so the
-		// server hook reads the correct cookie and %lang% is replaced with the
-		// right value in the freshly rendered HTML.
 		locale.set(nextLocale);
+
+		// Set lang synchronously before goto() so the attribute is already
+		// correct when Playwright polls it. A post-goto set is too late:
+		// SvelteKit's invalidateAll re-render can overwrite the attribute
+		// with the server-rendered value before we get a chance to re-apply.
+		if (typeof document !== 'undefined') {
+			document.documentElement.lang = nextLocale;
+		}
 
 		const nextUrl = new URL(page.url);
 		nextUrl.searchParams.set('locale', nextLocale);
@@ -54,13 +62,6 @@
 			keepFocus: true,
 			noScroll: true
 		});
-
-		// Re-apply after goto() because SvelteKit's client-side hydration of
-		// the freshly invalidated server HTML can overwrite the lang attribute
-		// that locale.set() wrote earlier.
-		if (typeof document !== 'undefined') {
-			document.documentElement.lang = nextLocale;
-		}
 	}
 </script>
 
