@@ -1,21 +1,28 @@
 import { randomBytes } from 'crypto';
 import { DEFAULT_LOCALE } from '$lib/i18n/config';
+import { resolveLocale } from '$lib/i18n/helpers';
 
 const STORAGE_KEY = 'app-locale';
 
 /**
  * Reads the active locale from the request.
  *
- * The locale is persisted in a session-storage entry on the client, which
- * the browser sends as a cookie named after STORAGE_KEY on subsequent
- * requests. Falls back to DEFAULT_LOCALE when the cookie is absent or
- * cannot be parsed.
+ * Priority order:
+ * 1. The `locale` URL search parameter (set by the LanguageSwitcher via
+ *    goto() with replaceState:true — the cookie may not yet reflect the
+ *    new value when the first invalidated server fetch arrives).
+ * 2. The `app-locale` session cookie (set by locale.set() in the store).
+ * 3. DEFAULT_LOCALE as a safe fallback.
  *
  * @param {import('@sveltejs/kit').RequestEvent} event
- * @returns {string} BCP 47 language tag, e.g. "en" or "de".
+ * @returns {string} BCP 47 language tag, e.g. "en-US" or "de-DE".
  */
 function getLocaleFromRequest(event) {
 	try {
+		const urlParam = event.url.searchParams.get('locale');
+		if (urlParam) {
+			return resolveLocale(urlParam);
+		}
 		return event.cookies.get(STORAGE_KEY) ?? DEFAULT_LOCALE;
 	} catch {
 		return DEFAULT_LOCALE;
