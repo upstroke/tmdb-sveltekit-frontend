@@ -48,9 +48,7 @@ export async function handle({ event, resolve }) {
 		// and replace the %lang% placeholder with the active locale so that
 		// <html lang="..."> is always correct for screen readers and search engines.
 		transformPageChunk: ({ html }) =>
-			html
-				.replace(/<script/g, `<script nonce="${nonce}"`)
-				.replace('%lang%', locale)
+			html.replace(/<script/g, `<script nonce="${nonce}"`).replace('%lang%', locale)
 	});
 
 	// Content Security Policy (CSP)
