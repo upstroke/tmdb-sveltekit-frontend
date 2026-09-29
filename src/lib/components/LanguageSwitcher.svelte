@@ -32,10 +32,9 @@
 	 * Die aktuelle Seite bleibt dabei erhalten und wird mit der neuen Locale
 	 * ohne Scroll- oder Fokusverlust neu geladen.
 	 *
-	 * Sets document.documentElement.lang synchronously before calling goto()
-	 * so that the DOM reflects the new locale immediately. A post-goto set
-	 * is insufficient because SvelteKit's invalidateAll re-render overwrites
-	 * the attribute with the server-rendered value.
+	 * <html lang> wird nicht hier gesetzt — das übernimmt der $effect in
+	 * +layout.svelte, der nach jedem Render-Zyklus läuft und damit immer
+	 * das letzte Wort hat, unabhängig von invalidateAll-Re-renders.
 	 *
 	 * @param {Event & { currentTarget: HTMLSelectElement }} event - Änderungsereignis des Select-Felds.
 	 * @returns {Promise<void>} Wird aufgelöst, sobald die Navigation abgeschlossen ist.
@@ -44,14 +43,6 @@
 		const nextLocale = resolveLocale(event.currentTarget.value);
 		selectedLocale = nextLocale;
 		locale.set(nextLocale);
-
-		// Set lang synchronously before goto() so the attribute is already
-		// correct when Playwright polls it. A post-goto set is too late:
-		// SvelteKit's invalidateAll re-render can overwrite the attribute
-		// with the server-rendered value before we get a chance to re-apply.
-		if (typeof document !== 'undefined') {
-			document.documentElement.lang = nextLocale;
-		}
 
 		const nextUrl = new URL(page.url);
 		nextUrl.searchParams.set('locale', nextLocale);
