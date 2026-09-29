@@ -26,10 +26,24 @@ function getInitialLocale() {
 }
 
 /**
+ * Writes the locale to the session cookie so the server can read it
+ * on subsequent requests (e.g. to set <html lang="...">).
+ *
+ * No expiry date is set intentionally: the cookie behaves as a session
+ * cookie and is deleted when the browser session ends, matching the
+ * lifetime of the sessionStorage entry.
+ *
+ * @param {string} locale - BCP 47 language tag to persist.
+ */
+function setCookieLocale(locale) {
+	document.cookie = `${STORAGE_KEY}=${locale}; path=/; SameSite=Strict`;
+}
+
+/**
  * Creates a Svelte store for the active locale.
  *
  * When setting a new locale, the value is additionally stored in
- * session storage in the browser.
+ * session storage and in a session cookie in the browser.
  *
  * @returns {{ subscribe: import('svelte/store').Readable<string>['subscribe'], set: (locale: string) => void }} Locale store with subscribe and set functions.
  */
@@ -44,6 +58,12 @@ function createLocaleStore() {
 					sessionStorage.setItem(STORAGE_KEY, locale);
 				} catch (storageError) {
 					console.warn(`The locale could not be saved: ${storageError}`);
+				}
+
+				try {
+					setCookieLocale(locale);
+				} catch (cookieError) {
+					console.warn(`The locale cookie could not be set: ${cookieError}`);
 				}
 			}
 
