@@ -5,6 +5,7 @@ import LanguageSwitcher from '$lib/components/LanguageSwitcher.svelte';
 import { getSupportedLocales } from '$lib/i18n/helpers.js';
 import { getTestLocaleText } from '$tests/setup/test-utils.js';
 import { DEFAULT_LOCALE } from '$lib/i18n/config.js';
+import { locale } from '$lib/stores/locale.js';
 
 vi.mock('$app/navigation', () => ({
   goto: vi.fn().mockResolvedValue(undefined)
@@ -15,15 +16,15 @@ import { goto } from '$app/navigation';
 const { labels } = getTestLocaleText(DEFAULT_LOCALE);
 
 describe('LanguageSwitcher', () => {
-  beforeEach(() => {
-    if (typeof sessionStorage !== 'undefined') {
-      sessionStorage.clear();
-    }
-
-    document.documentElement.lang = DEFAULT_LOCALE;
-    vi.clearAllMocks();
-    cleanup();
-  });
+	beforeEach(() => {
+		if (typeof sessionStorage !== 'undefined') {
+			sessionStorage.clear();
+		}
+		locale.set(DEFAULT_LOCALE);
+		document.documentElement.lang = DEFAULT_LOCALE;
+		vi.clearAllMocks();
+		cleanup();
+	});
 
   afterEach(() => {
     cleanup();

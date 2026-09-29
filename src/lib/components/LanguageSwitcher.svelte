@@ -40,6 +40,11 @@
 		selectedLocale = nextLocale;
 		locale.set(nextLocale);
 
+		// Sofortiges Update des lang-Attributs (vor der Server-Navigation)
+		if (typeof document !== 'undefined') {
+			document.documentElement.lang = nextLocale;
+		}
+
 		const nextUrl = new URL(page.url);
 		nextUrl.searchParams.set('locale', nextLocale);
 
@@ -56,7 +61,7 @@
 	<label for="language-select" class="u-sr-only">{labels.languageSelect}</label>
 	<select
 		id="language-select"
-		bind:value={selectedLocale}
+		value={selectedLocale}
 		aria-label={labels.languageSelect}
 		onchange={handleChange}
 	>

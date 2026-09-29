@@ -48,11 +48,12 @@ test.describe('Dynamic HTML lang attribute', () => {
 			// Switch to German via the language-switcher select in the global header.
 			const select = page.locator('#language-select');
 			await expect(select).toBeVisible();
-			await select.selectOption('de-DE');
-			await page.waitForURL('**/?locale=de*', { timeout: 5000 });
+			await page.getByLabel('Select language').selectOption('de-DE');
+			await expect(async () => {
+				expect(page.url()).toContain('locale=de-DE');
+			}).toPass({ timeout: 5000 });
 
 			const langAfter = await page.locator('html').getAttribute('lang');
-			expect(langAfter).toBeTruthy();
 			expect(langAfter?.startsWith('de')).toBe(true);
 		}
 	);
