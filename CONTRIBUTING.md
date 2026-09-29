@@ -12,6 +12,23 @@ Thank you for contributing to this project. Please follow the guidelines below b
 
 Keep changes small and focused. New or modified functionality should be accompanied by appropriate unit, integration, or acceptance tests.
 
+## Internationalization
+
+When adding or changing UI text, update the translation catalogs for **all supported languages**. Leaving a key untranslated in any locale is not acceptable — every language must receive the new or updated entry at the same time.
+
+Translation catalogs are located in:
+
+- `src/lib/i18n/ui.json` for UI strings
+- `src/lib/i18n/ratings.json` for rating formats
+
+Guidelines:
+
+- New UI text must be added to every locale in the catalog — not only the default language.
+- All locales must share an identical set of keys. Missing or extra keys in any locale will cause runtime errors or silent fallbacks.
+- When renaming or removing a key, update all locales at the same time.
+- The `lang` attribute on `<html>` is set automatically via a `$effect` in `src/routes/+layout.svelte` — no manual changes are needed there when adding translations.
+- After any change to the catalogs, verify that all supported locale catalogs have identical keys before committing.
+
 ## Tests
 
 Unit tests use Vitest. Acceptance tests use Playwright.
