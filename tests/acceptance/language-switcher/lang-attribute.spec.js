@@ -49,10 +49,13 @@ test.describe('Dynamic HTML lang attribute', () => {
 			const select = page.locator('#language-select');
 			await expect(select).toBeVisible();
 			await page.getByLabel('Select language').selectOption('de-DE');
-			await page.waitForURL('**/locale=de-DE**', { timeout: 5000 });
 
-			const langAfter = await page.locator('html').getAttribute('lang');
-			expect(langAfter?.startsWith('de')).toBe(true);
+			// goto() with replaceState:true is a SvelteKit-internal history update —
+			// no browser load event fires, so waitForURL would time out.
+			// Assert directly on the lang attribute (the actual test objective)
+			// and verify the URL as a secondary check via toHaveURL.
+			await expect(page.locator('html')).toHaveAttribute('lang', /^de/, { timeout: 5000 });
+			await expect(page).toHaveURL(/locale=de-DE/);
 		}
 	);
 
