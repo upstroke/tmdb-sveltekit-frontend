@@ -49,6 +49,8 @@ Locale logic is located in:
 
 The current route is preserved when the language changes. If the typeahead search contains a search term of at least four characters, the results are automatically reloaded using the new locale.
 
+The `<html lang="...">` attribute is set dynamically on every server-rendered response to reflect the active locale. This ensures screen readers and search engines always receive the correct BCP 47 language tag (WCAG 2.1 SC 3.1.1). The locale store writes the selected language both to `sessionStorage` and to a session cookie (`app-locale`). The server hook in `src/hooks.server.js` reads the cookie and injects the value via a `%lang%` placeholder in `src/app.html`.
+
 ## Streaming Data
 
 The displayed streaming providers and watch links are supplied through the TMDB API. The streaming data comes from JustWatch and is labeled "Provided by JustWatch" on movie and TV show detail pages.
