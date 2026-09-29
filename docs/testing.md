@@ -33,6 +33,42 @@ npx playwright test -g @a11y
 npx playwright test -g "(?=.*@accessibility)(?=.*@homepage)"
 ```
 
+## Security Testing
+
+The project includes two complementary layers of security testing.
+
+### HTTP Security Header Tests (Playwright)
+
+Acceptance tests in `tests/acceptance/security/security-headers.spec.js` verify that `src/hooks.server.js` sets the required HTTP security headers on every response. These tests run against the dev server or production preview.
+
+Test cases covered: Content-Security-Policy presence, CSP `script-src 'self'`, TMDB image and API origins in CSP, `frame-ancestors 'none'`, `X-Content-Type-Options: nosniff`, `Referrer-Policy`, and absence of the API key in rendered HTML.
+
+Tag: `@security`
+
+```bash
+# All security header tests
+npx playwright test tests/acceptance/security/
+
+# Security tests by tag
+npx playwright test -g @security
+
+# Combined with other tags
+npx playwright test -g "(?=.*@security)(?=.*@homepage)"
+
+# Security tests in headed mode (visible browser)
+npx playwright test tests/acceptance/security/ --headed
+```
+
+The test plan is documented in `tests/acceptance/security/security-testplan.md`.
+
+### Dependency Audit (npm audit)
+
+`npm run test:security` runs `npm audit --audit-level=moderate` to check all installed dependencies for known vulnerabilities. It is included in both `test:all` and `test:precommit`.
+
+```bash
+npm run test:security
+```
+
 ## Test Directory Structure
 
 ```text
@@ -41,6 +77,7 @@ tests/
     accessibility/
     loadmore/
     navigation/
+    security/
   integration/
     components/
     routes/
@@ -57,6 +94,7 @@ tests/
 - `tests/integration/routes/` contains Vitest route integration tests.
 - `tests/acceptance/<feature>/` contains Playwright end-to-end acceptance tests organized by user-visible feature.
 - `tests/acceptance/accessibility/` contains accessibility tests with Playwright and axe-core.
+- `tests/acceptance/security/` contains HTTP security header tests with Playwright.
 - `tests/fixtures/` contains stable, reusable domain test data.
 - `tests/mocks/` contains reusable mock support for technical dependencies.
 - `tests/setup/` contains shared setup and cleanup utilities.
@@ -80,6 +118,9 @@ npm run test:unit
 npm run test:components
 npm run test:integration
 npm run test:acceptance
+npm run test:security
+npm run test:all
+npm run test:precommit
 npm run test:vitest:coverage
 ```
 
@@ -121,6 +162,7 @@ Test coverage follows practical agile development:
 3. Vitest integration tests verify interactions between the involved components, routes, stores, helpers, and controlled dependencies.
 4. Vitest unit tests protect pure utility functions, isolated logic, and relevant edge cases.
 5. Accessibility tests verify WCAG 2.2 AA compliance for pages and interactions.
+6. Security tests verify HTTP security headers and dependency vulnerability status.
 
 Use the narrowest test level that provides sufficient confidence. Add a higher-level test when the behavior depends on browser interaction, routing, responsive layout, or multiple application layers.
 
@@ -137,11 +179,13 @@ Before every commit, Husky runs the pre-commit checks automatically:
 - unit tests with coverage
 - formatting and ESLint checks
 - integration tests
+- dependency security audit (`npm audit`)
 
 Run the same checks manually with:
 
 ```bash
 npm run test:precommit
+```
 
 ## Further Information
 

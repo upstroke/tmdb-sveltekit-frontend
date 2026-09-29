@@ -198,6 +198,19 @@ npm run test:precommit     # Unit tests with coverage + lint + integration + sec
 
 `test:security` runs `npm audit --audit-level=moderate` and is included in both `test:all` and `test:precommit`.
 
+Playwright security header tests can be run separately using the `@security` tag:
+
+```bash
+# All security header tests
+npx playwright test tests/acceptance/security/
+
+# Security tests by tag
+npx playwright test -g @security
+
+# Combined with other tags
+npx playwright test -g "(?=.*@security)(?=.*@homepage)"
+```
+
 ## Documentation
 
 - `docs/testing.md` for testing strategy, commands, and test-level guidance

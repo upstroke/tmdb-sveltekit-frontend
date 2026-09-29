@@ -206,6 +206,7 @@ tests/
     accessibility/
     loadmore/
     navigation/
+    security/
   integration/
     components/
     routes/
@@ -232,6 +233,7 @@ test-results/ (entsteht bei Bedarf)
 - `static/` enthält statische Assets
 - `tests/` enthält alle automatisierten Tests nach Testebene strukturiert
 - `tests/acceptance/accessibility/` enthält Accessibility-Tests mit axe-core
+- `tests/acceptance/security/` enthält HTTP-Sicherheits-Header-Tests mit Playwright
 - `coverage/` entsteht bei Bedarf durch Coverage-Läufe mit Vitest
 - `playwright-report/` enthält die HTML-Ausgabe der Playwright-Tests
 - `test-results/` enthält Laufzeit-Artefakte und Fehlerausgaben aus Playwright
@@ -327,6 +329,19 @@ npm run test:precommit     # Unit-Tests mit Coverage + Lint + Integration + Sich
 
 `test:security` führt `npm audit --audit-level=moderate` aus und ist sowohl in `test:all` als auch in `test:precommit` eingebunden.
 
+Die Playwright-Sicherheits-Header-Tests können über den Tag `@security` gezielt ausgeführt werden:
+
+```bash
+# Alle Sicherheits-Header-Tests
+npx playwright test tests/acceptance/security/
+
+# Sicherheits-Tests nach Tag
+npx playwright test -g @security
+
+# Kombiniert mit anderen Tags
+npx playwright test -g "(?=.*@security)(?=.*@homepage)"
+```
+
 ## Teststrategie
 
 Die Teststruktur orientiert sich an Testarten und fachlicher Ebene, nicht an technischen Hilfsmitteln wie Mocks oder Fixtures.
@@ -338,6 +353,9 @@ Die Teststruktur orientiert sich an Testarten und fachlicher Ebene, nicht an tec
 
 - `tests/acceptance/accessibility/`  
   Accessibility-Tests mit Playwright + axe-core für WCAG A/AA-Konformität
+
+- `tests/acceptance/security/`  
+  HTTP-Sicherheits-Header-Tests mit Playwright (Tag: `@security`)
 
 - `tests/integration/components/`  
   Komponententests mit Vitest für isolierte Svelte-Komponenten
@@ -370,6 +388,7 @@ Die Testabdeckung folgt möglichst nah der Praxis im agilen Entwicklungsalltag:
 3. Komponenten- und Integrationstests prüfen das Zusammenspiel der beteiligten Teile.
 4. Unit-Tests sichern reine Hilfsfunktionen und Randfälle ab.
 5. Accessibility-Tests prüfen die WCAG 2.2 AA-Konformität für Seiten und Interaktionen.
+6. Sicherheits-Tests prüfen HTTP-Sicherheits-Header und den Status bekannter Schwachstellen in Abhängigkeiten.
 
 ## Dokumentation
 
