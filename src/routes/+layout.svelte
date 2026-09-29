@@ -5,6 +5,7 @@
 	import FooterMain from '$lib/components/FooterMain.svelte';
 	import HeaderMain from '$lib/components/HeaderMain.svelte';
 	import { i18n } from '$lib/stores/i18n';
+	import { locale } from '$lib/stores/locale';
 	import '$css/app.scss';
 
 	let { children } = $props();
@@ -37,6 +38,10 @@
 			active: (pathname) => pathname === '/tv-shows' || pathname.startsWith('/tv-shows/')
 		}
 	]);
+
+	$effect(() => {
+		document.documentElement.lang = $locale;
+	});
 </script>
 
 <svelte:head>
