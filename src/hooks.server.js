@@ -56,5 +56,32 @@ export async function handle({ event, resolve }) {
 		].join('; ')
 	);
 
+	// Prevent browsers from MIME-sniffing the content-type away from the declared value.
+	// Mitigates drive-by download attacks and content-type confusion (TC-SEC-006).
+	response.headers.set('X-Content-Type-Options', 'nosniff');
+
+	// Control how much referrer information is sent with requests.
+	// strict-origin-when-cross-origin: full path for same-origin, only origin for cross-origin,
+	// nothing for downgrade (HTTPS → HTTP) (TC-SEC-007).
+	response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+
+	// Legacy clickjacking defence for browsers that do not support CSP frame-ancestors.
+	response.headers.set('X-Frame-Options', 'DENY');
+
+	// Disable browser features not used by this app.
+	response.headers.set(
+		'Permissions-Policy',
+		'camera=(), microphone=(), geolocation=(), payment=()'
+	);
+
+	// Instruct browsers to only connect via HTTPS for the next year (production only).
+	// Skipped in development so that localhost HTTP still works.
+	if (event.url.protocol === 'https:') {
+		response.headers.set(
+			'Strict-Transport-Security',
+			'max-age=31536000; includeSubDomains'
+		);
+	}
+
 	return response;
 }
