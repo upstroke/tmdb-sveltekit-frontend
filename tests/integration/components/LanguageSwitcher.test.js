@@ -30,6 +30,7 @@ describe('LanguageSwitcher', () => {
     cleanup();
   });
 
+  // Statement coverage: The component renders a select element with id "language-select".
   it('renders a select element with id "language-select"', () => {
     const { container } = render(LanguageSwitcher);
 
@@ -38,6 +39,7 @@ describe('LanguageSwitcher', () => {
     expect(select.tagName).toBe('SELECT');
   });
 
+  // Statement coverage: The component renders an sr-only label associated with the select.
   it('renders an sr-only label associated with the select', () => {
     render(LanguageSwitcher);
 
@@ -45,6 +47,7 @@ describe('LanguageSwitcher', () => {
     expect(label).toBeInTheDocument();
   });
 
+  // Statement coverage: All supported locales are rendered as options with their BCP 47 values.
   it('renders all supported locales as options with BCP 47 values', () => {
     const { container } = render(LanguageSwitcher);
 
@@ -55,6 +58,7 @@ describe('LanguageSwitcher', () => {
     });
   });
 
+  // Statement coverage: The default locale is pre-selected on initial render.
   it('pre-selects the default locale on initial render', () => {
     const { container } = render(LanguageSwitcher);
 
@@ -62,6 +66,7 @@ describe('LanguageSwitcher', () => {
     expect(select.value).toBe(DEFAULT_LOCALE);
   });
 
+  // Statement coverage: The i18n label is used as aria-label on the select element.
   it('uses the i18n label as aria-label on the select', () => {
     render(LanguageSwitcher);
 
@@ -69,6 +74,7 @@ describe('LanguageSwitcher', () => {
     expect(select).toHaveAttribute('aria-label', labels.languageSelect);
   });
 
+  // Branch coverage: Selecting a different locale updates the locale store and navigates to the current relative route with the new locale parameter.
   it('updates locale and navigates to the current relative route', async () => {
     const user = userEvent.setup();
     render(LanguageSwitcher);
@@ -98,6 +104,7 @@ describe('LanguageSwitcher', () => {
     });
   });
 
+  // Statement coverage: document.documentElement.lang is updated immediately when the locale changes.
   it('updates document.documentElement.lang immediately when locale changes', async () => {
     const user = userEvent.setup();
     render(LanguageSwitcher);
