@@ -5,11 +5,27 @@
 	import FooterMain from '$lib/components/FooterMain.svelte';
 	import HeaderMain from '$lib/components/HeaderMain.svelte';
 	import { i18n } from '$lib/stores/i18n';
+	import { locale } from '$lib/stores/locale';
 	import '$css/app.scss';
 
 	let { children } = $props();
 
 	const { titles } = $derived($i18n);
+
+	/**
+	 * Keeps <html lang> in sync with the active locale.
+	 *
+	 * hooks.server.js sets the lang attribute via transformPageChunk on the
+	 * initial server render. However, the LanguageSwitcher uses goto() with
+	 * replaceState:true, which is a client-side history update only — no new
+	 * server request is made, so the hook never runs again after a language
+	 * switch. This effect mirrors every locale store change directly onto
+	 * document.documentElement.lang, keeping the attribute current without
+	 * requiring a full page reload.
+	 */
+	$effect(() => {
+		document.documentElement.lang = $locale;
+	});
 
 	const navItems = $derived([
 		{
