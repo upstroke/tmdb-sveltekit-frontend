@@ -45,8 +45,10 @@ test.describe('Dynamic HTML lang attribute', () => {
 			const langBefore = await page.locator('html').getAttribute('lang');
 			expect(langBefore?.startsWith('en')).toBe(true);
 
-			// Switch to German via the language-switcher in the global header.
-			await page.getByRole('button', { name: /Deutsch|DE|German/i }).click();
+			// Switch to German via the language-switcher select in the global header.
+			const select = page.locator('#language-select');
+			await expect(select).toBeVisible();
+			await select.selectOption('de-DE');
 			await page.waitForURL('**/?locale=de*', { timeout: 5000 });
 
 			const langAfter = await page.locator('html').getAttribute('lang');
