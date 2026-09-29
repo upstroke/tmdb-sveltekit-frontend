@@ -91,7 +91,7 @@ describe('LanguageSwitcher', () => {
     expect(url.pathname).toBe('/');
     expect(url.searchParams.get('locale')).toBe(targetLocale);
     expect(navigationOptions).toEqual({
-      invalidateAll: true,
+      invalidateAll: false,
       replaceState: true,
       keepFocus: true,
       noScroll: true
