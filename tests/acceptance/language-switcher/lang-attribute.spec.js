@@ -49,9 +49,7 @@ test.describe('Dynamic HTML lang attribute', () => {
 			const select = page.locator('#language-select');
 			await expect(select).toBeVisible();
 			await page.getByLabel('Select language').selectOption('de-DE');
-			await expect(async () => {
-				expect(page.url()).toContain('locale=de-DE');
-			}).toPass({ timeout: 5000 });
+			await page.waitForURL('**/locale=de-DE**', { timeout: 5000 });
 
 			const langAfter = await page.locator('html').getAttribute('lang');
 			expect(langAfter?.startsWith('de')).toBe(true);
