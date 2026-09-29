@@ -32,10 +32,6 @@
 	 * Die aktuelle Seite bleibt dabei erhalten und wird mit der neuen Locale
 	 * ohne Scroll- oder Fokusverlust neu geladen.
 	 *
-	 * <html lang> wird nicht hier gesetzt — das übernimmt der $effect in
-	 * +layout.svelte, der nach jedem Render-Zyklus läuft und damit immer
-	 * das letzte Wort hat, unabhängig von invalidateAll-Re-renders.
-	 *
 	 * @param {Event & { currentTarget: HTMLSelectElement }} event - Änderungsereignis des Select-Felds.
 	 * @returns {Promise<void>} Wird aufgelöst, sobald die Navigation abgeschlossen ist.
 	 */
@@ -60,7 +56,7 @@
 	<label for="language-select" class="u-sr-only">{labels.languageSelect}</label>
 	<select
 		id="language-select"
-		value={selectedLocale}
+		bind:value={selectedLocale}
 		aria-label={labels.languageSelect}
 		onchange={handleChange}
 	>
