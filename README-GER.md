@@ -77,6 +77,8 @@ Beim Sprachwechsel bleibt die aktuelle Route erhalten. Ist in der Typeahead-Such
 
 Das `lang`-Attribut auf `<html>` wird clientseitig über einen `$effect` in `src/routes/+layout.svelte` gesetzt, damit es auch bei clientseitigen Sprachwechseln ohne Server-Roundtrip aktuell bleibt.
 
+Bei neuen UI-Text-Schlüsseln müssen **alle verfügbaren Sprachen** gleichzeitig ergänzt werden. Alle Locale-Kataloge müssen immer denselben Schlüsselsatz enthalten.
+
 ## Streaming-Daten
 
 Die angezeigten Streaming-Anbieter und Watch-Links werden über die TMDB-API bereitgestellt. Die Streaming-Daten stammen von JustWatch und werden auf den Detailseiten für Filme und TV-Shows mit "Provided by JustWatch" gekennzeichnet.
@@ -310,6 +312,20 @@ Bei Änderungen an Übersetzungen sollten alle unterstützten Locale-Kataloge au
 Die Testübersicht, Befehle, Verzeichnisstruktur und detaillierte Hinweise zu den einzelnen Testebenen sind in [docs/testing.md](docs/testing.md) dokumentiert.
 
 Detaillierte Playwright-Acceptance-Testpläne liegen jeweils neben den ausführbaren Spezifikationen in `tests/acceptance/<feature>/`.
+
+Folgende Skripte stehen für die Testausführung zur Verfügung:
+
+```bash
+npm run test:unit          # Unit-Tests
+npm run test:components    # Komponententests
+npm run test:integration   # Integrationstests
+npm run test:acceptance    # Acceptance-Tests (Playwright)
+npm run test:security      # Sicherheits-Audit der Abhängigkeiten (npm audit)
+npm run test:all           # Alle oben genannten Tests in Folge
+npm run test:precommit     # Unit-Tests mit Coverage + Lint + Integration + Sicherheits-Audit
+```
+
+`test:security` führt `npm audit --audit-level=moderate` aus und ist sowohl in `test:all` als auch in `test:precommit` eingebunden.
 
 ## Teststrategie
 

@@ -52,6 +52,8 @@ The current route is preserved when the language changes. If the typeahead searc
 
 The `lang` attribute on `<html>` is updated client-side via a `$effect` in `src/routes/+layout.svelte`, so it stays current even during client-side language switches without a server round-trip.
 
+When adding a new UI text key, translations must be provided for **all available languages** simultaneously. All locale catalogs must always contain the same set of keys.
+
 ## Streaming Data
 
 The displayed streaming providers and watch links are supplied through the TMDB API. The streaming data comes from JustWatch and is labeled "Provided by JustWatch" on movie and TV show detail pages.
@@ -181,6 +183,20 @@ docs/
 The testing overview, commands, directory structure, and detailed test-level guidance are documented in [docs/testing.md](docs/testing.md).
 
 Detailed Playwright end-to-end acceptance-test plans remain next to their executable specifications in `tests/acceptance/<feature>/`.
+
+The following scripts are available for running tests:
+
+```bash
+npm run test:unit          # Unit tests
+npm run test:components    # Component tests
+npm run test:integration   # Integration tests
+npm run test:acceptance    # Acceptance tests (Playwright)
+npm run test:security      # Dependency security audit (npm audit)
+npm run test:all           # All of the above in sequence
+npm run test:precommit     # Unit tests with coverage + lint + integration + security audit
+```
+
+`test:security` runs `npm audit --audit-level=moderate` and is included in both `test:all` and `test:precommit`.
 
 ## Documentation
 
