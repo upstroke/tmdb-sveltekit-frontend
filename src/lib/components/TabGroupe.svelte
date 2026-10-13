@@ -17,6 +17,7 @@
 	});
 
 	// Ensure activeTab is always a string
+	// svelte-ignore state_referenced_locally
 	let activeTab = $state(String(initialTab ?? ''));
 
 	$effect(() => {
