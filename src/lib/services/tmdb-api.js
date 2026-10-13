@@ -567,9 +567,7 @@ export function createTmdbApi(fetchFn, apiKey, language = DEFAULT_LOCALE) {
 			certification,
 			providers,
 			trailerUrls:
-				'trailerUrls' in mapped
-					? mapped.trailerUrls
-					: getTrailerUrls({ ...featured, ...details })
+				'trailerUrls' in mapped ? mapped.trailerUrls : getTrailerUrls({ ...featured, ...details })
 		};
 	}
 
