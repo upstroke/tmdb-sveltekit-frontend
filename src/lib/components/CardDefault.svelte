@@ -9,20 +9,20 @@
 	import { formatDate } from '$lib/utils/formatDate';
 
 	/**
-	 * Rendert eine Standardkarte für Filme und TV-Serien inklusive Bild,
-	 * Metadaten, Detail-Link und Ladezustand.
+	 * Renders a default card for movies and TV shows, including image,
+	 * metadata, details link, and loading state.
 	 *
 	 * @component
-	 * @prop {number|string} id - Eindeutige TMDB-ID des Mediums.
-	 * @prop {'movie'|'tv'} mediaType - Medientyp und Zielroute der Karte.
-	 * @prop {string} title - Titel des Films oder der Serie.
-	 * @prop {string} [date=''] - Veröffentlichungs- oder Ausstrahlungsdatum.
-	 * @prop {number} [rating=0] - Bewertung; positive Werte werden mit einer Dezimalstelle angezeigt.
-	 * @prop {string|number} [certification=''] - Altersfreigabe, z. B. FSK- oder US-Rating.
-	 * @prop {Array<{name: string}>} [genres=[]] - Genres, die mit Schrägstrich verbunden angezeigt werden.
-	 * @prop {string} [imageUrl=''] - URL des Posters; bei leerem Wert wird ein Platzhalter verwendet.
-	 * @prop {string} [scrollId=''] - Optionale HTML-ID für die Karte.
-	 * @prop {boolean} [isLoading=false] - Zeigt den Ladezustand der Karte an.
+	 * @prop {number|string} id - Unique TMDB ID of the media item.
+	 * @prop {'movie'|'tv'} mediaType - Media type and target route of the card.
+	 * @prop {string} title - Title of the movie or TV show.
+	 * @prop {string} [date=''] - Release or air date.
+	 * @prop {number} [rating=0] - Rating; positive values are shown with one decimal place.
+	 * @prop {string|number} [certification=''] - Age rating, e.g. FSK or US rating.
+	 * @prop {Array<{name: string}>} [genres=[]] - Genres, displayed joined by slashes.
+	 * @prop {string} [imageUrl=''] - Poster URL; a placeholder is used if empty.
+	 * @prop {string} [scrollId=''] - Optional HTML id for the card.
+	 * @prop {boolean} [isLoading=false] - Shows the loading state of the card.
 	 *
 	 * @example
 	 * <CardDefault id={123} mediaType="movie" title="Inception" />
