@@ -20,6 +20,12 @@
 	let activeTab = $state(String(initialTab ?? ''));
 
 	$effect(() => {
+		if (initialTab !== undefined) {
+			activeTab = String(initialTab);
+		}
+	});
+
+	$effect(() => {
 		if (!activeTab && tabs.length > 0) {
 			activeTab = String(tabs[0].id);
 		}

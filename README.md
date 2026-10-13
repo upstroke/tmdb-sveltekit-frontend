@@ -25,6 +25,7 @@ Its focus is on:
 - Typeahead search for movies and TV shows
 - Localized interface
 - Language switching through the global header
+- Dynamic update of the `lang` attribute on `<html>` when the language changes (client-side)
 - Typeahead search automatically repeated in the newly selected language when a search term is active
 - Search results use the currently active locale when clicked, even if the results were loaded before the language changed
 - Locale propagation through internal navigation and server-side data requests
@@ -49,7 +50,9 @@ Locale logic is located in:
 
 The current route is preserved when the language changes. If the typeahead search contains a search term of at least four characters, the results are automatically reloaded using the new locale.
 
-The `<html lang="...">` attribute is set dynamically on every server-rendered response to reflect the active locale. This ensures screen readers and search engines always receive the correct BCP 47 language tag (WCAG 2.1 SC 3.1.1). The locale store writes the selected language both to `sessionStorage` and to a session cookie (`app-locale`). The server hook in `src/hooks.server.js` reads the cookie and injects the value via a `%lang%` placeholder in `src/app.html`.
+The `lang` attribute on `<html>` is updated client-side via a `$effect` in `src/routes/+layout.svelte`, so it stays current even during client-side language switches without a server round-trip.
+
+When adding a new UI text key, translations must be provided for **all available languages** simultaneously. All locale catalogs must always contain the same set of keys.
 
 ## Streaming Data
 
@@ -180,6 +183,33 @@ docs/
 The testing overview, commands, directory structure, and detailed test-level guidance are documented in [docs/testing.md](docs/testing.md).
 
 Detailed Playwright end-to-end acceptance-test plans remain next to their executable specifications in `tests/acceptance/<feature>/`.
+
+The following scripts are available for running tests:
+
+```bash
+npm run test:unit          # Unit tests
+npm run test:components    # Component tests
+npm run test:integration   # Integration tests
+npm run test:acceptance    # Acceptance tests (Playwright)
+npm run test:security      # Dependency security audit (npm audit)
+npm run test:all           # All of the above in sequence
+npm run test:precommit     # Unit tests with coverage + lint + integration + security audit
+```
+
+`test:security` runs `npm audit --audit-level=moderate` and is included in both `test:all` and `test:precommit`.
+
+Playwright security header tests can be run separately using the `@security` tag:
+
+```bash
+# All security header tests
+npx playwright test tests/acceptance/security/
+
+# Security tests by tag
+npx playwright test -g @security
+
+# Combined with other tags
+npx playwright test -g "(?=.*@security)(?=.*@homepage)"
+```
 
 ## Documentation
 

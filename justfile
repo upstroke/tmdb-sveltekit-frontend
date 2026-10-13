@@ -42,6 +42,10 @@ test-acceptance-ui:
 	@echo "Running acceptance tests in UI mode..."
 	npm run test:acceptance:ui
 
+test-security:
+	@echo "Running security audit..."
+	npm run test:security
+
 # Combined recipes
 test-all:
 	@echo "Running all tests..."

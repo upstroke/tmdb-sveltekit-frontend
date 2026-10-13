@@ -39,12 +39,13 @@
 		const nextLocale = resolveLocale(event.currentTarget.value);
 		selectedLocale = nextLocale;
 		locale.set(nextLocale);
+		document.documentElement.lang = nextLocale;
 
 		const nextUrl = new URL(page.url);
 		nextUrl.searchParams.set('locale', nextLocale);
 
 		await goto(`${nextUrl.pathname}${nextUrl.search}${nextUrl.hash}`, {
-			invalidateAll: true,
+			invalidateAll: false,
 			replaceState: true,
 			keepFocus: true,
 			noScroll: true

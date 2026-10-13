@@ -25,6 +25,7 @@ Im Fokus stehen:
 - Typeahead-Suche für Filme und Serien
 - lokalisierte Oberfläche
 - Sprachwechsel über den globalen Header
+- dynamisches Setzen des `lang`-Attributs auf `<html>` bei Sprachwechsel (clientseitig)
 - erneute Typeahead-Suche in der neu gewählten Sprache bei aktivem Suchbegriff
 - Suchtreffer verwenden beim Klick die aktuell aktive Locale, auch wenn die Treffer vor dem Sprachwechsel geladen wurden
 - Weitergabe der Locale über interne Navigation und serverseitige Datenabfragen
@@ -74,7 +75,9 @@ Die Locale-Logik befindet sich in:
 
 Beim Sprachwechsel bleibt die aktuelle Route erhalten. Ist in der Typeahead-Suche ein Suchbegriff mit mindestens vier Zeichen vorhanden, werden die Ergebnisse automatisch mit der neuen Locale erneut geladen.
 
-Das `<html lang="...">`-Attribut wird bei jeder serverseitig gerenderten Antwort dynamisch auf die aktive Locale gesetzt. So erhalten Screenreader und Suchmaschinen stets den korrekten BCP-47-Sprachcode (WCAG 2.1 Erfolgskriterium 3.1.1). Der Locale-Store schreibt die gewählte Sprache sowohl in den `sessionStorage` als auch in ein Session-Cookie (`app-locale`). Der Server-Hook in `src/hooks.server.js` liest das Cookie aus und setzt den Wert über einen `%lang%`-Platzhalter in `src/app.html`.
+Das `lang`-Attribut auf `<html>` wird clientseitig über einen `$effect` in `src/routes/+layout.svelte` gesetzt, damit es auch bei clientseitigen Sprachwechseln ohne Server-Roundtrip aktuell bleibt.
+
+Bei neuen UI-Text-Schlüsseln müssen **alle verfügbaren Sprachen** gleichzeitig ergänzt werden. Alle Locale-Kataloge müssen immer denselben Schlüsselsatz enthalten.
 
 ## Streaming-Daten
 
@@ -203,6 +206,7 @@ tests/
     accessibility/
     loadmore/
     navigation/
+    security/
   integration/
     components/
     routes/
@@ -229,6 +233,7 @@ test-results/ (entsteht bei Bedarf)
 - `static/` enthält statische Assets
 - `tests/` enthält alle automatisierten Tests nach Testebene strukturiert
 - `tests/acceptance/accessibility/` enthält Accessibility-Tests mit axe-core
+- `tests/acceptance/security/` enthält HTTP-Sicherheits-Header-Tests mit Playwright
 - `coverage/` entsteht bei Bedarf durch Coverage-Läufe mit Vitest
 - `playwright-report/` enthält die HTML-Ausgabe der Playwright-Tests
 - `test-results/` enthält Laufzeit-Artefakte und Fehlerausgaben aus Playwright
@@ -310,6 +315,33 @@ Die Testübersicht, Befehle, Verzeichnisstruktur und detaillierte Hinweise zu de
 
 Detaillierte Playwright-Acceptance-Testpläne liegen jeweils neben den ausführbaren Spezifikationen in `tests/acceptance/<feature>/`.
 
+Folgende Skripte stehen für die Testausführung zur Verfügung:
+
+```bash
+npm run test:unit          # Unit-Tests
+npm run test:components    # Komponententests
+npm run test:integration   # Integrationstests
+npm run test:acceptance    # Acceptance-Tests (Playwright)
+npm run test:security      # Sicherheits-Audit der Abhängigkeiten (npm audit)
+npm run test:all           # Alle oben genannten Tests in Folge
+npm run test:precommit     # Unit-Tests mit Coverage + Lint + Integration + Sicherheits-Audit
+```
+
+`test:security` führt `npm audit --audit-level=moderate` aus und ist sowohl in `test:all` als auch in `test:precommit` eingebunden.
+
+Die Playwright-Sicherheits-Header-Tests können über den Tag `@security` gezielt ausgeführt werden:
+
+```bash
+# Alle Sicherheits-Header-Tests
+npx playwright test tests/acceptance/security/
+
+# Sicherheits-Tests nach Tag
+npx playwright test -g @security
+
+# Kombiniert mit anderen Tags
+npx playwright test -g "(?=.*@security)(?=.*@homepage)"
+```
+
 ## Teststrategie
 
 Die Teststruktur orientiert sich an Testarten und fachlicher Ebene, nicht an technischen Hilfsmitteln wie Mocks oder Fixtures.
@@ -321,6 +353,9 @@ Die Teststruktur orientiert sich an Testarten und fachlicher Ebene, nicht an tec
 
 - `tests/acceptance/accessibility/`  
   Accessibility-Tests mit Playwright + axe-core für WCAG A/AA-Konformität
+
+- `tests/acceptance/security/`  
+  HTTP-Sicherheits-Header-Tests mit Playwright (Tag: `@security`)
 
 - `tests/integration/components/`  
   Komponententests mit Vitest für isolierte Svelte-Komponenten
@@ -353,6 +388,7 @@ Die Testabdeckung folgt möglichst nah der Praxis im agilen Entwicklungsalltag:
 3. Komponenten- und Integrationstests prüfen das Zusammenspiel der beteiligten Teile.
 4. Unit-Tests sichern reine Hilfsfunktionen und Randfälle ab.
 5. Accessibility-Tests prüfen die WCAG 2.2 AA-Konformität für Seiten und Interaktionen.
+6. Sicherheits-Tests prüfen HTTP-Sicherheits-Header und den Status bekannter Schwachstellen in Abhängigkeiten.
 
 ## Dokumentation
 
