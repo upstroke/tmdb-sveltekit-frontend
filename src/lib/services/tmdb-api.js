@@ -128,15 +128,16 @@ export function createTmdbApi(fetchFn, apiKey, language = DEFAULT_LOCALE) {
 	 *
 	 * IDs without a known name are dropped.
 	 *
-	 * @param {number[]} [genreIds=[]] - List of genre IDs.
+	 * @param {number[] | undefined} genreIds - List of genre IDs (empty if missing).
 	 * @param {string | null} mediaType - Media type (`tv` uses the TV genre map, everything else the movie map).
 	 * @returns {Genre[]} Resolved genres.
 	 */
-	function resolveGenres(genreIds = [], mediaType) {
+	function resolveGenres(genreIds, mediaType) {
 		const map = mediaType === 'tv' ? tvGenreMap : movieGenreMap;
+		const ids = genreIds ?? [];
 
 		return /** @type {Genre[]} */ (
-			genreIds.map((id) => (map?.[id] ? { id, name: map[id] } : null)).filter(Boolean)
+			ids.map((id) => (map?.[id] ? { id, name: map[id] } : null)).filter(Boolean)
 		);
 	}
 
@@ -201,14 +202,16 @@ export function createTmdbApi(fetchFn, apiKey, language = DEFAULT_LOCALE) {
 	/**
 	 * Converts a list of watch providers into UI-friendly objects.
 	 *
-	 * @param {TmdbRawProvider[]} [providers=[]] - Provider list from TMDB.
+	 * @param {TmdbRawProvider[] | undefined} providers - Provider list from TMDB (empty if missing).
 	 * @param {string} type - Provider type.
 	 * @param {string | null | undefined} baseLink - Link to the provider list.
 	 * @returns {WatchProvider[]} Normalized provider list.
 	 */
-	function mapWatchProviderList(providers = [], type, baseLink) {
+	function mapWatchProviderList(providers, type, baseLink) {
+		const list = providers ?? [];
+
 		return /** @type {WatchProvider[]} */ (
-			providers.map((provider) => mapWatchProvider(provider, type, baseLink)).filter(Boolean)
+			list.map((provider) => mapWatchProvider(provider, type, baseLink)).filter(Boolean)
 		);
 	}
 
@@ -566,8 +569,7 @@ export function createTmdbApi(fetchFn, apiKey, language = DEFAULT_LOCALE) {
 			productionCompanies,
 			certification,
 			providers,
-			trailerUrls:
-				'trailerUrls' in mapped ? mapped.trailerUrls : getTrailerUrls({ ...featured, ...details })
+			trailerUrls: getTrailerUrls({ ...featured, ...details })
 		};
 	}
 
