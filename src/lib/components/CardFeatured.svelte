@@ -6,7 +6,7 @@
 	import { i18n } from '$lib/stores/i18n';
 	import { formatDate } from '$lib/utils/formatDate';
 
-	const { labels, fallbacks } = $derived($i18n);
+	const { labels, fallbacks, messages } = $derived($i18n);
 
 	/**
 	 * Renders a featured card for a movie or TV show.
@@ -91,6 +91,7 @@
 	let hasReleaseDate = $derived(Boolean(featuredReleaseDate));
 	let featuredOverview = $derived(overview?.trim() || notAvailableText);
 	let featuredHomepage = $derived(homepage?.trim() || '');
+	let actionsLabel = $derived(messages.actionsFor.replace('{title}', featuredTitle));
 </script>
 
 <article
@@ -157,7 +158,7 @@
 					{featuredOverview}
 				</p>
 
-				<nav aria-label={`Aktionen für ${featuredTitle}`} class="featured-card-actions">
+				<nav aria-label={actionsLabel} class="featured-card-actions">
 					{#if detailsHref}
 						<a
 							class="ui inverted primary button {labels.moreInfo ? '' : 'u-not-available'}"
