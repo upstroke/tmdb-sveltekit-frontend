@@ -10,14 +10,12 @@
 	 * The dialog opens automatically on the client side as soon as a message
 	 * is present, and optionally displays a customized heading.
 	 *
+	 * @component
+	 *
 	 * @example
 	 * <DialogMessage message="An error occurred while loading." />
-	 *
-	 * @type {{
-	 *   message: string,
-	 *   title?: string
-	 * }}
 	 */
+	/** @type {import('$lib/types/components.js').DialogMessageProps} */
 	let { message, title = messages.dialogErrorTitle } = $props();
 
 	/** @type {HTMLDialogElement | undefined} */

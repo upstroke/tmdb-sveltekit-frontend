@@ -46,4 +46,12 @@
  * @property {string=} emptyLabel Text for the empty state of production companies.
  */
 
+/**
+ * Props of `DialogMessage.svelte`.
+ *
+ * @typedef {Object} DialogMessageProps
+ * @property {string} message Message text; the dialog opens as soon as a message is present.
+ * @property {string=} title Dialog heading; defaults to the localized error title.
+ */
+
 export {};
