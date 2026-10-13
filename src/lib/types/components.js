@@ -35,4 +35,15 @@
  * @property {string=} posterUrl Poster URL; falls back to `imageUrl`.
  */
 
+/**
+ * Props of `DetailsHero.svelte`.
+ *
+ * @typedef {Object} DetailsHeroProps
+ * @property {string=} title Title of the media; a fallback text is shown if empty.
+ * @property {string=} backdrop Background image URL; falls back to `posterUrl`.
+ * @property {string=} posterUrl Poster URL; a placeholder is used if empty.
+ * @property {Pick<import('./tmdb-raw.js').TmdbRawProductionCompany, 'id' | 'name'>[]=} productionCompanies Production companies of the media.
+ * @property {string=} emptyLabel Text for the empty state of production companies.
+ */
+
 export {};

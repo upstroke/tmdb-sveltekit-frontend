@@ -11,11 +11,6 @@
 	 * production companies are displayed in a centered overlay at the bottom.
 	 *
 	 * @component
-	 * @prop {string} title - Title of the media.
-	 * @prop {string} backdrop - URL of the background image.
-	 * @prop {string} posterUrl - URL of the poster image; also serves as fallback.
-	 * @prop {Array<{id?: number|string, name?: string, logoPath?: string}>} [productionCompanies=[]] - Production companies of the media.
-	 * @prop {string} [emptyLabel=''] - Text for the empty state of production companies.
 	 *
 	 * @example
 	 * <DetailsHero
@@ -25,6 +20,7 @@
 	 * 	productionCompanies={[{ id: 1, name: 'Warner Bros.' }]}
 	 * />
 	 */
+	/** @type {import('$lib/types/components.js').DetailsHeroProps} */
 	let { title, backdrop, posterUrl, productionCompanies = [], emptyLabel = '' } = $props();
 
 	let notAvailableText = $derived(fallbacks.notAvailable);
