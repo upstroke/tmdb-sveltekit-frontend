@@ -25,7 +25,7 @@
  *
  * @typedef {Object} CardFeaturedProps
  * @property {number | string} id TMDB ID of the media item for the detail link.
- * @property {import('./tmdb.js').MediaType} mediaType Media type and target route of the card.
+ * @property {import('./tmdb.js').MediaType | null} mediaType Media type and target route of the card; `null` renders the card without a detail link.
  * @property {string=} title
  * @property {string=} releaseDate Release or premiere date.
  * @property {string=} overview Short description of the media.
