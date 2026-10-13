@@ -99,10 +99,71 @@
  */
 
 /**
+ * @typedef {Object} TmdbRawEpisode
+ * @property {number} id
+ * @property {number} episode_number
+ * @property {string=} name
+ * @property {string=} overview
+ * @property {string | null=} air_date
+ * @property {number | null=} runtime
+ * @property {number=} vote_average
+ * @property {string | null=} still_path
+ */
+
+/**
  * @typedef {Object} TmdbRawListResponse
  * @property {number=} page
  * @property {number=} total_pages
  * @property {TmdbRawItem[]=} results
+ */
+
+/**
+ * @typedef {Object} TmdbRawGenreListResponse
+ * @property {{id: number, name: string}[]=} genres
+ */
+
+/**
+ * @typedef {Object} TmdbRawWatchProviderRegion
+ * @property {string=} link
+ * @property {TmdbRawProvider[]=} flatrate
+ * @property {TmdbRawProvider[]=} rent
+ * @property {TmdbRawProvider[]=} buy
+ */
+
+/**
+ * @typedef {Object} TmdbRawWatchProvidersResponse
+ * @property {Record<string, TmdbRawWatchProviderRegion>=} results
+ */
+
+/**
+ * @typedef {Object} TmdbRawReleaseDate
+ * @property {string=} certification
+ */
+
+/**
+ * @typedef {Object} TmdbRawMovieReleaseCountry
+ * @property {string} iso_3166_1
+ * @property {TmdbRawReleaseDate[]=} release_dates
+ */
+
+/**
+ * @typedef {Object} TmdbRawMovieCertificationResponse
+ * @property {TmdbRawMovieReleaseCountry[]=} results
+ */
+
+/**
+ * @typedef {Object} TmdbRawTvRatingCountry
+ * @property {string} iso_3166_1
+ * @property {string=} rating
+ */
+
+/**
+ * @typedef {Object} TmdbRawTvCertificationResponse
+ * @property {TmdbRawTvRatingCountry[]=} results
+ */
+
+/**
+ * @typedef {TmdbRawSeason & { episodes?: TmdbRawEpisode[] }} TmdbRawSeasonResponse
  */
 
 /* ---------- Normalized data ---------- */
