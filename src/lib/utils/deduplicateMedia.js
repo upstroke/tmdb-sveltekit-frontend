@@ -31,8 +31,9 @@ export function getMediaKey(item) {
  * The first entry with a unique key is preserved, later duplicates are removed.
  * Elements without a valid key are skipped.
  *
- * @param {Array<MediaItem>} items - List of media items to clean up.
- * @returns {Array<MediaItem>} New array with only the first occurrence of each unique
+ * @template {MediaItem} T
+ * @param {T[]} [items=[]] - List of media items to clean up.
+ * @returns {T[]} New array with only the first occurrence of each unique
  * media item.
  */
 export function deduplicateMedia(items = []) {

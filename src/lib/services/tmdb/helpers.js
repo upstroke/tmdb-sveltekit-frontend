@@ -1,7 +1,7 @@
 // @ts-check
 
-/** @typedef {import('./types.js').TmdbRawItem} TmdbRawItem */
-/** @typedef {import('./types.js').ImageSize} ImageSize */
+/** @typedef {import('$lib/types/tmdb.js').TmdbRawItem} TmdbRawItem */
+/** @typedef {import('$lib/types/tmdb.js').ImageSize} ImageSize */
 
 const IMAGE_BASE_URL = 'https://image.tmdb.org/t/p';
 

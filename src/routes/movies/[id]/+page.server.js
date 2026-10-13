@@ -5,6 +5,9 @@ import { resolveLocale } from '$lib/i18n/helpers';
 import { getLocaleText } from '$lib/i18n/resolver';
 import { createTmdbApi } from '$lib/services/tmdb-api.js';
 
+/** @typedef {import('$lib/types/tmdb.js').MovieDetails} MovieDetails */
+/** @typedef {import('$lib/types/tmdb.js').WatchProviders} WatchProviders */
+
 /**
  * Loads the server data for a movie detail page.
  *
@@ -14,7 +17,7 @@ import { createTmdbApi } from '$lib/services/tmdb-api.js';
  * is returned.
  *
  * @param {{ fetch: typeof globalThis.fetch, params: { id: string }, url: URL }} event - SvelteKit load context.
- * @returns {Promise<{ movie: Record<string, unknown> | null, providers?: Object | null, error: string | null }>} Movie object for the detail page.
+ * @returns {Promise<{ movie: MovieDetails | null, providers?: WatchProviders | null, error: string | null }>} Movie object for the detail page.
  */
 
 export async function load({ fetch, params, url }) {
