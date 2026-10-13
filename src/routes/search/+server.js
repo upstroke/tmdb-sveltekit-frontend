@@ -1,3 +1,5 @@
+// @ts-check
+
 import { json } from '@sveltejs/kit';
 import { resolveLocale } from '$lib/i18n/helpers';
 import { getLocaleText } from '$lib/i18n/resolver';

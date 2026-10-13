@@ -1,3 +1,5 @@
+// @ts-check
+
 import { TMDB_API_KEY } from '$env/static/private';
 import { resolveLocale } from '$lib/i18n/helpers';
 import { getLocaleText } from '$lib/i18n/resolver';
