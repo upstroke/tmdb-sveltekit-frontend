@@ -12,37 +12,41 @@
 	import { deduplicateMedia, getMediaKey } from '$lib/utils/deduplicateMedia';
 	import { restorePagedList } from '$lib/utils/pageStateRestore';
 
-	const { titles, messages } = $derived($i18n);
-	const activeLocale = $derived(resolveLocale(page.url.searchParams.get('locale')));
-	const storageKey = 'movies-page';
-
 	/**
-	 * Expected props for the page.
+	 * @typedef {Object} Genre
+	 * @property {number | string} id
+	 * @property {string} name
+	 *
+	 * @typedef {Object} FeaturedMedia
+	 * @property {number | string} id
+	 * @property {'movie' | 'tv' | string} mediaType
+	 * @property {string} title
+	 * @property {string} [releaseDate]
+	 * @property {string} [overview]
+	 * @property {string} [homepage]
+	 * @property {Genre[]} [genres]
+	 * @property {string} [imageUrl]
+	 *
+	 * @typedef {Object} MediaCard
+	 * @property {number | string} id
+	 * @property {'movie' | 'tv' | string} mediaType
+	 * @property {string} title
+	 * @property {string} [date]
+	 * @property {number} [rating]
+	 * @property {Genre[]} [genres]
+	 * @property {string} [imageUrl]
 	 *
 	 * @typedef {Object} PageData
-	 * @property {{
-	 *   id: number|string,
-	 *   mediaType: 'movie'|'tv'|string,
-	 *   title: string,
-	 *   releaseDate?: string,
-	 *   overview?: string,
-	 *   homepage?: string,
-	 *   genres?: Array<{id: number|string, name: string}>,
-	 *   imageUrl?: string
-	 * } | null} [featured]
-	 * @property {Array<{
-	 *   id: number|string,
-	 *   mediaType: 'movie'|'tv'|string,
-	 *   title: string,
-	 *   date?: string,
-	 *   rating?: number,
-	 *   genres?: Array<{id: number|string, name: string}>,
-	 *   imageUrl?: string
-	 * }>} [cards]
+	 * @property {FeaturedMedia | null} [featured]
+	 * @property {MediaCard[]} [cards]
 	 * @property {number} [page]
 	 * @property {boolean} [hasMore]
 	 * @property {string | null} [error]
 	 */
+
+	const { titles, messages } = $derived($i18n);
+	const activeLocale = $derived(resolveLocale(page.url.searchParams.get('locale')));
+	const storageKey = 'movies-page';
 
 	/**
 	 * Loaded page data from the server load.
@@ -50,26 +54,28 @@
 	 * @type {{ data: PageData }}
 	 */
 	let { data } = $props();
+
+	/** @type {PageData | undefined} Last processed `data` object, used to detect navigation. */
 	let previousData;
 
+	/** @type {FeaturedMedia | null} */
 	let featured = $state(null);
+	/** @type {MediaCard[]} */
 	let cards = $state([]);
 	let currentPage = $state(1);
 	let hasMore = $state(false);
+	/** @type {string | null} */
 	let error = $state(null);
 	let loading = $state(false);
 	let initialized = $state(false);
 
+	/** @type {string | null} Element id of the first newly inserted card. */
 	let scrollTargetId = $state(null);
+	/** @type {IntersectionObserver | null} */
 	let observer = null;
 
 	/**
-	 * Initialisiert den Seitenzustand einmalig.
-	 *
-	 * Beim ersten Render werden gespeicherte Seitenwerte über `restorePagedList`
-	 * wiederhergestellt. Die Funktion lädt bei Bedarf weitere Seiten nach,
-	 * setzt `featured`, `cards`, `page` und `hasMore` und behandelt Fehler mit
-	 * einer sichtbaren Meldung.
+	 * Resets the page state whenever new server data arrives.
 	 */
 	$effect(() => {
 		if (data === previousData) {
@@ -85,6 +91,13 @@
 		error = data.error ?? null;
 	});
 
+	/**
+	 * Restores the page state after a reset.
+	 *
+	 * Stored page values are restored via `restorePagedList`, which loads
+	 * additional pages if needed. Sets `featured`, `cards`, `currentPage` and
+	 * `hasMore`, and handles errors with a visible message.
+	 */
 	$effect(() => {
 		if (initialized) {
 			return;
@@ -130,11 +143,11 @@
 	});
 
 	/**
-	 * Scrollt nach dem Nachladen zur ersten neu eingefügten Karte.
+	 * Scrolls to the first newly inserted card after loading more.
 	 *
-	 * Sobald `scrollTargetId` gesetzt ist, beobachtet der Effekt das Ziel-Element
-	 * im Browser und führt ein sanftes Scrollen aus, sobald es im Viewport
-	 * auftaucht. Danach wird der Observer wieder entfernt.
+	 * Once `scrollTargetId` is set, the effect observes the target element
+	 * in the browser and performs smooth scrolling as soon as it appears in the
+	 * viewport. After that, the observer is removed again.
 	 */
 	$effect(() => {
 		if (!browser || !scrollTargetId) {
@@ -173,9 +186,10 @@
 	});
 
 	/**
-	 * Speichert die zuletzt geladene Seite im Session Storage.
+	 * Saves the last loaded page to session storage.
 	 *
-	 * @param {number} value - Seitennummer, die gespeichert werden soll.
+	 * @param {number} value - Page number to save.
+	 * @returns {void}
 	 */
 	function savePage(value) {
 		if (!browser) {
@@ -190,22 +204,23 @@
 	}
 
 	/**
-	 * Merkt sich das Ziel für das Scrollen zur ersten neu geladenen Karte.
+	 * Marks the target for scrolling to the first newly loaded card.
 	 *
-	 * @param {number} previousCardsCount - Anzahl der Karten vor dem Nachladen.
+	 * @param {number} previousCardsCount - Number of cards before loading more.
+	 * @returns {void}
 	 */
 	function markScrollTarget(previousCardsCount) {
 		scrollTargetId = `movie-card-${previousCardsCount + 1}`;
 	}
 
 	/**
-	 * Lädt weitere Filme nach.
+	 * Loads more movies.
 	 *
-	 * Die Funktion verhindert Doppelaufrufe, holt weitere Karten über die
-	 * Movies-Route, dedupliziert die Ergebnisse und setzt das Scrollziel
-	 * auf die erste neu eingefügte Karte.
+	 * The function prevents duplicate calls, fetches more cards via the
+	 * movies route, deduplicates the results, and sets the scroll target
+	 * to the first newly inserted card.
 	 *
-	 * @returns {Promise<void>} Wird abgeschlossen, wenn das Nachladen beendet ist.
+	 * @returns {Promise<void>} Resolves when loading more is complete.
 	 */
 	async function loadMore() {
 		if (loading || !hasMore) {
@@ -239,6 +254,7 @@
 				return;
 			}
 
+			/** @type {PageData} */
 			const result = await response.json();
 
 			const existingKeys = new Set(cards.map(getMediaKey).filter(Boolean));
@@ -262,7 +278,7 @@
 			savePage(currentPage);
 			markScrollTarget(previousCardsCount);
 		} catch (exception) {
-			if (exception.name === 'AbortError') {
+			if (exception instanceof Error && exception.name === 'AbortError') {
 				error = messages.loadTimeout;
 			} else {
 				error = exception instanceof Error ? exception.message : messages.unknownError;
