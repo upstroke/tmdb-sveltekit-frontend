@@ -33,6 +33,20 @@
 		(page.url.searchParams.get('locale') ?? DEFAULT_LOCALE).split('-')[1] ?? 'US'
 	);
 
+	/**
+	 * @type {{
+	 *   id: number|string,
+	 *   mediaType: 'movie'|'tv',
+	 *   title?: string,
+	 *   date?: string,
+	 *   rating?: number,
+	 *   certification?: string|number,
+	 *   genres?: Array<{name: string}>,
+	 *   imageUrl?: string,
+	 *   scrollId?: string,
+	 *   isLoading?: boolean
+	 * }}
+	 */
 	let {
 		id,
 		mediaType,
@@ -113,7 +127,7 @@
 						src={cardImageUrl}
 						alt={`Poster von ${cardTitle}`}
 						onload={(event) => {
-							const img = event.currentTarget;
+							const img = /** @type {HTMLImageElement} */ (event.currentTarget);
 							if (img.complete && img.naturalWidth > 0) {
 								requestAnimationFrame(() => {
 									imageLoaded = true;
@@ -123,7 +137,7 @@
 							}
 						}}
 						onerror={(event) => {
-							const img = event.currentTarget;
+							const img = /** @type {HTMLImageElement} */ (event.currentTarget);
 							img.style.display = 'none';
 							imageErrored = true;
 							imageLoaded = false;
