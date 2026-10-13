@@ -73,7 +73,8 @@
 				"dialogErrorTitle": "Load error",
 				"dialogOk": "OK",
 				"loadMoreLoading": "Loading more results …",
-				"searchResultsCount": "{count} search results found"
+				"searchResultsCount": "{count} search results found",
+				"actionsFor": "Actions for {title}"
 			},
 			"formats": {
 				"outOfTen": "out of 10",
@@ -167,7 +168,8 @@
 				"dialogErrorTitle": "Fehler beim Laden",
 				"dialogOk": "OK",
 				"loadMoreLoading": "Lade weitere Ergebnisse …",
-				"searchResultsCount": "{count} Suchergebnisse gefunden"
+				"searchResultsCount": "{count} Suchergebnisse gefunden",
+				"actionsFor": "Aktionen für {title}"
 			},
 			"formats": {
 				"outOfTen": "von 10",
@@ -261,7 +263,8 @@
 				"dialogErrorTitle": "Error al cargar",
 				"dialogOk": "Aceptar",
 				"loadMoreLoading": "Cargando más resultados …",
-				"searchResultsCount": "{count} resultados de búsqueda encontrados"
+				"searchResultsCount": "{count} resultados de búsqueda encontrados",
+				"actionsFor": "Acciones para {title}"
 			},
 			"formats": {
 				"outOfTen": "de 10",
@@ -355,7 +358,8 @@
 				"dialogErrorTitle": "Erreur de chargement",
 				"dialogOk": "OK",
 				"loadMoreLoading": "Chargement de résultats supplémentaires …",
-				"searchResultsCount": "{count} résultats de recherche trouvés"
+				"searchResultsCount": "{count} résultats de recherche trouvés",
+				"actionsFor": "Actions pour {title}"
 			},
 			"formats": {
 				"outOfTen": "sur 10",
@@ -384,26 +388,26 @@
 				"dateFallback": "- -"
 			},
 			"labels": {
-				"rating": "Рейтинг",
+				"rating": "Рейтинг",
 				"genre": "Жанр",
 				"genres": "Жанры",
 				"releaseDate": "Дата выхода",
 				"productionCompanies": "Кинокомпании",
 				"moreInfo": "Подробнее",
-				"officialWebsite": "Официальный сайт",
+				"officialWebsite": "Официальный сайт",
 				"firstAirDate": "Дата первого показа",
 				"mediaType": "Тип медиа",
 				"overview": "Описание",
 				"homepage": "Главная страница",
-				"trailer": "Трейлер",
+				"trailer": "Трейлер",
 				"production": "Производство",
 				"runtime": "Длительность",
-				"cast": "Актёры",
-				"actor": "Актёр",
+				"cast": "Актёры",
+				"actor": "Актёр",
 				"role": "Роль",
-				"crew": "Съёмочная группа",
+				"crew": "Съёмочная группа",
 				"job": "Должность",
-				"certification": "Возрастной рейтинг",
+				"certification": "Возрастной рейтинг",
 				"searchInput": "Фильмы и сериалы",
 				"languageSelect": "Выбрать язык",
 				"navigationToggle": "Открыть или закрыть навигацию",
@@ -424,17 +428,17 @@
 				"unknownError": "Неизвестная ошибка",
 				"pageSaveWarning": "Не удалось сохранить состояние страницы:",
 				"loadTimeout": "Загрузка заняла слишком много времени.",
-				"noTvShows": "ТВ-шоу не найдены.",
+				"noTvShows": "ТВ-шоу не найдены.",
 				"noGenres": "Жанры недоступны.",
 				"noRole": "Информация о роли недоступна.",
-				"noCast": "Данные об актёрах недоступны.",
-				"noCrew": "Данные о съёмочной группе недоступны.",
+				"noCast": "Данные об актёрах недоступны.",
+				"noCrew": "Данные о съёмочной группе недоступны.",
 				"noJob": "Информация о должности недоступна.",
-				"searchLoading": "Идёт поиск …",
+				"searchLoading": "Идёт поиск …",
 				"searchError": "Не удалось загрузить поиск.",
-				"searchNoResults": "Результаты не найдены.",
-				"noContent": "Контент не найден.",
-				"noMoviesFound": "Фильмы не найдены.",
+				"searchNoResults": "Результаты не найдены.",
+				"noContent": "Контент не найден.",
+				"noMoviesFound": "Фильмы не найдены.",
 				"apiKeyMissing": "Отсутствует TMDB_API_KEY",
 				"contentLoadError": "Не удалось загрузить контент",
 				"moviesLoadError": "Не удалось загрузить фильмы",
@@ -445,11 +449,12 @@
 				"moreTvShowsLoadError": "Не удалось загрузить больше ТВ-шоу.",
 				"searchHint": "Введите минимум четыре символа.",
 				"searchResults": "Результаты поиска",
-				"loadMore": "Загрузить ещё",
+				"loadMore": "Загрузить ещё",
 				"dialogErrorTitle": "Ошибка загрузки",
 				"dialogOk": "OK",
 				"loadMoreLoading": "Загрузка дополнительных результатов …",
-				"searchResultsCount": "Найдено результатов: {count}"
+				"searchResultsCount": "Найдено результатов: {count}",
+				"actionsFor": "Действия для {title}"
 			},
 			"formats": {
 				"outOfTen": "из 10",
@@ -462,12 +467,12 @@
 				"movieDetails": "Подробности фильма",
 				"tvShowDetails": "Подробности ТВ-шоу",
 				"tvShows": "ТВ-шоу",
-				"topRatedProductions": "Самые высокооценённые проекты",
+				"topRatedProductions": "Самые высокооценённые проекты",
 				"featuredToday": "Сегодня в центре внимания",
 				"trendingToday": "Популярное сегодня"
 			},
 			"buttons": {
-				"watchTrailer": "Смотреть трейлер {index}"
+				"watchTrailer": "Смотреть трейлер {index}"
 			}
 		},
 		"vi-VN": {
@@ -504,10 +509,10 @@
 				"mainNavigation": "Điều hướng chính",
 				"movie": "Phim",
 				"tvShow": "Chương trình TV",
-				"streamingProviders": "Nhàµµ cung cấp streaming",
+				"streamingProviders": "Nhà cung cấp streaming",
 				"streamingDataProvidedBy": "Cung cấp bởi",
-				"providerTypeFlatrate": "Góµ»£c",
-				"providerTypeRent": "Thuêµª",
+				"providerTypeFlatrate": "Gói cước",
+				"providerTypeRent": "Thuê",
 				"providerTypeBuy": "Mua",
 				"seasons": "Mùa",
 				"season": "Mùa"
@@ -543,7 +548,8 @@
 				"dialogErrorTitle": "Lỗi khi tải",
 				"dialogOk": "OK",
 				"loadMoreLoading": "Đang tải thêm kết quả …",
-				"searchResultsCount": "Đã tìm thấy {count} kết quả tìm kiếm"
+				"searchResultsCount": "Đã tìm thấy {count} kết quả tìm kiếm",
+				"actionsFor": "Hành động cho {title}"
 			},
 			"formats": {
 				"outOfTen": "trên 10",
