@@ -5,13 +5,8 @@ import { resolveLocale } from '$lib/i18n/helpers';
 import { getLocaleText } from '$lib/i18n/resolver';
 import { createTmdbApi } from '$lib/services/tmdb-api.js';
 
-/** @typedef {import('$lib/types/tmdb.js').TvDetails} TvDetails */
-/** @typedef {import('$lib/types/tmdb.js').TmdbRawSeason} TmdbRawSeason */
-/** @typedef {import('$lib/types/tmdb.js').Episode} Episode */
+/** @typedef {import('$lib/types/tmdb.js').TvShowWithEpisodes} TvShowWithEpisodes */
 /** @typedef {import('$lib/types/tmdb.js').WatchProviders} WatchProviders */
-
-/** @typedef {TmdbRawSeason & { episodes: Episode[] }} TvSeasonWithEpisodes */
-/** @typedef {Omit<TvDetails, 'seasons'> & { seasons: TvSeasonWithEpisodes[] }} TvShowWithEpisodes */
 
 /**
  * Loads the server data for a TV show detail page.

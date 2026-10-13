@@ -18,6 +18,14 @@
  * @property {string} name
  */
 
+/* ---------- Request ---------- */
+
+/**
+ * Query parameters accepted by `request`. Empty values are skipped.
+ *
+ * @typedef {Record<string, string | number | boolean | null | undefined>} RequestParams
+ */
+
 /* ---------- Raw TMDB data ---------- */
 
 /**
@@ -89,6 +97,12 @@
  *   credits?: { cast?: TmdbRawPerson[], crew?: TmdbRawPerson[] },
  *   certification?: string
  * }} TmdbRawDetails
+ */
+
+/**
+ * Raw detail data that is guaranteed to carry an ID.
+ *
+ * @typedef {TmdbRawDetails & { id: number }} TmdbRawDetailsWithId
  */
 
 /**
@@ -298,6 +312,18 @@
  * @property {string | null} airDate
  * @property {string | null} posterUrl
  * @property {Episode[]} episodes
+ */
+
+/**
+ * Season entry of a TV show detail page, enriched with its episodes.
+ *
+ * @typedef {TmdbRawSeason & { episodes: Episode[] }} TvSeasonWithEpisodes
+ */
+
+/**
+ * TV show detail data as returned by the TV show detail page loader.
+ *
+ * @typedef {Omit<TvDetails, 'seasons'> & { seasons: TvSeasonWithEpisodes[] }} TvShowWithEpisodes
  */
 
 /**
