@@ -10,6 +10,7 @@
 		"prepare": "husky",
 		"lint": "npm run format:check && npm run lint:eslint",
 		"format": "prettier --write ./src",
+		"check": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json",
 		"format:check": "prettier --check ./src",
 		"lint:eslint": "eslint ./src",
 		"lint:fix": "npm run format && npm run lint:eslint -- --fix",
@@ -52,6 +53,7 @@
 		"prettier-plugin-svelte": "^4.1.0",
 		"sass": "^1.102.0",
 		"svelte": "^5.56.1",
+		"svelte-check": "^4.7.6",
 		"vite": "^8.0.16",
 		"vitest": "^4.1.10"
 	},
