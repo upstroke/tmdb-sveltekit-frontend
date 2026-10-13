@@ -33,20 +33,7 @@
 		(page.url.searchParams.get('locale') ?? DEFAULT_LOCALE).split('-')[1] ?? 'US'
 	);
 
-	/**
-	 * @type {{
-	 *   id: number|string,
-	 *   mediaType: 'movie'|'tv',
-	 *   title?: string,
-	 *   date?: string,
-	 *   rating?: number,
-	 *   certification?: string|number,
-	 *   genres?: Array<{name: string}>,
-	 *   imageUrl?: string,
-	 *   scrollId?: string,
-	 *   isLoading?: boolean
-	 * }}
-	 */
+	/** @type {import('../types/components.js').CardDefaultProps} */
 	let {
 		id,
 		mediaType,
