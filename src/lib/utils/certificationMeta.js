@@ -5,6 +5,13 @@ import ratings from '$lib/i18n/ratings.json';
 const DEFAULT_RATING_SYSTEM = 'US';
 
 /**
+ * @typedef {{ label: string, color: string, textColor: string, age?: number, description?: string }} RatingEntry
+ */
+
+/** @type {Record<string, { name: string, ratings: Record<string, RatingEntry> } | undefined>} */
+const ratingSystems = ratings.ratingSystems;
+
+/**
  * Normalizes a rating system and uses the default configured system
  * for missing or invalid values.
  *
@@ -32,7 +39,7 @@ export function getCertificationMeta(value, country = DEFAULT_RATING_SYSTEM) {
 		return null;
 	}
 
-	const ratingSystem = ratings.ratingSystems[normalizeRatingSystem(country)];
+	const ratingSystem = ratingSystems[normalizeRatingSystem(country)];
 	const rating = ratingSystem?.ratings?.[normalizedValue];
 
 	if (!rating) {

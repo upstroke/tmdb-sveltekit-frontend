@@ -54,9 +54,5 @@ function createLocaleStore() {
 	};
 }
 
-/**
- * Global store for the currently selected locale.
- *
- * @type {{ subscribe: Function, set: (locale: string) => void }}
- */
+/** Global store for the currently selected locale. */
 export const locale = createLocaleStore();

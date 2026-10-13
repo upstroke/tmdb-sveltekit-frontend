@@ -10,6 +10,6 @@ import { locale } from '$lib/stores/locale';
  * The store is automatically updated as soon as the underlying
  * `locale` store changes.
  *
- * @type {import('svelte/store').Readable<Object>}
+ * @type {import('svelte/store').Readable<ReturnType<typeof getLocaleText>>}
  */
 export const i18n = derived(locale, ($locale) => getLocaleText($locale));

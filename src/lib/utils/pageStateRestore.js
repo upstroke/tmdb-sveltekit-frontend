@@ -3,6 +3,8 @@
 import { browser } from '$app/environment';
 import { deduplicateMedia, getMediaKey } from '$lib/utils/deduplicateMedia';
 
+/** @typedef {import('$lib/utils/deduplicateMedia').MediaItem} MediaItem */
+
 /**
  * Reads the last saved page from session storage.
  *
@@ -31,20 +33,20 @@ export function getStoredPage(storageKey) {
  *   storageKey: string,
  *   initialData: {
  *     featured?: unknown,
- *     cards?: Array<unknown>,
+ *     cards?: Array<MediaItem>,
  *     page?: number,
  *     hasMore?: boolean
  *   },
  *   fetchPageData: (pageNumber: number) => Promise<{
  *     featured?: unknown,
- *     cards?: Array<unknown>,
+ *     cards?: Array<MediaItem>,
  *     page?: number,
  *     hasMore?: boolean
  *   }>
  * }} options - Configuration for restoring the list.
  * @returns {Promise<{
  *   featured: unknown,
- *   cards: Array<unknown>,
+ *   cards: Array<MediaItem>,
  *   page: number,
  *   hasMore: boolean
  * }>} Restored list state.
