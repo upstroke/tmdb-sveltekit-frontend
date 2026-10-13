@@ -12,7 +12,7 @@ import { createTmdbApi } from '$lib/services/tmdb-api.js';
  * The route expects the query parameter `page` and returns the next
  * batch of mixed content for the homepage.
  *
- * @param {{ fetch: Function, url: URL }} event - SvelteKit request context.
+ * @param {{ fetch: typeof globalThis.fetch, url: URL }} event - SvelteKit request context.
  * @returns {Promise<Response>} JSON response with cards and paging status.
  */
 export async function GET({ fetch, url }) {

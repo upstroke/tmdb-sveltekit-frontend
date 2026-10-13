@@ -12,7 +12,7 @@ import { createTmdbApi } from '$lib/services/tmdb-api.js';
  * The route expects the query parameter `page`, loads the corresponding
  * TV show page via the TMDB API, and returns deduplicated cards along with paging info.
  *
- * @param {{ fetch: Function, url: URL }} event - SvelteKit request context.
+ * @param {{ fetch: typeof globalThis.fetch, url: URL }} event - SvelteKit request context.
  * @returns {Promise<Response>} JSON response with cards, page number, and error status.
  */
 

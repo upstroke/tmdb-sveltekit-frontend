@@ -13,8 +13,8 @@ import { createTmdbApi } from '$lib/services/tmdb-api.js';
  * If no API key is available, an empty record with an error message
  * is returned.
  *
- * @param {{ fetch: Function, params: { id: string } }} event - SvelteKit load context.
- * @returns {Promise<{ movie: Record<string, unknown> | null, error: string | null }>} Movie object for the detail page.
+ * @param {{ fetch: typeof globalThis.fetch, params: { id: string }, url: URL }} event - SvelteKit load context.
+ * @returns {Promise<{ movie: Record<string, unknown> | null, providers?: Object | null, error: string | null }>} Movie object for the detail page.
  */
 
 export async function load({ fetch, params, url }) {
