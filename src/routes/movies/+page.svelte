@@ -12,37 +12,9 @@
 	import { deduplicateMedia, getMediaKey } from '$lib/utils/deduplicateMedia';
 	import { restorePagedList } from '$lib/utils/pageStateRestore';
 
-	/**
-	 * @typedef {Object} Genre
-	 * @property {number | string} id
-	 * @property {string} name
-	 *
-	 * @typedef {Object} FeaturedMedia
-	 * @property {number | string} id
-	 * @property {'movie' | 'tv' | string} mediaType
-	 * @property {string} title
-	 * @property {string} [releaseDate]
-	 * @property {string} [overview]
-	 * @property {string} [homepage]
-	 * @property {Genre[]} [genres]
-	 * @property {string} [imageUrl]
-	 *
-	 * @typedef {Object} MediaCard
-	 * @property {number | string} id
-	 * @property {'movie' | 'tv' | string} mediaType
-	 * @property {string} title
-	 * @property {string} [date]
-	 * @property {number} [rating]
-	 * @property {Genre[]} [genres]
-	 * @property {string} [imageUrl]
-	 *
-	 * @typedef {Object} PageData
-	 * @property {FeaturedMedia | null} [featured]
-	 * @property {MediaCard[]} [cards]
-	 * @property {number} [page]
-	 * @property {boolean} [hasMore]
-	 * @property {string | null} [error]
-	 */
+	/** @typedef {import('$lib/types/tmdb.js').PageData} PageData */
+	/** @typedef {import('$lib/types/tmdb.js').MappedFeatured} MappedFeatured */
+	/** @typedef {import('$lib/types/tmdb.js').CardItem} CardItem */
 
 	const { titles, messages } = $derived($i18n);
 	const activeLocale = $derived(resolveLocale(page.url.searchParams.get('locale')));
@@ -58,9 +30,9 @@
 	/** @type {PageData | undefined} Last processed `data` object, used to detect navigation. */
 	let previousData;
 
-	/** @type {FeaturedMedia | null} */
+	/** @type {MappedFeatured | null} */
 	let featured = $state(null);
-	/** @type {MediaCard[]} */
+	/** @type {CardItem[]} */
 	let cards = $state([]);
 	let currentPage = $state(1);
 	let hasMore = $state(false);
