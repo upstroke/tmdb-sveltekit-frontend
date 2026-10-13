@@ -6,8 +6,10 @@ import { DEFAULT_LOCALE } from '$lib/i18n/config';
 
 /** @typedef {import('$lib/types/tmdb.js').MediaType} MediaType */
 /** @typedef {import('$lib/types/tmdb.js').Genre} Genre */
+/** @typedef {import('$lib/types/tmdb.js').RequestParams} RequestParams */
 /** @typedef {import('$lib/types/tmdb.js').TmdbRawItem} TmdbRawItem */
 /** @typedef {import('$lib/types/tmdb.js').TmdbRawDetails} TmdbRawDetails */
+/** @typedef {import('$lib/types/tmdb.js').TmdbRawDetailsWithId} TmdbRawDetailsWithId */
 /** @typedef {import('$lib/types/tmdb.js').TmdbRawPerson} TmdbRawPerson */
 /** @typedef {import('$lib/types/tmdb.js').TmdbRawProvider} TmdbRawProvider */
 /** @typedef {import('$lib/types/tmdb.js').TmdbRawEpisode} TmdbRawEpisode */
@@ -29,18 +31,6 @@ import { DEFAULT_LOCALE } from '$lib/i18n/config';
 /** @typedef {import('$lib/types/tmdb.js').TvDetails} TvDetails */
 /** @typedef {import('$lib/types/tmdb.js').SeasonDetails} SeasonDetails */
 /** @typedef {import('$lib/types/tmdb.js').FeaturedItem} FeaturedItem */
-
-/**
- * Raw detail data that is guaranteed to carry an ID.
- *
- * @typedef {TmdbRawDetails & { id: number }} TmdbRawDetailsWithId
- */
-
-/**
- * Query parameters accepted by `request`. Empty values are skipped.
- *
- * @typedef {Record<string, string | number | boolean | null | undefined>} RequestParams
- */
 
 /** @typedef {ReturnType<typeof createTmdbApi>} TmdbApi */
 
