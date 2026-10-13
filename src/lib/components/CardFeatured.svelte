@@ -33,6 +33,7 @@
 	 * 	 overview="A thief who steals corporate secrets..."
 	 * />
 	 */
+	/** @type {import('$lib/types/components.js').CardFeaturedProps} */
 	let {
 		id,
 		mediaType,
@@ -48,11 +49,11 @@
 	let normalizedType = $derived(mediaType === 'movie' ? 'movie' : mediaType === 'tv' ? 'tv' : null);
 
 	/**
-	 * Ermittelt die lokale Detailroute für die Karte und übernimmt die aktive Locale.
+	 * Resolves the local detail route for the card and carries over the active locale.
 	 *
-	 * Bei einem unbekannten Medientyp wird kein Link erzeugt.
+	 * No link is generated for an unknown media type.
 	 *
-	 * @returns {string | undefined} Lokalisierte Detailroute oder `undefined`.
+	 * @returns {string | undefined} Localized detail route or `undefined`.
 	 */
 	let detailsHref = $derived.by(() => {
 		let href;

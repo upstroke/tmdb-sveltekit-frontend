@@ -20,4 +20,19 @@
  * @property {boolean=} isLoading Shows the loading state of the card.
  */
 
+/**
+ * Props of `CardFeatured.svelte`.
+ *
+ * @typedef {Object} CardFeaturedProps
+ * @property {number | string} id TMDB ID of the media item for the detail link.
+ * @property {import('./tmdb.js').MediaType} mediaType Media type and target route of the card.
+ * @property {string=} title
+ * @property {string=} releaseDate Release or premiere date.
+ * @property {string=} overview Short description of the media.
+ * @property {string=} homepage URL of the official website.
+ * @property {{ id?: number | string, name: string }[]=} genres
+ * @property {string=} imageUrl Background image URL; a placeholder is used if empty.
+ * @property {string=} posterUrl Poster URL; falls back to `imageUrl`.
+ */
+
 export {};
