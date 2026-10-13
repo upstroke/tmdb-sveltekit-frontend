@@ -6,19 +6,43 @@
 	import { i18n } from '$lib/stores/i18n';
 	import { resolveLocale } from '$lib/i18n/helpers';
 
+	/**
+	 * Typeahead-Suche für Filme und TV-Serien mit Combobox-Tastaturbedienung,
+	 * Screenreader-Ansagen und abbrechbaren Suchanfragen.
+	 *
+	 * @component
+	 */
+
+	/**
+	 * @typedef {Object} SearchResult
+	 * @property {number|string} id - TMDB-ID.
+	 * @property {'movie'|'tv'} mediaType - Medientyp des Treffers.
+	 * @property {string} [title] - Titel.
+	 * @property {string} [date] - Veröffentlichungsdatum.
+	 * @property {number|null} [rating] - Bewertung (0-10).
+	 * @property {string|null} [posterUrl] - Poster-URL.
+	 * @property {string|null} [imageUrl] - Alternative Bild-URL.
+	 */
+
 	const { labels: texts, messages, formats, titles, labels, fallbacks } = $derived($i18n);
 	const activeLocale = $derived(resolveLocale(page.url.searchParams.get('locale')));
 
 	let query = $state('');
+	/** @type {SearchResult[]} */
 	let movies = $state([]);
+	/** @type {SearchResult[]} */
 	let tvShows = $state([]);
 	let loading = $state(false);
 	let showLoading = $state(false);
 	let resultsClosed = $state(false);
+	/** @type {string | null} */
 	let error = $state(null);
 	let announcement = $state('');
+	/** @type {HTMLInputElement | undefined} */
 	let inputElement;
+	/** @type {string | null} */
 	let focusedResultId = $state(null);
+	/** @type {string | null} */
 	let lastSelectedResultId = $state(null);
 
 	let hasResults = $derived(movies.length > 0 || tvShows.length > 0);
@@ -28,21 +52,37 @@
 	);
 	let resultsVisible = $derived(!resultsClosed && (hasResults || loading || !!error));
 
+	/** @type {ReturnType<typeof setTimeout> | undefined} */
 	let debounceTimer;
+	/** @type {ReturnType<typeof setTimeout> | undefined} */
 	let loadingTimer;
+	/** @type {ReturnType<typeof setTimeout> | undefined} */
 	let announcementTimer;
+	/** @type {AbortController | undefined} */
 	let controller;
+	/** @type {string | null} */
 	let previousLocale = $state(null);
 
 	const searchHintId = 'typeahead-search-hint';
 	const resultsId = 'typeahead-search-results';
 
+	/**
+	 * Liefert die DOM-IDs aller Treffer in Anzeigereihenfolge (Filme, dann Serien).
+	 *
+	 * @returns {string[]}
+	 */
 	function getAllResultIds() {
 		const movieIds = movies.map((m) => `movie-${m.id}`);
 		const tvIds = tvShows.map((t) => `tv-${t.id}`);
 		return [...movieIds, ...tvIds];
 	}
 
+	/**
+	 * Setzt den Fokus auf einen Treffer und scrollt ihn in den sichtbaren Bereich.
+	 *
+	 * @param {string} resultId - DOM-ID des Treffers.
+	 * @returns {void}
+	 */
 	function focusResult(resultId) {
 		focusedResultId = resultId;
 
@@ -57,27 +97,31 @@
 		});
 	}
 
+	/** @returns {void} */
 	function focusNextResult() {
 		const ids = getAllResultIds();
 		if (ids.length === 0) return;
-		const currentIndex = ids.indexOf(focusedResultId);
+		const currentIndex = ids.indexOf(focusedResultId ?? '');
 		const nextIndex = currentIndex === -1 ? 0 : Math.min(currentIndex + 1, ids.length - 1);
 		focusResult(ids[nextIndex]);
 	}
 
+	/** @returns {void} */
 	function focusPreviousResult() {
 		const ids = getAllResultIds();
 		if (ids.length === 0) return;
-		const currentIndex = ids.indexOf(focusedResultId);
+		const currentIndex = ids.indexOf(focusedResultId ?? '');
 		const previousIndex = currentIndex === -1 ? 0 : Math.max(currentIndex - 1, 0);
 		focusResult(ids[previousIndex]);
 	}
 
+	/** @returns {void} */
 	function focusFirstResult() {
 		const ids = getAllResultIds();
 		if (ids.length > 0) focusResult(ids[0]);
 	}
 
+	/** @returns {void} */
 	function focusLastResult() {
 		const ids = getAllResultIds();
 		if (ids.length > 0) focusResult(ids[ids.length - 1]);
@@ -109,29 +153,59 @@
 		if (term.length >= 4) void search(term);
 	});
 
+	/**
+	 * @param {number|null|undefined} value - Bewertung.
+	 * @returns {string} Bewertung mit einer Dezimalstelle.
+	 */
 	function formatRating(value) {
 		return Number(value ?? 0).toFixed(1);
 	}
+
+	/**
+	 * @param {string|undefined} value - Datumsstring.
+	 * @returns {string} Jahr oder Fallback-Text.
+	 */
 	function formatYear(value) {
 		if (!value) return fallbacks.dateFallback;
 		const date = new Date(value);
 		if (Number.isNaN(date.getTime())) return fallbacks.dateFallback;
 		return String(date.getFullYear());
 	}
+
+	/**
+	 * Hängt die aktive Locale als Query-Parameter an einen Link an.
+	 *
+	 * @param {string} href - Pfad des Ziels.
+	 * @returns {string}
+	 */
 	function withLocale(href) {
 		if (!href) return href;
 		const url = new URL(href, page.url.origin);
 		url.searchParams.set('locale', activeLocale);
 		return `${url.pathname}${url.search}${url.hash}`;
 	}
+
+	/**
+	 * @param {SearchResult} item - Suchtreffer.
+	 * @returns {string} Detailroute des Treffers.
+	 */
 	function resultHref(item) {
 		if (item.mediaType === 'movie') return resolve('/movies/[id]', { id: String(item.id) });
 		return resolve('/tv-shows/[id]', { id: String(item.id) });
 	}
+
+	/** @returns {void} */
 	function clearAnnouncement() {
 		clearTimeout(announcementTimer);
 		announcement = '';
 	}
+
+	/**
+	 * Plant eine verzögerte Screenreader-Ansage.
+	 *
+	 * @param {string} message - Ansagetext.
+	 * @returns {void}
+	 */
 	function scheduleAnnouncement(message) {
 		clearTimeout(announcementTimer);
 		announcement = '';
@@ -142,6 +216,8 @@
 			});
 		}, 500);
 	}
+
+	/** @returns {void} */
 	function resetResults() {
 		clearTimeout(loadingTimer);
 		clearAnnouncement();
@@ -153,6 +229,8 @@
 		tvShows = [];
 		error = null;
 	}
+
+	/** @returns {void} */
 	function handleInput() {
 		clearTimeout(debounceTimer);
 		clearAnnouncement();
@@ -165,6 +243,13 @@
 		resultsClosed = false;
 		debounceTimer = setTimeout(() => search(term), 300);
 	}
+
+	/**
+	 * Führt die Suche aus und bricht dabei eine laufende Anfrage ab.
+	 *
+	 * @param {string} term - Suchbegriff (mindestens 4 Zeichen).
+	 * @returns {Promise<void>}
+	 */
 	async function search(term) {
 		controller?.abort();
 		clearTimeout(loadingTimer);
@@ -199,7 +284,7 @@
 				}
 			} else if (term.length >= 4) scheduleAnnouncement(messages.searchNoResults);
 		} catch (exception) {
-			if (exception.name === 'AbortError') return;
+			if (/** @type {Error} */ (exception).name === 'AbortError') return;
 			error = messages.searchError;
 			scheduleAnnouncement(messages.searchError);
 		} finally {
@@ -209,6 +294,12 @@
 		}
 	}
 
+	/**
+	 * Tastaturbedienung der Combobox (Pfeile, Enter, Escape, Home, End).
+	 *
+	 * @param {KeyboardEvent} event
+	 * @returns {void}
+	 */
 	function handleKeydown(event) {
 		if (!resultsVisible || !hasResults) {
 			if (event.key === 'Escape') {
@@ -230,7 +321,9 @@
 			case 'Enter':
 				event.preventDefault();
 				if (focusedResultId) {
-					const focusedLink = document.querySelector(`a.result[aria-selected="true"]`);
+					const focusedLink = /** @type {HTMLAnchorElement | null} */ (
+						document.querySelector(`a.result[aria-selected="true"]`)
+					);
 					if (focusedLink) {
 						focusedLink.click();
 					}
@@ -251,6 +344,12 @@
 		}
 	}
 
+	/**
+	 * Schließt die Trefferliste.
+	 *
+	 * @param {{ restoreFocus?: boolean }} [options]
+	 * @returns {void}
+	 */
 	function closeResults({ restoreFocus = false } = {}) {
 		clearAnnouncement();
 		resultsClosed = true;
@@ -264,10 +363,16 @@
 		if (restoreFocus) inputElement?.focus();
 	}
 
+	/**
+	 * @param {MouseEvent} event
+	 * @returns {void}
+	 */
 	function handleWindowClick(event) {
-		if (!event.target.closest('#typeahead-search')) closeResults();
+		const target = /** @type {Element | null} */ (event.target);
+		if (!target?.closest('#typeahead-search')) closeResults();
 	}
 
+	/** @returns {void} */
 	function showResults() {
 		if (query.trim().length >= 4 && (hasResults || loading || error)) {
 			resultsClosed = false;
