@@ -12,7 +12,7 @@ import { createTmdbApi } from '$lib/services/tmdb-api.js';
  * The route expects the query parameter `q`, validates its minimum length,
  * and returns separate lists for movies and TV shows.
  *
- * @param {{ fetch: Function, url: URL }} event - SvelteKit request context.
+ * @param {{ fetch: typeof globalThis.fetch, url: URL }} event - SvelteKit request context.
  * @returns {Promise<Response>} JSON response with search results.
  */
 export async function GET({ fetch, url }) {

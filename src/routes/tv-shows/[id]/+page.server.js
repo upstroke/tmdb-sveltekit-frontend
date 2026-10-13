@@ -14,8 +14,8 @@ import { createTmdbApi } from '$lib/services/tmdb-api.js';
  * If no API key is available, an empty record with an error message
  * is returned.
  *
- * @param {{ fetch: Function, params: { id: string }, url: URL }} event - SvelteKit load context.
- * @returns {Promise<{ tvShow: Record<string, unknown> | null, providers: Object | null, error: string | null }>} TV show object for the detail page.
+ * @param {{ fetch: typeof globalThis.fetch, params: { id: string }, url: URL }} event - SvelteKit load context.
+ * @returns {Promise<{ tvShow: Record<string, unknown> | null, providers?: Object | null, error: string | null }>} TV show object for the detail page.
  */
 export async function load({ fetch, params, url }) {
 	const locale = resolveLocale(url.searchParams.get('locale'));
@@ -46,7 +46,10 @@ export async function load({ fetch, params, url }) {
 						episodes: seasonDetails.episodes
 					};
 				} catch (err) {
-					console.warn(`Failed to fetch season ${season.season_number}:`, err.message);
+					console.warn(
+						`Failed to fetch season ${season.season_number}:`,
+						err instanceof Error ? err.message : err
+					);
 					return {
 						...season,
 						episodes: []

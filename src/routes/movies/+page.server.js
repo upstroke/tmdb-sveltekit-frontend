@@ -12,17 +12,18 @@ import { createTmdbApi } from '$lib/services/tmdb-api.js';
  * corresponding trending movies via the TMDB API, and prepares a
  * featured object as well as the card list for the page.
  *
- * @param {{ fetch: Function, url: URL }} event - SvelteKit load context.
+ * @param {{ fetch: typeof globalThis.fetch, url: URL }} event - SvelteKit load context.
  * @returns {Promise<{
  *   featured: {
  *     id: number|string,
- *     mediaType: 'movie',
+ *     mediaType: string | null,
  *     title: string,
  *     releaseDate: string,
  *     overview: string,
  *     homepage: string,
  *     genres: Array<{id: number|string, name: string}>,
- *     imageUrl: string
+ *     imageUrl: string,
+ *     posterUrl: string
  *   } | null,
  *   cards: Array<Record<string, unknown>>,
  *   page: number,
