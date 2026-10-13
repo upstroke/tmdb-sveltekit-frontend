@@ -19,11 +19,9 @@ describe('getLocaleText', () => {
 	// Statement coverage: the returned object contains all required top-level keys.
 	it('always returns an object with the required top-level keys', () => {
 		const result = getLocaleText('en-US');
-		['locale', 'labels', 'messages', 'titles', 'buttons', 'formats', 'fallbacks'].forEach(
-			(key) => {
-				expect(result).toHaveProperty(key);
-			}
-		);
+		['locale', 'labels', 'messages', 'titles', 'buttons', 'formats', 'fallbacks'].forEach((key) => {
+			expect(result).toHaveProperty(key);
+		});
 	});
 
 	// Branch coverage: a supported locale returns its own translation data.

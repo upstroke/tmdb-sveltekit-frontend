@@ -115,10 +115,7 @@ export async function handle({ event, resolve }) {
 	// Instruct browsers to only connect via HTTPS for the next year (production only).
 	// Skipped in development so that localhost HTTP still works.
 	if (event.url.protocol === 'https:') {
-		response.headers.set(
-			'Strict-Transport-Security',
-			'max-age=31536000; includeSubDomains'
-		);
+		response.headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
 	}
 
 	return response;

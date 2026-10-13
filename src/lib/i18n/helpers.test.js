@@ -142,8 +142,8 @@ describe('validateLocales', () => {
 	it('does not log a warning for the reference locale en-US', () => {
 		validateLocales();
 		const calls = /** @type {string[][]} */ (console.warn.mock.calls);
-		const referenceMentioned = calls.some(([msg]) =>
-			typeof msg === 'string' && msg.includes('en-US') && msg.includes('missing key')
+		const referenceMentioned = calls.some(
+			([msg]) => typeof msg === 'string' && msg.includes('en-US') && msg.includes('missing key')
 		);
 		expect(referenceMentioned).toBe(false);
 	});
