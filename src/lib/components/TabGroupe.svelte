@@ -217,7 +217,7 @@
 						class="episode-item"
 						tabindex={isSelected(tab.id) && episodeIndex === focusedEpisodeIndex[tabIndex] ? 0 : -1}
 						onkeydown={(event) =>
-							handleEpisodeKeydown(event, tabIndex, episodeIndex, tab.episodes.length)}
+							handleEpisodeKeydown(event, tabIndex, episodeIndex, tab.episodes?.length ?? 0)}
 					>
 						<h4 class="episode-title">
 							{episodeIndex + 1}. {episode.name}
