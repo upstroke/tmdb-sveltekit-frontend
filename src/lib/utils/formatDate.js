@@ -1,3 +1,5 @@
+// @ts-check
+
 /**
  * Checks whether a value consists exclusively of digits and optionally has a fixed length.
  *

@@ -1,3 +1,5 @@
+// @ts-check
+
 /**
  * @typedef {object} MediaItem
  * @property {string|number} id - Unique ID of the media item.

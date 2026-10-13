@@ -1,3 +1,5 @@
+// @ts-check
+
 import { browser } from '$app/environment';
 import { deduplicateMedia, getMediaKey } from '$lib/utils/deduplicateMedia';
 

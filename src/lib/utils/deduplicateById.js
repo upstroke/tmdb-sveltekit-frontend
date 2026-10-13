@@ -1,3 +1,5 @@
+// @ts-check
+
 /**
  * Removes entries without a valid ID and duplicate IDs from a list.
  *

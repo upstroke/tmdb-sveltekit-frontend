@@ -1,3 +1,5 @@
+// @ts-check
+
 import uiText from '$lib/i18n/ui.json';
 import { DEFAULT_LOCALE } from '$lib/i18n/config';
 

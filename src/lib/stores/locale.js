@@ -1,3 +1,5 @@
+// @ts-check
+
 import { browser } from '$app/environment';
 import { writable } from 'svelte/store';
 import { DEFAULT_LOCALE } from '$lib/i18n/config';

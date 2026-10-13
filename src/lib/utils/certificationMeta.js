@@ -1,3 +1,5 @@
+// @ts-check
+
 import ratings from '$lib/i18n/ratings.json';
 
 const DEFAULT_RATING_SYSTEM = 'US';
