@@ -4,31 +4,31 @@ import { getDate, getImageUrl, getMediaType, getTitle } from '$lib/services/tmdb
 import notAvailableImage from '$lib/assets/not-available.png';
 import { DEFAULT_LOCALE } from '$lib/i18n/config';
 
-/** @typedef {import('./tmdb/types.js').MediaType} MediaType */
-/** @typedef {import('./tmdb/types.js').Genre} Genre */
-/** @typedef {import('./tmdb/types.js').TmdbRawItem} TmdbRawItem */
-/** @typedef {import('./tmdb/types.js').TmdbRawDetails} TmdbRawDetails */
-/** @typedef {import('./tmdb/types.js').TmdbRawPerson} TmdbRawPerson */
-/** @typedef {import('./tmdb/types.js').TmdbRawProvider} TmdbRawProvider */
-/** @typedef {import('./tmdb/types.js').TmdbRawEpisode} TmdbRawEpisode */
-/** @typedef {import('./tmdb/types.js').TmdbRawListResponse} TmdbRawListResponse */
-/** @typedef {import('./tmdb/types.js').TmdbRawGenreListResponse} TmdbRawGenreListResponse */
-/** @typedef {import('./tmdb/types.js').TmdbRawWatchProvidersResponse} TmdbRawWatchProvidersResponse */
-/** @typedef {import('./tmdb/types.js').TmdbRawMovieCertificationResponse} TmdbRawMovieCertificationResponse */
-/** @typedef {import('./tmdb/types.js').TmdbRawTvCertificationResponse} TmdbRawTvCertificationResponse */
-/** @typedef {import('./tmdb/types.js').TmdbRawSeasonResponse} TmdbRawSeasonResponse */
-/** @typedef {import('./tmdb/types.js').CardItem} CardItem */
-/** @typedef {import('./tmdb/types.js').PagedResult} PagedResult */
-/** @typedef {import('./tmdb/types.js').WatchProvider} WatchProvider */
-/** @typedef {import('./tmdb/types.js').WatchProviders} WatchProviders */
-/** @typedef {import('./tmdb/types.js').CastMember} CastMember */
-/** @typedef {import('./tmdb/types.js').CrewMember} CrewMember */
-/** @typedef {import('./tmdb/types.js').MappedDetails} MappedDetails */
-/** @typedef {import('./tmdb/types.js').MappedFeatured} MappedFeatured */
-/** @typedef {import('./tmdb/types.js').MovieDetails} MovieDetails */
-/** @typedef {import('./tmdb/types.js').TvDetails} TvDetails */
-/** @typedef {import('./tmdb/types.js').SeasonDetails} SeasonDetails */
-/** @typedef {import('./tmdb/types.js').FeaturedItem} FeaturedItem */
+/** @typedef {import('$lib/types/tmdb.js').MediaType} MediaType */
+/** @typedef {import('$lib/types/tmdb.js').Genre} Genre */
+/** @typedef {import('$lib/types/tmdb.js').TmdbRawItem} TmdbRawItem */
+/** @typedef {import('$lib/types/tmdb.js').TmdbRawDetails} TmdbRawDetails */
+/** @typedef {import('$lib/types/tmdb.js').TmdbRawPerson} TmdbRawPerson */
+/** @typedef {import('$lib/types/tmdb.js').TmdbRawProvider} TmdbRawProvider */
+/** @typedef {import('$lib/types/tmdb.js').TmdbRawEpisode} TmdbRawEpisode */
+/** @typedef {import('$lib/types/tmdb.js').TmdbRawListResponse} TmdbRawListResponse */
+/** @typedef {import('$lib/types/tmdb.js').TmdbRawGenreListResponse} TmdbRawGenreListResponse */
+/** @typedef {import('$lib/types/tmdb.js').TmdbRawWatchProvidersResponse} TmdbRawWatchProvidersResponse */
+/** @typedef {import('$lib/types/tmdb.js').TmdbRawMovieCertificationResponse} TmdbRawMovieCertificationResponse */
+/** @typedef {import('$lib/types/tmdb.js').TmdbRawTvCertificationResponse} TmdbRawTvCertificationResponse */
+/** @typedef {import('$lib/types/tmdb.js').TmdbRawSeasonResponse} TmdbRawSeasonResponse */
+/** @typedef {import('$lib/types/tmdb.js').CardItem} CardItem */
+/** @typedef {import('$lib/types/tmdb.js').PagedResult} PagedResult */
+/** @typedef {import('$lib/types/tmdb.js').WatchProvider} WatchProvider */
+/** @typedef {import('$lib/types/tmdb.js').WatchProviders} WatchProviders */
+/** @typedef {import('$lib/types/tmdb.js').CastMember} CastMember */
+/** @typedef {import('$lib/types/tmdb.js').CrewMember} CrewMember */
+/** @typedef {import('$lib/types/tmdb.js').MappedDetails} MappedDetails */
+/** @typedef {import('$lib/types/tmdb.js').MappedFeatured} MappedFeatured */
+/** @typedef {import('$lib/types/tmdb.js').MovieDetails} MovieDetails */
+/** @typedef {import('$lib/types/tmdb.js').TvDetails} TvDetails */
+/** @typedef {import('$lib/types/tmdb.js').SeasonDetails} SeasonDetails */
+/** @typedef {import('$lib/types/tmdb.js').FeaturedItem} FeaturedItem */
 
 /**
  * Raw detail data that is guaranteed to carry an ID.
