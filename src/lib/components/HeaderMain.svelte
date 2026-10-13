@@ -5,31 +5,37 @@
 	import { i18n } from '$lib/stores/i18n';
 
 	/**
+	 * @typedef {import('svelte').Snippet} Snippet
+	 *
+	 * @typedef {Object} NavItem
+	 * @property {string} id - Unique id, also used as the list item id.
+	 * @property {string} label - Visible link text.
+	 * @property {string} icon - Icon class name.
+	 * @property {string} path - Target path.
+	 * @property {string} storageKey - Session storage key for the last opened page number.
+	 * @property {(pathname: string) => boolean} active - Returns true if the item matches the current path.
+	 */
+
+	/**
 	 * Renders the global header with navigation, mobile menu,
 	 * optional content slot, and language selector.
 	 *
 	 * The navigation links preserve the active path and the last used page number per route.
 	 *
-	 * @component
-	 * @prop {Array<{
-	 *   id: string,
-	 *   label: string,
-	 *   icon: string,
-	 *   path: string,
-	 *   storageKey: string,
-	 *   active: (pathname: string) => boolean
-	 * }>} [navItems=[]] - Navigation items for the global header.
-	 * @prop {Snippet|undefined} [children] - Optional Svelte 5 snippet content between navigation and language selector.
-	 *
 	 * @example
 	 * <HeaderMain navItems={navigationItems}>
 	 * 	<TypeHeadSearch />
 	 * </HeaderMain>
+	 *
+	 * @type {{
+	 *   navItems?: NavItem[],
+	 *   children?: Snippet
+	 * }}
 	 */
 	let { navItems = [], children } = $props();
 	const { labels } = $derived($i18n);
 
-	// Use $state for reactivity
+	/** @type {boolean} Whether the mobile menu is open. */
 	let menuOpen = $state(false);
 
 	/**
@@ -39,13 +45,16 @@
 	 * @returns {void}
 	 */
 	function handleWindowPointerdown(event) {
-		if (menuOpen && !event.target.closest('#menuHeader')) {
+		const target = /** @type {Element | null} */ (event.target);
+		if (menuOpen && !target?.closest('#menuHeader')) {
 			menuOpen = false;
 		}
 	}
 
 	/**
-	 * Toggle menu open/close
+	 * Toggles the mobile menu open/closed.
+	 *
+	 * @returns {void}
 	 */
 	function toggleMenu() {
 		menuOpen = !menuOpen;
