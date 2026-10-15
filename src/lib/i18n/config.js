@@ -1,3 +1,5 @@
+// @ts-check
+
 /**
  * Default locale used as a fallback throughout the application.
  *

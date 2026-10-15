@@ -9,20 +9,10 @@
 	import { formatDate } from '$lib/utils/formatDate';
 
 	/**
-	 * Rendert eine Standardkarte für Filme und TV-Serien inklusive Bild,
-	 * Metadaten, Detail-Link und Ladezustand.
+	 * Renders a default card for movies and TV shows, including image,
+	 * metadata, details link, and loading state.
 	 *
 	 * @component
-	 * @prop {number|string} id - Eindeutige TMDB-ID des Mediums.
-	 * @prop {'movie'|'tv'} mediaType - Medientyp und Zielroute der Karte.
-	 * @prop {string} title - Titel des Films oder der Serie.
-	 * @prop {string} [date=''] - Veröffentlichungs- oder Ausstrahlungsdatum.
-	 * @prop {number} [rating=0] - Bewertung; positive Werte werden mit einer Dezimalstelle angezeigt.
-	 * @prop {string|number} [certification=''] - Altersfreigabe, z. B. FSK- oder US-Rating.
-	 * @prop {Array<{name: string}>} [genres=[]] - Genres, die mit Schrägstrich verbunden angezeigt werden.
-	 * @prop {string} [imageUrl=''] - URL des Posters; bei leerem Wert wird ein Platzhalter verwendet.
-	 * @prop {string} [scrollId=''] - Optionale HTML-ID für die Karte.
-	 * @prop {boolean} [isLoading=false] - Zeigt den Ladezustand der Karte an.
 	 *
 	 * @example
 	 * <CardDefault id={123} mediaType="movie" title="Inception" />
@@ -33,6 +23,7 @@
 		(page.url.searchParams.get('locale') ?? DEFAULT_LOCALE).split('-')[1] ?? 'US'
 	);
 
+	/** @type {import('$lib/types/components.js').CardDefaultProps} */
 	let {
 		id,
 		mediaType,
@@ -113,7 +104,7 @@
 						src={cardImageUrl}
 						alt={`Poster von ${cardTitle}`}
 						onload={(event) => {
-							const img = event.currentTarget;
+							const img = /** @type {HTMLImageElement} */ (event.currentTarget);
 							if (img.complete && img.naturalWidth > 0) {
 								requestAnimationFrame(() => {
 									imageLoaded = true;
@@ -123,7 +114,7 @@
 							}
 						}}
 						onerror={(event) => {
-							const img = event.currentTarget;
+							const img = /** @type {HTMLImageElement} */ (event.currentTarget);
 							img.style.display = 'none';
 							imageErrored = true;
 							imageLoaded = false;

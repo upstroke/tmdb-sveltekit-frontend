@@ -1,8 +1,6 @@
-/**
- * @typedef {object} MediaItem
- * @property {string|number} id - Unique ID of the media item.
- * @property {string} mediaType - Media type, for example `movie` or `tv`.
- */
+// @ts-check
+
+/** @typedef {import('$lib/types/tmdb.js').MediaItem} MediaItem */
 
 /**
  * Creates a stable key to uniquely identify a media item.
@@ -29,8 +27,9 @@ export function getMediaKey(item) {
  * The first entry with a unique key is preserved, later duplicates are removed.
  * Elements without a valid key are skipped.
  *
- * @param {Array<MediaItem>} items - List of media items to clean up.
- * @returns {Array<MediaItem>} New array with only the first occurrence of each unique
+ * @template {MediaItem} T
+ * @param {T[]} [items=[]] - List of media items to clean up.
+ * @returns {T[]} New array with only the first occurrence of each unique
  * media item.
  */
 export function deduplicateMedia(items = []) {

@@ -11,63 +11,43 @@
 	import { restorePagedList } from '$lib/utils/pageStateRestore';
 	import { deduplicateMedia, getMediaKey } from '$lib/utils/deduplicateMedia';
 
+	/** @typedef {import('$lib/types/tmdb.js').PageData} PageData */
+	/** @typedef {import('$lib/types/tmdb.js').PageProps} PageProps */
+	/** @typedef {import('$lib/types/tmdb.js').MappedFeatured} MappedFeatured */
+	/** @typedef {import('$lib/types/tmdb.js').CardItem} CardItem */
+
 	const { titles, messages } = $derived($i18n);
 	const activeLocale = $derived(resolveLocale(page.url.searchParams.get('locale')));
 	const storageKey = 'tv-shows-page';
 
 	/**
-	 * Expected props for the page.
-	 *
-	 * @typedef {Object} PageData
-	 * @property {{
-	 *   id: number|string,
-	 *   mediaType: 'movie'|'tv'|string,
-	 *   title: string,
-	 *   releaseDate?: string,
-	 *   overview?: string,
-	 *   homepage?: string,
-	 *   genres?: Array<{id: number|string, name: string}>,
-	 *   imageUrl?: string
-	 * } | null} [featured]
-	 * @property {Array<{
-	 *   id: number|string,
-	 *   mediaType: 'movie'|'tv'|string,
-	 *   title: string,
-	 *   date?: string,
-	 *   rating?: number,
-	 *   genres?: Array<{id: number|string, name: string}>,
-	 *   imageUrl?: string
-	 * }>} [cards]
-	 * @property {number} [page]
-	 * @property {boolean} [hasMore]
-	 * @property {string | null} [error]
-	 */
-
-	/**
 	 * Loaded page data from the server load.
 	 *
-	 * @type {{ data: PageData }}
+	 * @type {PageProps}
 	 */
 	let { data } = $props();
+
+	/** @type {PageData | undefined} Last processed `data` object, used to detect navigation. */
 	let previousData;
 
+	/** @type {MappedFeatured | null} */
 	let featured = $state(null);
+	/** @type {CardItem[]} */
 	let cards = $state([]);
 	let currentPage = $state(1);
 	let hasMore = $state(false);
+	/** @type {string | null} */
 	let error = $state(null);
 	let loading = $state(false);
 	let initialized = $state(false);
 
+	/** @type {string | null} Element id of the first newly inserted card. */
 	let scrollTargetId = $state(null);
+	/** @type {IntersectionObserver | null} */
 	let observer = null;
 
 	/**
-	 * Initializes the page state once.
-	 *
-	 * On the first render, stored page values are restored via `restorePagedList`.
-	 * The function loads additional pages if needed, sets `featured`, `cards`,
-	 * `page`, and `hasMore`, and handles errors with a visible message.
+	 * Resets the page state whenever new server data arrives.
 	 */
 	$effect(() => {
 		if (data === previousData) {
@@ -83,6 +63,13 @@
 		error = data.error ?? null;
 	});
 
+	/**
+	 * Restores the page state after a reset.
+	 *
+	 * Stored page values are restored via `restorePagedList`, which loads
+	 * additional pages if needed. Sets `featured`, `cards`, `currentPage` and
+	 * `hasMore`, and handles errors with a visible message.
+	 */
 	$effect(() => {
 		if (initialized) {
 			return;
@@ -174,6 +161,7 @@
 	 * Stores the most recently loaded page in session storage.
 	 *
 	 * @param {number} value - The page number to store.
+	 * @returns {void}
 	 */
 	function savePage(value) {
 		if (!browser) {
@@ -191,6 +179,7 @@
 	 * Sets the target for scrolling to the first newly loaded card.
 	 *
 	 * @param {number} previousCardsCount - The number of cards before loading more.
+	 * @returns {void}
 	 */
 	function markScrollTarget(previousCardsCount) {
 		scrollTargetId = `tv-card-${previousCardsCount + 1}`;
@@ -237,6 +226,7 @@
 				return;
 			}
 
+			/** @type {PageData} */
 			const result = await response.json();
 
 			const existingKeys = new Set(cards.map(getMediaKey).filter(Boolean));
@@ -260,7 +250,7 @@
 			savePage(currentPage);
 			markScrollTarget(previousCardsCount);
 		} catch (exception) {
-			if (exception.name === 'AbortError') {
+			if (exception instanceof Error && exception.name === 'AbortError') {
 				error = messages.loadTimeout;
 			} else {
 				error = exception instanceof Error ? exception.message : messages.unknownError;
@@ -302,7 +292,7 @@
 			{/each}
 		</ul>
 
-		<!-- LoadMore wird IMMER gerendert, nicht nur wenn hasMore -->
+		<!-- LoadMore is ALWAYS rendered, not only when hasMore is true -->
 		<LoadMore {hasMore} {loading} onload={() => loadMore()} />
 	{:else if !error}
 		<p class={messages.noTvShows ? '' : 'u-not-available'}>{messages.noTvShows}</p>

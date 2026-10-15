@@ -1,3 +1,5 @@
+// @ts-check
+
 /**
  * Removes the HTTP or HTTPS protocol from a homepage URL for compact display.
  *

@@ -1,5 +1,11 @@
+// @ts-check
+
 import { browser } from '$app/environment';
 import { deduplicateMedia, getMediaKey } from '$lib/utils/deduplicateMedia';
+
+/** @typedef {import('$lib/types/tmdb.js').PageData} PageData */
+/** @typedef {import('$lib/types/tmdb.js').CardItem} CardItem */
+/** @typedef {import('$lib/types/tmdb.js').MappedFeatured} MappedFeatured */
 
 /**
  * Reads the last saved page from session storage.
@@ -27,22 +33,12 @@ export function getStoredPage(storageKey) {
  *
  * @param {{
  *   storageKey: string,
- *   initialData: {
- *     featured?: unknown,
- *     cards?: Array<unknown>,
- *     page?: number,
- *     hasMore?: boolean
- *   },
- *   fetchPageData: (pageNumber: number) => Promise<{
- *     featured?: unknown,
- *     cards?: Array<unknown>,
- *     page?: number,
- *     hasMore?: boolean
- *   }>
+ *   initialData: PageData,
+ *   fetchPageData: (pageNumber: number) => Promise<PageData>
  * }} options - Configuration for restoring the list.
  * @returns {Promise<{
- *   featured: unknown,
- *   cards: Array<unknown>,
+ *   featured: MappedFeatured | null,
+ *   cards: CardItem[],
  *   page: number,
  *   hasMore: boolean
  * }>} Restored list state.

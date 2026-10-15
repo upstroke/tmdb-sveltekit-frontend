@@ -10,26 +10,17 @@
 	 *
 	 * The navigation links preserve the active path and the last used page number per route.
 	 *
-	 * @component
-	 * @prop {Array<{
-	 *   id: string,
-	 *   label: string,
-	 *   icon: string,
-	 *   path: string,
-	 *   storageKey: string,
-	 *   active: (pathname: string) => boolean
-	 * }>} [navItems=[]] - Navigation items for the global header.
-	 * @prop {Snippet|undefined} [children] - Optional Svelte 5 snippet content between navigation and language selector.
-	 *
 	 * @example
 	 * <HeaderMain navItems={navigationItems}>
 	 * 	<TypeHeadSearch />
 	 * </HeaderMain>
 	 */
+
+	/** @type {import('$lib/types/components.js').HeaderMainProps} */
 	let { navItems = [], children } = $props();
 	const { labels } = $derived($i18n);
 
-	// Use $state for reactivity
+	/** @type {boolean} Whether the mobile menu is open. */
 	let menuOpen = $state(false);
 
 	/**
@@ -39,13 +30,16 @@
 	 * @returns {void}
 	 */
 	function handleWindowPointerdown(event) {
-		if (menuOpen && !event.target.closest('#menuHeader')) {
+		const target = /** @type {Element | null} */ (event.target);
+		if (menuOpen && !target?.closest('#menuHeader')) {
 			menuOpen = false;
 		}
 	}
 
 	/**
-	 * Toggle menu open/close
+	 * Toggles the mobile menu open/closed.
+	 *
+	 * @returns {void}
 	 */
 	function toggleMenu() {
 		menuOpen = !menuOpen;

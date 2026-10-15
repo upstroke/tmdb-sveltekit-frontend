@@ -1,6 +1,13 @@
+// @ts-check
+
 import ratings from '$lib/i18n/ratings.json';
 
 const DEFAULT_RATING_SYSTEM = 'US';
+
+/** @typedef {import('$lib/types/tmdb.js').RatingEntry} RatingEntry */
+
+/** @type {Record<string, { name: string, ratings: Record<string, RatingEntry> } | undefined>} */
+const ratingSystems = ratings.ratingSystems;
 
 /**
  * Normalizes a rating system and uses the default configured system
@@ -30,7 +37,7 @@ export function getCertificationMeta(value, country = DEFAULT_RATING_SYSTEM) {
 		return null;
 	}
 
-	const ratingSystem = ratings.ratingSystems[normalizeRatingSystem(country)];
+	const ratingSystem = ratingSystems[normalizeRatingSystem(country)];
 	const rating = ratingSystem?.ratings?.[normalizedValue];
 
 	if (!rating) {

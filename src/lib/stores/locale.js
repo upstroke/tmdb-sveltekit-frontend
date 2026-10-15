@@ -1,3 +1,5 @@
+// @ts-check
+
 import { browser } from '$app/environment';
 import { writable } from 'svelte/store';
 import { DEFAULT_LOCALE } from '$lib/i18n/config';
@@ -52,9 +54,5 @@ function createLocaleStore() {
 	};
 }
 
-/**
- * Global store for the currently selected locale.
- *
- * @type {{ subscribe: Function, set: (locale: string) => void }}
- */
+/** Global store for the currently selected locale. */
 export const locale = createLocaleStore();

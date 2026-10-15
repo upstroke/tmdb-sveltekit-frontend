@@ -11,23 +11,20 @@
 	 * is present, and optionally displays a customized heading.
 	 *
 	 * @component
-	 * @prop {string} message - The message text to display.
-	 * @prop {string} [title=messages.dialogErrorTitle] - Optional heading of the dialog.
 	 *
 	 * @example
 	 * <DialogMessage message="An error occurred while loading." />
 	 */
+	/** @type {import('$lib/types/components.js').DialogMessageProps} */
 	let { message, title = messages.dialogErrorTitle } = $props();
 
-	let dialog;
+	/** @type {HTMLDialogElement | undefined} */
+	let dialog = $state();
 
 	/**
-	 * Öffnet den nativen Dialog automatisch, sobald im Browser eine Meldung vorliegt.
+	 * Opens the native dialog automatically as soon as a message is present in the browser.
 	 *
-	 * Der Effekt reagiert nur clientseitig und vermeidet mehrfaches Öffnen eines
-	 * bereits sichtbaren Dialogs.
-	 *
-	 * @returns {void}
+	 * The effect only runs on the client and avoids reopening an already open dialog.
 	 */
 	$effect(() => {
 		if (!browser || !dialog || !message) {

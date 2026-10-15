@@ -6,7 +6,7 @@
 	import { i18n } from '$lib/stores/i18n';
 	import { formatDate } from '$lib/utils/formatDate';
 
-	const { labels, fallbacks } = $derived($i18n);
+	const { labels, fallbacks, messages } = $derived($i18n);
 
 	/**
 	 * Renders a featured card for a movie or TV show.
@@ -15,15 +15,6 @@
 	 * short description, and optional website link are displayed as an overlay.
 	 *
 	 * @component
-	 * @prop {number|string} id - Unique ID of the media for the detail link.
-	 * @prop {'movie'|'tv'} mediaType - Media type and target route of the card.
-	 * @prop {string} title - Title of the media.
-	 * @prop {string} [releaseDate=''] - Release or premiere date.
-	 * @prop {string} [overview=''] - Short description of the media.
-	 * @prop {string} [homepage=''] - URL of the official website.
-	 * @prop {Array<{id?: number|string, name: string}>} [genres=[]] - Genres of the media.
-	 * @prop {string} [imageUrl=''] - URL of the background or preview image.
-	 * @prop {string} [posterUrl=''] - URL of the poster; falls back to `imageUrl`.
 	 *
 	 * @example
 	 * <CardFeatured
@@ -33,6 +24,7 @@
 	 * 	 overview="A thief who steals corporate secrets..."
 	 * />
 	 */
+	/** @type {import('$lib/types/components.js').CardFeaturedProps} */
 	let {
 		id,
 		mediaType,
@@ -48,11 +40,11 @@
 	let normalizedType = $derived(mediaType === 'movie' ? 'movie' : mediaType === 'tv' ? 'tv' : null);
 
 	/**
-	 * Ermittelt die lokale Detailroute für die Karte und übernimmt die aktive Locale.
+	 * Resolves the local detail route for the card and carries over the active locale.
 	 *
-	 * Bei einem unbekannten Medientyp wird kein Link erzeugt.
+	 * No link is generated for an unknown media type.
 	 *
-	 * @returns {string | undefined} Lokalisierte Detailroute oder `undefined`.
+	 * @returns {string | undefined} Localized detail route or `undefined`.
 	 */
 	let detailsHref = $derived.by(() => {
 		let href;
@@ -90,6 +82,7 @@
 	let hasReleaseDate = $derived(Boolean(featuredReleaseDate));
 	let featuredOverview = $derived(overview?.trim() || notAvailableText);
 	let featuredHomepage = $derived(homepage?.trim() || '');
+	let actionsLabel = $derived(messages.actionsFor.replace('{title}', featuredTitle));
 </script>
 
 <article
@@ -156,7 +149,7 @@
 					{featuredOverview}
 				</p>
 
-				<nav aria-label={`Aktionen für ${featuredTitle}`} class="featured-card-actions">
+				<nav aria-label={actionsLabel} class="featured-card-actions">
 					{#if detailsHref}
 						<a
 							class="ui inverted primary button {labels.moreInfo ? '' : 'u-not-available'}"

@@ -12,6 +12,11 @@
 	import { deduplicateMedia, getMediaKey } from '$lib/utils/deduplicateMedia';
 	import { restorePagedList } from '$lib/utils/pageStateRestore';
 
+	/** @typedef {import('$lib/types/tmdb.js').PageData} PageData */
+	/** @typedef {import('$lib/types/tmdb.js').PageProps} PageProps */
+	/** @typedef {import('$lib/types/tmdb.js').MappedFeatured} MappedFeatured */
+	/** @typedef {import('$lib/types/tmdb.js').CardItem} CardItem */
+
 	const { titles, messages } = $derived($i18n);
 	const activeLocale = $derived(resolveLocale(page.url.searchParams.get('locale')));
 	const storageKey = 'home-page';
@@ -19,55 +24,37 @@
 	/**
 	 * Expected data from the server load of the homepage.
 	 *
-	 * @param {{
-	 *   featured?: {
-	 *     id: number|string,
-	 *     mediaType: 'movie'|'tv'|string,
-	 *     title: string,
-	 *     releaseDate?: string,
-	 *     overview?: string,
-	 *     homepage?: string,
-	 *     genres?: Array<{id: number|string, name: string}>,
-	 *     imageUrl?: string
-	 *   } | null,
-	 *   cards?: Array<{
-	 *     id: number|string,
-	 *     mediaType: 'movie'|'tv'|string,
-	 *     title?: string,
-	 *     date?: string,
-	 *     rating?: number,
-	 *     genres?: Array<{id: number|string, name: string}>,
-	 *     imageUrl?: string
-	 *   }>,
-	 *   page?: number,
-	 *   hasMore?: boolean,
-	 *   error?: string | null
-	 * }} data - Loaded homepage data.
+	 * @type {PageProps}
 	 */
 	let { data } = $props();
+
+	/** @type {PageData | undefined} Last processed `data` object, used to detect navigation. */
 	let previousData;
 
+	/** @type {MappedFeatured | null} */
 	let featured = $state(null);
+	/** @type {CardItem[]} */
 	let cards = $state([]);
+	/** @type {CardItem[]} Cards of the previous data set, shown while restoring. */
 	let previousCards = $state([]);
 	let currentPage = $state(1);
 	let hasMore = $state(false);
+	/** @type {string | null} */
 	let error = $state(null);
 	let loading = $state(false);
 	let restoringCards = $state(false);
 	let initialized = $state(false);
 	let showLoadingCards = $state(true);
 
+	/** @type {string | null} Element id of the first newly inserted card. */
 	let scrollTargetId = $state(null);
+	/** @type {IntersectionObserver | null} */
 	let observer = null;
 
 	/**
-	 * Restores the homepage state on first render.
+	 * Resets the page state whenever new server data arrives.
 	 *
-	 * The effect runs only once, loads saved page values via
-	 * `restorePagedList` and sets `featured`, `cards`, `page` and `hasMore`.
-	 * On errors, a message is written to `error`, while `loading`
-	 * controls the loading state.
+	 * Keeps the previous cards for display while the list is restored again.
 	 */
 	$effect(() => {
 		if (data === previousData) {
@@ -86,6 +73,13 @@
 		showLoadingCards = true;
 	});
 
+	/**
+	 * Restores the homepage state after a reset.
+	 *
+	 * Loads saved page values via `restorePagedList` and sets `featured`,
+	 * `cards`, `currentPage` and `hasMore`. On errors, a message is written
+	 * to `error`, while `loading` controls the loading state.
+	 */
 	$effect(() => {
 		if (initialized) {
 			return;
@@ -181,6 +175,7 @@
 	 * Saves the last loaded page to session storage.
 	 *
 	 * @param {number} value - Page number to save.
+	 * @returns {void}
 	 */
 	function savePage(value) {
 		if (!browser) {
@@ -198,6 +193,7 @@
 	 * Marks the target for scrolling to the first newly loaded card.
 	 *
 	 * @param {number} previousCardsCount - Number of cards before loading more.
+	 * @returns {void}
 	 */
 	function markScrollTarget(previousCardsCount) {
 		scrollTargetId = `home-card-${previousCardsCount + 1}`;
@@ -244,6 +240,7 @@
 				return;
 			}
 
+			/** @type {PageData} */
 			const result = await response.json();
 
 			const existingKeys = new Set(cards.map(getMediaKey).filter(Boolean));
@@ -267,7 +264,7 @@
 			savePage(currentPage);
 			markScrollTarget(previousCardsCount);
 		} catch (exception) {
-			if (exception.name === 'AbortError') {
+			if (exception instanceof Error && exception.name === 'AbortError') {
 				error = messages.loadTimeout;
 			} else {
 				error = exception instanceof Error ? exception.message : messages.unknownError;
@@ -321,7 +318,7 @@
 			{/each}
 		</ul>
 
-		<!-- LoadMore wird IMMER gerendert, nicht nur wenn hasMore -->
+		<!-- LoadMore is ALWAYS rendered, not only when hasMore is true -->
 		<LoadMore {hasMore} {loading} onload={() => loadMore()} />
 	{:else if !error}
 		<p class={messages.noContent ? '' : 'u-not-available'}>{messages.noContent}</p>

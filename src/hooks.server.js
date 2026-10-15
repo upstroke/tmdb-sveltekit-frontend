@@ -1,3 +1,5 @@
+// @ts-check
+
 import { randomBytes } from 'crypto';
 import { DEFAULT_LOCALE } from '$lib/i18n/config';
 import { resolveLocale } from '$lib/i18n/helpers';

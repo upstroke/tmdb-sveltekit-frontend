@@ -1,7 +1,14 @@
+// @ts-check
+
 import { TMDB_API_KEY } from '$env/static/private';
 import { resolveLocale } from '$lib/i18n/helpers';
 import { getLocaleText } from '$lib/i18n/resolver';
 import { createTmdbApi } from '$lib/services/tmdb-api.js';
+
+/** @typedef {import('$lib/types/tmdb.js').DetailLoadEvent} DetailLoadEvent */
+
+/** @typedef {import('$lib/types/tmdb.js').MovieDetails} MovieDetails */
+/** @typedef {import('$lib/types/tmdb.js').WatchProviders} WatchProviders */
 
 /**
  * Loads the server data for a movie detail page.
@@ -11,10 +18,9 @@ import { createTmdbApi } from '$lib/services/tmdb-api.js';
  * If no API key is available, an empty record with an error message
  * is returned.
  *
- * @param {{ fetch: Function, params: { id: string } }} event - SvelteKit load context.
- * @returns {Promise<{ movie: Record<string, unknown> | null, error: string | null }>} Movie object for the detail page.
+ * @param {DetailLoadEvent} event - SvelteKit load context.
+ * @returns {Promise<{ movie: MovieDetails | null, providers?: WatchProviders | null, error: string | null }>} Movie object for the detail page.
  */
-
 export async function load({ fetch, params, url }) {
 	const locale = resolveLocale(url.searchParams.get('locale'));
 	const { messages } = getLocaleText(locale);

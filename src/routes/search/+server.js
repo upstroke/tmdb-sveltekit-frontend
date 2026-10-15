@@ -1,8 +1,12 @@
+// @ts-check
+
 import { json } from '@sveltejs/kit';
 import { resolveLocale } from '$lib/i18n/helpers';
 import { getLocaleText } from '$lib/i18n/resolver';
 import { TMDB_API_KEY } from '$env/static/private';
 import { createTmdbApi } from '$lib/services/tmdb-api.js';
+
+/** @typedef {import('$lib/types/tmdb.js').LoadEvent} LoadEvent */
 
 /**
  * Searches for movies and TV shows based on a search term.
@@ -10,7 +14,7 @@ import { createTmdbApi } from '$lib/services/tmdb-api.js';
  * The route expects the query parameter `q`, validates its minimum length,
  * and returns separate lists for movies and TV shows.
  *
- * @param {{ fetch: Function, url: URL }} event - SvelteKit request context.
+ * @param {LoadEvent} event - SvelteKit request context.
  * @returns {Promise<Response>} JSON response with search results.
  */
 export async function GET({ fetch, url }) {

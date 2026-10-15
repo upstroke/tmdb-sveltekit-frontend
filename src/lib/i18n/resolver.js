@@ -1,3 +1,5 @@
+// @ts-check
+
 import uiText from '$lib/i18n/ui.json';
 import { DEFAULT_LOCALE } from '$lib/i18n/config';
 
@@ -18,9 +20,10 @@ import { DEFAULT_LOCALE } from '$lib/i18n/config';
  *   fallbacks: Record<string, string>
  * }} Resolved texts for the user interface.
  */
-
 export function getLocaleText(locale = DEFAULT_LOCALE) {
-	const current = uiText.locales[locale] ?? uiText.locales[DEFAULT_LOCALE];
+	/** @type {Record<string, any>} */
+	const locales = uiText.locales;
+	const current = locales[locale] ?? locales[DEFAULT_LOCALE];
 
 	return {
 		locale,

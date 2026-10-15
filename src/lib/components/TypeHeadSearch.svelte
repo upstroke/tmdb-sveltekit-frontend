@@ -6,19 +6,33 @@
 	import { i18n } from '$lib/stores/i18n';
 	import { resolveLocale } from '$lib/i18n/helpers';
 
+	/**
+	 * Typeahead search for movies and TV shows with combobox keyboard support,
+	 * screen reader announcements, and cancellable search requests.
+	 *
+	 * @component
+	 * @remarks This component expects no props.
+	 */
+
 	const { labels: texts, messages, formats, titles, labels, fallbacks } = $derived($i18n);
 	const activeLocale = $derived(resolveLocale(page.url.searchParams.get('locale')));
 
 	let query = $state('');
+	/** @type {import('$lib/types/components.js').SearchResult[]} */
 	let movies = $state([]);
+	/** @type {import('$lib/types/components.js').SearchResult[]} */
 	let tvShows = $state([]);
 	let loading = $state(false);
 	let showLoading = $state(false);
 	let resultsClosed = $state(false);
+	/** @type {string | null} */
 	let error = $state(null);
 	let announcement = $state('');
+	/** @type {HTMLInputElement | undefined} */
 	let inputElement;
+	/** @type {string | null} */
 	let focusedResultId = $state(null);
+	/** @type {string | null} */
 	let lastSelectedResultId = $state(null);
 
 	let hasResults = $derived(movies.length > 0 || tvShows.length > 0);
@@ -28,21 +42,37 @@
 	);
 	let resultsVisible = $derived(!resultsClosed && (hasResults || loading || !!error));
 
+	/** @type {ReturnType<typeof setTimeout> | undefined} */
 	let debounceTimer;
+	/** @type {ReturnType<typeof setTimeout> | undefined} */
 	let loadingTimer;
+	/** @type {ReturnType<typeof setTimeout> | undefined} */
 	let announcementTimer;
+	/** @type {AbortController | undefined} */
 	let controller;
+	/** @type {string | null} */
 	let previousLocale = $state(null);
 
 	const searchHintId = 'typeahead-search-hint';
 	const resultsId = 'typeahead-search-results';
 
+	/**
+	 * Returns the DOM IDs of all results in display order (movies, then TV shows).
+	 *
+	 * @returns {string[]}
+	 */
 	function getAllResultIds() {
 		const movieIds = movies.map((m) => `movie-${m.id}`);
 		const tvIds = tvShows.map((t) => `tv-${t.id}`);
 		return [...movieIds, ...tvIds];
 	}
 
+	/**
+	 * Focuses a result and scrolls it into the visible area.
+	 *
+	 * @param {string} resultId - DOM ID of the result.
+	 * @returns {void}
+	 */
 	function focusResult(resultId) {
 		focusedResultId = resultId;
 
@@ -57,27 +87,31 @@
 		});
 	}
 
+	/** @returns {void} */
 	function focusNextResult() {
 		const ids = getAllResultIds();
 		if (ids.length === 0) return;
-		const currentIndex = ids.indexOf(focusedResultId);
+		const currentIndex = ids.indexOf(focusedResultId ?? '');
 		const nextIndex = currentIndex === -1 ? 0 : Math.min(currentIndex + 1, ids.length - 1);
 		focusResult(ids[nextIndex]);
 	}
 
+	/** @returns {void} */
 	function focusPreviousResult() {
 		const ids = getAllResultIds();
 		if (ids.length === 0) return;
-		const currentIndex = ids.indexOf(focusedResultId);
+		const currentIndex = ids.indexOf(focusedResultId ?? '');
 		const previousIndex = currentIndex === -1 ? 0 : Math.max(currentIndex - 1, 0);
 		focusResult(ids[previousIndex]);
 	}
 
+	/** @returns {void} */
 	function focusFirstResult() {
 		const ids = getAllResultIds();
 		if (ids.length > 0) focusResult(ids[0]);
 	}
 
+	/** @returns {void} */
 	function focusLastResult() {
 		const ids = getAllResultIds();
 		if (ids.length > 0) focusResult(ids[ids.length - 1]);
@@ -109,29 +143,59 @@
 		if (term.length >= 4) void search(term);
 	});
 
+	/**
+	 * @param {number|null|undefined} value - Rating.
+	 * @returns {string} Rating with one decimal place.
+	 */
 	function formatRating(value) {
 		return Number(value ?? 0).toFixed(1);
 	}
+
+	/**
+	 * @param {string|undefined} value - Date string.
+	 * @returns {string} Year or fallback text.
+	 */
 	function formatYear(value) {
 		if (!value) return fallbacks.dateFallback;
 		const date = new Date(value);
 		if (Number.isNaN(date.getTime())) return fallbacks.dateFallback;
 		return String(date.getFullYear());
 	}
+
+	/**
+	 * Appends the active locale as a query parameter to a link.
+	 *
+	 * @param {string} href - Path of the target.
+	 * @returns {string}
+	 */
 	function withLocale(href) {
 		if (!href) return href;
 		const url = new URL(href, page.url.origin);
 		url.searchParams.set('locale', activeLocale);
 		return `${url.pathname}${url.search}${url.hash}`;
 	}
+
+	/**
+	 * @param {import('$lib/types/components.js').SearchResult} item - Search result.
+	 * @returns {string} Detail route of the result.
+	 */
 	function resultHref(item) {
 		if (item.mediaType === 'movie') return resolve('/movies/[id]', { id: String(item.id) });
 		return resolve('/tv-shows/[id]', { id: String(item.id) });
 	}
+
+	/** @returns {void} */
 	function clearAnnouncement() {
 		clearTimeout(announcementTimer);
 		announcement = '';
 	}
+
+	/**
+	 * Schedules a delayed screen reader announcement.
+	 *
+	 * @param {string} message - Announcement text.
+	 * @returns {void}
+	 */
 	function scheduleAnnouncement(message) {
 		clearTimeout(announcementTimer);
 		announcement = '';
@@ -142,6 +206,8 @@
 			});
 		}, 500);
 	}
+
+	/** @returns {void} */
 	function resetResults() {
 		clearTimeout(loadingTimer);
 		clearAnnouncement();
@@ -153,6 +219,8 @@
 		tvShows = [];
 		error = null;
 	}
+
+	/** @returns {void} */
 	function handleInput() {
 		clearTimeout(debounceTimer);
 		clearAnnouncement();
@@ -165,6 +233,13 @@
 		resultsClosed = false;
 		debounceTimer = setTimeout(() => search(term), 300);
 	}
+
+	/**
+	 * Runs the search and aborts a running request.
+	 *
+	 * @param {string} term - Search term (at least 4 characters).
+	 * @returns {Promise<void>}
+	 */
 	async function search(term) {
 		controller?.abort();
 		clearTimeout(loadingTimer);
@@ -199,7 +274,7 @@
 				}
 			} else if (term.length >= 4) scheduleAnnouncement(messages.searchNoResults);
 		} catch (exception) {
-			if (exception.name === 'AbortError') return;
+			if (/** @type {Error} */ (exception).name === 'AbortError') return;
 			error = messages.searchError;
 			scheduleAnnouncement(messages.searchError);
 		} finally {
@@ -209,6 +284,12 @@
 		}
 	}
 
+	/**
+	 * Keyboard handling of the combobox (arrows, Enter, Escape, Home, End).
+	 *
+	 * @param {KeyboardEvent} event
+	 * @returns {void}
+	 */
 	function handleKeydown(event) {
 		if (!resultsVisible || !hasResults) {
 			if (event.key === 'Escape') {
@@ -230,7 +311,9 @@
 			case 'Enter':
 				event.preventDefault();
 				if (focusedResultId) {
-					const focusedLink = document.querySelector(`a.result[aria-selected="true"]`);
+					const focusedLink = /** @type {HTMLAnchorElement | null} */ (
+						document.querySelector(`a.result[aria-selected="true"]`)
+					);
 					if (focusedLink) {
 						focusedLink.click();
 					}
@@ -251,6 +334,12 @@
 		}
 	}
 
+	/**
+	 * Closes the results list.
+	 *
+	 * @param {{ restoreFocus?: boolean }} [options]
+	 * @returns {void}
+	 */
 	function closeResults({ restoreFocus = false } = {}) {
 		clearAnnouncement();
 		resultsClosed = true;
@@ -264,10 +353,16 @@
 		if (restoreFocus) inputElement?.focus();
 	}
 
+	/**
+	 * @param {MouseEvent} event
+	 * @returns {void}
+	 */
 	function handleWindowClick(event) {
-		if (!event.target.closest('#typeahead-search')) closeResults();
+		const target = /** @type {Element | null} */ (event.target);
+		if (!target?.closest('#typeahead-search')) closeResults();
 	}
 
+	/** @returns {void} */
 	function showResults() {
 		if (query.trim().length >= 4 && (hasResults || loading || error)) {
 			resultsClosed = false;

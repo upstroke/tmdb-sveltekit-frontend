@@ -1,8 +1,8 @@
 import { AxeBuilder } from '@axe-core/playwright';
 
 /**
- * Prüft die aktuelle Seite auf WCAG 2.0/2.1/2.2 Level A und AA Verstö§§§.
- * Wirft einen Fehler mit detaillierter Fehlerliste, wenn Verstö§§§ gefunden werden.
+ * Checks the current page for WCAG 2.0/2.1/2.2 Level A and AA violations.
+ * Throws an error with a detailed list of violations if any are found.
  * @param {import('@playwright/test').Page} page
  */
 export async function checkA11y(page) {

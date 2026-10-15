@@ -1,3 +1,5 @@
+// @ts-check
+
 /**
  * Removes entries without a valid ID and duplicate IDs from a list.
  *
@@ -5,8 +7,9 @@
  * Further entries with the same ID are removed.
  * The original order is maintained.
  *
- * @param {Array<{id: string|number}>} items List of objects with IDs.
- * @returns {Array<{id: string|number}>} Cleaned list without duplicate IDs.
+ * @template {{ id?: string | number | null }} T
+ * @param {T[]} [items=[]] List of objects with IDs.
+ * @returns {T[]} Cleaned list without duplicate IDs.
  */
 export function deduplicateById(items = []) {
 	const seen = new Set();

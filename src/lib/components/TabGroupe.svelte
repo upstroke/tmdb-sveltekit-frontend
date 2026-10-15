@@ -1,4 +1,9 @@
 <script>
+	/**
+	 * Accessible tab group (WAI-ARIA tabs pattern) with optional episode lists.
+	 * Supports ArrowLeft/ArrowRight/Home/End on tabs and ArrowUp/ArrowDown/Home/End on episodes.
+	 */
+
 	import { i18n } from '$lib/stores/i18n';
 	import { formatDate } from '$lib/utils/formatDate.js';
 	import { page } from '$app/state';
@@ -6,6 +11,7 @@
 	import { tick } from 'svelte';
 	const { labels, messages } = $derived($i18n);
 
+	/** @type {import('$lib/types/components.js').TabGroupeProps} */
 	let { tabs = [], initialTab = undefined, ariaLabel = '', onTabSelect = undefined } = $props();
 
 	$effect(() => {
@@ -16,7 +22,8 @@
 		}
 	});
 
-	// Ensure activeTab is always a string
+	/** @type {string} Always a string, so comparisons with tab ids stay consistent. */
+	// svelte-ignore state_referenced_locally
 	let activeTab = $state(String(initialTab ?? ''));
 
 	$effect(() => {
@@ -41,10 +48,18 @@
 		}
 	});
 
+	/** @type {number[]} Focused episode index per tab (roving tabindex). */
 	// svelte-ignore state_referenced_locally
 	let focusedEpisodeIndex = $state(tabs.map(() => 0));
+
+	/** @type {Record<number, HTMLOListElement | undefined>} */
 	let episodeListRefs = $state({});
 
+	/**
+	 * Activates a tab, resets its episode focus and notifies the parent.
+	 * @param {string | number} id
+	 * @returns {void}
+	 */
 	function selectTab(id) {
 		activeTab = String(id);
 		const tabIndex = tabs.findIndex((t) => String(t.id) === String(id));
@@ -52,10 +67,20 @@
 		onTabSelect?.(String(id));
 	}
 
+	/**
+	 * @param {string | number} id
+	 * @returns {boolean}
+	 */
 	function isSelected(id) {
 		return String(activeTab) === String(id);
 	}
 
+	/**
+	 * Computes the target tab index for a navigation key (wraps around).
+	 * @param {string} key
+	 * @param {number} index
+	 * @returns {number}
+	 */
 	function getNextTabIndex(key, index) {
 		if (key === 'ArrowRight') return (index + 1) % tabs.length;
 		if (key === 'ArrowLeft') return (index - 1 + tabs.length) % tabs.length;
@@ -64,6 +89,10 @@
 		return index;
 	}
 
+	/**
+	 * @param {KeyboardEvent & { currentTarget: HTMLButtonElement }} event
+	 * @returns {void}
+	 */
 	function handleTabKeydown(event) {
 		const navigationKeys = ['ArrowRight', 'ArrowLeft', 'Home', 'End'];
 		if (!navigationKeys.includes(event.key)) {
@@ -87,6 +116,13 @@
 		}
 	}
 
+	/**
+	 * @param {KeyboardEvent} event
+	 * @param {number} tabIndex
+	 * @param {number} episodeIndex
+	 * @param {number} total
+	 * @returns {Promise<void>}
+	 */
 	async function handleEpisodeKeydown(event, tabIndex, episodeIndex, total) {
 		const navigationKeys = ['ArrowDown', 'ArrowUp', 'Home', 'End'];
 		if (!navigationKeys.includes(event.key)) {
@@ -95,6 +131,7 @@
 
 		event.preventDefault();
 
+		/** @type {Record<string, number>} */
 		const moves = {
 			ArrowDown: (episodeIndex + 1) % total,
 			ArrowUp: (episodeIndex - 1 + total) % total,
@@ -111,7 +148,9 @@
 
 		const ol = episodeListRefs[tabIndex];
 		if (ol) {
-			const items = Array.from(ol.querySelectorAll('li.episode-item'));
+			const items = /** @type {HTMLElement[]} */ (
+				Array.from(ol.querySelectorAll('li.episode-item'))
+			);
 			items[nextIndex]?.focus({ preventScroll: false });
 		}
 	}
@@ -158,7 +197,7 @@
 						class="episode-item"
 						tabindex={isSelected(tab.id) && episodeIndex === focusedEpisodeIndex[tabIndex] ? 0 : -1}
 						onkeydown={(event) =>
-							handleEpisodeKeydown(event, tabIndex, episodeIndex, tab.episodes.length)}
+							handleEpisodeKeydown(event, tabIndex, episodeIndex, tab.episodes?.length ?? 0)}
 					>
 						<h4 class="episode-title">
 							{episodeIndex + 1}. {episode.name}

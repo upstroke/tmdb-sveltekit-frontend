@@ -14,32 +14,34 @@
 
 	const { titles } = $derived($i18n);
 
-	const navItems = $derived([
-		{
-			id: 'home',
-			label: titles.home,
-			icon: 'home',
-			path: '/',
-			storageKey: 'home-page',
-			active: (pathname) => pathname === '/'
-		},
-		{
-			id: 'movies',
-			label: titles.movies,
-			icon: 'film',
-			path: '/movies',
-			storageKey: 'movies-page',
-			active: (pathname) => pathname === '/movies' || pathname.startsWith('/movies/')
-		},
-		{
-			id: 'tvshows',
-			label: titles.tvShows,
-			icon: 'tv',
-			path: '/tv-shows',
-			storageKey: 'tv-shows-page',
-			active: (pathname) => pathname === '/tv-shows' || pathname.startsWith('/tv-shows/')
-		}
-	]);
+	const navItems = $derived(
+		/** @type {import('$lib/types/components.js').NavItem[]} */ ([
+			{
+				id: 'home',
+				label: titles.home,
+				icon: 'home',
+				path: '/',
+				storageKey: 'home-page',
+				active: (pathname) => pathname === '/'
+			},
+			{
+				id: 'movies',
+				label: titles.movies,
+				icon: 'film',
+				path: '/movies',
+				storageKey: 'movies-page',
+				active: (pathname) => pathname === '/movies' || pathname.startsWith('/movies/')
+			},
+			{
+				id: 'tvshows',
+				label: titles.tvShows,
+				icon: 'tv',
+				path: '/tv-shows',
+				storageKey: 'tv-shows-page',
+				active: (pathname) => pathname === '/tv-shows' || pathname.startsWith('/tv-shows/')
+			}
+		])
+	);
 
 	if (dev) {
 		validateLocales();
