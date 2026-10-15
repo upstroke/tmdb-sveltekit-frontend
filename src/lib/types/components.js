@@ -55,6 +55,15 @@
  */
 
 /**
+ * Props of `LoadMore.svelte`.
+ *
+ * @typedef {Object} LoadMoreProps
+ * @property {boolean=} hasMore Indicates whether more entries are available.
+ * @property {boolean=} loading Indicates whether more entries are currently being loaded.
+ * @property {(() => void | Promise<void>) | null=} onload Callback for loading more entries.
+ */
+
+/**
  * Props of `MediaTypeLabel.svelte`.
  *
  * @typedef {Object} MediaTypeLabelProps

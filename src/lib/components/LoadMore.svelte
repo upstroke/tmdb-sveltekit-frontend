@@ -8,14 +8,12 @@
 	 * While loading, the appropriate loading message is displayed.
 	 *
 	 * @component
-	 * @prop {boolean} [hasMore=false] - Indicates whether more entries are available.
-	 * @prop {boolean} [loading=false] - Indicates whether more entries are currently being loaded.
-	 * @prop {(() => void | Promise<void>) | null} [onload=null] - Callback for loading more entries.
 	 *
 	 * @example
 	 * <LoadMore hasMore={true} loading={false} onload={loadNextPage} />
 	 */
 
+	/** @type {import('../types/components.js').LoadMoreProps} */
 	let { hasMore = false, loading = false, onload = null } = $props();
 
 	const { messages: texts } = $derived($i18n);
