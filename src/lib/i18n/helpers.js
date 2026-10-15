@@ -28,9 +28,7 @@ const SUPPORTED_LOCALES = new Set(
 function collectKeys(obj, prefix = '') {
 	return Object.entries(obj).flatMap(([key, value]) => {
 		const path = prefix ? `${prefix}.${key}` : key;
-		return value !== null && typeof value === 'object'
-			? collectKeys(value, path)
-			: [path];
+		return value !== null && typeof value === 'object' ? collectKeys(value, path) : [path];
 	});
 }
 
