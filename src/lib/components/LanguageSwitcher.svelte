@@ -27,13 +27,13 @@
 	}));
 
 	/**
-	 * Reagiert auf eine geänderte Sprachwahl und aktualisiert Store sowie URL.
+	 * Handles a language selection change and updates the store and URL.
 	 *
-	 * Die aktuelle Seite bleibt dabei erhalten und wird mit der neuen Locale
-	 * ohne Scroll- oder Fokusverlust neu geladen.
+	 * The current page is kept and reloaded with the new locale
+	 * without losing scroll position or focus.
 	 *
-	 * @param {Event & { currentTarget: HTMLSelectElement }} event - Änderungsereignis des Select-Felds.
-	 * @returns {Promise<void>} Wird aufgelöst, sobald die Navigation abgeschlossen ist.
+	 * @param {Event & { currentTarget: HTMLSelectElement }} event - Change event of the select element.
+	 * @returns {Promise<void>} Resolves once the navigation has finished.
 	 */
 	async function handleChange(event) {
 		const nextLocale = resolveLocale(event.currentTarget.value);
@@ -55,14 +55,9 @@
 
 <div class="language-switcher">
 	<label for="language-select" class="u-sr-only">{labels.languageSelect}</label>
-	<select
-		id="language-select"
-		bind:value={selectedLocale}
-		aria-label={labels.languageSelect}
-		onchange={handleChange}
-	>
-		{#each locales as locale (locale.value)}
-			<option value={locale.value}>{locale.label}</option>
+	<select id="language-select" bind:value={selectedLocale} onchange={handleChange}>
+		{#each locales as item (item.value)}
+			<option value={item.value}>{item.label}</option>
 		{/each}
 	</select>
 </div>
