@@ -13,7 +13,7 @@
 	 * <LoadMore hasMore={true} loading={false} onload={loadNextPage} />
 	 */
 
-	/** @type {import('../types/components.js').LoadMoreProps} */
+	/** @type {import('$lib/types/components.js').LoadMoreProps} */
 	let { hasMore = false, loading = false, onload = null } = $props();
 
 	const { messages: texts } = $derived($i18n);

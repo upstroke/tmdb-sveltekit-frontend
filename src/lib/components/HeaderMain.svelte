@@ -16,7 +16,7 @@
 	 * </HeaderMain>
 	 */
 
-	/** @type {import('../types/components.js').HeaderMainProps} */
+	/** @type {import('$lib/types/components.js').HeaderMainProps} */
 	let { navItems = [], children } = $props();
 	const { labels } = $derived($i18n);
 

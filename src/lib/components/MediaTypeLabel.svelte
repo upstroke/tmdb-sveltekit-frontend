@@ -15,7 +15,7 @@
 	 * <MediaTypeLabel mediaType="movie" class="featured-card-type" />
 	 */
 
-	/** @type {import('../types/components.js').MediaTypeLabelProps} */
+	/** @type {import('$lib/types/components.js').MediaTypeLabelProps} */
 	let { mediaType, class: className = '' } = $props();
 
 	let normalizedType = $derived(mediaType === 'movie' ? 'movie' : mediaType === 'tv' ? 'tv' : null);
