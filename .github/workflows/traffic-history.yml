@@ -1,0 +1,31 @@
+name: GitHub Traffic History
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # Runs automatically every day at midnight UTC
+  workflow_dispatch: # Allows you to trigger the workflow manually at any time
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Fetch GitHub Traffic Data
+        uses: platane/snk@v3
+        with:
+          github_user_name: ${{ github.repository_owner }}
+          repository_name: ${{ github.event.repository.name }}
+
+        env:
+          # Custom token required to bypass default API limitations for traffic data
+          GITHUB_TOKEN: ${{ secrets.TRAFFIC_TOKEN }}
+
+      - name: Save Traffic Data to Branch
+        uses: crazy-max/ghaction-github-pages@v4
+        with:
+          target_branch: traffic
+          build_dir: Documentation/traffic
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
