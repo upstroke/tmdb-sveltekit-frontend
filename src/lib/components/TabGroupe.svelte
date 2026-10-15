@@ -2,19 +2,6 @@
 	/**
 	 * Accessible tab group (WAI-ARIA tabs pattern) with optional episode lists.
 	 * Supports ArrowLeft/ArrowRight/Home/End on tabs and ArrowUp/ArrowDown/Home/End on episodes.
-	 *
-	 * @typedef {Object} Episode
-	 * @property {number} [id]
-	 * @property {string} name
-	 * @property {string} [air_date]
-	 * @property {string} [overview]
-	 *
-	 * @typedef {Object} Tab
-	 * @property {string | number} id
-	 * @property {string} label
-	 * @property {boolean} [loading]
-	 * @property {Episode[]} [episodes]
-	 * @property {string} [content]
 	 */
 
 	import { i18n } from '$lib/stores/i18n';
@@ -26,7 +13,7 @@
 
 	/**
 	 * @type {{
-	 *   tabs?: Tab[],
+	 *   tabs?: import('$lib/types/components.js').Tab[],
 	 *   initialTab?: string | number,
 	 *   ariaLabel?: string,
 	 *   onTabSelect?: (id: string) => void

@@ -54,4 +54,26 @@
  * @property {string=} title Dialog heading; defaults to the localized error title.
  */
 
+/**
+ * Episode entry shown inside a tab of `TabGroupe.svelte`.
+ * Reduced view of `TmdbRawEpisode` (`name` is required for display).
+ *
+ * @typedef {Object} TabEpisode
+ * @property {number=} id TMDB episode ID.
+ * @property {string} name Episode title.
+ * @property {string=} air_date Air date (ISO string).
+ * @property {string=} overview Episode summary.
+ */
+
+/**
+ * Single tab of `TabGroupe.svelte`.
+ *
+ * @typedef {Object} Tab
+ * @property {string | number} id Unique tab ID (also used for the `tab-<id>` element ID).
+ * @property {string} label Visible tab label.
+ * @property {boolean=} loading Shows the loading state while content is fetched.
+ * @property {TabEpisode[]=} episodes Optional episode list rendered in the tab panel.
+ * @property {string=} content Optional plain text content of the tab panel.
+ */
+
 export {};
