@@ -18,20 +18,21 @@ jobs:
       - name: Fetch and Save Real Clone Data
         env:
           TRAFFIC_TOKEN: ${{ secrets.TRAFFIC_TOKEN }}
+          REPO: ${{ github.repository }}
         run: |
           mkdir -p .traffic
 
           # Fetch clones data from the official GitHub API endpoint
-          curl -s -H "Authorization: token $TRAFFIC_TOKEN" \
-               -H "Accept: application/vnd.github.v3+json" \
-               https://github.com{{ github.repository }}/traffic/clones \
+          curl -sSf -H "Authorization: Bearer $TRAFFIC_TOKEN" \
+               -H "Accept: application/vnd.github+json" \
+               "https://api.github.com/repos/$REPO/traffic/clones" \
                > .traffic/clones.json
 
           # Fetch views data from the official GitHub API endpoint
-          curl -s -H "Authorization: token $TRAFFIC_TOKEN" \
-               -H "Accept: application/vnd.github.v3+json" \
-               https://github.com{{ github.repository }}/traffic/views \
-               > .traffic/clones_views.json
+          curl -sSf -H "Authorization: Bearer $TRAFFIC_TOKEN" \
+               -H "Accept: application/vnd.github+json" \
+               "https://api.github.com/repos/$REPO/traffic/views" \
+               > .traffic/views.json
 
       - name: Commit and Push Traffic Data to Main
         run: |
