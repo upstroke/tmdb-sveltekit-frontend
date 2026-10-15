@@ -21,13 +21,13 @@ jobs:
         run: |
           mkdir -p .traffic
 
-          # Fetch clones data from official GitHub API
+          # Fetch clones data from the official GitHub API endpoint
           curl -s -H "Authorization: token $TRAFFIC_TOKEN" \
                -H "Accept: application/vnd.github.v3+json" \
                https://github.com{{ github.repository }}/traffic/clones \
                > .traffic/clones.json
 
-          # Fetch views data from official GitHub API
+          # Fetch views data from the official GitHub API endpoint
           curl -s -H "Authorization: token $TRAFFIC_TOKEN" \
                -H "Accept: application/vnd.github.v3+json" \
                https://github.com{{ github.repository }}/traffic/views \
