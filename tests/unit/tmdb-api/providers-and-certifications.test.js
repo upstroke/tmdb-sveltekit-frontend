@@ -1,11 +1,13 @@
 import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
 import { createTmdbApi } from '$lib/services/tmdb-api';
 
+/** @typedef {import('../../setup/types.js').MockResponse} MockResponse */
+
 /**
  * Creates a mock JSON response object for fetch operations.
  *
  * @param {any} data - The data to be returned by the mocked json() method.
- * @returns {{ ok: boolean, json: import('vitest').Mock<() => Promise<any>> }}
+ * @returns {MockResponse}
  */
 function createJsonResponse(data) {
 	return {

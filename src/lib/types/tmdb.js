@@ -255,4 +255,22 @@
  * @typedef {Partial<ListPageData>} PageData
  */
 
+/**
+ * SvelteKit load or request context of the list and search routes.
+ *
+ * @typedef {{ fetch: typeof globalThis.fetch, url: URL }} LoadEvent
+ */
+
+/**
+ * Load context of the movie and TV show detail routes.
+ *
+ * @typedef {{ fetch: typeof globalThis.fetch, params: { id: string }, url: URL }} DetailLoadEvent
+ */
+
+/**
+ * Props of the list pages.
+ *
+ * @typedef {{ data: PageData }} PageProps
+ */
+
 export {};

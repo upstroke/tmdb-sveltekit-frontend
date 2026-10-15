@@ -6,13 +6,15 @@ import { getLocaleText } from '$lib/i18n/resolver';
 import { TMDB_API_KEY } from '$env/static/private';
 import { createTmdbApi } from '$lib/services/tmdb-api.js';
 
+/** @typedef {import('$lib/types/tmdb.js').LoadEvent} LoadEvent */
+
 /**
  * Loads a page of trending content.
  *
  * The route expects the query parameter `page` and returns the next
  * batch of mixed content for the homepage.
  *
- * @param {{ fetch: typeof globalThis.fetch, url: URL }} event - SvelteKit request context.
+ * @param {LoadEvent} event - SvelteKit request context.
  * @returns {Promise<Response>} JSON response with cards and paging status.
  */
 export async function GET({ fetch, url }) {

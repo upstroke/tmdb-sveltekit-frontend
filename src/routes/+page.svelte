@@ -13,6 +13,7 @@
 	import { restorePagedList } from '$lib/utils/pageStateRestore';
 
 	/** @typedef {import('$lib/types/tmdb.js').PageData} PageData */
+	/** @typedef {import('$lib/types/tmdb.js').PageProps} PageProps */
 	/** @typedef {import('$lib/types/tmdb.js').MappedFeatured} MappedFeatured */
 	/** @typedef {import('$lib/types/tmdb.js').CardItem} CardItem */
 
@@ -23,7 +24,7 @@
 	/**
 	 * Expected data from the server load of the homepage.
 	 *
-	 * @type {{ data: PageData }}
+	 * @type {PageProps}
 	 */
 	let { data } = $props();
 

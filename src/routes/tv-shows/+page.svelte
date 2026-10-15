@@ -12,6 +12,7 @@
 	import { deduplicateMedia, getMediaKey } from '$lib/utils/deduplicateMedia';
 
 	/** @typedef {import('$lib/types/tmdb.js').PageData} PageData */
+	/** @typedef {import('$lib/types/tmdb.js').PageProps} PageProps */
 	/** @typedef {import('$lib/types/tmdb.js').MappedFeatured} MappedFeatured */
 	/** @typedef {import('$lib/types/tmdb.js').CardItem} CardItem */
 
@@ -22,7 +23,7 @@
 	/**
 	 * Loaded page data from the server load.
 	 *
-	 * @type {{ data: PageData }}
+	 * @type {PageProps}
 	 */
 	let { data } = $props();
 

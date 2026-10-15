@@ -5,6 +5,8 @@ import { resolveLocale } from '$lib/i18n/helpers';
 import { getLocaleText } from '$lib/i18n/resolver';
 import { createTmdbApi } from '$lib/services/tmdb-api.js';
 
+/** @typedef {import('$lib/types/tmdb.js').DetailLoadEvent} DetailLoadEvent */
+
 /** @typedef {import('$lib/types/tmdb.js').TvShowWithEpisodes} TvShowWithEpisodes */
 /** @typedef {import('$lib/types/tmdb.js').WatchProviders} WatchProviders */
 
@@ -17,7 +19,7 @@ import { createTmdbApi } from '$lib/services/tmdb-api.js';
  * If no API key is available, an empty record with an error message
  * is returned.
  *
- * @param {{ fetch: typeof globalThis.fetch, params: { id: string }, url: URL }} event - SvelteKit load context.
+ * @param {DetailLoadEvent} event - SvelteKit load context.
  * @returns {Promise<{ tvShow: TvShowWithEpisodes | null, providers?: WatchProviders | null, error: string | null }>} TV show object for the detail page.
  */
 export async function load({ fetch, params, url }) {

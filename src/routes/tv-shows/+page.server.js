@@ -6,6 +6,8 @@ import { getLocaleText } from '$lib/i18n/resolver';
 import { createTmdbApi } from '$lib/services/tmdb-api.js';
 import { toFeatured } from '$lib/utils/toFeatured.js';
 
+/** @typedef {import('$lib/types/tmdb.js').LoadEvent} LoadEvent */
+
 /** @typedef {import('$lib/types/tmdb.js').ListPageData} ListPageData */
 
 /**
@@ -15,7 +17,7 @@ import { toFeatured } from '$lib/utils/toFeatured.js';
  * corresponding trending TV shows via the TMDB API, and prepares a
  * featured object as well as the card list for the page.
  *
- * @param {{ fetch: typeof globalThis.fetch, url: URL }} event - SvelteKit load context.
+ * @param {LoadEvent} event - SvelteKit load context.
  * @returns {Promise<ListPageData>} Loaded page and card data.
  */
 

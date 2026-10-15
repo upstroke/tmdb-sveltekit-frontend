@@ -6,13 +6,15 @@ import { getLocaleText } from '$lib/i18n/resolver';
 import { TMDB_API_KEY } from '$env/static/private';
 import { createTmdbApi } from '$lib/services/tmdb-api.js';
 
+/** @typedef {import('$lib/types/tmdb.js').LoadEvent} LoadEvent */
+
 /**
  * Loads another page of TV shows.
  *
  * The route expects the query parameter `page`, loads the corresponding
  * TV show page via the TMDB API, and returns deduplicated cards along with paging info.
  *
- * @param {{ fetch: typeof globalThis.fetch, url: URL }} event - SvelteKit request context.
+ * @param {LoadEvent} event - SvelteKit request context.
  * @returns {Promise<Response>} JSON response with cards, page number, and error status.
  */
 
