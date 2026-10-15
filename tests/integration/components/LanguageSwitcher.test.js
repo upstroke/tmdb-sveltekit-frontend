@@ -66,12 +66,15 @@ describe('LanguageSwitcher', () => {
     expect(select.value).toBe(DEFAULT_LOCALE);
   });
 
-  // Statement coverage: The i18n label is used as aria-label on the select element.
-  it('uses the i18n label as aria-label on the select', () => {
+  // Statement coverage: The i18n label (labels.languageSelect) is the accessible name via the associated <label>, without a redundant aria-label.
+  it('uses the i18n label as accessible name via the associated label', () => {
     render(LanguageSwitcher);
 
     const select = screen.getByRole('combobox', { name: labels.languageSelect });
-    expect(select).toHaveAttribute('aria-label', labels.languageSelect);
+    const label = document.querySelector('label[for="language-select"]');
+
+    expect(label).toHaveTextContent(labels.languageSelect);
+    expect(select).not.toHaveAttribute('aria-label');
   });
 
   // Branch coverage: Selecting a different locale updates the locale store and navigates to the current relative route with the new locale parameter.
