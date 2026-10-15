@@ -10,6 +10,7 @@ import { DEFAULT_LOCALE } from '$lib/i18n/config';
 /** @typedef {import('../types/i18n.js').LocaleTitles} LocaleTitles */
 /** @typedef {import('../types/i18n.js').LocaleButtons} LocaleButtons */
 /** @typedef {import('../types/i18n.js').LocaleData} LocaleData */
+/** @typedef {import('../types/i18n.js').LocaleCatalog} LocaleCatalog */
 
 const SUPPORTED_LOCALES = new Set(
 	Object.values(uiText.locales)
@@ -20,7 +21,7 @@ const SUPPORTED_LOCALES = new Set(
 /**
  * Collects all leaf-level keys of an object as dot-notation paths.
  *
- * @param {Record<string, unknown>} obj
+ * @param {LocaleCatalog} obj
  * @param {string} [prefix]
  * @returns {string[]}
  */
@@ -28,7 +29,7 @@ function collectKeys(obj, prefix = '') {
 	return Object.entries(obj).flatMap(([key, value]) => {
 		const path = prefix ? `${prefix}.${key}` : key;
 		return value !== null && typeof value === 'object'
-			? collectKeys(/** @type {Record<string, unknown>} */ (value), path)
+			? collectKeys(value, path)
 			: [path];
 	});
 }
@@ -57,7 +58,7 @@ export function validateLocales() {
 	for (const [localeCode, localeData] of Object.entries(locales)) {
 		if (localeCode === referenceLocale) continue;
 
-		const localeKeys = new Set(collectKeys(/** @type {Record<string, unknown>} */ (localeData)));
+		const localeKeys = new Set(collectKeys(localeData));
 
 		for (const key of referenceKeys) {
 			if (!localeKeys.has(key)) {

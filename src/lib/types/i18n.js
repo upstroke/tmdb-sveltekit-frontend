@@ -118,4 +118,11 @@
  * @property {LocaleButtons} buttons
  */
 
+/**
+ * Nested translation catalog; leaves are strings.
+ * Used for generic walks over the locale data in `ui.json`.
+ *
+ * @typedef {{ [key: string]: string | LocaleCatalog }} LocaleCatalog
+ */
+
 export {};
