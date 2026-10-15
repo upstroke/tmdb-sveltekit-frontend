@@ -11,26 +11,16 @@
 	 * Screenreader-Ansagen und abbrechbaren Suchanfragen.
 	 *
 	 * @component
-	 */
-
-	/**
-	 * @typedef {Object} SearchResult
-	 * @property {number|string} id - TMDB-ID.
-	 * @property {'movie'|'tv'} mediaType - Medientyp des Treffers.
-	 * @property {string} [title] - Titel.
-	 * @property {string} [date] - Veröffentlichungsdatum.
-	 * @property {number|null} [rating] - Bewertung (0-10).
-	 * @property {string|null} [posterUrl] - Poster-URL.
-	 * @property {string|null} [imageUrl] - Alternative Bild-URL.
+	 * @remarks This component expects no props.
 	 */
 
 	const { labels: texts, messages, formats, titles, labels, fallbacks } = $derived($i18n);
 	const activeLocale = $derived(resolveLocale(page.url.searchParams.get('locale')));
 
 	let query = $state('');
-	/** @type {SearchResult[]} */
+	/** @type {import('$lib/types/components.js').SearchResult[]} */
 	let movies = $state([]);
-	/** @type {SearchResult[]} */
+	/** @type {import('$lib/types/components.js').SearchResult[]} */
 	let tvShows = $state([]);
 	let loading = $state(false);
 	let showLoading = $state(false);
@@ -186,7 +176,7 @@
 	}
 
 	/**
-	 * @param {SearchResult} item - Suchtreffer.
+	 * @param {import('$lib/types/components.js').SearchResult} item - Suchtreffer.
 	 * @returns {string} Detailroute des Treffers.
 	 */
 	function resultHref(item) {
