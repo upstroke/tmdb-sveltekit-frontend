@@ -19,12 +19,19 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.TRAFFIC_TOKEN }}
 
-      - name: Ensure Target Directory Exists
-        run: mkdir -p Documentation/traffic
+      - name: Ensure Hidden Root Directory Exists
+        run: mkdir -p .traffic
+
+      - name: Move Traffic Data to Hidden Root Folder
+        run: |
+          if [ -d "Documentation/traffic" ]; then
+            cp -r Documentation/traffic/* .traffic/
+            rm -rf Documentation
+          fi
 
       - name: Commit and Push Traffic Data to Main
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@://github.com"
-          git add Documentation/traffic/
-          git diff --quiet && git diff --staged --quiet || (git commit -m "chore: update traffic statistics [skip ci]" && git push)
+          git add .traffic/
+          git diff --quiet && git diff --staged --quiet || (git commit -m "chore: update repository traffic analytics [skip ci]" && git push)
