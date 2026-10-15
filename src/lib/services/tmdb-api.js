@@ -224,7 +224,6 @@ export function createTmdbApi(fetchFn, apiKey, language = DEFAULT_LOCALE) {
 			return /** @type {WatchProviders | null} */ (watchProvidersCache.get(cacheKey));
 		}
 
-		const region = language.split('-')[1] ?? language.split('_')[1] ?? 'DE';
 		/** @type {WatchProviders | null} */
 		let providers = null;
 
