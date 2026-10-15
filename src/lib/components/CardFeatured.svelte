@@ -15,15 +15,6 @@
 	 * short description, and optional website link are displayed as an overlay.
 	 *
 	 * @component
-	 * @prop {number|string} id - Unique ID of the media for the detail link.
-	 * @prop {'movie'|'tv'|null} mediaType - Media type and target route of the card; `null` renders the card without a detail link.
-	 * @prop {string} [title] - Title of the media.
-	 * @prop {string} [releaseDate=''] - Release or premiere date.
-	 * @prop {string} [overview=''] - Short description of the media.
-	 * @prop {string} [homepage=''] - URL of the official website.
-	 * @prop {Array<{id?: number|string, name: string}>} [genres=[]] - Genres of the media.
-	 * @prop {string} [imageUrl=''] - URL of the background or preview image.
-	 * @prop {string} [posterUrl=''] - URL of the poster; falls back to `imageUrl`.
 	 *
 	 * @example
 	 * <CardFeatured

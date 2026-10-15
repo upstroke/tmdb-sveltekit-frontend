@@ -13,16 +13,6 @@
 	 * metadata, details link, and loading state.
 	 *
 	 * @component
-	 * @prop {number|string} id - Unique TMDB ID of the media item.
-	 * @prop {'movie'|'tv'} mediaType - Media type and target route of the card.
-	 * @prop {string} title - Title of the movie or TV show.
-	 * @prop {string} [date=''] - Release or air date.
-	 * @prop {number} [rating=0] - Rating; positive values are shown with one decimal place.
-	 * @prop {string|number} [certification=''] - Age rating, e.g. FSK or US rating.
-	 * @prop {Array<{name: string}>} [genres=[]] - Genres, displayed joined by slashes.
-	 * @prop {string} [imageUrl=''] - Poster URL; a placeholder is used if empty.
-	 * @prop {string} [scrollId=''] - Optional HTML id for the card.
-	 * @prop {boolean} [isLoading=false] - Shows the loading state of the card.
 	 *
 	 * @example
 	 * <CardDefault id={123} mediaType="movie" title="Inception" />
