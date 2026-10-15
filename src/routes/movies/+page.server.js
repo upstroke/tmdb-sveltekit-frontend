@@ -5,6 +5,8 @@ import { resolveLocale } from '$lib/i18n/helpers';
 import { getLocaleText } from '$lib/i18n/resolver';
 import { createTmdbApi } from '$lib/services/tmdb-api.js';
 
+/** @typedef {import('$lib/types/tmdb.js').PageData} PageData */
+
 /**
  * Loads the server data for the movie list.
  *
@@ -13,23 +15,7 @@ import { createTmdbApi } from '$lib/services/tmdb-api.js';
  * featured object as well as the card list for the page.
  *
  * @param {{ fetch: typeof globalThis.fetch, url: URL }} event - SvelteKit load context.
- * @returns {Promise<{
- *   featured: {
- *     id: number|string,
- *     mediaType: string | null,
- *     title: string,
- *     releaseDate: string,
- *     overview: string,
- *     homepage: string,
- *     genres: Array<{id: number|string, name: string}>,
- *     imageUrl: string,
- *     posterUrl: string
- *   } | null,
- *   cards: Array<Record<string, unknown>>,
- *   page: number,
- *   hasMore: boolean,
- *   error: string | null
- * }>} Loaded page and card data.
+ * @returns {Promise<PageData>} Loaded page and card data.
  */
 
 export async function load({ fetch, url }) {
