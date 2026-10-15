@@ -21,7 +21,6 @@ import { createTmdbApi } from '$lib/services/tmdb-api.js';
  * @param {DetailLoadEvent} event - SvelteKit load context.
  * @returns {Promise<{ movie: MovieDetails | null, providers?: WatchProviders | null, error: string | null }>} Movie object for the detail page.
  */
-
 export async function load({ fetch, params, url }) {
 	const locale = resolveLocale(url.searchParams.get('locale'));
 	const { messages } = getLocaleText(locale);
