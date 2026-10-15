@@ -294,6 +294,6 @@
 		<!-- LoadMore is ALWAYS rendered, not only when hasMore is true -->
 		<LoadMore {hasMore} {loading} onload={() => loadMore()} />
 	{:else if !error}
-		<p class="{messages.noTvShows ? '' : 'u-not-available'}">{messages.noTvShows}</p>
+		<p class={messages.noTvShows ? '' : 'u-not-available'}>{messages.noTvShows}</p>
 	{/if}
 </main>
