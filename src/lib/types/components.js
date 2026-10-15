@@ -113,4 +113,14 @@
  * @property {string=} content Optional plain text content of the tab panel.
  */
 
+/**
+ * Props of `TabGroupe.svelte`.
+ *
+ * @typedef {Object} TabGroupeProps
+ * @property {Tab[]=} tabs Tabs to render; the first tab is active if `initialTab` is not set.
+ * @property {(string | number)=} initialTab ID of the initially active tab.
+ * @property {string=} ariaLabel Accessible label of the tab list (required for WCAG 4.1.2).
+ * @property {((id: string) => void)=} onTabSelect Called with the tab ID after a tab was selected.
+ */
+
 export {};

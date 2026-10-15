@@ -11,14 +11,7 @@
 	import { tick } from 'svelte';
 	const { labels, messages } = $derived($i18n);
 
-	/**
-	 * @type {{
-	 *   tabs?: import('$lib/types/components.js').Tab[],
-	 *   initialTab?: string | number,
-	 *   ariaLabel?: string,
-	 *   onTabSelect?: (id: string) => void
-	 * }}
-	 */
+	/** @type {import('$lib/types/components.js').TabGroupeProps} */
 	let { tabs = [], initialTab = undefined, ariaLabel = '', onTabSelect = undefined } = $props();
 
 	$effect(() => {
