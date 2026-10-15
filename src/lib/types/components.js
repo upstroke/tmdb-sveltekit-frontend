@@ -92,6 +92,19 @@
  */
 
 /**
+ * Search hit shown in the result list of `TypeHeadSearch.svelte`.
+ *
+ * @typedef {Object} SearchResult
+ * @property {number | string} id TMDB ID of the media item.
+ * @property {'movie' | 'tv'} mediaType Media type of the hit.
+ * @property {string=} title Title of the media.
+ * @property {string=} date Release or air date.
+ * @property {number | null=} rating Rating (0-10).
+ * @property {string | null=} posterUrl Poster URL.
+ * @property {string | null=} imageUrl Alternative image URL.
+ */
+
+/**
  * Episode entry shown inside a tab of `TabGroupe.svelte`.
  * Reduced view of `TmdbRawEpisode` (`name` is required for display).
  *
