@@ -7,8 +7,8 @@
 	import { resolveLocale } from '$lib/i18n/helpers';
 
 	/**
-	 * Typeahead-Suche für Filme und TV-Serien mit Combobox-Tastaturbedienung,
-	 * Screenreader-Ansagen und abbrechbaren Suchanfragen.
+	 * Typeahead search for movies and TV shows with combobox keyboard support,
+	 * screen reader announcements, and cancellable search requests.
 	 *
 	 * @component
 	 * @remarks This component expects no props.
@@ -57,7 +57,7 @@
 	const resultsId = 'typeahead-search-results';
 
 	/**
-	 * Liefert die DOM-IDs aller Treffer in Anzeigereihenfolge (Filme, dann Serien).
+	 * Returns the DOM IDs of all results in display order (movies, then TV shows).
 	 *
 	 * @returns {string[]}
 	 */
@@ -68,9 +68,9 @@
 	}
 
 	/**
-	 * Setzt den Fokus auf einen Treffer und scrollt ihn in den sichtbaren Bereich.
+	 * Focuses a result and scrolls it into the visible area.
 	 *
-	 * @param {string} resultId - DOM-ID des Treffers.
+	 * @param {string} resultId - DOM ID of the result.
 	 * @returns {void}
 	 */
 	function focusResult(resultId) {
@@ -144,16 +144,16 @@
 	});
 
 	/**
-	 * @param {number|null|undefined} value - Bewertung.
-	 * @returns {string} Bewertung mit einer Dezimalstelle.
+	 * @param {number|null|undefined} value - Rating.
+	 * @returns {string} Rating with one decimal place.
 	 */
 	function formatRating(value) {
 		return Number(value ?? 0).toFixed(1);
 	}
 
 	/**
-	 * @param {string|undefined} value - Datumsstring.
-	 * @returns {string} Jahr oder Fallback-Text.
+	 * @param {string|undefined} value - Date string.
+	 * @returns {string} Year or fallback text.
 	 */
 	function formatYear(value) {
 		if (!value) return fallbacks.dateFallback;
@@ -163,9 +163,9 @@
 	}
 
 	/**
-	 * Hängt die aktive Locale als Query-Parameter an einen Link an.
+	 * Appends the active locale as a query parameter to a link.
 	 *
-	 * @param {string} href - Pfad des Ziels.
+	 * @param {string} href - Path of the target.
 	 * @returns {string}
 	 */
 	function withLocale(href) {
@@ -176,8 +176,8 @@
 	}
 
 	/**
-	 * @param {import('$lib/types/components.js').SearchResult} item - Suchtreffer.
-	 * @returns {string} Detailroute des Treffers.
+	 * @param {import('$lib/types/components.js').SearchResult} item - Search result.
+	 * @returns {string} Detail route of the result.
 	 */
 	function resultHref(item) {
 		if (item.mediaType === 'movie') return resolve('/movies/[id]', { id: String(item.id) });
@@ -191,9 +191,9 @@
 	}
 
 	/**
-	 * Plant eine verzögerte Screenreader-Ansage.
+	 * Schedules a delayed screen reader announcement.
 	 *
-	 * @param {string} message - Ansagetext.
+	 * @param {string} message - Announcement text.
 	 * @returns {void}
 	 */
 	function scheduleAnnouncement(message) {
@@ -235,9 +235,9 @@
 	}
 
 	/**
-	 * Führt die Suche aus und bricht dabei eine laufende Anfrage ab.
+	 * Runs the search and aborts a running request.
 	 *
-	 * @param {string} term - Suchbegriff (mindestens 4 Zeichen).
+	 * @param {string} term - Search term (at least 4 characters).
 	 * @returns {Promise<void>}
 	 */
 	async function search(term) {
@@ -285,7 +285,7 @@
 	}
 
 	/**
-	 * Tastaturbedienung der Combobox (Pfeile, Enter, Escape, Home, End).
+	 * Keyboard handling of the combobox (arrows, Enter, Escape, Home, End).
 	 *
 	 * @param {KeyboardEvent} event
 	 * @returns {void}
@@ -335,7 +335,7 @@
 	}
 
 	/**
-	 * Schließt die Trefferliste.
+	 * Closes the results list.
 	 *
 	 * @param {{ restoreFocus?: boolean }} [options]
 	 * @returns {void}
