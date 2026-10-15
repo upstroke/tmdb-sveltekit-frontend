@@ -5,7 +5,6 @@ on:
     - cron: '0 0 * * *' # Runs automatically every day at midnight UTC
   workflow_dispatch: # Allows you to trigger the workflow manually at any time
 
-# Grant the corporate GitHub Actions bot permission to write changes back to the repository
 permissions:
   contents: write
 
@@ -16,22 +15,23 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Fetch GitHub Traffic Data
-        uses: platane/snk@v3
-        with:
-          github_user_name: ${{ github.repository_owner }}
+      - name: Fetch and Save Real Clone Data
         env:
-          GITHUB_TOKEN: ${{ secrets.TRAFFIC_TOKEN }}
-
-      - name: Ensure Hidden Root Directory Exists
-        run: mkdir -p .traffic
-
-      - name: Move Traffic Data to Hidden Root Folder
+          TRAFFIC_TOKEN: ${{ secrets.TRAFFIC_TOKEN }}
         run: |
-          if [ -d "Documentation/traffic" ]; then
-            cp -r Documentation/traffic/* .traffic/
-            rm -rf Documentation
-          fi
+          mkdir -p .traffic
+
+          # Fetch clones data from official GitHub API
+          curl -s -H "Authorization: token $TRAFFIC_TOKEN" \
+               -H "Accept: application/vnd.github.v3+json" \
+               https://github.com{{ github.repository }}/traffic/clones \
+               > .traffic/clones.json
+
+          # Fetch views data from official GitHub API
+          curl -s -H "Authorization: token $TRAFFIC_TOKEN" \
+               -H "Accept: application/vnd.github.v3+json" \
+               https://github.com{{ github.repository }}/traffic/views \
+               > .traffic/clones_views.json
 
       - name: Commit and Push Traffic Data to Main
         run: |
