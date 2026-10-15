@@ -10,12 +10,12 @@
 	 * For unknown or missing media types, no label is rendered.
 	 *
 	 * @component
-	 * @prop {'movie'|'tv'|string|null|undefined} mediaType - Media type from which text and color variant are derived.
-	 * @prop {string} [class=''] - Additional CSS classes for the label.
 	 *
 	 * @example
 	 * <MediaTypeLabel mediaType="movie" class="featured-card-type" />
 	 */
+
+	/** @type {import('../types/components.js').MediaTypeLabelProps} */
 	let { mediaType, class: className = '' } = $props();
 
 	let normalizedType = $derived(mediaType === 'movie' ? 'movie' : mediaType === 'tv' ? 'tv' : null);

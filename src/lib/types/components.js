@@ -55,6 +55,14 @@
  */
 
 /**
+ * Props of `MediaTypeLabel.svelte`.
+ *
+ * @typedef {Object} MediaTypeLabelProps
+ * @property {import('./tmdb.js').MediaType | string | null=} mediaType Media type from which text and color variant are derived; unknown or missing values render nothing.
+ * @property {string=} class Additional CSS classes for the label.
+ */
+
+/**
  * Episode entry shown inside a tab of `TabGroupe.svelte`.
  * Reduced view of `TmdbRawEpisode` (`name` is required for display).
  *
