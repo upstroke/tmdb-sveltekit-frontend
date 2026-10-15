@@ -4,6 +4,7 @@ import { TMDB_API_KEY } from '$env/static/private';
 import { resolveLocale } from '$lib/i18n/helpers';
 import { getLocaleText } from '$lib/i18n/resolver';
 import { createTmdbApi } from '$lib/services/tmdb-api.js';
+import { toFeatured } from '$lib/utils/toFeatured.js';
 
 /** @typedef {import('$lib/types/tmdb.js').ListPageData} ListPageData */
 
@@ -51,17 +52,7 @@ export async function load({ fetch, url }) {
 			try {
 				const details = await api.getMovieDetails(source.id);
 
-				featured = {
-					id: details.id,
-					mediaType: details.mediaType,
-					title: details.title,
-					releaseDate: details.releaseDate,
-					overview: details.overview,
-					homepage: details.homepage,
-					genres: details.genres ?? [],
-					imageUrl: details.imageUrl,
-					posterUrl: details.posterUrl
-				};
+				featured = toFeatured(details);
 			} catch (error) {
 				console.error('Featured movie details could not be loaded:', error);
 			}
