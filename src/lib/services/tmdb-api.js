@@ -12,7 +12,6 @@ import { DEFAULT_LOCALE } from '$lib/i18n/config';
 /** @typedef {import('$lib/types/tmdb.js').TmdbRawDetailsWithId} TmdbRawDetailsWithId */
 /** @typedef {import('$lib/types/tmdb.js').TmdbRawPerson} TmdbRawPerson */
 /** @typedef {import('$lib/types/tmdb.js').TmdbRawProvider} TmdbRawProvider */
-/** @typedef {import('$lib/types/tmdb.js').TmdbRawEpisode} TmdbRawEpisode */
 /** @typedef {import('$lib/types/tmdb.js').TmdbRawListResponse} TmdbRawListResponse */
 /** @typedef {import('$lib/types/tmdb.js').TmdbRawGenreListResponse} TmdbRawGenreListResponse */
 /** @typedef {import('$lib/types/tmdb.js').TmdbRawWatchProvidersResponse} TmdbRawWatchProvidersResponse */
@@ -214,7 +213,7 @@ export function createTmdbApi(fetchFn, apiKey, language = DEFAULT_LOCALE) {
 	 *
 	 * Errors are logged and result in `null`. The result is cached per instance.
 	 *
-	 * @param {string} mediaType - `movie` or `tv`.
+	 * @param {MediaType} mediaType - `movie` or `tv`.
 	 * @param {number | string} id - TMDB ID.
 	 * @returns {Promise<WatchProviders | null>} Watch provider data or null.
 	 */
@@ -263,7 +262,7 @@ export function createTmdbApi(fetchFn, apiKey, language = DEFAULT_LOCALE) {
 	 *
 	 * Errors are logged and result in an empty string. The result is cached per instance.
 	 *
-	 * @param {string} mediaType - `movie` or `tv`.
+	 * @param {MediaType} mediaType - `movie` or `tv`.
 	 * @param {number | string} id - TMDB ID.
 	 * @returns {Promise<string>} Age rating or empty string.
 	 */
