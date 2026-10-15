@@ -15,28 +15,26 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Fetch and Merge Traffic Data
+      - name: Fetch and Merge Clone Data
         env:
           TRAFFIC_TOKEN: ${{ secrets.TRAFFIC_TOKEN }}
           REPO: ${{ github.repository }}
         run: |
           mkdir -p .traffic
 
-          for t in clones views; do
-            # Fetch the last 14 days from the official GitHub API endpoint
-            curl -sSf -H "Authorization: Bearer $TRAFFIC_TOKEN" \
-                 -H "Accept: application/vnd.github+json" \
-                 "https://api.github.com/repos/$REPO/traffic/$t" \
-                 -o "$RUNNER_TEMP/$t.json"
+          # Fetch the last 14 days from the official GitHub API endpoint
+          curl -sSf -H "Authorization: Bearer $TRAFFIC_TOKEN" \
+               -H "Accept: application/vnd.github+json" \
+               "https://api.github.com/repos/$REPO/traffic/clones" \
+               -o "$RUNNER_TEMP/clones.json"
 
-            f=".traffic/${t}_history.json"
-            [ -f "$f" ] || echo '[]' > "$f"
+          f=".traffic/clones_history.json"
+          [ -f "$f" ] || echo '[]' > "$f"
 
-            # Merge by day: new values win, older days are kept, sorted by date
-            jq -s --arg k "$t" '(.[1][$k] + .[0]) | unique_by(.timestamp)' \
-               "$f" "$RUNNER_TEMP/$t.json" > "$RUNNER_TEMP/merged.json"
-            mv "$RUNNER_TEMP/merged.json" "$f"
-          done
+          # Merge by day: new values win, older days are kept, sorted by date
+          jq -s '(.[1].clones + .[0]) | unique_by(.timestamp)' \
+             "$f" "$RUNNER_TEMP/clones.json" > "$RUNNER_TEMP/merged.json"
+          mv "$RUNNER_TEMP/merged.json" "$f"
 
       - name: Commit and Push Traffic Data to Main
         run: |
