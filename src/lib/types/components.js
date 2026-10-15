@@ -10,12 +10,12 @@
  * @typedef {Object} CardDefaultProps
  * @property {number | string} id TMDB ID of the media item.
  * @property {import('./tmdb.js').MediaType} mediaType Media type and target route of the card.
- * @property {string=} title
- * @property {string=} date Release or air date.
+ * @property {string=} title Title; `fallbacks.notAvailable` is shown if empty.
+ * @property {string=} date Release or air date; nothing is rendered if empty.
  * @property {number=} rating
  * @property {string | number=} certification Age rating, e.g. FSK or US rating.
  * @property {Pick<import('./tmdb.js').Genre, 'name'>[]=} genres
- * @property {string=} imageUrl Poster URL; a placeholder is used if empty.
+ * @property {string=} imageUrl Poster URL; the `not-available.png` placeholder is used if empty.
  * @property {string=} scrollId Optional HTML id for the card.
  * @property {boolean=} isLoading Shows the loading state of the card.
  */
@@ -26,24 +26,24 @@
  * @typedef {Object} CardFeaturedProps
  * @property {number | string} id TMDB ID of the media item for the detail link.
  * @property {import('./tmdb.js').MediaType | null} mediaType Media type and target route of the card; `null` renders the card without a detail link.
- * @property {string=} title
+ * @property {string=} title Title; `fallbacks.notAvailable` is shown if empty.
  * @property {string=} releaseDate Release or premiere date.
- * @property {string=} overview Short description of the media.
+ * @property {string=} overview Short description of the media; `fallbacks.notAvailable` is shown if empty.
  * @property {string=} homepage URL of the official website.
  * @property {{ id?: number | string, name: string }[]=} genres
- * @property {string=} imageUrl Background image URL; a placeholder is used if empty.
- * @property {string=} posterUrl Poster URL; falls back to `imageUrl`.
+ * @property {string=} imageUrl Background image URL; the `not-available.png` placeholder is used if empty.
+ * @property {string=} posterUrl Poster URL; falls back to `imageUrl`, then to the `not-available.png` placeholder.
  */
 
 /**
  * Props of `DetailsHero.svelte`.
  *
  * @typedef {Object} DetailsHeroProps
- * @property {string=} title Title of the media; a fallback text is shown if empty.
- * @property {string=} backdrop Background image URL; falls back to `posterUrl`.
- * @property {string=} posterUrl Poster URL; a placeholder is used if empty.
+ * @property {string=} title Title of the media; `fallbacks.notAvailable` is shown if empty.
+ * @property {string=} backdrop Background image URL; falls back to `posterUrl`, then to the `not-available.png` placeholder.
+ * @property {string=} posterUrl Poster URL; the `not-available.png` placeholder is used if empty.
  * @property {Pick<import('./tmdb-raw.js').TmdbRawProductionCompany, 'id' | 'name'>[]=} productionCompanies Production companies of the media.
- * @property {string=} emptyLabel Text for the empty state of production companies.
+ * @property {string=} emptyLabel Text for the empty state of production companies; `fallbacks.notAvailable` is used if empty.
  */
 
 /**
@@ -97,10 +97,10 @@
  * @typedef {Object} SearchResult
  * @property {number | string} id TMDB ID of the media item.
  * @property {'movie' | 'tv'} mediaType Media type of the hit.
- * @property {string=} title Title of the media.
- * @property {string=} date Release or air date.
- * @property {number | null=} rating Rating (0-10).
- * @property {string | null=} posterUrl Poster URL.
+ * @property {string=} title Title of the media; a missing title is marked as not available.
+ * @property {string=} date Release or air date; `fallbacks.dateFallback` is shown if empty or invalid.
+ * @property {number | null=} rating Rating (0-10); `fallbacks.notAvailable` is shown if empty.
+ * @property {string | null=} posterUrl Poster URL; falls back to `imageUrl`, then to the `not-available.png` placeholder.
  * @property {string | null=} imageUrl Alternative image URL.
  */
 
