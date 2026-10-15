@@ -12,10 +12,9 @@
  * @property {import('./tmdb.js').MediaType} mediaType Media type and target route of the card.
  * @property {string=} title Title; `fallbacks.notAvailable` is shown if empty.
  * @property {string=} date Release or air date; nothing is rendered if empty.
- * @property {number=} rating
+ * @property {number=} rating Rating (0-10); positive values are shown with one decimal place.
  * @property {string | number=} certification Age rating, e.g. FSK or US rating.
- * @property {Pick<import('./tmdb.js').Genre, 'name'>[]=} genres
- * @property {string=} imageUrl Poster URL; the `not-available.png` placeholder is used if empty.
+ * @property {Pick<import('./tmdb.js').Genre, 'name'>[]=} genres Genres, displayed joined by slashes. * @property {string=} imageUrl Poster URL; the `not-available.png` placeholder is used if empty.
  * @property {string=} scrollId Optional HTML id for the card.
  * @property {boolean=} isLoading Shows the loading state of the card.
  */
