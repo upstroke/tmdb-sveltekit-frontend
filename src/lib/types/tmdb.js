@@ -217,15 +217,22 @@
 /* ---------- Page data ---------- */
 
 /**
- * Data returned by the load functions of the home, movies and TV shows pages.
- * Also the JSON shape of the paged `/trending`, `/movies` and `/tv-shows` endpoints.
+ * Return value of the load functions of the home, movies and TV shows pages.
+ * All properties are always present.
  *
- * @typedef {Object} PageData
- * @property {MappedFeatured | null=} featured
- * @property {CardItem[]=} cards
- * @property {number=} page
- * @property {boolean=} hasMore
- * @property {string | null=} error
+ * @typedef {Object} ListPageData
+ * @property {MappedFeatured | null} featured
+ * @property {CardItem[]} cards
+ * @property {number} page
+ * @property {boolean} hasMore
+ * @property {string | null} error
+ */
+
+/**
+ * Page data as consumed by components and the paged `/trending`, `/movies`
+ * and `/tv-shows` endpoints; every property is optional.
+ *
+ * @typedef {Partial<ListPageData>} PageData
  */
 
 export {};
