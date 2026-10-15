@@ -17,16 +17,14 @@ jobs:
         with:
           github_user_name: ${{ github.repository_owner }}
         env:
-          # Custom token required to bypass default API limitations for traffic data
           GITHUB_TOKEN: ${{ secrets.TRAFFIC_TOKEN }}
 
       - name: Ensure Target Directory Exists
         run: mkdir -p Documentation/traffic
 
-      - name: Save Traffic Data to Branch
-        uses: crazy-max/ghaction-github-pages@v4
-        with:
-          target_branch: traffic
-          build_dir: Documentation/traffic
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Commit and Push Traffic Data to Main
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@://github.com"
+          git add Documentation/traffic/
+          git diff --quiet && git diff --staged --quiet || (git commit -m "chore: update traffic statistics [skip ci]" && git push)
