@@ -33,7 +33,7 @@
 		(page.url.searchParams.get('locale') ?? DEFAULT_LOCALE).split('-')[1] ?? 'US'
 	);
 
-	/** @type {import('../types/components.js').CardDefaultProps} */
+	/** @type {import('$lib/types/components.js').CardDefaultProps} */
 	let {
 		id,
 		mediaType,
