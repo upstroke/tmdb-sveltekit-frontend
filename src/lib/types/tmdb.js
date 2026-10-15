@@ -19,6 +19,26 @@
  * @property {string} name
  */
 
+/**
+ * Minimal shape needed to identify a media item, for example for deduplication.
+ * Every normalized item with `id` and `mediaType` (such as `CardItem`) satisfies it.
+ *
+ * @typedef {Object} MediaItem
+ * @property {string | number} id Unique ID of the media item.
+ * @property {string} mediaType Media type, for example `movie` or `tv`.
+ */
+
+/**
+ * Display data of a single country-specific age rating (see `ratings.json`).
+ *
+ * @typedef {Object} RatingEntry
+ * @property {string} label
+ * @property {string} color
+ * @property {string} textColor
+ * @property {number=} age
+ * @property {string=} description
+ */
+
 /* ---------- Request ---------- */
 
 /**

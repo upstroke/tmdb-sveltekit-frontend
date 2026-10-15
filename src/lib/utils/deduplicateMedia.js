@@ -1,10 +1,6 @@
 // @ts-check
 
-/**
- * @typedef {object} MediaItem
- * @property {string|number} id - Unique ID of the media item.
- * @property {string} mediaType - Media type, for example `movie` or `tv`.
- */
+/** @typedef {import('$lib/types/tmdb.js').MediaItem} MediaItem */
 
 /**
  * Creates a stable key to uniquely identify a media item.
