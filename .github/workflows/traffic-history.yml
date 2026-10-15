@@ -16,11 +16,12 @@ jobs:
         uses: platane/snk@v3
         with:
           github_user_name: ${{ github.repository_owner }}
-          repository_name: ${{ github.event.repository.name }}
-
         env:
           # Custom token required to bypass default API limitations for traffic data
           GITHUB_TOKEN: ${{ secrets.TRAFFIC_TOKEN }}
+
+      - name: Ensure Target Directory Exists
+        run: mkdir -p Documentation/traffic
 
       - name: Save Traffic Data to Branch
         uses: crazy-max/ghaction-github-pages@v4
