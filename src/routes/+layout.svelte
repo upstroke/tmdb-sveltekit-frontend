@@ -10,22 +10,12 @@
 	import { dev } from '$app/environment';
 	import '$css/app.scss';
 
-	/**
-	 * @typedef {Object} NavItem
-	 * @property {string} id
-	 * @property {string} label
-	 * @property {string} icon
-	 * @property {string} path
-	 * @property {string} storageKey
-	 * @property {(pathname: string) => boolean} active
-	 */
-
 	let { children } = $props();
 
 	const { titles } = $derived($i18n);
 
 	const navItems = $derived(
-		/** @type {NavItem[]} */ ([
+		/** @type {import('$lib/types/components.js').NavItem[]} */ ([
 			{
 				id: 'home',
 				label: titles.home,

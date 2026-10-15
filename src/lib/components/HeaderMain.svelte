@@ -5,18 +5,6 @@
 	import { i18n } from '$lib/stores/i18n';
 
 	/**
-	 * @typedef {import('svelte').Snippet} Snippet
-	 *
-	 * @typedef {Object} NavItem
-	 * @property {string} id - Unique id, also used as the list item id.
-	 * @property {string} label - Visible link text.
-	 * @property {string} icon - Icon class name.
-	 * @property {string} path - Target path.
-	 * @property {string} storageKey - Session storage key for the last opened page number.
-	 * @property {(pathname: string) => boolean} active - Returns true if the item matches the current path.
-	 */
-
-	/**
 	 * Renders the global header with navigation, mobile menu,
 	 * optional content slot, and language selector.
 	 *
@@ -26,12 +14,9 @@
 	 * <HeaderMain navItems={navigationItems}>
 	 * 	<TypeHeadSearch />
 	 * </HeaderMain>
-	 *
-	 * @type {{
-	 *   navItems?: NavItem[],
-	 *   children?: Snippet
-	 * }}
 	 */
+
+	/** @type {import('../types/components.js').HeaderMainProps} */
 	let { navItems = [], children } = $props();
 	const { labels } = $derived($i18n);
 

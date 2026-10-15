@@ -55,6 +55,26 @@
  */
 
 /**
+ * Navigation entry of `HeaderMain.svelte`, built in `routes/+layout.svelte`.
+ *
+ * @typedef {Object} NavItem
+ * @property {string} id Unique ID, also used as the list item ID.
+ * @property {string} label Visible link text.
+ * @property {string} icon Icon class name.
+ * @property {string} path Target path.
+ * @property {string} storageKey Session storage key for the last opened page number.
+ * @property {(pathname: string) => boolean} active Returns true if the item matches the current path.
+ */
+
+/**
+ * Props of `HeaderMain.svelte`.
+ *
+ * @typedef {Object} HeaderMainProps
+ * @property {NavItem[]=} navItems Navigation entries; defaults to an empty list.
+ * @property {import('svelte').Snippet=} children Optional content rendered next to the navigation, e.g. the search.
+ */
+
+/**
  * Props of `LoadMore.svelte`.
  *
  * @typedef {Object} LoadMoreProps
