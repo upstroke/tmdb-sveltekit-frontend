@@ -58,6 +58,41 @@ When adding a new UI text key, translations must be provided for **all available
 
 The displayed streaming providers and watch links are supplied through the TMDB API. The streaming data comes from JustWatch and is labeled "Provided by JustWatch" on movie and TV show detail pages.
 
+## TMDB Integration
+
+The application integrates the third-party [TMDB REST API](https://developer.themoviedb.org/docs/getting-started) on the server.
+
+SvelteKit server routes act as a backend-for-frontend (BFF) and API-proxy layer between the browser and TMDB. The browser requests data from application-owned endpoints, while the corresponding server routes call the TMDB API, apply locale-specific parameters, handle fallbacks and errors, and return prepared JSON data to the Svelte UI.
+
+The TMDB API key is read from server-side environment variables and is never exposed to the browser.
+
+### Data flow
+
+```text
+Browser / Svelte UI
+        |
+        v
+SvelteKit server routes (API proxy / BFF)
+        |
+        v
+TMDB REST API
+        |
+        v
+SvelteKit server routes
+        |
+        v
+Browser / Svelte UI
+```
+
+### Characteristics
+
+- **Server-side third-party REST API integration:** TMDB is consumed over HTTPS using REST endpoints and JSON responses.
+- **API proxy:** SvelteKit server routes mediate between the browser and the external TMDB API.
+- **Backend-for-frontend (BFF):** Server routes prepare TMDB data specifically for this SvelteKit frontend.
+- **Secure credential handling:** `TMDB_API_KEY` remains on the server and is excluded from client bundles.
+- **Locale-aware requests:** The active locale is propagated to server-side TMDB requests.
+- **Runtime data validation:** External TMDB data can be validated before it is passed to the UI.
+
 ## Tech Stack
 
 - SvelteKit 2.63
