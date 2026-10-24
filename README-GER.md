@@ -31,7 +31,7 @@ Im Fokus stehen:
 - Weitergabe der Locale über interne Navigation und serverseitige Datenabfragen
 - Wiederherstellung der zuletzt besuchten Seite in paginierten Listen
 - Duplikatbereinigung beim Nachladen von Daten
-- gemeinsame Fallback-Logik für fehlende Bilder und Texte
+- gemeinsame Fallback-Logik für fehlende Bilder und Text
 - gemeinsamer Fehlerdialog für API- und Ladefehler
 - wiederverwendbare Komponenten für Karten, Suche, Pagination und Fehlerzustände
 
@@ -82,6 +82,41 @@ Bei neuen UI-Text-Schlüsseln müssen **alle verfügbaren Sprachen** gleichzeiti
 ## Streaming-Daten
 
 Die angezeigten Streaming-Anbieter und Watch-Links werden über die TMDB-API bereitgestellt. Die Streaming-Daten stammen von JustWatch und werden auf den Detailseiten für Filme und TV-Shows mit "Provided by JustWatch" gekennzeichnet.
+
+## TMDB-Integration
+
+Die Anwendung integriert die externe [TMDB-REST-API](https://developer.themoviedb.org/docs/getting-started) serverseitig.
+
+SvelteKit-Server-Routen dienen für clientseitige TMDB-Anfragen als API-Proxy- und Backend-for-Frontend-Schicht (BFF). Der Browser ruft anwendungseigene Endpunkte wie `/movies`, `/search`, `/trending` und `/tv-shows` auf. Die zugehörigen Server-Routen rufen die TMDB-API auf, ergänzen locale-spezifische Parameter, behandeln Fallbacks und Fehler und geben aufbereitete JSON-Daten an die Svelte-UI zurück.
+
+Für das initiale Rendern einer Seite holen SvelteKit-Server-Load-Funktionen die TMDB-Daten direkt serverseitig. In beiden Fällen kommuniziert der Browser nie direkt mit TMDB und erhält niemals den API-Key.
+
+### Datenfluss
+
+```text
+Browser / Svelte-UI
+        |
+        v
+SvelteKit-Server-Routen (API-Proxy / BFF)
+        |
+        v
+TMDB-REST-API
+        |
+        v
+SvelteKit-Server-Routen
+        |
+        v
+Browser / Svelte-UI
+```
+
+### Eigenschaften
+
+- **Serverseitige Integration einer externen REST-API:** TMDB wird über HTTPS über REST-Endpunkte und JSON-Antworten konsumiert.
+- **API-Proxy für clientseitige Anfragen:** SvelteKit-`+server.js`-Routen vermitteln zwischen Browser und externer TMDB-API.
+- **Serverseitiges Rendering:** SvelteKit-`+page.server.js`-Load-Funktionen holen TMDB-Daten für das initiale Seitenrendering direkt auf dem Server.
+- **Backend-for-Frontend (BFF):** Server-Routen bereiten TMDB-Daten speziell für dieses SvelteKit-Frontend auf.
+- **Sicherer Umgang mit Credentials:** `TMDB_API_KEY` wird über `$env/static/private` importiert, bleibt serverseitig und wird nicht in Client-Bundles aufgenommen.
+- **Locale-aware Requests:** Die aktive Locale wird an serverseitige TMDB-Anfragen weitergegeben.
 
 ## Testing-Hinweis
 
@@ -324,10 +359,12 @@ npm run test:integration   # Integrationstests
 npm run test:acceptance    # Acceptance-Tests (Playwright)
 npm run test:security      # Sicherheits-Audit der Abhängigkeiten (npm audit)
 npm run test:all           # Alle oben genannten Tests in Folge
-npm run test:precommit     # Unit-Tests mit Coverage + Lint + Integration + Sicherheits-Audit
+npm run test:precommit     # Unit-Tests + Lint (schnelle Pre-Commit-Prüfung)
 ```
 
-`test:security` führt `npm audit --audit-level=moderate` aus und ist sowohl in `test:all` als auch in `test:precommit` eingebunden.
+Die Pre-Commit-Prüfung ist bewusst schnell gehalten: Sie führt Unit-Tests, Prettier und ESLint aus. Integrationstests, Coverage und das Sicherheits-Audit der Abhängigkeiten sind für die umfassendere Validierung vor dem Pushen oder Erstellen eines Pull Requests vorgesehen.
+
+`test:security` führt `npm audit --audit-level=high` aus und ist in `test:all` eingebunden.
 
 Die Playwright-Sicherheits-Header-Tests können über den Tag `@security` gezielt ausgeführt werden:
 

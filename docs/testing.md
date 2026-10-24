@@ -63,7 +63,7 @@ The test plan is documented in `tests/acceptance/security/security-testplan.md`.
 
 ### Dependency Audit (npm audit)
 
-`npm run test:security` runs `npm audit --audit-level=moderate` to check all installed dependencies for known vulnerabilities. It is included in both `test:all` and `test:precommit`.
+`npm run test:security` runs `npm audit --audit-level=high` to check all installed dependencies for known vulnerabilities. It is included in `test:all`.
 
 ```bash
 npm run test:security
@@ -211,18 +211,18 @@ Coverage numbers provide orientation and complement functional test selection. T
 
 Unit tests must maintain a minimum statement coverage of 80%.
 
-Before every commit, Husky runs the pre-commit checks automatically:
+Before every commit, Husky runs fast pre-commit checks automatically:
 
-- unit tests with coverage
+- unit tests
 - formatting and ESLint checks
-- integration tests
-- dependency security audit (`npm audit`)
 
 Run the same checks manually with:
 
 ```bash
 npm run test:precommit
 ```
+
+Integration tests, coverage, and the dependency security audit are intended for broader validation before pushing changes or opening a pull request.
 
 ## Further Information
 

@@ -62,9 +62,9 @@ The displayed streaming providers and watch links are supplied through the TMDB 
 
 The application integrates the third-party [TMDB REST API](https://developer.themoviedb.org/docs/getting-started) on the server.
 
-SvelteKit server routes act as a backend-for-frontend (BFF) and API-proxy layer between the browser and TMDB. The browser requests data from application-owned endpoints, while the corresponding server routes call the TMDB API, apply locale-specific parameters, handle fallbacks and errors, and return prepared JSON data to the Svelte UI.
+SvelteKit server routes act as an API-proxy and backend-for-frontend (BFF) layer for client-side TMDB requests. The browser calls application-owned endpoints such as `/movies`, `/search`, `/trending`, and `/tv-shows`; the corresponding server routes call the TMDB API, apply locale-specific parameters, handle fallbacks and errors, and return prepared JSON data to the Svelte UI.
 
-The TMDB API key is read from server-side environment variables and is never exposed to the browser.
+For initial page rendering, SvelteKit server load functions fetch TMDB data directly on the server. In both cases, the browser never communicates directly with TMDB and never receives the API key.
 
 ### Data flow
 
@@ -87,11 +87,11 @@ Browser / Svelte UI
 ### Characteristics
 
 - **Server-side third-party REST API integration:** TMDB is consumed over HTTPS using REST endpoints and JSON responses.
-- **API proxy:** SvelteKit server routes mediate between the browser and the external TMDB API.
+- **API proxy for client-side requests:** SvelteKit `+server.js` route handlers mediate between the browser and the external TMDB API.
+- **Server-side rendering:** SvelteKit `+page.server.js` load functions fetch TMDB data directly on the server for initial page rendering.
 - **Backend-for-frontend (BFF):** Server routes prepare TMDB data specifically for this SvelteKit frontend.
-- **Secure credential handling:** `TMDB_API_KEY` remains on the server and is excluded from client bundles.
+- **Secure credential handling:** `TMDB_API_KEY` is imported from `$env/static/private`, remains server-side, and is excluded from client bundles.
 - **Locale-aware requests:** The active locale is propagated to server-side TMDB requests.
-- **Runtime data validation:** External TMDB data can be validated before it is passed to the UI.
 
 ## Tech Stack
 
@@ -230,9 +230,10 @@ npm run test:security      # Dependency security audit (npm audit)
 npm run test:all           # All of the above in sequence
 npm run test:precommit     # Unit tests + lint (fast pre-commit validation)
 ```
+
 The pre-commit check is intentionally kept fast: it runs unit tests, Prettier, and ESLint. Integration tests, coverage, and the dependency security audit are intended for broader validation before pushing changes or opening a pull request.
 
-`test:security` runs `npm audit --audit-level=moderate` and is included in both `test:all` and `test:precommit`.
+`test:security` runs `npm audit --audit-level=high` and is included in `test:all`.
 
 Playwright security header tests can be run separately using the `@security` tag:
 
