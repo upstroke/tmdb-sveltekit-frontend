@@ -228,8 +228,9 @@ npm run test:integration   # Integration tests
 npm run test:acceptance    # Acceptance tests (Playwright)
 npm run test:security      # Dependency security audit (npm audit)
 npm run test:all           # All of the above in sequence
-npm run test:precommit     # Unit tests with coverage + lint + integration + security audit
+npm run test:precommit     # Unit tests + lint (fast pre-commit validation)
 ```
+The pre-commit check is intentionally kept fast: it runs unit tests, Prettier, and ESLint. Integration tests, coverage, and the dependency security audit are intended for broader validation before pushing changes or opening a pull request.
 
 `test:security` runs `npm audit --audit-level=moderate` and is included in both `test:all` and `test:precommit`.
 
